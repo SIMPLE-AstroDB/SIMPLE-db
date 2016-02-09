@@ -1,0 +1,21 @@
+<!doctype html>
+<title>A short quiz</title>
+<link rel=stylesheet type=text/css href='{{ url_for('static',filename='style.css')}}'>
+<div class=page>
+  <h1>BDNYC SQL Query</h1>
+  <div class=metanav>
+    <h4>
+      Please type your SQL query below
+    </h4>
+
+    <form id='queryform' method='post' action='runquery' >
+      <p>
+        <textarea name="query_to_run" cols="50" rows="5">{{defquery}}</textarea>
+      </p>
+      <p>
+    <input type='submit' value='Submit' />
+      </p>
+    </form>
+
+  </div>
+</div>
