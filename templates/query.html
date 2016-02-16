@@ -10,12 +10,31 @@
 
     <form id='queryform' method='post' action='runquery' >
       <p>
-        <textarea name="query_to_run" cols="50" rows="5">{{defquery}}</textarea>
+        <textarea name="query_to_run" cols="80" rows="10">{{defquery}}</textarea>
       </p>
       <p>
     <input type='submit' value='Submit' />
       </p>
     </form>
+
+    <p>Want some example queries? Try these out:</p>
+    <ul>
+      <li>SELECT shortname, ra, dec FROM sources WHERE (222&lt;ra AND ra&lt;232) AND (5&lt;dec AND dec&lt;15)</li>
+      <li>SELECT band, magnitude, magnitude_unc FROM photometry WHERE source_id=58</li>
+      <li>SELECT source_id, band, magnitude FROM photometry WHERE band='z' AND magnitude<15</li>
+      <li>SELECT wavelength, flux, unc FROM spectra WHERE observation_id=75</li>
+      <li>SELECT t.name, p.band, p.magnitude, p.magnitude_unc FROM telescopes as t 
+          JOIN photometry AS p ON p.telescope_id=t.id WHERE p.source_id=58</li>
+      <li>SELECT p1.magnitude-p2.magnitude FROM photometry AS p1 
+          JOIN photometry AS p2 ON p1.source_id=p2.source_id WHERE p1.band='J' AND p2.band='H'</li>
+      <li>SELECT src.designation, src.unum, spt.spectral_type FROM sources AS src JOIN spectral_types AS spt ON spt.source_id=src.id WHERE spt.spectral_type>=10 AND spt.spectral_type<20 AND spt.regime='optical'</li>
+      <li>SELECT s.id, p.parallax, p.parallax_unc, p.publication_id FROM sources as s JOIN parallaxes AS p ON p.source_id=s.id</li>
+      <li>SELECT s.id, s.ra, s.dec, s.shortname, p.source_id, p.band, p.magnitude 
+          FROM sources as s 
+          JOIN photometry as p 
+          ON s.id=p.source_id 
+          WHERE s.dec<=-10 AND (p.band IN ("J","H","Ks","W1","W2"))</li>
+    </ul>
 
   </div>
 </div>
