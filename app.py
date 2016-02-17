@@ -22,7 +22,7 @@ def bdnyc_index():
 # Page with a text box to take the SQL query
 @app_bdnyc.route('/query', methods=['GET','POST'])
 def bdnyc_query():
-    defquery = 'SELECT * FROM sources LIMIT 15'
+    defquery = 'SELECT * FROM sources LIMIT 25'
 
     if request.method == 'GET':
         return render_template('query.html', defquery=defquery)
@@ -53,7 +53,7 @@ def bdnyc_runquery():
     for col in t.keys():
         data.loc[:,col] = pd.Series(t[col])
 
-    return render_template('view.html', table=data.to_html(classes='dataframe', index=False))
+    return render_template('view.html', table=data.to_html(classes='display', index=False))
 
 
 if __name__ == '__main__':
