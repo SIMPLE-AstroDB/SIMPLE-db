@@ -47,11 +47,14 @@ def bdnyc_runquery():
         else:
             return render_template('view.html', table='<p>Error for query:<br>'+htmltxt+'</p>')
 
-
     # Convert to Pandas data frame
-    data = pd.DataFrame()
-    for col in t.keys():
-        data.loc[:,col] = pd.Series(t[col])
+    try:
+        data = pd.DataFrame()
+        for col in t.keys():
+            data.loc[:,col] = pd.Series(t[col])
+    except AttributeError:
+        htmltxt = app_bdnyc.vars['query'].replace('<','&lt;')
+        return render_template('view.html', table='<p>Error for query:<br>'+htmltxt+'</p>')
 
     return render_template('view.html', table=data.to_html(classes='display', index=False))
 
