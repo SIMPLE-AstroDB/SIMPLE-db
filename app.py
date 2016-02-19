@@ -1,5 +1,6 @@
 from flask import Flask,render_template,request,redirect,make_response
 from astrodbkit import astrodb
+import os
 #import pandas as pd
 
 
@@ -72,6 +73,7 @@ def bdnyc_savefile():
     db.query(app_bdnyc.vars['query'], fmt='table', export=filename)
     with open(filename, 'r') as f:
         file_as_string = f.read()
+    os.remove(filename) # delete the file after it's read
 
     response = make_response(file_as_string)
     response.headers["Content-Disposition"] = "attachment; filename=%s" % filename
