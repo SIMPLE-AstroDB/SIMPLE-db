@@ -15,5 +15,17 @@
 
     {{ table|safe }}
 
+  <p><a href="query">Return to query</a></p>
+
+
+    <form id='formatselect' method='post' action='savefile' >
+        <h4>Save to a file:</h4>
+        <select name="format">
+            <option value="ascii">ASCII</option>
+            <option value="votable">VOTable</option>
+        </select>
+        <input type='submit' value='Save' />
+    </form>
+
 </div>
 

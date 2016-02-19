@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,redirect
+from flask import Flask,render_template,request,redirect,make_response
 from astrodbkit import astrodb
 #import pandas as pd
 
@@ -60,6 +60,22 @@ def bdnyc_runquery():
 
     return render_template('view.html', table=data.to_html(classes='display', index=False))
 
+@app_bdnyc.route('/savefile', methods=['POST'])
+def bdnyc_savefile():
+    export_fmt = request.form['format']
+    if export_fmt=='votable':
+        filename = 'bdnyc_table.vot'
+    else:
+        filename = 'bdnyc_table.txt'
+
+    db = astrodb.get_db('./BDNYCv1.0.db')
+    db.query(app_bdnyc.vars['query'], fmt='table', export=filename)
+    with open(filename, 'r') as f:
+        file_as_string = f.read()
+
+    response = make_response(file_as_string)
+    response.headers["Content-Disposition"] = "attachment; filename=%s" % filename
+    return response
 
 if __name__ == '__main__':
     app_bdnyc.run(debug=True)
