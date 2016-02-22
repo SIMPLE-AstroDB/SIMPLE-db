@@ -1,0 +1,21 @@
+<!doctype html>
+<title>Query Results</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='datatable.css') }}">
+<script src="jquery-1.12.0.min.js"></script>
+<script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready( function () {
+      $('.dataframe').DataTable();
+    } );
+</script>
+
+<div class=error>
+  <h1>Error in Query</h1>
+
+    {{ errmess|safe }}
+
+  <p><a href="query">Return to query</a></p>
+
+</div>
+
