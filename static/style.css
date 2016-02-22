@@ -17,7 +17,8 @@ table.dataTable {
 table.dataTable thead th,
 table.dataTable tfoot th {
   font-weight: bold;
-  background-color: #add8e6;
+  background-color: #2474E3
+  /* #add8e6; */
   /*color: white;*/
 }
 table.dataTable thead th,
@@ -103,10 +104,12 @@ table.dataTable.stripe tbody tr.odd.selected, table.dataTable.display tbody tr.o
 table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
   /*background-color: #f6f6f6;*/
   background-color: #ffff99;
+  background-color: #FFA500;
 }
 table.dataTable.hover tbody tr:hover.selected, table.dataTable.display tbody tr:hover.selected {
   /*background-color: #aab7d1;*/
   background-color: #ffff99;
+  background-color: #FFA500;
 }
 table.dataTable.order-column tbody tr > .sorting_1,
 table.dataTable.order-column tbody tr > .sorting_2,
@@ -161,14 +164,17 @@ table.dataTable.display tbody tr.even.selected > .sorting_3, table.dataTable.ord
 table.dataTable.display tbody tr:hover > .sorting_1, table.dataTable.order-column.hover tbody tr:hover > .sorting_1 {
   background-color: #eaeaea;
   background-color: #ffff99;
+  background-color: #FFA500;
 }
 table.dataTable.display tbody tr:hover > .sorting_2, table.dataTable.order-column.hover tbody tr:hover > .sorting_2 {
   background-color: #ececec;
   background-color: #ffff99;
+  background-color: #FFA500;
 }
 table.dataTable.display tbody tr:hover > .sorting_3, table.dataTable.order-column.hover tbody tr:hover > .sorting_3 {
   background-color: #efefef;
   background-color: #ffff99;
+  background-color: #FFA500;
 }
 table.dataTable.display tbody tr:hover.selected > .sorting_1, table.dataTable.order-column.hover tbody tr:hover.selected > .sorting_1 {
   background-color: #a2aec7;
@@ -461,7 +467,6 @@ table.dataTable td {
 }
 
 a               { color: #377BA8; }
-h1, h2          { color: #7A7A7A; }
 h1, h2          { font-family: 'Georgia', serif; margin: 0; }
 h1              { border-bottom: 2px solid #eee; }
 h2              { font-size: 1.2em; }

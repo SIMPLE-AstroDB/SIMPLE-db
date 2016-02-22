@@ -9,8 +9,6 @@ app_bdnyc = Flask(__name__)
 # http://127.0.0.1:5000/query
 # To access the query form
 
-print os.getcwd() # check current working directory
-
 app_bdnyc.vars={}
 app_bdnyc.vars['query'] = ''
 
