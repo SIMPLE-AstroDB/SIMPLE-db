@@ -3,12 +3,13 @@ from astrodbkit import astrodb
 import os
 #import pandas as pd
 
-
 app_bdnyc = Flask(__name__)
 
 # Go to
 # http://127.0.0.1:5000/query
 # To access the query form
+
+print os.getcwd() # check current working directory
 
 app_bdnyc.vars={}
 app_bdnyc.vars['query'] = ''
@@ -24,7 +25,7 @@ def bdnyc_index():
 # Page with a text box to take the SQL query
 @app_bdnyc.route('/query', methods=['GET','POST'])
 def bdnyc_query():
-    defquery = 'SELECT * FROM sources LIMIT 25'
+    defquery = 'SELECT * FROM sources'
     if app_bdnyc.vars['query']=='':
         app_bdnyc.vars['query'] = defquery
 
@@ -39,11 +40,11 @@ def bdnyc_runquery():
     htmltxt = app_bdnyc.vars['query'].replace('<','&lt;')
 
     # Load the database
-    db = astrodb.get_db('./BDNYCv1.0.db')
+    db = astrodb.get_db('./database.db')
 
     # Only SELECT commands are allowed
     if not app_bdnyc.vars['query'].lower().startswith('select'):
-        return render_template('view.html', table='<p>Only SELECT queries are allowed. You typed:<br>'+htmltxt+'</p>')
+        return render_template('error.html', errmess='<p>Only SELECT queries are allowed. You typed:<br>'+htmltxt+'</p>')
 
     # Run the query
     try:
@@ -51,13 +52,13 @@ def bdnyc_runquery():
     except ValueError:
         t = db.query(app_bdnyc.vars['query'], fmt='array')
         if len(t)==0: # no entries found
-            return render_template('view.html', table='<p>No entries found for query:<br>'+htmltxt+'</p>')
+            return render_template('error.html', errmess='<p>No entries found for query:<br>'+htmltxt+'</p>')
 
     # Convert to Pandas data frame
     try:
         data = t.to_pandas()
     except AttributeError:
-        return render_template('view.html', table='<p>Error for query:<br>'+htmltxt+'</p>')
+        return render_template('error.html', errmess='<p>Error for query:<br>'+htmltxt+'</p>')
 
     return render_template('view.html', table=data.to_html(classes='display', index=False))
 
@@ -69,7 +70,7 @@ def bdnyc_savefile():
     else:
         filename = 'bdnyc_table.txt'
 
-    db = astrodb.get_db('./BDNYCv1.0.db')
+    db = astrodb.get_db('./database.db')
     db.query(app_bdnyc.vars['query'], fmt='table', export=filename)
     with open(filename, 'r') as f:
         file_as_string = f.read()
