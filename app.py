@@ -79,4 +79,4 @@ def bdnyc_savefile():
     return response
 
 if __name__ == '__main__':
-    app_bdnyc.run(debug=True)
+    app_bdnyc.run(debug=False)
