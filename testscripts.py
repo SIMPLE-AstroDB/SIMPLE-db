@@ -3,7 +3,7 @@ import pandas as pd
 
 db = astrodb.get_db('./BDNYCv1.0.db')
 
-txt = 'SELECT * FROM sources LIMIT 10'
+txt = 'SELECT * FROM sources'
 #data = db.query(txt, fmt='table', export='temp.txt') # if fmt=table or dict, the columns are sorted. if array no columns names are given
 data = db.query(txt, fmt='table')
 
