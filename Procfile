@@ -1,1 +1,1 @@
-web: gunicorn bdnycapp.wsgi --log-file -
+web: python app.py
