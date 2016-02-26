@@ -1,6 +1,7 @@
 from flask import Flask,render_template,request,redirect,make_response
 from astrodbkit import astrodb
-import os
+import os, sys
+from cStringIO import StringIO
 #import pandas as pd
 
 app_bdnyc = Flask(__name__)
@@ -11,6 +12,7 @@ app_bdnyc = Flask(__name__)
 
 app_bdnyc.vars={}
 app_bdnyc.vars['query'] = ''
+app_bdnyc.vars['search'] = ''
 
 @app_bdnyc.route('/')
 def bdnyc_home():
@@ -28,10 +30,12 @@ def bdnyc_query():
         app_bdnyc.vars['query'] = defquery
 
     if request.method == 'GET':
-        return render_template('query.html', defquery=app_bdnyc.vars['query'])
+        return render_template('query.html', defquery=app_bdnyc.vars['query'],
+                               defsearch=app_bdnyc.vars['search'])
     else:
         return 'This was a POST request'
 
+# Grab results of query and display them
 @app_bdnyc.route('/runquery', methods=['POST'])
 def bdnyc_runquery():
     app_bdnyc.vars['query'] = request.form['query_to_run']
@@ -46,17 +50,21 @@ def bdnyc_runquery():
                                errmess='<p>Only SELECT queries are allowed. You typed:</p><p>'+htmltxt+'</p>')
 
     # Run the query
+    stdout = sys.stdout  #keep a handle on the real standard output
+    sys.stdout = mystdout = StringIO() #Choose a file-like object to write to
     try:
         t = db.query(app_bdnyc.vars['query'], fmt='table')
     except ValueError:
         t = db.query(app_bdnyc.vars['query'], fmt='array')
+    sys.stdout = stdout
 
     # Check how many results were found
     try:
         len(t)
     except TypeError:
         return render_template('error.html', headermessage='No Results Found',
-                               errmess='<p>No entries found for query:</p><p>'+htmltxt+'</p>')
+                               errmess='<p>No entries found for query:</p><p>' + htmltxt + \
+                                       '</p><p>'+mystdout.getvalue().replace('<','&lt;')+'</p>')
 
     # Convert to Pandas data frame
     try:
@@ -85,7 +93,45 @@ def bdnyc_savefile():
     response.headers["Content-Disposition"] = "attachment; filename=%s" % filename
     return response
 
+# Perform a search
+@app_bdnyc.route('/search', methods=['POST'])
+def bdnyc_search():
+    app_bdnyc.vars['search'] = request.form['search_to_run']
+    search_table = 'sources'#request.form['table_to_search']
+    search_value = app_bdnyc.vars['search']
+
+    # Load the database
+    db = astrodb.get_db('./database.db')
+
+    # Process search
+    search_value = search_value.replace(',',' ').split()
+    if len(search_value)==1:
+      search_value = search_value[0]
+    else:
+        try:
+            search_value = [float(s) for s in search_value]
+        except:
+            return render_template('error.html', headermessage='Error in Search',
+                               errmess='<p>Could not process search input:</p>' + \
+                                       '<p>' + app_bdnyc.vars['search'] + '</p>')
+
+    # Run the search
+    stdout = sys.stdout  #keep a handle on the real standard output
+    sys.stdout = mystdout = StringIO() #Choose a file-like object to write to
+    t = db.search(search_value, search_table, fetch=True)
+    sys.stdout = stdout
+
+    print app_bdnyc.vars['search']
+
+    try:
+        data = t.to_pandas()
+    except AttributeError:
+        return render_template('error.html', headermessage='Error in Search',
+                               errmess=mystdout.getvalue().replace('<','&lt;'))
+
+    return render_template('view_search.html', table=data.to_html(classes='display', index=False))
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app_bdnyc.run(host='0.0.0.0', port=port, debug=True)
+    app_bdnyc.run(host='0.0.0.0', port=port, debug=False)
     #app_bdnyc.run(debug=False)

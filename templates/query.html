@@ -22,10 +22,9 @@
             to generate queries to the database.
         </p>
 
+        <hr>
 
-        <h4>
-            Please type your SQL query below
-        </h4>
+        <h4>Please type your SQL query below</h4>
 
         <form id='queryform' method='post' action='runquery' >
             <p>
@@ -54,6 +53,29 @@
                 ON s.id=p.source_id
                 WHERE s.dec<=-10 AND (p.band IN ("J","H","Ks","W1","W2"))</li>
         </ul>
+
+        <hr>
+
+        <h4>Perform a Search</h4>
+
+        <form id='searchform' method='post' action='search' >
+            <p> Search for objects by partial name matching or within 1 degree of an RA, Dec coordinate (in degrees):
+                <input type="text" name="search_to_run" cols="30" rows="1" value="{{defsearch}}" />
+                <!--
+                <select name="table_to_search">
+                    <option value="sources">sources</option>
+                    <option value="instruments">instruments</option>
+                    <option value="parallaxes">parallaxes</option>
+                    <option value="photometry">photometry</option>
+                    <option value="proper_motions">proper_motions</option>
+                    <option value="radial_velocities">radial_velocities</option>
+                    <option value="spectral_types">spectral_types</option>
+                    <option value="telescopes">telescopes</option>
+                </select>
+                -->
+                <input type='submit' value='Search' />
+            </p>
+        </form>
 
     </div>
 </div>
