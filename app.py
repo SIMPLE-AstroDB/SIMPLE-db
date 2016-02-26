@@ -49,8 +49,14 @@ def bdnyc_runquery():
         t = db.query(app_bdnyc.vars['query'], fmt='table')
     except ValueError:
         t = db.query(app_bdnyc.vars['query'], fmt='array')
-        if len(t)==0: # no entries found
-            return render_template('error.html', errmess='<p>No entries found for query:<br>'+htmltxt+'</p>')
+        #if len(t)==0: # no entries found
+        #    return render_template('error.html', errmess='<p>No entries found for query:<br>'+htmltxt+'</p>')
+
+    # Check how many results were found
+    try:
+        len(t)
+    except TypeError:
+        return render_template('error.html', errmess='<p>No entries found for query:</p><p>'+htmltxt+'</p>')
 
     # Convert to Pandas data frame
     try:
@@ -80,5 +86,5 @@ def bdnyc_savefile():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app_bdnyc.run(host='0.0.0.0', port=port, debug=False)
+    app_bdnyc.run(host='0.0.0.0', port=port, debug=True)
     #app_bdnyc.run(debug=False)
