@@ -42,27 +42,28 @@ def bdnyc_runquery():
 
     # Only SELECT commands are allowed
     if not app_bdnyc.vars['query'].lower().startswith('select'):
-        return render_template('error.html', errmess='<p>Only SELECT queries are allowed. You typed:<br>'+htmltxt+'</p>')
+        return render_template('error.html', headermessage='Error in Query',
+                               errmess='<p>Only SELECT queries are allowed. You typed:</p><p>'+htmltxt+'</p>')
 
     # Run the query
     try:
         t = db.query(app_bdnyc.vars['query'], fmt='table')
     except ValueError:
         t = db.query(app_bdnyc.vars['query'], fmt='array')
-        #if len(t)==0: # no entries found
-        #    return render_template('error.html', errmess='<p>No entries found for query:<br>'+htmltxt+'</p>')
 
     # Check how many results were found
     try:
         len(t)
     except TypeError:
-        return render_template('error.html', errmess='<p>No entries found for query:</p><p>'+htmltxt+'</p>')
+        return render_template('error.html', headermessage='No Results Found',
+                               errmess='<p>No entries found for query:</p><p>'+htmltxt+'</p>')
 
     # Convert to Pandas data frame
     try:
         data = t.to_pandas()
     except AttributeError:
-        return render_template('error.html', errmess='<p>Error for query:<br>'+htmltxt+'</p>')
+        return render_template('error.html', headermessage='Error in Query',
+                               errmess='<p>Error for query:</p><p>'+htmltxt+'</p>')
 
     return render_template('view.html', table=data.to_html(classes='display', index=False))
 
