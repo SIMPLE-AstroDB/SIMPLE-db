@@ -1,7 +1,6 @@
 <!doctype html>
 <title>Query Results</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-<script src="jquery-1.12.0.min.js"></script>
 <script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
 <script>
@@ -10,12 +9,21 @@
     } );
 </script>
 
+<header id="branding">
+    <img src="static/images/BDNYC-logo.gif" width="500px">
+    <ul>
+        <li><a href="query">Return to Query Form</a></li>
+        <li><a href="http://www.bdnyc.org">Return to BDNYC Blog</a></li>
+        <li><a href="http://astrodbkit.readthedocs.org/en/latest/index.html">BDNYC Database</a></li>
+    </ul>
+</header>
+
 <div class=error>
-  <h1>Error in Query</h1>
+    <h1>Error in Query</h1>
 
     {{ errmess|safe }}
 
-  <p><a href="query">Return to query</a></p>
+    <p><a href="query">Return to query</a></p>
 
 </div>
 
