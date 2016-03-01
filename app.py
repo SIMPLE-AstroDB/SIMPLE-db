@@ -8,10 +8,6 @@ from bokeh.embed import components
 
 app_bdnyc = Flask(__name__)
 
-# Go to
-# http://127.0.0.1:5000/query
-# To access the query form
-
 app_bdnyc.vars={}
 app_bdnyc.vars['query'] = ''
 app_bdnyc.vars['search'] = ''
@@ -32,11 +28,9 @@ def bdnyc_query():
     if app_bdnyc.vars['query']=='':
         app_bdnyc.vars['query'] = defquery
 
-    if request.method == 'GET':
-        return render_template('query.html', defquery=app_bdnyc.vars['query'],
-                               defsearch=app_bdnyc.vars['search'], specid=app_bdnyc.vars['specid'])
-    else:
-        return 'This was a POST request'
+    return render_template('query.html', defquery=app_bdnyc.vars['query'],
+                           defsearch=app_bdnyc.vars['search'], specid=app_bdnyc.vars['specid'])
+
 
 # Grab results of query and display them
 @app_bdnyc.route('/runquery', methods=['POST'])
@@ -62,9 +56,7 @@ def bdnyc_runquery():
     sys.stdout = stdout
 
     # Check how many results were found
-    try:
-        len(t)
-    except TypeError:
+    if type(t)==type(None):
         return render_template('error.html', headermessage='No Results Found',
                                errmess='<p>No entries found for query:</p><p>' + htmltxt + \
                                        '</p><p>'+mystdout.getvalue().replace('<','&lt;')+'</p>')
@@ -100,7 +92,7 @@ def bdnyc_savefile():
 @app_bdnyc.route('/search', methods=['POST'])
 def bdnyc_search():
     app_bdnyc.vars['search'] = request.form['search_to_run']
-    search_table = 'sources'#request.form['table_to_search']
+    search_table = 'sources' #request.form['table_to_search']
     search_value = app_bdnyc.vars['search']
 
     # Load the database
@@ -115,16 +107,14 @@ def bdnyc_search():
             search_value = [float(s) for s in search_value]
         except:
             return render_template('error.html', headermessage='Error in Search',
-                               errmess='<p>Could not process search input:</p>' + \
-                                       '<p>' + app_bdnyc.vars['search'] + '</p>')
+                                   errmess='<p>Could not process search input:</p>' + \
+                                           '<p>' + app_bdnyc.vars['search'] + '</p>')
 
     # Run the search
     stdout = sys.stdout  #keep a handle on the real standard output
     sys.stdout = mystdout = StringIO() #Choose a file-like object to write to
     t = db.search(search_value, search_table, fetch=True)
     sys.stdout = stdout
-
-    print app_bdnyc.vars['search']
 
     try:
         data = t.to_pandas()
@@ -151,6 +141,11 @@ def bdnyc_plot():
     query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id FROM spectra WHERE id=' + \
             app_bdnyc.vars['specid']
     t = db.query(query, fetch='one', fmt='dict')
+
+    # Check if found anything
+    if type(t)==type(None):
+        return render_template('error.html', headermessage='No Result', errmess='<p>No spectrum found.</p>')
+
     spec = t['spectrum']
 
     # Get shortname and other information
@@ -170,7 +165,8 @@ def bdnyc_plot():
     # create a new plot
     wav = 'Wavelength ('+t['wavelength_units']+')'
     flux = 'Flux ('+t['flux_units']+')'
-    p = figure( tools=TOOLS, title=shortname, x_axis_label=wav, y_axis_label=flux ) # can specify plot_width if needed
+    # can specify plot_width if needed
+    p = figure( tools=TOOLS, title=shortname, x_axis_label=wav, y_axis_label=flux, plot_width=800 )
 
     # add some renderers
     p.line(spec.data[0], spec.data[1], line_width=2)
@@ -182,4 +178,3 @@ def bdnyc_plot():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app_bdnyc.run(host='0.0.0.0', port=port, debug=False)
-    #app_bdnyc.run(debug=False)
