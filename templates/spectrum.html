@@ -1,0 +1,30 @@
+<!doctype html>
+<title>Query Results</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
+
+<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.css" type="text/css" />
+<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.js"></script>
+
+{{ script|safe }}
+
+<header id="branding">
+    <img src="static/images/BDNYC-logo.gif" width="500px">
+    <ul>
+        <li><a href="query">Return to Query Form</a></li>
+        <li><a href="http://www.bdnyc.org">Return to BDNYC Blog</a></li>
+        <li><a href="http://astrodbkit.readthedocs.org/en/latest/index.html">BDNYC Database</a></li>
+    </ul>
+</header>
+
+<div class=page>
+    <h1>Spectrum</h1>
+    <br>
+
+    {{ plot|safe }}
+
+    <p><a href="query">Return to query</a></p>
+
+</div>
+

@@ -2,6 +2,8 @@ from flask import Flask,render_template,request,redirect,make_response
 from astrodbkit import astrodb
 import os, sys
 from cStringIO import StringIO
+from bokeh.plotting import figure, output_file, show
+from bokeh.embed import components
 #import pandas as pd
 
 app_bdnyc = Flask(__name__)
@@ -13,6 +15,7 @@ app_bdnyc = Flask(__name__)
 app_bdnyc.vars={}
 app_bdnyc.vars['query'] = ''
 app_bdnyc.vars['search'] = ''
+app_bdnyc.vars['specid'] = ''
 
 @app_bdnyc.route('/')
 def bdnyc_home():
@@ -131,7 +134,41 @@ def bdnyc_search():
 
     return render_template('view_search.html', table=data.to_html(classes='display', index=False))
 
+# Plot a spectrum
+@app_bdnyc.route('/spectrum', methods=['POST'])
+def bdnyc_plot():
+    app_bdnyc.vars['specid'] = request.form['spectrum_to_plot']
+
+    # If not a number, error
+    if not app_bdnyc.vars['specid'].isdigit():
+        return render_template('error.html', headermessage='Error in Input',
+                               errmess='<p>Input was not a number.</p>')
+
+    # Load the database
+    db = astrodb.get_db('./database.db')
+
+    # Grab the spectrum
+    query = 'SELECT spectrum FROM spectra WHERE id='+app_bdnyc.vars['specid']
+    t = db.query(query, fetch='one', fmt='dict')
+    spec = t['spectrum']
+
+    # Make the plot
+    TOOLS="resize,crosshair,pan,wheel_zoom,box_zoom,reset"
+
+    # create a new plot
+    p = figure(
+        tools=TOOLS, title="object name",
+        x_axis_label='Wavelength', y_axis_label='Flux'
+    )
+
+    # add some renderers
+    p.line(spec.data[0], spec.data[1], legend="data")
+
+    script, div = components(p)
+
+    return render_template('spectrum.html', script=script, plot=div)
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app_bdnyc.run(host='0.0.0.0', port=port, debug=False)
+    app_bdnyc.run(host='0.0.0.0', port=port, debug=True)
     #app_bdnyc.run(debug=False)
