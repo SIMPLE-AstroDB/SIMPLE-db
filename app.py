@@ -55,6 +55,11 @@ def bdnyc_runquery():
         t = db.query(app_bdnyc.vars['query'], fmt='array')
     sys.stdout = stdout
 
+    # Check for any errors from mystdout
+    if mystdout.getvalue().lower().startswith('could not execute'):
+        return render_template('error.html', headermessage='Error in Query',
+                               errmess='<p>Error in query:</p><p>'+mystdout.getvalue().replace('<','&lt;')+'</p>')
+
     # Check how many results were found
     if type(t)==type(None):
         return render_template('error.html', headermessage='No Results Found',
@@ -138,9 +143,17 @@ def bdnyc_plot():
     db = astrodb.get_db('./database.db')
 
     # Grab the spectrum
+    stdout = sys.stdout  #keep a handle on the real standard output
+    sys.stdout = mystdout = StringIO() #Choose a file-like object to write to
     query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id FROM spectra WHERE id=' + \
             app_bdnyc.vars['specid']
     t = db.query(query, fetch='one', fmt='dict')
+    sys.stdout = stdout
+
+    # Check for errors first
+    if mystdout.getvalue().lower().startswith('could not execute'):
+        return render_template('error.html', headermessage='Error in Query',
+                               errmess='<p>Error in query:</p><p>'+mystdout.getvalue().replace('<','&lt;')+'</p>')
 
     # Check if found anything
     if type(t)==type(None):
