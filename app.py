@@ -34,7 +34,7 @@ def bdnyc_query():
 
     if request.method == 'GET':
         return render_template('query.html', defquery=app_bdnyc.vars['query'],
-                               defsearch=app_bdnyc.vars['search'])
+                               defsearch=app_bdnyc.vars['search'], specid=app_bdnyc.vars['specid'])
     else:
         return 'This was a POST request'
 
@@ -148,21 +148,32 @@ def bdnyc_plot():
     db = astrodb.get_db('./database.db')
 
     # Grab the spectrum
-    query = 'SELECT spectrum FROM spectra WHERE id='+app_bdnyc.vars['specid']
+    query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id FROM spectra WHERE id=' + \
+            app_bdnyc.vars['specid']
     t = db.query(query, fetch='one', fmt='dict')
     spec = t['spectrum']
+
+    # Get shortname and other information
+    # plt.figtext(0.15,0.88,
+    #             '{}\n{}\n{}\n{}'.format(i['filename'],
+    #             self.query("SELECT name FROM telescopes WHERE id={}".format(i['telescope_id']), fetch='one')[0]
+    #             if i['telescope_id'] else '',self.query("SELECT name FROM instruments WHERE id={}".format(i['instrument_id']),
+    #                                                     fetch='one')[0] if i['instrument_id'] else '',i['obs_date']),
+    #             verticalalignment='top')
+
+    query = 'SELECT shortname FROM sources WHERE id='+str(t['source_id'])
+    shortname = db.query(query, fetch='one', fmt='dict')['shortname']
 
     # Make the plot
     TOOLS="resize,crosshair,pan,wheel_zoom,box_zoom,reset"
 
     # create a new plot
-    p = figure(
-        tools=TOOLS, title="object name",
-        x_axis_label='Wavelength', y_axis_label='Flux'
-    )
+    wav = 'Wavelength ('+t['wavelength_units']+')'
+    flux = 'Flux ('+t['flux_units']+')'
+    p = figure( tools=TOOLS, title=shortname, x_axis_label=wav, y_axis_label=flux ) # can specify plot_width if needed
 
     # add some renderers
-    p.line(spec.data[0], spec.data[1], legend="data")
+    p.line(spec.data[0], spec.data[1], line_width=2)
 
     script, div = components(p)
 
