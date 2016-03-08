@@ -12,6 +12,7 @@ app_bdnyc.vars={}
 app_bdnyc.vars['query'] = ''
 app_bdnyc.vars['search'] = ''
 app_bdnyc.vars['specid'] = ''
+app_bdnyc.vars['source_id'] = ''
 
 @app_bdnyc.route('/')
 def bdnyc_home():
@@ -29,7 +30,8 @@ def bdnyc_query():
         app_bdnyc.vars['query'] = defquery
 
     return render_template('query.html', defquery=app_bdnyc.vars['query'],
-                           defsearch=app_bdnyc.vars['search'], specid=app_bdnyc.vars['specid'])
+                           defsearch=app_bdnyc.vars['search'], specid=app_bdnyc.vars['specid'],
+                           source_id=app_bdnyc.vars['source_id'])
 
 
 # Grab results of query and display them
@@ -188,6 +190,24 @@ def bdnyc_plot():
 
     return render_template('spectrum.html', script=script, plot=div)
 
+# Check inventory
+@app_bdnyc.route('/inventory', methods=['POST'])
+def bdnyc_inventory():
+    app_bdnyc.vars['source_id'] = request.form['id_to_check']
+
+    # Load the database
+    db = astrodb.get_db('./database.db')
+
+    # Grab inventory
+    stdout = sys.stdout
+    sys.stdout = mystdout = StringIO()
+    t = db.inventory(app_bdnyc.vars['source_id'], fetch=True, fmt='Table')
+    sys.stdout = stdout
+
+    return render_template('inventory.html', tables=[t['photometry'].to_html(classes='display', index=False),
+                                                          t['spectra'].to_html(classes='display', index=False)],
+                           titles=['photometry','spectra'])
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app_bdnyc.run(host='0.0.0.0', port=port, debug=False)
+    app_bdnyc.run(host='0.0.0.0', port=port, debug=True)
