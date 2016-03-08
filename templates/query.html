@@ -82,10 +82,11 @@
         <h4>Plot a Spectrum</h4>
 
         <form id="spectrumform" method="post" action="spectrum">
-            <p> Plot the spectrum of an object by providing the spectrum ID (from the spectra table; eg,
-                SELECT sp.id, s.shortname FROM spectra AS sp JOIN sources as s WHERE s.id=sp.source_id):
-                <input type="text" name="spectrum_to_plot" cols="15" rows="1" value="{{specid}}" />
+            <p> Plot the spectrum of an object by providing the spectrum ID (from the spectra table):
+                <input type="text" name="spectrum_to_plot" cols="10" rows="1" value="{{specid}}" />
                 <input type='submit' value='Plot' />
+                <br> To get the IDs, you can do something like:
+                <i>SELECT sp.id, s.shortname FROM spectra AS sp JOIN sources as s WHERE s.id=sp.source_id</i>
             </p>
         </form>
 
@@ -93,9 +94,9 @@
 
         <h4>Check Inventory</h4>
 
-        <form id="inventoryform" methods="post" action="inventory">
+        <form id="inventoryform" method="post" action="inventory">
             <p> Check the database for information on a particular source ID:
-                <input type="text" name="id_to_check" cols="15" rows="1" value="{{source_id}}" />
+                <input type="text" name="id_to_check" rows="1" value="{{source_id}}" />
                 <input type="submit" value="Check Inventory" />
             </p>
         </form>

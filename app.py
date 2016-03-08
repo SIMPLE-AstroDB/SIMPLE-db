@@ -201,12 +201,12 @@ def bdnyc_inventory():
     # Grab inventory
     stdout = sys.stdout
     sys.stdout = mystdout = StringIO()
-    t = db.inventory(app_bdnyc.vars['source_id'], fetch=True, fmt='Table')
+    t = db.inventory(app_bdnyc.vars['source_id'], fetch=True, fmt='table')
     sys.stdout = stdout
 
-    return render_template('inventory.html', tables=[t['photometry'].to_html(classes='display', index=False),
-                                                          t['spectra'].to_html(classes='display', index=False)],
-                           titles=['photometry','spectra'])
+    return render_template('inventory.html',
+                           tables=[t[x].to_pandas().to_html(classes='display', index=False) for x in t.keys()],
+                           titles=['na']+t.keys())
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
