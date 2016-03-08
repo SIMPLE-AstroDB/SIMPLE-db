@@ -204,6 +204,16 @@ def bdnyc_inventory():
     t = db.inventory(app_bdnyc.vars['source_id'], fetch=True, fmt='table')
     sys.stdout = stdout
 
+    # Check for errors (no results)
+    if mystdout.getvalue().lower().startswith('no source'):
+        return render_template('error.html', headermessage='No Results Found',
+                               errmess='<p>'+mystdout.getvalue().replace('<','&lt;')+'</p>')
+
+    # Empty because of invalid input
+    if len(t)==0:
+        return render_template('error.html', headermessage='Error',
+                               errmess="<p>You typed: "+app_bdnyc.vars['source_id']+"</p>")
+
     return render_template('inventory.html',
                            tables=[t[x].to_pandas().to_html(classes='display', index=False) for x in t.keys()],
                            titles=['na']+t.keys())
