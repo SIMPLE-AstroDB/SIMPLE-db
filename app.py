@@ -29,9 +29,15 @@ def bdnyc_query():
     if app_bdnyc.vars['query']=='':
         app_bdnyc.vars['query'] = defquery
 
+    # Get the number of objects
+    db = astrodb.get_db('./database.db')
+    t = db.query('SELECT id FROM sources', fmt='table')
+    bd_num = len(t)
+
+
     return render_template('query.html', defquery=app_bdnyc.vars['query'],
                            defsearch=app_bdnyc.vars['search'], specid=app_bdnyc.vars['specid'],
-                           source_id=app_bdnyc.vars['source_id'])
+                           source_id=app_bdnyc.vars['source_id'], bd_num=bd_num)
 
 
 # Grab results of query and display them
