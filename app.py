@@ -30,7 +30,7 @@ def bdnyc_query():
         app_bdnyc.vars['query'] = defquery
 
     # Get the number of objects
-    db = astrodb.get_db('./database.db')
+    db = astrodb.Database('./database.db')
     t = db.query('SELECT id FROM sources', fmt='table')
     bd_num = len(t)
 
@@ -47,7 +47,7 @@ def bdnyc_runquery():
     htmltxt = app_bdnyc.vars['query'].replace('<','&lt;')
 
     # Load the database
-    db = astrodb.get_db('./database.db')
+    db = astrodb.Database('./database.db')
 
     # Only SELECT commands are allowed
     if not app_bdnyc.vars['query'].lower().startswith('select'):
@@ -91,7 +91,7 @@ def bdnyc_savefile():
     else:
         filename = 'bdnyc_table.txt'
 
-    db = astrodb.get_db('./database.db')
+    db = astrodb.Database('./database.db')
     db.query(app_bdnyc.vars['query'], fmt='table', export=filename)
     with open(filename, 'r') as f:
         file_as_string = f.read()
@@ -109,7 +109,7 @@ def bdnyc_search():
     search_value = app_bdnyc.vars['search']
 
     # Load the database
-    db = astrodb.get_db('./database.db')
+    db = astrodb.Database('./database.db')
 
     # Process search
     search_value = search_value.replace(',',' ').split()
@@ -148,7 +148,7 @@ def bdnyc_plot():
                                errmess='<p>Input was not a number.</p>')
 
     # Load the database
-    db = astrodb.get_db('./database.db')
+    db = astrodb.Database('./database.db')
 
     # Grab the spectrum
     stdout = sys.stdout  #keep a handle on the real standard output
@@ -202,7 +202,7 @@ def bdnyc_inventory():
     app_bdnyc.vars['source_id'] = request.form['id_to_check']
 
     # Load the database
-    db = astrodb.get_db('./database.db')
+    db = astrodb.Database('./database.db')
 
     # Grab inventory
     stdout = sys.stdout
