@@ -2,9 +2,8 @@ from flask import Flask,render_template,request,redirect,make_response
 from astrodbkit import astrodb
 import os, sys
 from cStringIO import StringIO
-from bokeh.plotting import figure, output_file, show
+from bokeh.plotting import figure
 from bokeh.embed import components
-#import pandas as pd
 
 app_bdnyc = Flask(__name__)
 
@@ -187,7 +186,7 @@ def bdnyc_plot():
     wav = 'Wavelength ('+t['wavelength_units']+')'
     flux = 'Flux ('+t['flux_units']+')'
     # can specify plot_width if needed
-    p = figure( tools=TOOLS, title=shortname, x_axis_label=wav, y_axis_label=flux, plot_width=800 )
+    p = figure(tools=TOOLS, title=shortname, x_axis_label=wav, y_axis_label=flux, plot_width=800)
 
     # add some renderers
     p.line(spec.data[0], spec.data[1], line_width=2)
@@ -223,7 +222,3 @@ def bdnyc_inventory():
     return render_template('inventory.html',
                            tables=[t[x].to_pandas().to_html(classes='display', index=False) for x in t.keys()],
                            titles=['na']+t.keys())
-
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app_bdnyc.run(host='0.0.0.0', port=port, debug=False)
