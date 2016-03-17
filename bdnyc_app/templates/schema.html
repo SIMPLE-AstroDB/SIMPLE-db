@@ -1,0 +1,39 @@
+<!doctype html>
+<title>Database Schema</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready( function () {
+      $('.dataframe').DataTable( {
+        "paging": false,
+        "info": false,
+        "searching": false
+      } );
+    } );
+</script>
+
+<header id="branding">
+    <img src="static/images/BDNYC-logo.gif" width="500px">
+    <ul>
+        <li><a href="query">Return to Query Form</a></li>
+        <li><a href="http://www.bdnyc.org">Return to BDNYC Blog</a></li>
+        <li><a href="http://astrodbkit.readthedocs.org/en/latest/index.html">BDNYC Database</a></li>
+    </ul>
+</header>
+
+<div class=page>
+    <h1>Query Results</h1>
+    <br>
+
+    {% for table in tables %}
+        <h2>{{titles[loop.index]}}</h2>
+        {{ table|safe }}
+    <br><hr><br>
+    {% endfor %}
+
+
+    <p><a href="query">Return to query</a></p>
+
+</div>
+

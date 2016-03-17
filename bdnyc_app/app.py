@@ -13,12 +13,12 @@ app_bdnyc.vars['search'] = ''
 app_bdnyc.vars['specid'] = ''
 app_bdnyc.vars['source_id'] = ''
 
+# Redirect to the main page
 @app_bdnyc.route('/')
-def bdnyc_home():
-    return redirect('/query')
-
 @app_bdnyc.route('/index')
-def bdnyc_index():
+@app_bdnyc.route('/index.html')
+@app_bdnyc.route('/query.html')
+def bdnyc_home():
     return redirect('/query')
 
 # Page with a text box to take the SQL query
@@ -222,3 +222,23 @@ def bdnyc_inventory():
     return render_template('inventory.html',
                            tables=[t[x].to_pandas().to_html(classes='display', index=False) for x in t.keys()],
                            titles=['na']+t.keys())
+
+# Check Schema
+@app_bdnyc.route('/schema.html', methods=['GET','POST'])
+@app_bdnyc.route('/schema', methods=['GET','POST'])
+def bdnyc_schema():
+
+    # Load the database
+    db = astrodb.Database('./database.db')
+
+    # Get table names and their structure
+    table_names = db.query("SELECT name FROM sqlite_sequence", unpack=True)[0]
+
+    table_dict = dict()
+    for name in table_names:
+        temptab = db.query('PRAGMA table_info('+name+')', fmt='table')
+        table_dict[name] = temptab
+
+    return render_template('schema.html',
+                           tables=[table_dict[x].to_pandas().to_html(classes='display', index=False) for x in table_dict.keys()],
+                           titles=['na']+table_dict.keys())
