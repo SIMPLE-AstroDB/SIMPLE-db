@@ -29,15 +29,16 @@
             You can grab a copy of the database <a href="https://github.com/BDNYC/BDNYCdb">here</a>.
             <a href="http://dx.doi.org/10.5281/zenodo.45169">
                 <img src="https://zenodo.org/badge/doi/10.5281/zenodo.45169.svg" alt="10.5281/zenodo.45169">
-            </a>
-            We welcome additions to the database through its <a href="https://github.com/BDNYC/BDNYCdb">Github repository</a>.
+            </a><br>
+            We encourage additions to the database via its
+            <a href="https://github.com/BDNYC/BDNYCdb">Github repository</a>.
         </p>
         <p>
             This application runs on Python and utilizes the
             <a href="http://astrodbkit.readthedocs.org/en/latest/index.html">astrodbkit</a> package to
             generate queries to the database.
             We recommend using <a href="https://github.com/BDNYC/astrodbkit">astrodbkit</a>
-            to work with your astronomy SQL databases.
+            to work with your astronomy SQL databases. <br>
             This application has been created by <a href="http://dr-rodriguez.github.io/">David R. Rodriguez</a>;
             you can grab a copy of the code <a href="https://github.com/dr-rodriguez/BDNYC_WebApp">here</a> for
             use with your own databases.
@@ -78,20 +79,8 @@
         <h4 id="search">Perform a Search</h4>
 
         <form id='searchform' method='post' action='search' >
-            <p> Search for objects by partial name matching or within 1 degree of an RA, Dec coordinate (in degrees):
+            <p> Search for objects by partial name matching or within 1 arcminute of an RA, Dec coordinate (in degrees):
                 <input type="text" name="search_to_run" size="20" rows="1" value="{{defsearch}}" />
-                <!--
-                <select name="table_to_search">
-                    <option value="sources">sources</option>
-                    <option value="instruments">instruments</option>
-                    <option value="parallaxes">parallaxes</option>
-                    <option value="photometry">photometry</option>
-                    <option value="proper_motions">proper_motions</option>
-                    <option value="radial_velocities">radial_velocities</option>
-                    <option value="spectral_types">spectral_types</option>
-                    <option value="telescopes">telescopes</option>
-                </select>
-                -->
                 <input type='submit' value='Search' />
             </p>
         </form>

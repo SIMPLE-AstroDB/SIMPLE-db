@@ -1,13 +1,14 @@
-from flask import Flask,render_template,request,redirect,make_response
+from flask import Flask, render_template, request, redirect, make_response
 from astrodbkit import astrodb
-import os, sys
+import os
+import sys
 from cStringIO import StringIO
 from bokeh.plotting import figure
 from bokeh.embed import components
 
 app_bdnyc = Flask(__name__)
 
-app_bdnyc.vars={}
+app_bdnyc.vars = dict()
 app_bdnyc.vars['query'] = ''
 app_bdnyc.vars['search'] = ''
 app_bdnyc.vars['specid'] = ''
@@ -22,7 +23,7 @@ def bdnyc_home():
     return redirect('/query')
 
 # Page with a text box to take the SQL query
-@app_bdnyc.route('/query', methods=['GET','POST'])
+@app_bdnyc.route('/query', methods=['GET', 'POST'])
 def bdnyc_query():
     defquery = 'SELECT * FROM sources'
     if app_bdnyc.vars['query']=='':
@@ -43,7 +44,7 @@ def bdnyc_query():
 @app_bdnyc.route('/runquery', methods=['POST'])
 def bdnyc_runquery():
     app_bdnyc.vars['query'] = request.form['query_to_run']
-    htmltxt = app_bdnyc.vars['query'].replace('<','&lt;')
+    htmltxt = app_bdnyc.vars['query'].replace('<', '&lt;')
 
     # Load the database
     db = astrodb.Database('./database.db')
@@ -54,24 +55,27 @@ def bdnyc_runquery():
                                errmess='<p>Only SELECT queries are allowed. You typed:</p><p>'+htmltxt+'</p>')
 
     # Run the query
-    stdout = sys.stdout  #keep a handle on the real standard output
-    sys.stdout = mystdout = StringIO() #Choose a file-like object to write to
+    stdout = sys.stdout  # Keep a handle on the real standard output
+    sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
     try:
         t = db.query(app_bdnyc.vars['query'], fmt='table')
     except ValueError:
         t = db.query(app_bdnyc.vars['query'], fmt='array')
+    except:
+        return render_template('error.html', headermessage='Error in Query',
+                               errmess='<p>Error in query:</p><p>'+htmltxt+'</p>')
     sys.stdout = stdout
 
     # Check for any errors from mystdout
     if mystdout.getvalue().lower().startswith('could not execute'):
         return render_template('error.html', headermessage='Error in Query',
-                               errmess='<p>Error in query:</p><p>'+mystdout.getvalue().replace('<','&lt;')+'</p>')
+                               errmess='<p>Error in query:</p><p>'+mystdout.getvalue().replace('<', '&lt;')+'</p>')
 
     # Check how many results were found
     if type(t)==type(None):
         return render_template('error.html', headermessage='No Results Found',
-                               errmess='<p>No entries found for query:</p><p>' + htmltxt + \
-                                       '</p><p>'+mystdout.getvalue().replace('<','&lt;')+'</p>')
+                               errmess='<p>No entries found for query:</p><p>' + htmltxt +
+                                       '</p><p>'+mystdout.getvalue().replace('<', '&lt;')+'</p>')
 
     # Convert to Pandas data frame
     try:
@@ -85,7 +89,7 @@ def bdnyc_runquery():
 @app_bdnyc.route('/savefile', methods=['POST'])
 def bdnyc_savefile():
     export_fmt = request.form['format']
-    if export_fmt=='votable':
+    if export_fmt == 'votable':
         filename = 'bdnyc_table.vot'
     else:
         filename = 'bdnyc_table.txt'
@@ -94,7 +98,7 @@ def bdnyc_savefile():
     db.query(app_bdnyc.vars['query'], fmt='table', export=filename)
     with open(filename, 'r') as f:
         file_as_string = f.read()
-    os.remove(filename) # delete the file after it's read
+    os.remove(filename)  # Delete the file after it's read
 
     response = make_response(file_as_string)
     response.headers["Content-Disposition"] = "attachment; filename=%s" % filename
@@ -104,27 +108,27 @@ def bdnyc_savefile():
 @app_bdnyc.route('/search', methods=['POST'])
 def bdnyc_search():
     app_bdnyc.vars['search'] = request.form['search_to_run']
-    search_table = 'sources' #request.form['table_to_search']
+    search_table = 'sources'
     search_value = app_bdnyc.vars['search']
 
     # Load the database
     db = astrodb.Database('./database.db')
 
     # Process search
-    search_value = search_value.replace(',',' ').split()
-    if len(search_value)==1:
-      search_value = search_value[0]
+    search_value = search_value.replace(',', ' ').split()
+    if len(search_value) == 1:
+        search_value = search_value[0]
     else:
         try:
             search_value = [float(s) for s in search_value]
         except:
             return render_template('error.html', headermessage='Error in Search',
-                                   errmess='<p>Could not process search input:</p>' + \
+                                   errmess='<p>Could not process search input:</p>' +
                                            '<p>' + app_bdnyc.vars['search'] + '</p>')
 
     # Run the search
-    stdout = sys.stdout  #keep a handle on the real standard output
-    sys.stdout = mystdout = StringIO() #Choose a file-like object to write to
+    stdout = sys.stdout  # Keep a handle on the real standard output
+    sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
     t = db.search(search_value, search_table, fetch=True)
     sys.stdout = stdout
 
@@ -132,7 +136,7 @@ def bdnyc_search():
         data = t.to_pandas()
     except AttributeError:
         return render_template('error.html', headermessage='Error in Search',
-                               errmess=mystdout.getvalue().replace('<','&lt;'))
+                               errmess=mystdout.getvalue().replace('<', '&lt;'))
 
     return render_template('view_search.html', table=data.to_html(classes='display', index=False))
 
@@ -150,45 +154,36 @@ def bdnyc_plot():
     db = astrodb.Database('./database.db')
 
     # Grab the spectrum
-    stdout = sys.stdout  #keep a handle on the real standard output
-    sys.stdout = mystdout = StringIO() #Choose a file-like object to write to
-    query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id FROM spectra WHERE id=' + \
-            app_bdnyc.vars['specid']
+    stdout = sys.stdout  # Keep a handle on the real standard output
+    sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
+    query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id ' + \
+            'FROM spectra WHERE id=' + app_bdnyc.vars['specid']
     t = db.query(query, fetch='one', fmt='dict')
     sys.stdout = stdout
 
     # Check for errors first
     if mystdout.getvalue().lower().startswith('could not execute'):
         return render_template('error.html', headermessage='Error in Query',
-                               errmess='<p>Error in query:</p><p>'+mystdout.getvalue().replace('<','&lt;')+'</p>')
+                               errmess='<p>Error in query:</p><p>'+mystdout.getvalue().replace('<', '&lt;')+'</p>')
 
     # Check if found anything
-    if type(t)==type(None):
+    if isinstance(t, type(None)):
         return render_template('error.html', headermessage='No Result', errmess='<p>No spectrum found.</p>')
 
     spec = t['spectrum']
-
-    # Get shortname and other information
-    # plt.figtext(0.15,0.88,
-    #             '{}\n{}\n{}\n{}'.format(i['filename'],
-    #             self.query("SELECT name FROM telescopes WHERE id={}".format(i['telescope_id']), fetch='one')[0]
-    #             if i['telescope_id'] else '',self.query("SELECT name FROM instruments WHERE id={}".format(i['instrument_id']),
-    #                                                     fetch='one')[0] if i['instrument_id'] else '',i['obs_date']),
-    #             verticalalignment='top')
 
     query = 'SELECT shortname FROM sources WHERE id='+str(t['source_id'])
     shortname = db.query(query, fetch='one', fmt='dict')['shortname']
 
     # Make the plot
-    TOOLS="resize,crosshair,pan,wheel_zoom,box_zoom,reset"
+    tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
 
     # create a new plot
     wav = 'Wavelength ('+t['wavelength_units']+')'
     flux = 'Flux ('+t['flux_units']+')'
     # can specify plot_width if needed
-    p = figure(tools=TOOLS, title=shortname, x_axis_label=wav, y_axis_label=flux, plot_width=800)
+    p = figure(tools=tools, title=shortname, x_axis_label=wav, y_axis_label=flux, plot_width=800)
 
-    # add some renderers
     p.line(spec.data[0], spec.data[1], line_width=2)
 
     script, div = components(p)
@@ -212,10 +207,10 @@ def bdnyc_inventory():
     # Check for errors (no results)
     if mystdout.getvalue().lower().startswith('no source'):
         return render_template('error.html', headermessage='No Results Found',
-                               errmess='<p>'+mystdout.getvalue().replace('<','&lt;')+'</p>')
+                               errmess='<p>'+mystdout.getvalue().replace('<', '&lt;')+'</p>')
 
     # Empty because of invalid input
-    if len(t)==0:
+    if len(t) == 0:
         return render_template('error.html', headermessage='Error',
                                errmess="<p>You typed: "+app_bdnyc.vars['source_id']+"</p>")
 
@@ -224,8 +219,8 @@ def bdnyc_inventory():
                            titles=['na']+t.keys())
 
 # Check Schema
-@app_bdnyc.route('/schema.html', methods=['GET','POST'])
-@app_bdnyc.route('/schema', methods=['GET','POST'])
+@app_bdnyc.route('/schema.html', methods=['GET', 'POST'])
+@app_bdnyc.route('/schema', methods=['GET', 'POST'])
 def bdnyc_schema():
 
     # Load the database
@@ -240,5 +235,6 @@ def bdnyc_schema():
         table_dict[name] = temptab
 
     return render_template('schema.html',
-                           tables=[table_dict[x].to_pandas().to_html(classes='display', index=False) for x in sorted(table_dict.keys())],
+                           tables=[table_dict[x].to_pandas().to_html(classes='display', index=False)
+                                   for x in sorted(table_dict.keys())],
                            titles=['na']+sorted(table_dict.keys()))
