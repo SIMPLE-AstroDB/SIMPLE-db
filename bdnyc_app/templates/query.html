@@ -12,22 +12,22 @@
 
 <div class=page>
 
-    <h1>BDNYC SQL Query</h1>
+    <h1>AstrodbWeb: BDNYC Database</h1>
 
     <div class=metanav>
         <p>
             The BDNYC Database contains records for {{bd_num}} brown dwarfs and includes information such as
             photometry, parallaxes, spectra, etc. <br>
-            The forms below allow you to explore the database by sending an <a href="#sql">SQL query</a>;
+            The list of all available tables within the database can be found <a href="schema">here</a>. <br>
+            The forms below allow you to explore the database by submitting an <a href="#sql">SQL query</a>;
             performing a <a href="#search">search</a> by source ID, name, or coordinates; <a href="#plot">plot</a> a spectrum;
-            and check the <a href="#inventory">inventory</a> for a specific source. <br>
-            The list of all available tables within the database can be found <a href="schema">here</a>.
+            and check the <a href="#inventory">inventory</a> for a specific source.
         </p>
         <p>
             The current version of this database is that of
             <a href="http://adsabs.harvard.edu/abs/2015ApJ...810..158F">Filippazzo et al. 2015</a>.
             You can grab a copy of the BDNYC database <a href="https://github.com/BDNYC/BDNYCdb">here</a>. <br>
-            We encourage additions to the database via the <a href="https://github.com/BDNYC/BDNYCdb">Github repository</a>.
+            We encourage additions to the database via its <a href="https://github.com/BDNYC/BDNYCdb">Github repository</a>.
         </p>
         <p>
             This application runs on Python and utilizes the
@@ -38,11 +38,12 @@
             This application has been created by <a href="http://dr-rodriguez.github.io/">David R. Rodriguez</a>;
             you can grab a copy of the code <a href="https://github.com/dr-rodriguez/BDNYC_WebApp">here</a> for
             use with your own databases. <br>
-            Publications that benefit from this application should cite its
-            <a href="http://dx.doi.org/10.5281/zenodo.47866">Zenodo record</a>:
-            <a href="http://dx.doi.org/10.5281/zenodo.47866">
-                <img src="https://zenodo.org/badge/doi/10.5281/zenodo.47866.svg" alt="10.5281/zenodo.47866">
-            </a>
+        </p>
+        <p>
+            Publications that benefit from the BDNYC database should cite its
+            <a href="http://dx.doi.org/10.5281/zenodo.45169">Zenodo record</a>;
+            those that benefit from this application should also cite this
+            <a href="http://dx.doi.org/10.5281/zenodo.47866">record</a>.
         </p>
 
         <hr>
@@ -117,6 +118,9 @@
     <p id="grey_note">
         Created by <a href="http://dr-rodriguez.github.io/">David R. Rodriguez</a> for the
         <a href="http://www.bdnyc.org/">Brown Dwarfs in New York City (BDNYC)</a> research team.
+        <a href="http://dx.doi.org/10.5281/zenodo.47866">
+            <img src="https://zenodo.org/badge/doi/10.5281/zenodo.47866.svg" alt="10.5281/zenodo.47866">
+        </a>
     </p>
 
 </div>
