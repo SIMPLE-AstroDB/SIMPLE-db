@@ -240,5 +240,5 @@ def bdnyc_schema():
         table_dict[name] = temptab
 
     return render_template('schema.html',
-                           tables=[table_dict[x].to_pandas().to_html(classes='display', index=False) for x in table_dict.keys()],
-                           titles=['na']+table_dict.keys())
+                           tables=[table_dict[x].to_pandas().to_html(classes='display', index=False) for x in sorted(table_dict.keys())],
+                           titles=['na']+sorted(table_dict.keys()))
