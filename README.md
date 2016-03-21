@@ -5,7 +5,15 @@ This web application allows you to query the BDNYC database
 It uses the [astrodbkit](https://github.com/BDNYC/astrodbkit) python package to 
 perform queries and returns tables in [JQuery-DataTable](http://datatables.net/) format and 
 figures created with [Bokeh](http://bokeh.pydata.org/en/latest/).   
-This code can be downloaded or forked for use with your own databases.   
+
+This code can be downloaded or forked for use with your own SQL database. 
+You will want to modify the static and template HTML files to use your styling and 
+remove the Google Analytics tracking information from ours. 
+Running a local version of this application is easy, just run:   
+```
+python runapp.py
+```
+and navigate to the indicated URL.
 
 A live version of this app can be found [here](http://database.bdnyc.org) or at [Heroku](http://bdnyc-app.herokuapp.com/).
 
