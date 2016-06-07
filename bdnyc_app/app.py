@@ -3,8 +3,9 @@ from astrodbkit import astrodb
 import os
 import sys
 from cStringIO import StringIO
-from bokeh.plotting import figure
+from bokeh.plotting import figure, gridplot
 from bokeh.embed import components
+import numpy as np
 
 app_bdnyc = Flask(__name__)
 
@@ -238,3 +239,70 @@ def bdnyc_schema():
                            tables=[table_dict[x].to_pandas().to_html(classes='display', index=False)
                                    for x in sorted(table_dict.keys())],
                            titles=['na']+sorted(table_dict.keys()))
+
+@app_bdnyc.route('/summary/<int:source_id>')
+def bdnyc_summary(source_id):
+    """Create a summary page for the requested star"""
+
+    # Load the database
+    db = astrodb.Database('./database.db')
+
+    t = db.inventory(source_id, fetch=True, fmt='table')
+
+    # Grab object information
+    shortname = t['sources']['shortname'][0]
+    ra = t['sources']['ra'][0]
+    dec = t['sources']['dec'][0]
+    coords = "{0} {1}".format(ra, dec)  # TODO: sexagesimal display
+    allnames = t['sources']['names'][0]
+
+    # TODO: Pivot photometry table
+
+    # Grab spectra
+    spec_list = t['spectra']['id']
+    plot_list = list()
+    warnings = list()
+
+    for spec_id in spec_list:
+        stdout = sys.stdout  # Keep a handle on the real standard output
+        sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
+        query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id ' + \
+                'FROM spectra WHERE id={}'.format(spec_id)
+        q = db.query(query, fetch='one', fmt='dict')
+        sys.stdout = stdout
+
+        if mystdout.getvalue().lower().startswith('could not retrieve spectrum'):
+            print('WARNING')
+            print(mystdout.getvalue())
+            warnings.append(mystdout.getvalue())
+            continue
+
+        spec = q['spectrum']
+
+        # Get spectrum name
+        query = 'SELECT name FROM telescopes WHERE id={}'.format(q['telescope_id'])
+        n1 = db.query(query, fetch='one', fmt='array')[0]
+        query = 'SELECT name FROM instruments WHERE id={}'.format(q['instrument_id'])
+        n2 = db.query(query, fetch='one', fmt='array')[0]
+        plot_name = n1 + ':' + n2
+
+        print spec_id, plot_name
+
+        # Make the plot
+        tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
+
+        # create a new plot
+        wav = 'Wavelength (' + q['wavelength_units'] + ')'
+        flux = 'Flux (' + q['flux_units'] + ')'
+        # can specify plot_width if needed
+        p = figure(tools=tools, title=plot_name, x_axis_label=wav, y_axis_label=flux, plot_width=600)
+
+        p.line(spec.data[0], spec.data[1], line_width=2)
+
+        plot_list.append(p)
+
+    script, div = components(plot_list)
+
+    return render_template('summary.html',
+                           table=t['photometry'].to_pandas().to_html(classes='display', index=False),
+                           script=script, plot=div, name=shortname, coords=coords, allnames=allnames, warnings=warnings)
