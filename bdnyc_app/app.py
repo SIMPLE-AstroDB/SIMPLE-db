@@ -87,6 +87,7 @@ def bdnyc_runquery():
 
     return render_template('view.html', table=data.to_html(classes='display', index=False))
 
+
 @app_bdnyc.route('/savefile', methods=['POST'])
 def bdnyc_savefile():
     export_fmt = request.form['format']
@@ -104,6 +105,7 @@ def bdnyc_savefile():
     response = make_response(file_as_string)
     response.headers["Content-Disposition"] = "attachment; filename=%s" % filename
     return response
+
 
 # Perform a search
 @app_bdnyc.route('/search', methods=['POST'])
@@ -140,6 +142,7 @@ def bdnyc_search():
                                errmess=mystdout.getvalue().replace('<', '&lt;'))
 
     return render_template('view_search.html', table=data.to_html(classes='display', index=False))
+
 
 # Plot a spectrum
 @app_bdnyc.route('/spectrum', methods=['POST'])
@@ -191,6 +194,7 @@ def bdnyc_plot():
 
     return render_template('spectrum.html', script=script, plot=div)
 
+
 # Check inventory
 @app_bdnyc.route('/inventory', methods=['POST'])
 def bdnyc_inventory():
@@ -219,6 +223,7 @@ def bdnyc_inventory():
                            tables=[t[x].to_pandas().to_html(classes='display', index=False) for x in t.keys()],
                            titles=['na']+t.keys())
 
+
 # Check Schema
 @app_bdnyc.route('/schema.html', methods=['GET', 'POST'])
 @app_bdnyc.route('/schema', methods=['GET', 'POST'])
@@ -240,6 +245,7 @@ def bdnyc_schema():
                                    for x in sorted(table_dict.keys())],
                            titles=['na']+sorted(table_dict.keys()))
 
+
 @app_bdnyc.route('/summary/<int:source_id>')
 def bdnyc_summary(source_id):
     """Create a summary page for the requested star"""
@@ -250,7 +256,7 @@ def bdnyc_summary(source_id):
     t = db.inventory(source_id, fetch=True, fmt='table')
 
     # Grab object information
-    shortname = t['sources']['shortname'][0]
+    objname = t['sources']['designation'][0]
     ra = t['sources']['ra'][0]
     dec = t['sources']['dec'][0]
     coords = "{0} {1}".format(ra, dec)  # TODO: sexagesimal display
@@ -305,4 +311,37 @@ def bdnyc_summary(source_id):
 
     return render_template('summary.html',
                            table=t['photometry'].to_pandas().to_html(classes='display', index=False),
-                           script=script, plot=div, name=shortname, coords=coords, allnames=allnames, warnings=warnings)
+                           script=script, plot=div, name=objname, coords=coords, allnames=allnames, warnings=warnings)
+
+
+@app_bdnyc.route('/browse')
+def bdnyc_browse():
+    """Examine the full source list with clickable links to object summaries"""
+
+    # Load the database
+    db = astrodb.Database('./database.db')
+
+    # Run the query
+    t = db.query('SELECT id, shortname, ra, dec, names, comments FROM sources', fmt='table')
+
+    # Convert to Pandas data frame
+    data = t.to_pandas()
+
+    # Change column to a link
+    linklist = []
+    for i, elem in enumerate(data['shortname']):
+        link = '<a href="summary/{0}">{1}</a>'.format(data.iloc[i]['id'], elem)
+        linklist.append(link)
+    data['shortname'] = linklist
+
+    # Rename columns
+    translation = {'id':'Source ID', 'ra':'RA', 'dec':'Dec', 'names':'Alternate Designations',
+                   'comments':'Comments', 'shortname':'Object Shortname'}
+    column_names = data.columns.tolist()
+    for i, name in enumerate(column_names):
+        if name in translation.keys():
+            column_names[i] = translation[name]
+    data.columns = column_names
+
+    return render_template('browse.html', table=data.to_html(classes='display', index=False, escape=False))
+

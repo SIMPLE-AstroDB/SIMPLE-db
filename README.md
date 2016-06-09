@@ -15,7 +15,7 @@ python runapp.py
 ```
 and navigate to the indicated URL.
 
-A live version of this app can be found [here](http://database.bdnyc.org) or at [Heroku](http://bdnyc-app.herokuapp.com/).
+A live version of this app can be found [here](http://database.bdnyc.org).
 
 ## How to Cite
 
