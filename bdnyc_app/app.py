@@ -3,9 +3,10 @@ from astrodbkit import astrodb
 import os
 import sys
 from cStringIO import StringIO
-from bokeh.plotting import figure, gridplot
+from bokeh.plotting import figure
 from bokeh.embed import components
-import numpy as np
+from astropy import units as u
+from astropy.coordinates import SkyCoord
 
 app_bdnyc = Flask(__name__)
 
@@ -259,7 +260,9 @@ def bdnyc_summary(source_id):
     objname = t['sources']['designation'][0]
     ra = t['sources']['ra'][0]
     dec = t['sources']['dec'][0]
-    coords = "{0} {1}".format(ra, dec)  # TODO: sexagesimal display
+    # coords = "{0} {1}".format(ra, dec)  # TODO: sexagesimal display
+    c = SkyCoord(ra=ra * u.hour, dec=dec * u.degree)
+    coords = c.to_string('hmsdms', sep=':', precision=2)
     allnames = t['sources']['names'][0]
 
     # TODO: Pivot photometry table
@@ -292,7 +295,7 @@ def bdnyc_summary(source_id):
         n2 = db.query(query, fetch='one', fmt='array')[0]
         plot_name = n1 + ':' + n2
 
-        print spec_id, plot_name
+        # print spec_id, plot_name
 
         # Make the plot
         tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
@@ -326,6 +329,8 @@ def bdnyc_browse():
 
     # Convert to Pandas data frame
     data = t.to_pandas()
+
+    # Convert RA to
 
     # Change column to a link
     linklist = []
