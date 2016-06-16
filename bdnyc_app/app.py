@@ -8,6 +8,7 @@ from bokeh.embed import components
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 import pandas as pd
+from collections import OrderedDict
 
 app_bdnyc = Flask(__name__)
 
@@ -272,7 +273,33 @@ def bdnyc_summary(source_id):
     coords = c.to_string('hmsdms', sep=':', precision=2)
     allnames = t['sources']['names'][0]
 
-    # TODO: Pivot photometry table
+    # TODO: Grab distance
+    # distance = 1000./t['parallaxes']['parallax'][0]
+
+    # TODO: Grab spectral types
+    # t['spectral_types']['spectral_type'].tolist()
+    # t['spectral_types']['regime'].tolist()
+
+    # TODO: Consider getting a 2MASS finder chart?
+
+    phot_dict = {'J': 1.24, 'H': 1.66, 'K': 2.19, 'Ks': 2.16, 'W1': 3.35, 'W2': 4.6, 'W3': 11.56, 'W4': 22.09,
+              '[3.6]': 3.51, '[4.5]': 4.44, '[5.8]': 5.63, '[8]': 7.59, 'g': .48, 'i': .76, 'r': .62, 'u': .35,
+              'z': .91}
+    phot_data = t['photometry'].to_pandas()
+    phot_txt = '<p>'
+    for band in OrderedDict(sorted(phot_dict.items(), key=lambda t: t[1])):
+        if band in phot_data['band'].tolist():
+            print band, phot_data[phot_data['band']==band]['magnitude'].values
+
+            if phot_data[phot_data['band']==band]['magnitude_unc'].values[0] == 'null':
+                phot_txt += '<strong>{0}</strong>: >{1:.2f}<br>'.format(band,
+                                                                           phot_data[phot_data['band'] == band][
+                                                                               'magnitude'].values[0])
+            else:
+                phot_txt += '<strong>{0}</strong>: {1:.2f} +/- {2:.2f}<br>'.format(band,
+                                                             phot_data[phot_data['band']==band]['magnitude'].values[0],
+                                                             float(phot_data[phot_data['band']==band]['magnitude_unc'].values[0]))
+    phot_txt += '</p>'
 
     # Grab spectra
     spec_list = t['spectra']['id']
@@ -288,8 +315,6 @@ def bdnyc_summary(source_id):
         sys.stdout = stdout
 
         if mystdout.getvalue().lower().startswith('could not retrieve spectrum'):
-            print('WARNING')
-            print(mystdout.getvalue())
             warnings.append(mystdout.getvalue())
             continue
 
@@ -322,8 +347,10 @@ def bdnyc_summary(source_id):
 
     script, div = components(plot_list)
 
+    # table = t['photometry'].to_pandas().to_html(classes='display', index=False)
+
     return render_template('summary.html',
-                           table=t['photometry'].to_pandas().to_html(classes='display', index=False),
+                           table=phot_txt,
                            script=script, plot=div, name=objname, coords=coords, allnames=allnames, warnings=warnings,
                            source_id=source_id)
 
