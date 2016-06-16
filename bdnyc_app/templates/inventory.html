@@ -14,16 +14,20 @@
 </script>
 
 <header id="branding">
-    <img src="static/images/BDNYC-logo.gif" width="500px">
+    <img src="{{path|safe}}static/images/BDNYC-logo.gif" width="500px">
     <ul>
-        <li><a href="query">Return to Query Form</a></li>
+        <li><a href="{{path|safe}}query">Return to Query Form</a></li>
         <li><a href="http://www.bdnyc.org">Return to BDNYC Blog</a></li>
-        <li><a href="http://astrodbkit.readthedocs.org/en/latest/index.html">BDNYC Database</a></li>
+        <li><a href="{{path|safe}}browse">Browse the Database</a></li>
     </ul>
 </header>
 
 <div class=page>
     <h1>Query Results</h1>
+
+    <br>
+    <p>Go to the <a href="summary/{{source_id|safe}}">summary page</a></p>
+
     <br>
 
     {% for table in tables %}
@@ -33,7 +37,7 @@
     {% endfor %}
 
 
-    <p><a href="query">Return to query</a></p>
+    <p><a href="{{path|safe}}query">Return to query</a></p>
 
 </div>
 

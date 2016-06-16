@@ -7,6 +7,7 @@ from bokeh.plotting import figure
 from bokeh.embed import components
 from astropy import units as u
 from astropy.coordinates import SkyCoord
+import pandas as pd
 
 app_bdnyc = Flask(__name__)
 
@@ -198,8 +199,14 @@ def bdnyc_plot():
 
 # Check inventory
 @app_bdnyc.route('/inventory', methods=['POST'])
-def bdnyc_inventory():
-    app_bdnyc.vars['source_id'] = request.form['id_to_check']
+@app_bdnyc.route('/inventory/<int:source_id>')
+def bdnyc_inventory(source_id=None):
+    if source_id is None:
+        app_bdnyc.vars['source_id'] = request.form['id_to_check']
+        path = ''
+    else:
+        app_bdnyc.vars['source_id'] = source_id
+        path = '../'
 
     # Load the database
     db = astrodb.Database('./database.db')
@@ -222,7 +229,7 @@ def bdnyc_inventory():
 
     return render_template('inventory.html',
                            tables=[t[x].to_pandas().to_html(classes='display', index=False) for x in t.keys()],
-                           titles=['na']+t.keys())
+                           titles=['na']+t.keys(), path=path, source_id=app_bdnyc.vars['source_id'])
 
 
 # Check Schema
@@ -261,7 +268,7 @@ def bdnyc_summary(source_id):
     ra = t['sources']['ra'][0]
     dec = t['sources']['dec'][0]
     # coords = "{0} {1}".format(ra, dec)  # TODO: sexagesimal display
-    c = SkyCoord(ra=ra * u.hour, dec=dec * u.degree)
+    c = SkyCoord(ra=ra * u.degree, dec=dec * u.degree)
     coords = c.to_string('hmsdms', sep=':', precision=2)
     allnames = t['sources']['names'][0]
 
@@ -289,11 +296,14 @@ def bdnyc_summary(source_id):
         spec = q['spectrum']
 
         # Get spectrum name
-        query = 'SELECT name FROM telescopes WHERE id={}'.format(q['telescope_id'])
-        n1 = db.query(query, fetch='one', fmt='array')[0]
-        query = 'SELECT name FROM instruments WHERE id={}'.format(q['instrument_id'])
-        n2 = db.query(query, fetch='one', fmt='array')[0]
-        plot_name = n1 + ':' + n2
+        try:
+            query = 'SELECT name FROM telescopes WHERE id={}'.format(q['telescope_id'])
+            n1 = db.query(query, fetch='one', fmt='array')[0]
+            query = 'SELECT name FROM instruments WHERE id={}'.format(q['instrument_id'])
+            n2 = db.query(query, fetch='one', fmt='array')[0]
+            plot_name = n1 + ':' + n2
+        except:
+            plot_name = ''
 
         # print spec_id, plot_name
 
@@ -314,7 +324,8 @@ def bdnyc_summary(source_id):
 
     return render_template('summary.html',
                            table=t['photometry'].to_pandas().to_html(classes='display', index=False),
-                           script=script, plot=div, name=objname, coords=coords, allnames=allnames, warnings=warnings)
+                           script=script, plot=div, name=objname, coords=coords, allnames=allnames, warnings=warnings,
+                           source_id=source_id)
 
 
 @app_bdnyc.route('/browse')
@@ -325,10 +336,11 @@ def bdnyc_browse():
     db = astrodb.Database('./database.db')
 
     # Run the query
-    t = db.query('SELECT id, shortname, ra, dec, names, comments FROM sources', fmt='table')
+    t = db.query('SELECT id, ra, dec, shortname, names, comments FROM sources', fmt='table')
 
     # Convert to Pandas data frame
     data = t.to_pandas()
+    data.index = data['id']
 
     # Convert RA to
 
@@ -348,5 +360,15 @@ def bdnyc_browse():
             column_names[i] = translation[name]
     data.columns = column_names
 
-    return render_template('browse.html', table=data.to_html(classes='display', index=False, escape=False))
+    # TODO: Count up photometry and spectroscopy for new columns
+    df_phot = db.query('SELECT id, source_id FROM photometry', fmt='table').to_pandas()
+    phot_counts = df_phot.groupby(by='source_id').count()
+    phot_counts.columns = ['Photometry']
+    df_spec = db.query('SELECT id, source_id FROM spectra', fmt='table').to_pandas()
+    spec_counts = df_spec.groupby(by='source_id').count()
+    spec_counts.columns = ['Spectroscopy']
+
+    final_data = pd.concat([data, phot_counts, spec_counts], axis=1, join='inner')
+
+    return render_template('browse.html', table=final_data.to_html(classes='display', index=False, escape=False))
 
