@@ -5,7 +5,11 @@
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
 <script>
     $(document).ready( function () {
-      $('.dataframe').DataTable();
+      $('.dataframe').DataTable( {
+        "pageLength": 20,
+        "paging": false,
+        "scrollY": 500
+      } );
     } );
 </script>
 
