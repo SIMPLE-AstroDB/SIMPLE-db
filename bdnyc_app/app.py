@@ -283,14 +283,12 @@ def bdnyc_summary(source_id):
     # TODO: Consider getting a 2MASS finder chart?
 
     phot_dict = {'J': 1.24, 'H': 1.66, 'K': 2.19, 'Ks': 2.16, 'W1': 3.35, 'W2': 4.6, 'W3': 11.56, 'W4': 22.09,
-              '[3.6]': 3.51, '[4.5]': 4.44, '[5.8]': 5.63, '[8]': 7.59, 'g': .48, 'i': .76, 'r': .62, 'u': .35,
-              'z': .91}
+                 '[3.6]': 3.51, '[4.5]': 4.44, '[5.8]': 5.63, '[8]': 7.59, 'g': .48, 'i': .76, 'r': .62, 'u': .35,
+                 'z': .91}
     phot_data = t['photometry'].to_pandas()
     phot_txt = '<p>'
     for band in OrderedDict(sorted(phot_dict.items(), key=lambda t: t[1])):
         if band in phot_data['band'].tolist():
-            print band, phot_data[phot_data['band']==band]['magnitude'].values
-
             if phot_data[phot_data['band']==band]['magnitude_unc'].values[0] == 'null':
                 phot_txt += '<strong>{0}</strong>: >{1:.2f}<br>'.format(band,
                                                                            phot_data[phot_data['band'] == band][
@@ -377,6 +375,7 @@ def bdnyc_browse():
         link = '<a href="summary/{0}">{1}</a>'.format(data.iloc[i]['id'], elem)
         linklist.append(link)
     data['shortname'] = linklist
+    # TODO: Consider on-hover text tooltips
 
     # Rename columns
     translation = {'id':'Source ID', 'ra':'RA', 'dec':'Dec', 'names':'Alternate Designations',
@@ -387,7 +386,7 @@ def bdnyc_browse():
             column_names[i] = translation[name]
     data.columns = column_names
 
-    # TODO: Count up photometry and spectroscopy for new columns
+    # Count up photometry and spectroscopy for new columns
     df_phot = db.query('SELECT id, source_id FROM photometry', fmt='table').to_pandas()
     phot_counts = df_phot.groupby(by='source_id').count()
     phot_counts.columns = ['Photometry']
