@@ -5,6 +5,7 @@ import sys
 from cStringIO import StringIO
 from bokeh.plotting import figure
 from bokeh.embed import components
+from bokeh.models import ColumnDataSource, HoverTool, OpenURL, TapTool
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 import pandas as pd
@@ -367,8 +368,6 @@ def bdnyc_browse():
     data = t.to_pandas()
     data.index = data['id']
 
-    # Convert RA to
-
     # Change column to a link
     linklist = []
     for i, elem in enumerate(data['shortname']):
@@ -398,3 +397,33 @@ def bdnyc_browse():
 
     return render_template('browse.html', table=final_data.to_html(classes='display', index=False, escape=False))
 
+@app_bdnyc.route('/skyplot')
+def bdnyc_skyplot():
+    """
+    Create a sky plot of the database objects
+    """
+
+    # Load the database
+    db = astrodb.Database('./database.db')
+    t = db.query('SELECT id, ra, dec, shortname FROM sources', fmt='table')
+
+    # Convert to Pandas data frame
+    data = t.to_pandas()
+    data.index = data['id']
+    source = ColumnDataSource(data=data)
+
+    # Make the plot
+    tools = "resize,tap,pan,wheel_zoom,box_zoom,reset"
+    p = figure(tools=tools, title='', x_axis_label='RA (deg)', y_axis_label='Dec (deg)', plot_width=800)
+    p.scatter('ra', 'dec', source=source, size=10, color='blue')
+    tooltip = OrderedDict([("Source ID", "@id"), ("Name", "@shortname"), ("(RA, Dec)", "(@ra, @dec)")])
+    p.add_tools(HoverTool(tooltips=tooltip))
+
+    # When clicked, go to the Summary page
+    url = "summary/@id"
+    taptool = p.select(type=TapTool)
+    taptool.callback = OpenURL(url=url)
+
+    script, div = components(p)
+
+    return render_template('skyplot.html', script=script, plot=div)
