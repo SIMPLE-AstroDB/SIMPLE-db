@@ -10,6 +10,8 @@ from astropy import units as u
 from astropy.coordinates import SkyCoord
 import pandas as pd
 from collections import OrderedDict
+from math import sqrt
+import numpy as np
 
 app_bdnyc = Flask(__name__)
 
@@ -269,7 +271,6 @@ def bdnyc_summary(source_id):
     objname = t['sources']['designation'][0]
     ra = t['sources']['ra'][0]
     dec = t['sources']['dec'][0]
-    # coords = "{0} {1}".format(ra, dec)  # TODO: sexagesimal display
     c = SkyCoord(ra=ra * u.degree, dec=dec * u.degree)
     coords = c.to_string('hmsdms', sep=':', precision=2)
     allnames = t['sources']['names'][0]
@@ -410,13 +411,38 @@ def bdnyc_skyplot():
     # Convert to Pandas data frame
     data = t.to_pandas()
     data.index = data['id']
-    source = ColumnDataSource(data=data)
+
+    # Coordinate conversion (Aitoff Projection)
+    c = SkyCoord(ra=data['ra'] * u.degree, dec=data['dec'] * u.degree)
+    pi = np.pi
+    rarad = c.ra.radian - pi
+    decrad = c.dec.radian
+    # bd_x = 2.0 ** 1.5 * np.cos(decrad) * np.sin(rarad / 2.0) / np.sqrt(1.0 + np.cos(decrad) * np.cos(rarad / 2.0))  # Hammer
+    # bd_y = sqrt(2.0) * np.sin(decrad) / np.sqrt(1.0 + np.cos(decrad) * np.cos(rarad / 2.0))  # Hammer
+    alpha_c = np.arccos(np.cos(decrad) * np.cos(rarad / 2))
+    bd_x = 2.0 * np.cos(decrad) * np.sin(rarad) / np.sinc(alpha_c / pi)  # Aitoff, note np.sinc is normalized (hence the /pi)
+    bd_y = np.sin(decrad) / np.sinc(alpha_c / pi)  # Aitoff
+    data['x'] = bd_x
+    data['y'] = bd_y
+    # TODO: Move projection transformation to a function since I'll need it later
 
     # Make the plot
+    source = ColumnDataSource(data=data)
+
     tools = "resize,tap,pan,wheel_zoom,box_zoom,reset"
-    p = figure(tools=tools, title='', x_axis_label='RA (deg)', y_axis_label='Dec (deg)', plot_width=800)
-    p.scatter('ra', 'dec', source=source, size=10, color='blue')
-    tooltip = OrderedDict([("Source ID", "@id"), ("Name", "@shortname"), ("(RA, Dec)", "(@ra, @dec)")])
+    p = figure(tools=tools, title='', x_axis_label='RA (deg)', y_axis_label='Dec (deg)', plot_width=800,
+               x_range=(-1.05 * (2.0 ** 1.5), 1.3 * 2.0 ** 1.5), y_range=(-2.0 * sqrt(2.0), 1.2 * sqrt(2.0)))
+
+    p.axis.visible = None
+    p.outline_line_color = None
+    p.xgrid.grid_line_color = None
+    p.ygrid.grid_line_color = None
+
+    # Add the grid
+
+    # Add the data
+    p.scatter('x', 'y', source=source, size=8, alpha=0.6)
+    tooltip = [("Source ID", "@id"), ("Name", "@shortname"), ("(RA, Dec)", "(@ra, @dec)")]
     p.add_tools(HoverTool(tooltips=tooltip))
 
     # When clicked, go to the Summary page
