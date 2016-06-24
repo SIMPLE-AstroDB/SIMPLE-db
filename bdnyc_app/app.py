@@ -413,27 +413,54 @@ def bdnyc_skyplot():
     data = t.to_pandas()
     data.index = data['id']
 
-    # Coordinate conversion (Aitoff Projection)
+    # Coordinate conversion
     c = SkyCoord(ra=data['ra'] * u.degree, dec=data['dec'] * u.degree)
-    rarad = c.ra.radian - np.pi
-    decrad = c.dec.radian
-    # bd_x = 2.0 ** 1.5 * np.cos(decrad) * np.sin(rarad / 2.0) / np.sqrt(1.0 + np.cos(decrad) * np.cos(rarad / 2.0))  # Hammer
-    # bd_y = sqrt(2.0) * np.sin(decrad) / np.sqrt(1.0 + np.cos(decrad) * np.cos(rarad / 2.0))  # Hammer
-    data['x'], data['y'] = project_aitoff(rarad, decrad)
+    pi = np.pi
+    proj = 'hammer'
+    data['x'], data['y'] = projection(c.ra.radian - pi, c.dec.radian, use=proj)
+    # data['x'], data['y'] = projection(c.galactic.l.radian-pi, c.galactic.b.radian, use=proj)
 
     # Make the plot
     source = ColumnDataSource(data=data)
 
     tools = "resize,tap,pan,wheel_zoom,box_zoom,reset"
-    p = figure(tools=tools, title='', x_axis_label='RA (deg)', y_axis_label='Dec (deg)', plot_width=800,
-               x_range=(-1.05 * (2.0 ** 1.5), 1.3 * 2.0 ** 1.5), y_range=(-2.0 * sqrt(2.0), 1.2 * sqrt(2.0)))
+    p = figure(tools=tools, title='', plot_width=800, plot_height=600,
+               x_range=(-1.05 * (2.0 ** 1.5), 1.3 * 2.0 ** 1.5), y_range=(-2.0 * sqrt(2.0), 1.2 * sqrt(2.0)),
+               min_border=0, min_border_bottom=0)
 
+    # Initial figure formatting
     p.axis.visible = None
     p.outline_line_color = None
     p.xgrid.grid_line_color = None
     p.ygrid.grid_line_color = None
 
     # Add the grid
+    rangepts = 50
+    raseps = 12
+    decseps = 9
+    rarange = [-pi + i * 2.0 * pi / rangepts for i in range(0, rangepts + 1)]
+    decrange = [-pi / 2.0 + i * pi / rangepts for i in range(0, rangepts + 1)]
+    ragrid = [-pi + i * 2.0 * pi / raseps for i in range(0, raseps + 1)]
+    decgrid = [-pi / 2.0 + i * pi / decseps for i in range(0, decseps + 1)]
+
+    raxs = []
+    rays = []
+    for rg in ragrid:
+        t1 = [projection(rg, x, use=proj) for x in decrange]
+        tx, ty = zip(*t1)
+        raxs.append(tx)
+        rays.append(ty)
+
+    decxs = []
+    decys = []
+    for dg in decgrid:
+        t1 = [projection(x, dg, use=proj) for x in rarange]
+        tx, ty = zip(*t1)
+        decxs.append(tx)
+        decys.append(ty)
+
+    p.multi_line(raxs, rays, color='#bbbbbb')
+    p.multi_line(decxs, decys, color='#bbbbbb')
 
     # Add the data
     p.scatter('x', 'y', source=source, size=8, alpha=0.6)
@@ -450,12 +477,18 @@ def bdnyc_skyplot():
     return render_template('skyplot.html', script=script, plot=div)
 
 
-def project_aitoff(lon, lat):
+def projection(lon, lat, use='aitoff'):
     """
     Convert x,y to Aitoff projection. Lat and Lon should be in radians. RA=lon, Dec=lat
     """
+    # TODO: Figure out why aitoff is failing
+
     # Note that np.sinc is normalized (hence the division by pi)
-    alpha_c = np.arccos(np.cos(lat) * np.cos(lon / 2))
-    x = 2.0 * np.cos(lat) * np.sin(lon) / np.sinc(alpha_c / np.pi)
-    y = np.sin(lat) / np.sinc(alpha_c / np.pi)
+    if use.lower() == 'hammer':
+        x = 2.0 ** 1.5 * np.cos(lat) * np.sin(lon / 2.0) / np.sqrt(1.0 + np.cos(lat) * np.cos(lon / 2.0))
+        y = sqrt(2.0) * np.sin(lat) / np.sqrt(1.0 + np.cos(lat) * np.cos(lon / 2.0))
+    else: # Aitoff by default
+        alpha_c = np.arccos(np.cos(lat) * np.cos(lon / 2.0))
+        x = 2.0 * np.cos(lat) * np.sin(lon) / np.sinc(alpha_c / np.pi)
+        y = np.sin(lat) / np.sinc(alpha_c / np.pi)
     return x, y
