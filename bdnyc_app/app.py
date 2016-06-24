@@ -6,6 +6,7 @@ from cStringIO import StringIO
 from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models import ColumnDataSource, HoverTool, OpenURL, TapTool
+from bokeh.models.widgets import Panel, Tabs
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 import pandas as pd
@@ -404,7 +405,6 @@ def bdnyc_skyplot():
     """
     Create a sky plot of the database objects
     """
-
     # Load the database
     db = astrodb.Database('./database.db')
     t = db.query('SELECT id, ra, dec, shortname FROM sources', fmt='table')
@@ -418,9 +418,43 @@ def bdnyc_skyplot():
     pi = np.pi
     proj = 'hammer'
     data['x'], data['y'] = projection(c.ra.radian - pi, c.dec.radian, use=proj)
-    # data['x'], data['y'] = projection(c.galactic.l.radian-pi, c.galactic.b.radian, use=proj)
+    data['l'], data['b'] = c.galactic.l, c.galactic.b
 
     # Make the plot
+    p1 = make_sky_plot(data, proj)
+    data['x'], data['y'] = projection(c.galactic.l.radian - pi, c.galactic.b.radian, use=proj)
+    p2 = make_sky_plot(data, proj)
+
+    tab1 = Panel(child=p1, title="Equatorial")
+    tab2 = Panel(child=p2, title="Galactic")
+    tabs = Tabs(tabs=[tab1, tab2])
+
+    script, div = components(tabs)
+
+    return render_template('skyplot.html', script=script, plot=div)
+
+
+def projection(lon, lat, use='hammer'):
+    """
+    Convert x,y to Aitoff or Hammer projection. Lat and Lon should be in radians. RA=lon, Dec=lat
+    """
+    # TODO: Figure out why Aitoff is failing
+
+    # Note that np.sinc is normalized (hence the division by pi)
+    if use.lower() == 'hammer': # Hammer
+        x = 2.0 ** 1.5 * np.cos(lat) * np.sin(lon / 2.0) / np.sqrt(1.0 + np.cos(lat) * np.cos(lon / 2.0))
+        y = sqrt(2.0) * np.sin(lat) / np.sqrt(1.0 + np.cos(lat) * np.cos(lon / 2.0))
+    else: # Aitoff
+        alpha_c = np.arccos(np.cos(lat) * np.cos(lon / 2.0))
+        x = 2.0 * np.cos(lat) * np.sin(lon) / np.sinc(alpha_c / np.pi)
+        y = np.sin(lat) / np.sinc(alpha_c / np.pi)
+    return x, y
+
+
+def make_sky_plot(data, proj='hammer'):
+    """
+    Make a sky plot and return a Bokeh figure
+    """
     source = ColumnDataSource(data=data)
 
     tools = "resize,tap,pan,wheel_zoom,box_zoom,reset"
@@ -435,9 +469,10 @@ def bdnyc_skyplot():
     p.ygrid.grid_line_color = None
 
     # Add the grid
+    pi = np.pi
     rangepts = 50
     raseps = 12
-    decseps = 9
+    decseps = 12
     rarange = [-pi + i * 2.0 * pi / rangepts for i in range(0, rangepts + 1)]
     decrange = [-pi / 2.0 + i * pi / rangepts for i in range(0, rangepts + 1)]
     ragrid = [-pi + i * 2.0 * pi / raseps for i in range(0, raseps + 1)]
@@ -464,7 +499,7 @@ def bdnyc_skyplot():
 
     # Add the data
     p.scatter('x', 'y', source=source, size=8, alpha=0.6)
-    tooltip = [("Source ID", "@id"), ("Name", "@shortname"), ("(RA, Dec)", "(@ra, @dec)")]
+    tooltip = [("Source ID", "@id"), ("Name", "@shortname"), ("(RA, Dec)", "(@ra, @dec)"), ("(l, b)", "(@l, @b)")]
     p.add_tools(HoverTool(tooltips=tooltip))
 
     # When clicked, go to the Summary page
@@ -472,23 +507,4 @@ def bdnyc_skyplot():
     taptool = p.select(type=TapTool)
     taptool.callback = OpenURL(url=url)
 
-    script, div = components(p)
-
-    return render_template('skyplot.html', script=script, plot=div)
-
-
-def projection(lon, lat, use='aitoff'):
-    """
-    Convert x,y to Aitoff projection. Lat and Lon should be in radians. RA=lon, Dec=lat
-    """
-    # TODO: Figure out why aitoff is failing
-
-    # Note that np.sinc is normalized (hence the division by pi)
-    if use.lower() == 'hammer':
-        x = 2.0 ** 1.5 * np.cos(lat) * np.sin(lon / 2.0) / np.sqrt(1.0 + np.cos(lat) * np.cos(lon / 2.0))
-        y = sqrt(2.0) * np.sin(lat) / np.sqrt(1.0 + np.cos(lat) * np.cos(lon / 2.0))
-    else: # Aitoff by default
-        alpha_c = np.arccos(np.cos(lat) * np.cos(lon / 2.0))
-        x = 2.0 * np.cos(lat) * np.sin(lon) / np.sinc(alpha_c / np.pi)
-        y = np.sin(lat) / np.sinc(alpha_c / np.pi)
-    return x, y
+    return p

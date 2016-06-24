@@ -7,6 +7,9 @@
 <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.css" type="text/css" />
 <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.js"></script>
 
+<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.11.0.min.css" type="text/css" />
+<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.11.0.min.js"></script>
+
 {{ script|safe }}
 
 <header id="branding">
@@ -19,13 +22,13 @@
 </header>
 
 <div class=page>
-    <h1>BDNYC Database</h1>
+    <h1>BDNYC Database Sky Plot</h1>
     <br>
 
     {{ plot|safe }}
 
-    <p>Hammer projection of the RA/Dec locations of sources in the BDNYC database. You can hover over individual
-        points to identify sources and can click on them to go their summary page.</p>
+    <p>Hammer projection of the Equatorial and Galactic locations of sources in the BDNYC database.
+        You can hover over individual points to identify sources and can click on them to go their summary page.</p>
 
 </div>
 
