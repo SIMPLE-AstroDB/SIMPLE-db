@@ -398,6 +398,7 @@ def bdnyc_browse():
 
     return render_template('browse.html', table=final_data.to_html(classes='display', index=False, escape=False))
 
+
 @app_bdnyc.route('/skyplot')
 def bdnyc_skyplot():
     """
@@ -414,17 +415,11 @@ def bdnyc_skyplot():
 
     # Coordinate conversion (Aitoff Projection)
     c = SkyCoord(ra=data['ra'] * u.degree, dec=data['dec'] * u.degree)
-    pi = np.pi
-    rarad = c.ra.radian - pi
+    rarad = c.ra.radian - np.pi
     decrad = c.dec.radian
     # bd_x = 2.0 ** 1.5 * np.cos(decrad) * np.sin(rarad / 2.0) / np.sqrt(1.0 + np.cos(decrad) * np.cos(rarad / 2.0))  # Hammer
     # bd_y = sqrt(2.0) * np.sin(decrad) / np.sqrt(1.0 + np.cos(decrad) * np.cos(rarad / 2.0))  # Hammer
-    alpha_c = np.arccos(np.cos(decrad) * np.cos(rarad / 2))
-    bd_x = 2.0 * np.cos(decrad) * np.sin(rarad) / np.sinc(alpha_c / pi)  # Aitoff, note np.sinc is normalized (hence the /pi)
-    bd_y = np.sin(decrad) / np.sinc(alpha_c / pi)  # Aitoff
-    data['x'] = bd_x
-    data['y'] = bd_y
-    # TODO: Move projection transformation to a function since I'll need it later
+    data['x'], data['y'] = project_aitoff(rarad, decrad)
 
     # Make the plot
     source = ColumnDataSource(data=data)
@@ -453,3 +448,14 @@ def bdnyc_skyplot():
     script, div = components(p)
 
     return render_template('skyplot.html', script=script, plot=div)
+
+
+def project_aitoff(lon, lat):
+    """
+    Convert x,y to Aitoff projection. Lat and Lon should be in radians. RA=lon, Dec=lat
+    """
+    # Note that np.sinc is normalized (hence the division by pi)
+    alpha_c = np.arccos(np.cos(lat) * np.cos(lon / 2))
+    x = 2.0 * np.cos(lat) * np.sin(lon) / np.sinc(alpha_c / np.pi)
+    y = np.sin(lat) / np.sinc(alpha_c / np.pi)
+    return x, y
