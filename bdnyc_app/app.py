@@ -277,11 +277,20 @@ def bdnyc_summary(source_id):
     allnames = t['sources']['names'][0]
 
     # TODO: Grab distance
-    # distance = 1000./t['parallaxes']['parallax'][0]
+    try:
+        distance = 1000./t['parallaxes']['parallax']
+        dist_string = ', '.join(['{0:.2f}'.format(i) for i in distance])
+        dist_string += ' pc'
+    except:
+        dist_string = 'N/A'
 
     # TODO: Grab spectral types
+    # Will need to parse the strings to have things like M7, L5, T3, etc
     # t['spectral_types']['spectral_type'].tolist()
     # t['spectral_types']['regime'].tolist()
+
+    # Grab comments
+    comments = t['sources']['comments'][0]
 
     # TODO: Consider getting a 2MASS finder chart?
 
@@ -293,13 +302,13 @@ def bdnyc_summary(source_id):
     for band in OrderedDict(sorted(phot_dict.items(), key=lambda t: t[1])):
         if band in phot_data['band'].tolist():
             if phot_data[phot_data['band']==band]['magnitude_unc'].values[0] == 'null':
-                phot_txt += '<strong>{0}</strong>: >{1:.2f}<br>'.format(band,
-                                                                           phot_data[phot_data['band'] == band][
-                                                                               'magnitude'].values[0])
+                phot_txt += '<strong>{0}</strong>: ' \
+                            '>{1:.2f}<br>'.format(band, phot_data[phot_data['band'] == band]['magnitude'].values[0])
             else:
-                phot_txt += '<strong>{0}</strong>: {1:.2f} +/- {2:.2f}<br>'.format(band,
-                                                             phot_data[phot_data['band']==band]['magnitude'].values[0],
-                                                             float(phot_data[phot_data['band']==band]['magnitude_unc'].values[0]))
+                phot_txt += '<strong>{0}</strong>: ' \
+                            '{1:.2f} +/- {2:.2f}<br>'.format(band,
+                                                             phot_data[phot_data['band'] == band]['magnitude'].values[0],
+                                                             float(phot_data[phot_data['band'] == band]['magnitude_unc'].values[0]))
     phot_txt += '</p>'
 
     # Grab spectra
@@ -331,8 +340,6 @@ def bdnyc_summary(source_id):
         except:
             plot_name = ''
 
-        # print spec_id, plot_name
-
         # Make the plot
         tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
 
@@ -351,9 +358,9 @@ def bdnyc_summary(source_id):
     # table = t['photometry'].to_pandas().to_html(classes='display', index=False)
 
     return render_template('summary.html',
-                           table=phot_txt,
-                           script=script, plot=div, name=objname, coords=coords, allnames=allnames, warnings=warnings,
-                           source_id=source_id)
+                           table=phot_txt, script=script, plot=div, name=objname, coords=coords,
+                           allnames=allnames, warnings=warnings, source_id=source_id, distance=dist_string,
+                           comments=comments)
 
 
 @app_bdnyc.route('/browse')
@@ -376,11 +383,12 @@ def bdnyc_browse():
         link = '<a href="summary/{0}">{1}</a>'.format(data.iloc[i]['id'], elem)
         linklist.append(link)
     data['shortname'] = linklist
-    # TODO: Consider on-hover text tooltips
+
+    # TODO: Consider on-hover text tooltips, at least for alt designations and comments
 
     # Rename columns
-    translation = {'id':'Source ID', 'ra':'RA', 'dec':'Dec', 'names':'Alternate Designations',
-                   'comments':'Comments', 'shortname':'Object Shortname'}
+    translation = {'id': 'Source ID', 'ra': 'RA', 'dec': 'Dec', 'names': 'Alternate Designations',
+                   'comments': 'Comments', 'shortname': 'Object Shortname'}
     column_names = data.columns.tolist()
     for i, name in enumerate(column_names):
         if name in translation.keys():
@@ -390,10 +398,10 @@ def bdnyc_browse():
     # Count up photometry and spectroscopy for new columns
     df_phot = db.query('SELECT id, source_id FROM photometry', fmt='table').to_pandas()
     phot_counts = df_phot.groupby(by='source_id').count()
-    phot_counts.columns = ['Photometry']
+    phot_counts.columns = ['<span title="Amount of photometry data available">Photometry</span>']
     df_spec = db.query('SELECT id, source_id FROM spectra', fmt='table').to_pandas()
     spec_counts = df_spec.groupby(by='source_id').count()
-    spec_counts.columns = ['Spectroscopy']
+    spec_counts.columns = ['<span title="Amount of spectroscopic observations available">Spectroscopy</span>']
 
     final_data = pd.concat([data, phot_counts, spec_counts], axis=1, join='inner')
 
@@ -420,7 +428,7 @@ def bdnyc_skyplot():
     data['x'], data['y'] = projection(c.ra.radian - pi, c.dec.radian, use=proj)
     data['l'], data['b'] = c.galactic.l, c.galactic.b
 
-    # Make the plot
+    # Make the plots
     p1 = make_sky_plot(data, proj)
     data['x'], data['y'] = projection(c.galactic.l.radian - pi, c.galactic.b.radian, use=proj)
     p2 = make_sky_plot(data, proj)
@@ -444,7 +452,7 @@ def projection(lon, lat, use='hammer'):
     if use.lower() == 'hammer': # Hammer
         x = 2.0 ** 1.5 * np.cos(lat) * np.sin(lon / 2.0) / np.sqrt(1.0 + np.cos(lat) * np.cos(lon / 2.0))
         y = sqrt(2.0) * np.sin(lat) / np.sqrt(1.0 + np.cos(lat) * np.cos(lon / 2.0))
-    else: # Aitoff
+    else:  # Aitoff, not yet working
         alpha_c = np.arccos(np.cos(lat) * np.cos(lon / 2.0))
         x = 2.0 * np.cos(lat) * np.sin(lon) / np.sinc(alpha_c / np.pi)
         y = np.sin(lat) / np.sinc(alpha_c / np.pi)
