@@ -276,7 +276,7 @@ def bdnyc_summary(source_id):
     coords = c.to_string('hmsdms', sep=':', precision=2)
     allnames = t['sources']['names'][0]
 
-    # TODO: Grab distance
+    # Grab distance
     try:
         distance = 1000./t['parallaxes']['parallax']
         dist_string = ', '.join(['{0:.2f}'.format(i) for i in distance])
@@ -284,10 +284,20 @@ def bdnyc_summary(source_id):
     except:
         dist_string = 'N/A'
 
-    # TODO: Grab spectral types
-    # Will need to parse the strings to have things like M7, L5, T3, etc
-    # t['spectral_types']['spectral_type'].tolist()
-    # t['spectral_types']['regime'].tolist()
+    # Grab spectral types; gravity indicators are ignored for now
+    sptype_txt = ''
+    types = np.array(t['spectral_types']['spectral_type'].tolist())
+    regime = np.array(t['spectral_types']['regime'].tolist())
+    if 'OPT' in regime:
+        sptype_txt += 'Optical: '
+        # Parse string
+        ind = np.where(regime == 'OPT')
+        sptype_txt += ', '.join([parse_sptype(s) for s in types[ind]])
+        sptype_txt += ' '
+    if 'IR' in regime:
+        sptype_txt += 'Infrared: '
+        ind = np.where(regime == 'IR')
+        sptype_txt += ', '.join([parse_sptype(s) for s in types[ind]])
 
     # Grab comments
     comments = t['sources']['comments'][0]
@@ -360,7 +370,7 @@ def bdnyc_summary(source_id):
     return render_template('summary.html',
                            table=phot_txt, script=script, plot=div, name=objname, coords=coords,
                            allnames=allnames, warnings=warnings, source_id=source_id, distance=dist_string,
-                           comments=comments)
+                           comments=comments, sptypes=sptype_txt)
 
 
 @app_bdnyc.route('/browse')
@@ -387,7 +397,8 @@ def bdnyc_browse():
     # TODO: Consider on-hover text tooltips, at least for alt designations and comments
 
     # Rename columns
-    translation = {'id': 'Source ID', 'ra': 'RA', 'dec': 'Dec', 'names': 'Alternate Designations',
+    translation = {'id': 'Source ID', 'ra': '<span title="Right Ascension (deg)">RA</span>',
+                   'dec': '<span title="Declination (deg)">Dec</span>', 'names': 'Alternate Designations',
                    'comments': 'Comments', 'shortname': 'Object Shortname'}
     column_names = data.columns.tolist()
     for i, name in enumerate(column_names):
@@ -516,3 +527,21 @@ def make_sky_plot(data, proj='hammer'):
     taptool.callback = OpenURL(url=url)
 
     return p
+
+
+def parse_sptype(spnum):
+    """Parse a spectral type number and return a string"""
+    if spnum >= 30:
+        sptxt = 'Y'
+    if (spnum >= 20) & (spnum < 30):
+        sptxt = 'T'
+    if (spnum >= 10) & (spnum < 20):
+        sptxt = 'L'
+    if (spnum >= 0) & (spnum < 10):
+        sptxt = 'M'
+    if spnum < 0:
+        sptxt = 'K'
+
+    sptxt += '{0:.1f}'.format(abs(spnum) % 10)
+
+    return sptxt
