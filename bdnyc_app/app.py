@@ -389,10 +389,12 @@ def bdnyc_browse():
 
     # Change column to a link
     linklist = []
-    for i, elem in enumerate(data['shortname']):
-        link = '<a href="summary/{0}">{1}</a>'.format(data.iloc[i]['id'], elem)
+    for i, elem in enumerate(zip(data['shortname'], data['names'])):
+        link = '<a href="summary/{0}">{1}<span>{2}</span></a>'.format(data.iloc[i]['id'], elem[0], elem[1])
         linklist.append(link)
     data['shortname'] = linklist
+
+    pd.set_option('max_colwidth', 150)  # Ensure columns are wide enough for the new text
 
     # TODO: Consider on-hover text tooltips, at least for alt designations and comments
 

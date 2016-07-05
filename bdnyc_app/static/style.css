@@ -488,3 +488,15 @@ h2              { font-size: 1.2em; }
 #branding li a { display: block; color: white; text-align: center;
                  padding: 14px 16px; text-decoration: none; }
 #branding li a:hover { background-color: #f9f9f9; color: #373737; }
+
+/* Hover box for Browse page */
+a span {
+    display: none;
+    position: absolute;
+    color: #000;
+    background: #dcdcdc;
+    border:1px solid #377BA8; border-radius: 10px;
+    padding: 5px; width: 200px;
+    left:50px; z-index: 9; }
+a {position: relative; }
+a:hover span {display: block; text-align: center; }

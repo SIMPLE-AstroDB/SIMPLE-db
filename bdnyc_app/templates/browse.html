@@ -8,7 +8,11 @@
       $('.dataframe').DataTable( {
         "pageLength": 20,
         "paging": false,
-        "scrollY": 500
+        "scrollY": 500,
+        "columnDefs": [ {
+            "visible": false,
+            "targets": [4]
+        } ]
       } );
     } );
 </script>
