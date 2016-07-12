@@ -65,6 +65,13 @@
     <br>
     {% endfor %}
 
+    {% for spectrum in spectra_download %}
+        {{ spectrum|safe }}
+    <br>
+    {% endfor %}
+
+    <hr>
+
     <p><a href="../query">Return to query</a></p>
 
 </div>

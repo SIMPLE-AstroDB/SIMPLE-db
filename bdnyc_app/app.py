@@ -326,7 +326,9 @@ def bdnyc_summary(source_id):
     plot_list = list()
     warnings = list()
 
-    for spec_id in spec_list:
+    spectra_download = []
+
+    for i, spec_id in enumerate(spec_list):
         stdout = sys.stdout  # Keep a handle on the real standard output
         sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
         query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id ' + \
@@ -346,9 +348,9 @@ def bdnyc_summary(source_id):
             n1 = db.query(query, fetch='one', fmt='array')[0]
             query = 'SELECT name FROM instruments WHERE id={}'.format(q['instrument_id'])
             n2 = db.query(query, fetch='one', fmt='array')[0]
-            plot_name = n1 + ':' + n2
+            plot_name = 'Spectrum {}: {}:{}'.format(i+1, n1, n2)
         except:
-            plot_name = ''
+            plot_name = 'Spectrum {}'.format(i+1)
 
         # Make the plot
         tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
@@ -363,14 +365,17 @@ def bdnyc_summary(source_id):
 
         plot_list.append(p)
 
-    script, div = components(plot_list)
+        # Make download link
+        query = 'SELECT spectrum FROM spectra WHERE id={}'.format(spec_id)
+        q = db.query(query, fetch='one', fmt='dict', use_converters=False)
+        spectra_download.append('<a href="{}" download="">Download {}</a>'.format(q['spectrum'], plot_name))
 
-    # table = t['photometry'].to_pandas().to_html(classes='display', index=False)
+    script, div = components(plot_list)
 
     return render_template('summary.html',
                            table=phot_txt, script=script, plot=div, name=objname, coords=coords,
                            allnames=allnames, warnings=warnings, source_id=source_id, distance=dist_string,
-                           comments=comments, sptypes=sptype_txt)
+                           comments=comments, sptypes=sptype_txt, spectra_download=spectra_download)
 
 
 @app_bdnyc.route('/browse')
