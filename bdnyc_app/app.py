@@ -375,7 +375,7 @@ def bdnyc_summary(source_id):
     return render_template('summary.html',
                            table=phot_txt, script=script, plot=div, name=objname, coords=coords,
                            allnames=allnames, warnings=warnings, source_id=source_id, distance=dist_string,
-                           comments=comments, sptypes=sptype_txt, spectra_download=spectra_download)
+                           comments=comments, sptypes=sptype_txt, spectra_download=spectra_download, ra=ra, dec=dec)
 
 
 @app_bdnyc.route('/browse')

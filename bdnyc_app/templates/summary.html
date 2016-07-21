@@ -7,6 +7,8 @@
 <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.css" type="text/css" />
 <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.js"></script>
 
+<link rel="stylesheet" href="http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css" />
+
 <script>
     $(document).ready( function () {
       $('.dataframe').DataTable( {
@@ -32,23 +34,44 @@
 <div class=page>
 
     <h1>Object Summary for {{name|safe}}</h1>
-    <br>
 
-    <p>
-        <strong>Coordinates:</strong> {{coords|safe}} <br>
-        <strong>Distance:</strong> {{distance|safe}} <br>
-        <strong>Spectral Types:</strong> {{sptypes|safe}} <br>
-        <strong>Comments:</strong> {{comments|safe}} <br>
-        <strong>Alternate designations:</strong> {{allnames|safe}}
-    </p>
+    <div class="basicinfo">
+        <p>
+            <strong>Coordinates:</strong> {{coords|safe}} <br>
+            <strong>Distance:</strong> {{distance|safe}} <br>
+            <strong>Spectral Types:</strong> {{sptypes|safe}} <br>
+            <strong>Comments:</strong> {{comments|safe}} <br>
+            <strong>Alternate designations:</strong> {{allnames|safe}}
+        </p>
 
-    <p>See the <a href="../inventory/{{source_id|safe}}">full inventory</a></p>
+        <p>See the <a href="../inventory/{{source_id|safe}}">full inventory</a></p>
 
-    <hr>
+        <hr>
 
-    <h2>Photometry</h2>
+        <h2>Photometry</h2>
 
-    {{ table|safe }}
+        {{ table|safe }}
+
+    </div>
+
+    <div id="aladin-lite-div">
+        <script type="text/javascript" src="http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js" charset="utf-8"></script>
+        <script type="text/javascript">
+            var aladin = A.aladin('#aladin-lite-div', {cooFrame: "J2000", showFrame: false, showGotoControl: false,
+            survey: "P/2MASS/color", fov:0.1, target: "{{coords|safe}}", showReticle: false});
+            <!-- Other surveys: P/DSS2/color  P/allWISE/color -->
+
+            <!--var catsim = A.catalogFromSimbad("{{coords|safe}}", 0.1, {onClick: 'showPopup', limit: 100});-->
+            <!--aladin.addCatalog(catsim);-->
+
+            var cat = A.catalog({name: 'BDNYC Source', sourceSize: 10});
+            aladin.addCatalog(cat);
+            cat.addSources([A.marker({{ra|safe}}, {{dec|safe}}, {popupTitle: '{{name|safe}}'})]);
+
+        </script>
+    </div>
+
+    <div class="clearfix"></div>
 
     <hr>
 
