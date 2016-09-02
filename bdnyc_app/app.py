@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, make_response
+import astrodbkit
 from astrodbkit import astrodb
 import os
 import sys
@@ -21,6 +22,7 @@ app_bdnyc.vars['query'] = ''
 app_bdnyc.vars['search'] = ''
 app_bdnyc.vars['specid'] = ''
 app_bdnyc.vars['source_id'] = ''
+
 
 # Redirect to the main page
 @app_bdnyc.route('/')
@@ -45,7 +47,7 @@ def bdnyc_query():
 
     return render_template('query.html', defquery=app_bdnyc.vars['query'],
                            defsearch=app_bdnyc.vars['search'], specid=app_bdnyc.vars['specid'],
-                           source_id=app_bdnyc.vars['source_id'], bd_num=bd_num)
+                           source_id=app_bdnyc.vars['source_id'], bd_num=bd_num, version=astrodbkit.__version__)
 
 
 # Grab results of query and display them
