@@ -300,22 +300,25 @@ def bdnyc_summary(source_id):
         sptype_txt += 'Infrared: '
         ind = np.where(regime == 'IR')
         sptype_txt += ', '.join([parse_sptype(s) for s in types[ind]])
+        sptype_txt += ' '
     else:
         sptype_txt += ', '.join([parse_sptype(s) for s in types])
 
     # Grab comments
     comments = t['sources']['comments'][0]
 
-    # TODO: Consider getting a 2MASS finder chart?
-
     phot_dict = {'J': 1.24, 'H': 1.66, 'K': 2.19, 'Ks': 2.16, 'W1': 3.35, 'W2': 4.6, 'W3': 11.56, 'W4': 22.09,
                  '[3.6]': 3.51, '[4.5]': 4.44, '[5.8]': 5.63, '[8]': 7.59, 'g': .48, 'i': .76, 'r': .62, 'u': .35,
-                 'z': .91}
+                 'z': .91, '2MASS_J': 1.24, '2MASS_H': 1.66, '2MASS_Ks': 2.16, 'WISE_W1': 3.35,
+                 'WISE_W2': 4.6, 'WISE_W3': 11.56, 'WISE_W4': 22.09, 'IRAC_ch1': 3.51, 'IRAC_ch2': 4.44,
+                 'IRAC_ch3': 5.63, 'IRAC_ch4': 7.59, 'SDSS_g': .48, 'SDSS_i': .76, 'SDSS_r': .62, 'SDSS_u': .35,
+                 'SDSS_z': .91}
     phot_data = t['photometry'].to_pandas()
     phot_txt = '<p>'
     for band in OrderedDict(sorted(phot_dict.items(), key=lambda t: t[1])):
         if band in phot_data['band'].tolist():
-            if phot_data[phot_data['band']==band]['magnitude_unc'].values[0] == 'null':
+            unc = phot_data[phot_data['band']==band]['magnitude_unc'].values[0]
+            if unc == 'null' or unc is None:
                 phot_txt += '<strong>{0}</strong>: ' \
                             '>{1:.2f}<br>'.format(band, phot_data[phot_data['band'] == band]['magnitude'].values[0])
             else:
@@ -360,8 +363,16 @@ def bdnyc_summary(source_id):
         tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
 
         # create a new plot
-        wav = 'Wavelength (' + q['wavelength_units'] + ')'
-        flux = 'Flux (' + q['flux_units'] + ')'
+        if q['wavelength_units'] is not None:
+            wav = 'Wavelength (' + q['wavelength_units'] + ')'
+        else:
+            wav = 'Wavelength'
+
+        if q['flux_units'] is not None:
+            flux = 'Flux (' + q['flux_units'] + ')'
+        else:
+            flux = 'Flux'
+
         # can specify plot_width if needed
         p = figure(tools=tools, title=plot_name, x_axis_label=wav, y_axis_label=flux, plot_width=600)
 
