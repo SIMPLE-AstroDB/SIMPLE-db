@@ -296,10 +296,12 @@ def bdnyc_summary(source_id):
         ind = np.where(regime == 'OPT')
         sptype_txt += ', '.join([parse_sptype(s) for s in types[ind]])
         sptype_txt += ' '
-    if 'IR' in regime:
+    elif 'IR' in regime:
         sptype_txt += 'Infrared: '
         ind = np.where(regime == 'IR')
         sptype_txt += ', '.join([parse_sptype(s) for s in types[ind]])
+    else:
+        sptype_txt += ', '.join([parse_sptype(s) for s in types])
 
     # Grab comments
     comments = t['sources']['comments'][0]
