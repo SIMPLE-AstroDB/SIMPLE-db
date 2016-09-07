@@ -441,6 +441,18 @@ def bdnyc_skyplot():
     data = t.to_pandas()
     data.index = data['id']
 
+    # Remove objects without RA/Dec
+    num_missing = np.sum(pd.isnull(data['ra']))
+    if num_missing > 0:
+        warning_message = 'Note: {} objects had missing coordinate information and were removed.'.format(num_missing)
+        data = data[pd.notnull(data['ra'])]
+    else:
+        warning_message = ''
+
+    # Coerce to numeric
+    data['ra'] = pd.to_numeric(data['ra'])
+    data['dec'] = pd.to_numeric(data['dec'])
+
     # Coordinate conversion
     c = SkyCoord(ra=data['ra'] * u.degree, dec=data['dec'] * u.degree)
     pi = np.pi
@@ -459,7 +471,7 @@ def bdnyc_skyplot():
 
     script, div = components(tabs)
 
-    return render_template('skyplot.html', script=script, plot=div)
+    return render_template('skyplot.html', script=script, plot=div, warning=warning_message)
 
 
 def projection(lon, lat, use='hammer'):
