@@ -115,6 +115,37 @@ def bdnyc_savefile():
     response.headers["Content-Disposition"] = "attachment; filename=%s" % filename
     return response
 
+@app_bdnyc.route('/send_samp', methods=['POST'])
+def bdnyc_send_to_samp():
+    filename = 'bdnyc_table.vot'
+
+    db = astrodb.Database('./database.db')
+    db.query(app_bdnyc.vars['query'], fmt='table', export=filename)
+
+    # Connect to the SAMP Hub (started by TOPCAT or others)
+    from astropy.vo.samp import SAMPIntegratedClient
+    client = SAMPIntegratedClient()
+    client.connect()
+
+    # Prepare parameters
+    params = dict()
+    params["url"] = request.url_root + filename
+    params["name"] = "BDNYC Query"
+
+    # Prepare message
+    message = dict()
+    message["samp.mtype"] = "table.load.votable"
+    message["samp.params"] = params
+
+    # Send message
+    client.notify_all(message)
+
+    # Delete the file after it's read and disconnect from Hub
+    os.remove(filename)
+    client.disconnect()
+
+    # Return no content
+    return ('', 204)
 
 # Perform a search
 @app_bdnyc.route('/search', methods=['POST'])
