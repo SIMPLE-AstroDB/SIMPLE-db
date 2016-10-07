@@ -306,12 +306,20 @@ def bdnyc_summary(source_id):
     # Grab comments
     comments = t['sources']['comments'][0]
 
+    # Photometry dictionary in microns
     phot_dict = {'J': 1.24, 'H': 1.66, 'K': 2.19, 'Ks': 2.16, 'W1': 3.35, 'W2': 4.6, 'W3': 11.56, 'W4': 22.09,
-                 '[3.6]': 3.51, '[4.5]': 4.44, '[5.8]': 5.63, '[8]': 7.59, 'g': .48, 'i': .76, 'r': .62, 'u': .35,
-                 'z': .91, '2MASS_J': 1.24, '2MASS_H': 1.66, '2MASS_Ks': 2.16, 'WISE_W1': 3.35,
+                 '[3.6]': 3.51, '[4.5]': 4.44, '[5.8]': 5.63, '[8]': 7.59, '[24]': 23.68, 'g': .48, 'i': .76, 'r': .62,
+                 'u': .35, 'z': .91, '2MASS_J': 1.24, '2MASS_H': 1.66, '2MASS_Ks': 2.16, 'WISE_W1': 3.35,
                  'WISE_W2': 4.6, 'WISE_W3': 11.56, 'WISE_W4': 22.09, 'IRAC_ch1': 3.51, 'IRAC_ch2': 4.44,
                  'IRAC_ch3': 5.63, 'IRAC_ch4': 7.59, 'SDSS_g': .48, 'SDSS_i': .76, 'SDSS_r': .62, 'SDSS_u': .35,
-                 'SDSS_z': .91}
+                 'SDSS_z': .91, 'HST_F105W': 1.0552, 'HST_F110W': 1.1534, 'HST_F125W': 1.2486, 'HST_F140W': 1.3923,
+                 'Johnson_B': 0.442, 'Johnson_U': 0.364, 'Johnson_V': 0.540,
+                 'MKO_H': 1.635, 'MKO_J': 1.25, 'MKO_K': 2.20, "MKO_L'": 3.77, "MKO_M'": 4.68, 'MKO_Y': 1.02,
+                 'DENIS_I': 0.82, 'DENIS_J': 1.25, 'DENIS_K': 2.15, 'DENIS_Ks': 2.15,
+                 'Cousins_I': 0.647, 'Cousins_R': 0.7865,
+                 'I': 0.806, 'L': 3.45, 'Y': 1.02, 'Z': 0.9, 'y': 1.02,
+                 'GALEX_FUV': 0.1528, 'GALEX_NUV': 0.2271,
+                 'FourStar_J2': 1.144, 'FourStar_J3': 1.287}
     phot_data = t['photometry'].to_pandas()
     phot_txt = '<p>'
     for band in OrderedDict(sorted(phot_dict.items(), key=lambda t: t[1])):
