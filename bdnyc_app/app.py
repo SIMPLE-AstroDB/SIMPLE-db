@@ -325,6 +325,21 @@ def bdnyc_summary(source_id):
                             '{1:.2f} +/- {2:.2f}<br>'.format(band,
                                                              phot_data[phot_data['band'] == band]['magnitude'].values[0],
                                                              float(phot_data[phot_data['band'] == band]['magnitude_unc'].values[0]))
+    for band in phot_data['band'].tolist():
+        if band in phot_dict.keys():  # Skip those already displayed (which match the dictionary)
+            continue
+
+        unc = phot_data[phot_data['band'] == band]['magnitude_unc'].values[0]
+        if unc == 'null' or unc is None:
+            phot_txt += '<strong>{0}</strong>: ' \
+                        '>{1:.2f}<br>'.format(band, phot_data[phot_data['band'] == band]['magnitude'].values[0])
+        else:
+            phot_txt += '<strong>{0}</strong>: ' \
+                        '{1:.2f} +/- {2:.2f}<br>'.format(band,
+                                                         phot_data[phot_data['band'] == band]['magnitude'].values[0],
+                                                         float(phot_data[phot_data['band'] == band][
+                                                                   'magnitude_unc'].values[0]))
+
     phot_txt += '</p>'
 
     # Grab spectra
