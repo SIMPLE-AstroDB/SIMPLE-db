@@ -68,9 +68,9 @@ def bdnyc_runquery():
     stdout = sys.stdout  # Keep a handle on the real standard output
     sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
     try:
-        t = db.query(app_bdnyc.vars['query'], fmt='table')
+        t = db.query(app_bdnyc.vars['query'], fmt='table', use_converters=False)
     except ValueError:
-        t = db.query(app_bdnyc.vars['query'], fmt='array')
+        t = db.query(app_bdnyc.vars['query'], fmt='array', use_converters=False)
     except:
         return render_template('error.html', headermessage='Error in Query',
                                errmess='<p>Error in query:</p><p>'+htmltxt+'</p>')
@@ -106,7 +106,7 @@ def bdnyc_savefile():
         filename = 'bdnyc_table.txt'
 
     db = astrodb.Database('./database.db')
-    db.query(app_bdnyc.vars['query'], fmt='table', export=filename)
+    db.query(app_bdnyc.vars['query'], fmt='table', export=filename, use_converters=False)
     with open(filename, 'r') as f:
         file_as_string = f.read()
     os.remove(filename)  # Delete the file after it's read
