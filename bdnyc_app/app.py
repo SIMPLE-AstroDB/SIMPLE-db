@@ -587,6 +587,13 @@ def make_sky_plot(data, proj='hammer'):
 
 def parse_sptype(spnum):
     """Parse a spectral type number and return a string"""
+
+    # Attempt to convert to float
+    try:
+        spnum = float(spnum)
+    except ValueError:
+        pass
+
     if spnum >= 30:
         sptxt = 'Y'
     if (spnum >= 20) & (spnum < 30):
@@ -598,6 +605,9 @@ def parse_sptype(spnum):
     if spnum < 0:
         sptxt = 'K'
 
-    sptxt += '{0:.1f}'.format(abs(spnum) % 10)
+    if isinstance(spnum, type('')):
+        sptxt = spnum
+    else:
+        sptxt += '{0:.1f}'.format(abs(spnum) % 10)
 
     return sptxt
