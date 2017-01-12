@@ -456,8 +456,9 @@ def bdnyc_browse():
     spec_counts = df_spec.groupby(by='source_id').count()
     spec_counts.columns = ['<span title="Amount of spectroscopic observations available">Spectroscopy</span>']
 
-    # TODO: Consider updating so that objects with no photometry/spectroscopy still appear
-    final_data = pd.concat([data, phot_counts, spec_counts], axis=1, join='inner')
+    final_data = pd.concat([data, phot_counts, spec_counts], axis=1, join='outer')
+    final_data['<span title="Amount of photometry data available">Photometry</span>'].fillna(value=0, inplace=True)
+    final_data['<span title="Amount of spectroscopic observations available">Spectroscopy</span>'].fillna(value=0, inplace=True)
 
     return render_template('browse.html', table=final_data.to_html(classes='display', index=False, escape=False))
 
