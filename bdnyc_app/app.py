@@ -438,8 +438,6 @@ def bdnyc_browse():
 
     pd.set_option('max_colwidth', 150)  # Ensure columns are wide enough for the new text
 
-    # TODO: Consider on-hover text tooltips, at least for alt designations and comments
-
     # Rename columns
     translation = {'id': 'Source ID', 'ra': '<span title="Right Ascension (deg)">RA</span>',
                    'dec': '<span title="Declination (deg)">Dec</span>', 'names': 'Alternate Designations',
@@ -458,6 +456,7 @@ def bdnyc_browse():
     spec_counts = df_spec.groupby(by='source_id').count()
     spec_counts.columns = ['<span title="Amount of spectroscopic observations available">Spectroscopy</span>']
 
+    # TODO: Consider updating so that objects with no photometry/spectroscopy still appear
     final_data = pd.concat([data, phot_counts, spec_counts], axis=1, join='inner')
 
     return render_template('browse.html', table=final_data.to_html(classes='display', index=False, escape=False))
@@ -529,6 +528,7 @@ def projection(lon, lat, use='hammer'):
 def make_sky_plot(data, proj='hammer'):
     """
     Make a sky plot and return a Bokeh figure
+    Adapted from: https://github.com/astrocatalogs/astrocats/blob/master/scripts/hammertime.py#L93-L132 and the Open Supernova Catalog (https://sne.space/statistics/sky-locations/)
     """
     source = ColumnDataSource(data=data)
 
