@@ -286,22 +286,25 @@ def bdnyc_summary(source_id):
         dist_string = 'N/A'
 
     # Grab spectral types; gravity indicators are ignored for now
-    sptype_txt = ''
-    types = np.array(t['spectral_types']['spectral_type'].tolist())
-    regime = np.array(t['spectral_types']['regime'].tolist())
-    if 'OPT' in regime:
-        sptype_txt += 'Optical: '
-        # Parse string
-        ind = np.where(regime == 'OPT')
-        sptype_txt += ', '.join([parse_sptype(s) for s in types[ind]])
-        sptype_txt += ' '
-    if 'IR' in regime:
-        sptype_txt += 'Infrared: '
-        ind = np.where(regime == 'IR')
-        sptype_txt += ', '.join([parse_sptype(s) for s in types[ind]])
-        sptype_txt += ' '
-    else:
-        sptype_txt += ', '.join([parse_sptype(s) for s in types])
+    try:
+        sptype_txt = ''
+        types = np.array(t['spectral_types']['spectral_type'].tolist())
+        regime = np.array(t['spectral_types']['regime'].tolist())
+        if 'OPT' in regime:
+            sptype_txt += 'Optical: '
+            # Parse string
+            ind = np.where(regime == 'OPT')
+            sptype_txt += ', '.join([parse_sptype(s) for s in types[ind]])
+            sptype_txt += ' '
+        if 'IR' in regime:
+            sptype_txt += 'Infrared: '
+            ind = np.where(regime == 'IR')
+            sptype_txt += ', '.join([parse_sptype(s) for s in types[ind]])
+            sptype_txt += ' '
+        else:
+            sptype_txt += ', '.join([parse_sptype(s) for s in types])
+    except:
+        sptype_txt = ''
 
     # Grab comments
     comments = t['sources']['comments'][0]
@@ -320,11 +323,27 @@ def bdnyc_summary(source_id):
                  'I': 0.806, 'L': 3.45, 'Y': 1.02, 'Z': 0.9, 'y': 1.02,
                  'GALEX_FUV': 0.1528, 'GALEX_NUV': 0.2271,
                  'FourStar_J2': 1.144, 'FourStar_J3': 1.287}
-    phot_data = t['photometry'].to_pandas()
-    phot_txt = '<p>'
-    for band in OrderedDict(sorted(phot_dict.items(), key=lambda t: t[1])):
-        if band in phot_data['band'].tolist():
-            unc = phot_data[phot_data['band']==band]['magnitude_unc'].values[0]
+
+    # Photometry text
+    try:
+        phot_data = t['photometry'].to_pandas()
+        phot_txt = '<p>'
+        for band in OrderedDict(sorted(phot_dict.items(), key=lambda t: t[1])):
+            if band in phot_data['band'].tolist():
+                unc = phot_data[phot_data['band']==band]['magnitude_unc'].values[0]
+                if unc == 'null' or unc is None:
+                    phot_txt += '<strong>{0}</strong>: ' \
+                                '>{1:.2f}<br>'.format(band, phot_data[phot_data['band'] == band]['magnitude'].values[0])
+                else:
+                    phot_txt += '<strong>{0}</strong>: ' \
+                                '{1:.2f} +/- {2:.2f}<br>'.format(band,
+                                                                 phot_data[phot_data['band'] == band]['magnitude'].values[0],
+                                                                 float(phot_data[phot_data['band'] == band]['magnitude_unc'].values[0]))
+        for band in phot_data['band'].tolist():
+            if band in phot_dict.keys():  # Skip those already displayed (which match the dictionary)
+                continue
+
+            unc = phot_data[phot_data['band'] == band]['magnitude_unc'].values[0]
             if unc == 'null' or unc is None:
                 phot_txt += '<strong>{0}</strong>: ' \
                             '>{1:.2f}<br>'.format(band, phot_data[phot_data['band'] == band]['magnitude'].values[0])
@@ -332,82 +351,74 @@ def bdnyc_summary(source_id):
                 phot_txt += '<strong>{0}</strong>: ' \
                             '{1:.2f} +/- {2:.2f}<br>'.format(band,
                                                              phot_data[phot_data['band'] == band]['magnitude'].values[0],
-                                                             float(phot_data[phot_data['band'] == band]['magnitude_unc'].values[0]))
-    for band in phot_data['band'].tolist():
-        if band in phot_dict.keys():  # Skip those already displayed (which match the dictionary)
-            continue
+                                                             float(phot_data[phot_data['band'] == band][
+                                                                       'magnitude_unc'].values[0]))
 
-        unc = phot_data[phot_data['band'] == band]['magnitude_unc'].values[0]
-        if unc == 'null' or unc is None:
-            phot_txt += '<strong>{0}</strong>: ' \
-                        '>{1:.2f}<br>'.format(band, phot_data[phot_data['band'] == band]['magnitude'].values[0])
-        else:
-            phot_txt += '<strong>{0}</strong>: ' \
-                        '{1:.2f} +/- {2:.2f}<br>'.format(band,
-                                                         phot_data[phot_data['band'] == band]['magnitude'].values[0],
-                                                         float(phot_data[phot_data['band'] == band][
-                                                                   'magnitude_unc'].values[0]))
-
-    phot_txt += '</p>'
+        phot_txt += '</p>'
+    except:
+        phot_txt = '<p>None in database</p>'
 
     # Grab spectra
-    spec_list = t['spectra']['id']
-    plot_list = list()
     warnings = list()
+    spectra_download = list()
+    try:
+        spec_list = t['spectra']['id']
+        plot_list = list()
 
-    spectra_download = []
+        for i, spec_id in enumerate(spec_list):
+            stdout = sys.stdout  # Keep a handle on the real standard output
+            sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
+            query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id ' + \
+                    'FROM spectra WHERE id={}'.format(spec_id)
+            q = db.query(query, fetch='one', fmt='dict')
+            sys.stdout = stdout
 
-    for i, spec_id in enumerate(spec_list):
-        stdout = sys.stdout  # Keep a handle on the real standard output
-        sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
-        query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id ' + \
-                'FROM spectra WHERE id={}'.format(spec_id)
-        q = db.query(query, fetch='one', fmt='dict')
-        sys.stdout = stdout
+            if mystdout.getvalue().lower().startswith('could not retrieve spectrum'):
+                warnings.append(mystdout.getvalue())
+                continue
 
-        if mystdout.getvalue().lower().startswith('could not retrieve spectrum'):
-            warnings.append(mystdout.getvalue())
-            continue
+            spec = q['spectrum']
 
-        spec = q['spectrum']
+            # Get spectrum name
+            try:
+                query = 'SELECT name FROM telescopes WHERE id={}'.format(q['telescope_id'])
+                n1 = db.query(query, fetch='one', fmt='array')[0]
+                query = 'SELECT name FROM instruments WHERE id={}'.format(q['instrument_id'])
+                n2 = db.query(query, fetch='one', fmt='array')[0]
+                plot_name = 'Spectrum {}: {}:{}'.format(i+1, n1, n2)
+            except:
+                plot_name = 'Spectrum {}'.format(i+1)
 
-        # Get spectrum name
-        try:
-            query = 'SELECT name FROM telescopes WHERE id={}'.format(q['telescope_id'])
-            n1 = db.query(query, fetch='one', fmt='array')[0]
-            query = 'SELECT name FROM instruments WHERE id={}'.format(q['instrument_id'])
-            n2 = db.query(query, fetch='one', fmt='array')[0]
-            plot_name = 'Spectrum {}: {}:{}'.format(i+1, n1, n2)
-        except:
-            plot_name = 'Spectrum {}'.format(i+1)
+            # Make the plot
+            tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
 
-        # Make the plot
-        tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
+            # create a new plot
+            if q['wavelength_units'] is not None:
+                wav = 'Wavelength (' + q['wavelength_units'] + ')'
+            else:
+                wav = 'Wavelength'
 
-        # create a new plot
-        if q['wavelength_units'] is not None:
-            wav = 'Wavelength (' + q['wavelength_units'] + ')'
-        else:
-            wav = 'Wavelength'
+            if q['flux_units'] is not None:
+                flux = 'Flux (' + q['flux_units'] + ')'
+            else:
+                flux = 'Flux'
 
-        if q['flux_units'] is not None:
-            flux = 'Flux (' + q['flux_units'] + ')'
-        else:
-            flux = 'Flux'
+            # can specify plot_width if needed
+            p = figure(tools=tools, title=plot_name, x_axis_label=wav, y_axis_label=flux, plot_width=600)
 
-        # can specify plot_width if needed
-        p = figure(tools=tools, title=plot_name, x_axis_label=wav, y_axis_label=flux, plot_width=600)
+            p.line(spec.data[0], spec.data[1], line_width=2)
 
-        p.line(spec.data[0], spec.data[1], line_width=2)
+            plot_list.append(p)
 
-        plot_list.append(p)
+            # Make download link
+            query = 'SELECT spectrum FROM spectra WHERE id={}'.format(spec_id)
+            q = db.query(query, fetch='one', fmt='dict', use_converters=False)
+            spectra_download.append('<a href="{}" download="">Download {}</a>'.format(q['spectrum'], plot_name))
 
-        # Make download link
-        query = 'SELECT spectrum FROM spectra WHERE id={}'.format(spec_id)
-        q = db.query(query, fetch='one', fmt='dict', use_converters=False)
-        spectra_download.append('<a href="{}" download="">Download {}</a>'.format(q['spectrum'], plot_name))
-
-    script, div = components(plot_list)
+        script, div = components(plot_list)
+    except:
+        script, div = '', ''
+        spectra_download = ['None in database']
 
     return render_template('summary.html',
                            table=phot_txt, script=script, plot=div, name=objname, coords=coords,
