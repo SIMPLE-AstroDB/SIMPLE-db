@@ -247,7 +247,10 @@ def bdnyc_schema():
     db = astrodb.Database('./database.db')
 
     # Get table names and their structure
-    table_names = db.query("SELECT name FROM sqlite_sequence", unpack=True)[0]
+    try:
+        table_names = db.query("SELECT name FROM sqlite_sequence", unpack=True)[0]
+    except:
+        table_names = db.query("SELECT name FROM sqlite_master WHERE type='table'", unpack=True)[0]
 
     table_dict = dict()
     for name in table_names:
