@@ -523,6 +523,10 @@ def bdnyc_skyplot():
     return render_template('skyplot.html', script=script, plot=div, warning=warning_message)
 
 
+@app_bdnyc.route('/feedback')
+def bdnyc_feedback():
+    return render_template('feedback.html')
+
 def projection(lon, lat, use='hammer'):
     """
     Convert x,y to Aitoff or Hammer projection. Lat and Lon should be in radians. RA=lon, Dec=lat
