@@ -24,9 +24,11 @@
 </header>
 
 <div class=page>
-    <h1 id="top">Query Results</h1>
+    <h1 id="top">Database Schema</h1>
 
-    <p>The following tables are part of the database:
+    <p><a href="static/images/full_database.png"><img src="static/images/full_database.png" width="1000px"></a></p>
+
+    <p><br>In more detail, the following tables are part of the database:
         {% for table in tables %}
         <a href="#{{titles[loop.index]}}">{{titles[loop.index]}} </a>
         {% endfor %}
