@@ -1,6 +1,6 @@
-from bdnyc_app import app_bdnyc
+from onc_app import app_onc
 import os
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app_bdnyc.run(host='0.0.0.0', port=port, debug=False)
+    port = int(os.environ.get('PORT', 5001))
+    app_onc.run(host='0.0.0.0', port=port, debug=False)

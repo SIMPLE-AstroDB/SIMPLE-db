@@ -3,7 +3,7 @@ import astrodbkit
 from astrodbkit import astrodb
 import os
 import sys
-from cStringIO import StringIO
+from io import StringIO
 from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models import ColumnDataSource, HoverTool, OpenURL, TapTool
@@ -15,52 +15,52 @@ from collections import OrderedDict
 from math import sqrt
 import numpy as np
 
-app_bdnyc = Flask(__name__)
+app_onc = Flask(__name__)
 
-app_bdnyc.vars = dict()
-app_bdnyc.vars['query'] = ''
-app_bdnyc.vars['search'] = ''
-app_bdnyc.vars['specid'] = ''
-app_bdnyc.vars['source_id'] = ''
+app_onc.vars = dict()
+app_onc.vars['query'] = ''
+app_onc.vars['search'] = ''
+app_onc.vars['specid'] = ''
+app_onc.vars['source_id'] = ''
 
 
 # Redirect to the main page
-@app_bdnyc.route('/')
-@app_bdnyc.route('/index')
-@app_bdnyc.route('/index.html')
-@app_bdnyc.route('/query.html')
-def bdnyc_home():
+@app_onc.route('/')
+@app_onc.route('/index')
+@app_onc.route('/index.html')
+@app_onc.route('/query.html')
+def onc_home():
     return redirect('/query')
 
 # Page with a text box to take the SQL query
-@app_bdnyc.route('/query', methods=['GET', 'POST'])
-def bdnyc_query():
+@app_onc.route('/query', methods=['GET', 'POST'])
+def onc_query():
     defquery = 'SELECT * FROM sources'
-    if app_bdnyc.vars['query']=='':
-        app_bdnyc.vars['query'] = defquery
+    if app_onc.vars['query']=='':
+        app_onc.vars['query'] = defquery
 
     # Get the number of objects
-    db = astrodb.Database('./database.db')
+    db = astrodb.Database('./orion.db')
     t = db.query('SELECT id FROM sources', fmt='table')
     bd_num = len(t)
 
 
-    return render_template('query.html', defquery=app_bdnyc.vars['query'],
-                           defsearch=app_bdnyc.vars['search'], specid=app_bdnyc.vars['specid'],
-                           source_id=app_bdnyc.vars['source_id'], bd_num=bd_num, version=astrodbkit.__version__)
+    return render_template('query.html', defquery=app_onc.vars['query'],
+                           defsearch=app_onc.vars['search'], specid=app_onc.vars['specid'],
+                           source_id=app_onc.vars['source_id'], bd_num=bd_num, version=astrodbkit.__version__)
 
 
 # Grab results of query and display them
-@app_bdnyc.route('/runquery', methods=['POST'])
-def bdnyc_runquery():
-    app_bdnyc.vars['query'] = request.form['query_to_run']
-    htmltxt = app_bdnyc.vars['query'].replace('<', '&lt;')
+@app_onc.route('/runquery', methods=['POST'])
+def onc_runquery():
+    app_onc.vars['query'] = request.form['query_to_run']
+    htmltxt = app_onc.vars['query'].replace('<', '&lt;')
 
     # Load the database
-    db = astrodb.Database('./database.db')
+    db = astrodb.Database('./orion.db')
 
     # Only SELECT commands are allowed
-    if not app_bdnyc.vars['query'].lower().startswith('select'):
+    if not app_onc.vars['query'].lower().startswith('select'):
         return render_template('error.html', headermessage='Error in Query',
                                errmess='<p>Only SELECT queries are allowed. You typed:</p><p>'+htmltxt+'</p>')
 
@@ -68,9 +68,9 @@ def bdnyc_runquery():
     stdout = sys.stdout  # Keep a handle on the real standard output
     sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
     try:
-        t = db.query(app_bdnyc.vars['query'], fmt='table', use_converters=False)
+        t = db.query(app_onc.vars['query'], fmt='table', use_converters=False)
     except ValueError:
-        t = db.query(app_bdnyc.vars['query'], fmt='array', use_converters=False)
+        t = db.query(app_onc.vars['query'], fmt='array', use_converters=False)
     except:
         return render_template('error.html', headermessage='Error in Query',
                                errmess='<p>Error in query:</p><p>'+htmltxt+'</p>')
@@ -97,16 +97,16 @@ def bdnyc_runquery():
     return render_template('view.html', table=data.to_html(classes='display', index=False))
 
 
-@app_bdnyc.route('/savefile', methods=['POST'])
-def bdnyc_savefile():
+@app_onc.route('/savefile', methods=['POST'])
+def onc_savefile():
     export_fmt = request.form['format']
     if export_fmt == 'votable':
-        filename = 'bdnyc_table.vot'
+        filename = 'onc_table.vot'
     else:
-        filename = 'bdnyc_table.txt'
+        filename = 'onc_table.txt'
 
-    db = astrodb.Database('./database.db')
-    db.query(app_bdnyc.vars['query'], fmt='table', export=filename, use_converters=False)
+    db = astrodb.Database('./orion.db')
+    db.query(app_onc.vars['query'], fmt='table', export=filename, use_converters=False)
     with open(filename, 'r') as f:
         file_as_string = f.read()
     os.remove(filename)  # Delete the file after it's read
@@ -116,14 +116,14 @@ def bdnyc_savefile():
     return response
 
 # Perform a search
-@app_bdnyc.route('/search', methods=['POST'])
-def bdnyc_search():
-    app_bdnyc.vars['search'] = request.form['search_to_run']
+@app_onc.route('/search', methods=['POST'])
+def onc_search():
+    app_onc.vars['search'] = request.form['search_to_run']
     search_table = 'sources'
-    search_value = app_bdnyc.vars['search']
+    search_value = app_onc.vars['search']
 
     # Load the database
-    db = astrodb.Database('./database.db')
+    db = astrodb.Database('./orion.db')
 
     # Process search
     search_value = search_value.replace(',', ' ').split()
@@ -135,7 +135,7 @@ def bdnyc_search():
         except:
             return render_template('error.html', headermessage='Error in Search',
                                    errmess='<p>Could not process search input:</p>' +
-                                           '<p>' + app_bdnyc.vars['search'] + '</p>')
+                                           '<p>' + app_onc.vars['search'] + '</p>')
 
     # Run the search
     stdout = sys.stdout  # Keep a handle on the real standard output
@@ -153,23 +153,23 @@ def bdnyc_search():
 
 
 # Plot a spectrum
-@app_bdnyc.route('/spectrum', methods=['POST'])
-def bdnyc_plot():
-    app_bdnyc.vars['specid'] = request.form['spectrum_to_plot']
+@app_onc.route('/spectrum', methods=['POST'])
+def onc_plot():
+    app_onc.vars['specid'] = request.form['spectrum_to_plot']
 
     # If not a number, error
-    if not app_bdnyc.vars['specid'].isdigit():
+    if not app_onc.vars['specid'].isdigit():
         return render_template('error.html', headermessage='Error in Input',
                                errmess='<p>Input was not a number.</p>')
 
     # Load the database
-    db = astrodb.Database('./database.db')
+    db = astrodb.Database('./orion.db')
 
     # Grab the spectrum
     stdout = sys.stdout  # Keep a handle on the real standard output
     sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
     query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id ' + \
-            'FROM spectra WHERE id=' + app_bdnyc.vars['specid']
+            'FROM spectra WHERE id=' + app_onc.vars['specid']
     t = db.query(query, fetch='one', fmt='dict')
     sys.stdout = stdout
 
@@ -204,23 +204,23 @@ def bdnyc_plot():
 
 
 # Check inventory
-@app_bdnyc.route('/inventory', methods=['POST'])
-@app_bdnyc.route('/inventory/<int:source_id>')
-def bdnyc_inventory(source_id=None):
+@app_onc.route('/inventory', methods=['POST'])
+@app_onc.route('/inventory/<int:source_id>')
+def onc_inventory(source_id=None):
     if source_id is None:
-        app_bdnyc.vars['source_id'] = request.form['id_to_check']
+        app_onc.vars['source_id'] = request.form['id_to_check']
         path = ''
     else:
-        app_bdnyc.vars['source_id'] = source_id
+        app_onc.vars['source_id'] = source_id
         path = '../'
 
     # Load the database
-    db = astrodb.Database('./database.db')
+    db = astrodb.Database('./orion.db')
 
     # Grab inventory
     stdout = sys.stdout
     sys.stdout = mystdout = StringIO()
-    t = db.inventory(app_bdnyc.vars['source_id'], fetch=True, fmt='table')
+    t = db.inventory(app_onc.vars['source_id'], fetch=True, fmt='table')
     sys.stdout = stdout
 
     # Check for errors (no results)
@@ -231,20 +231,20 @@ def bdnyc_inventory(source_id=None):
     # Empty because of invalid input
     if len(t) == 0:
         return render_template('error.html', headermessage='Error',
-                               errmess="<p>You typed: "+app_bdnyc.vars['source_id']+"</p>")
+                               errmess="<p>You typed: "+app_onc.vars['source_id']+"</p>")
 
     return render_template('inventory.html',
                            tables=[t[x].to_pandas().to_html(classes='display', index=False) for x in t.keys()],
-                           titles=['na']+t.keys(), path=path, source_id=app_bdnyc.vars['source_id'])
+                           titles=['na']+t.keys(), path=path, source_id=app_onc.vars['source_id'])
 
 
 # Check Schema
-@app_bdnyc.route('/schema.html', methods=['GET', 'POST'])
-@app_bdnyc.route('/schema', methods=['GET', 'POST'])
-def bdnyc_schema():
+@app_onc.route('/schema.html', methods=['GET', 'POST'])
+@app_onc.route('/schema', methods=['GET', 'POST'])
+def onc_schema():
 
     # Load the database
-    db = astrodb.Database('./database.db')
+    db = astrodb.Database('./orion.db')
 
     # Get table names and their structure
     try:
@@ -263,12 +263,12 @@ def bdnyc_schema():
                            titles=['na']+sorted(table_dict.keys()))
 
 
-@app_bdnyc.route('/summary/<int:source_id>')
-def bdnyc_summary(source_id):
+@app_onc.route('/summary/<int:source_id>')
+def onc_summary(source_id):
     """Create a summary page for the requested star"""
 
     # Load the database
-    db = astrodb.Database('./database.db')
+    db = astrodb.Database('./orion.db')
 
     t = db.inventory(source_id, fetch=True, fmt='table')
 
@@ -429,12 +429,12 @@ def bdnyc_summary(source_id):
                            comments=comments, sptypes=sptype_txt, spectra_download=spectra_download, ra=ra, dec=dec)
 
 
-@app_bdnyc.route('/browse')
-def bdnyc_browse():
+@app_onc.route('/browse')
+def onc_browse():
     """Examine the full source list with clickable links to object summaries"""
 
     # Load the database
-    db = astrodb.Database('./database.db')
+    db = astrodb.Database('./orion.db')
 
     # Run the query
     t = db.query('SELECT id, ra, dec, shortname, names, comments FROM sources', fmt='table')
@@ -477,13 +477,13 @@ def bdnyc_browse():
     return render_template('browse.html', table=final_data.to_html(classes='display', index=False, escape=False))
 
 
-@app_bdnyc.route('/skyplot')
-def bdnyc_skyplot():
+@app_onc.route('/skyplot')
+def onc_skyplot():
     """
     Create a sky plot of the database objects
     """
     # Load the database
-    db = astrodb.Database('./database.db')
+    db = astrodb.Database('./orion.db')
     t = db.query('SELECT id, ra, dec, shortname FROM sources', fmt='table')
 
     # Convert to Pandas data frame
@@ -523,8 +523,8 @@ def bdnyc_skyplot():
     return render_template('skyplot.html', script=script, plot=div, warning=warning_message)
 
 
-@app_bdnyc.route('/feedback')
-def bdnyc_feedback():
+@app_onc.route('/feedback')
+def onc_feedback():
     return render_template('feedback.html')
 
 def projection(lon, lat, use='hammer'):
