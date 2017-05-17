@@ -1,50 +1,75 @@
 <!doctype html>
 <title>BDNYC Database Feedback</title>
-<link rel=stylesheet type=text/css href='{{ url_for('static',filename='style.css')}}'>
+<html lang="en">
+    <head>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+        <script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script>
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
 
-<header id="branding">
-    <img src="static/images/BDNYC-logo.gif" width="500px" />
-    <ul>
-        <li><a href="../query">Return to Query Form</a></li>
-        <li><a href="http://www.bdnyc.org">Return to BDNYC Blog</a></li>
-        <li><a href="browse">Browse the Database</a></li>
-        <li><a href="skyplot">Sky Plot</a></li>
-    </ul>
-</header>
+        <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.css" type="text/css" />
+        <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.js"></script>
 
-<div class=page>
+        <link rel="stylesheet" href="http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css" />
 
-    <h1>AstrodbWeb & BDNYC Database Feedback</h1>
+        <script>
+            $(document).ready( function () {
+              $('.dataframe').DataTable( {
+                "paging": false,
+                "info": false,
+                "searching": false
+              } );
+            } );
+        </script>
 
-    <div class=metanav>
-        <p>
-            Have a suggestion for improving this tool? A correction on a particular object or set of objects? <br>
-            Have you found a potential bug or error in our website? Just want to ask us a question? Let us know!
-        </p>
-        <p>
-            If you use GitHub, you can always submit new Issues to the
-            <a href="https://github.com/BDNYC/BDNYCdb">BDNYC database repository</a> or <br>
-            the <a href="https://github.com/dr-rodriguez/AstrodbWeb">AstrodbWeb repository</a>,
-            depending on the nature of your comment.
-        </p>
-        <p>
-            Alternatively, you can use the form below and we'll address it as best as we can. <br>
-            Please try to be as descriptive as possible about any errors; such as the query to reproduce your error
-            or the source name/id number with missing/incorrect data.
-        </p>
+        {{ script|safe }}
+    
+    </head>
+    <body>
+        
+        <script>
+            $(document).ready(function(){
+                $("#header").load('{{ url_for('static',filename='header.html')}}');
+                $("#footer").load('{{ url_for('static',filename='footer.html')}}');
+            });
+        </script>
+            
+        <div id="header"></div>
 
-        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSe_1BMtkOf51xpyGphJgtrZkL2YQ16F2u-QMst-a5mJ_rjYyw/viewform?embedded=true"
-                width="700" height="800" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+        <div class=page>
 
-    </div>
+            <h1>AstrodbWeb & BDNYC Database Feedback</h1>
 
-    <hr>
+            <div class=metanav>
+                <p>
+                    Have a suggestion for improving this tool? A correction on a particular object or set of objects? <br>
+                    Have you found a potential bug or error in our website? Just want to ask us a question? Let us know!
+                </p>
+                <p>
+                    If you use GitHub, you can always submit new Issues to the
+                    <a href="https://github.com/BDNYC/BDNYCdb">BDNYC database repository</a> or <br>
+                    the <a href="https://github.com/dr-rodriguez/AstrodbWeb">AstrodbWeb repository</a>,
+                    depending on the nature of your comment.
+                </p>
+                <p>
+                    Alternatively, you can use the form below and we'll address it as best as we can. <br>
+                    Please try to be as descriptive as possible about any errors; such as the query to reproduce your error
+                    or the source name/id number with missing/incorrect data.
+                </p>
+
+                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSe_1BMtkOf51xpyGphJgtrZkL2YQ16F2u-QMst-a5mJ_rjYyw/viewform?embedded=true"
+                        width="700" height="800" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+
+            </div>
+
+            <hr>
 
 
-</div>
+        </div>
+    </body>
+</html>
 
 <!-- Script for Google Analytics Tracking -->
-<script>
+<!-- <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -53,4 +78,4 @@
   ga('create', 'UA-75424601-1', 'auto');
   ga('send', 'pageview');
 
-</script>
+</script> -->

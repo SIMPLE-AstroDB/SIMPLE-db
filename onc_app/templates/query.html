@@ -1,138 +1,111 @@
 <!doctype html>
 <title>BDNYC SQL Query</title>
-<link rel=stylesheet type=text/css href='{{ url_for('static',filename='style.css')}}'>
+<html lang="en">
+    <head>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+        <script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script>
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
 
-<header id="branding">
-    <img src="static/images/BDNYC-logo.gif" width="500px" />
-    <ul>
-        <li><a href="http://www.bdnyc.org">Return to BDNYC Blog</a></li>
-        <li><a href="browse">Browse the Database</a></li>
-        <li><a href="skyplot">Sky Plot</a></li>
-        <li><a href="feedback">Feedback/Questions</a></li>
-    </ul>
-</header>
+        <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.css" type="text/css" />
+        <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.js"></script>
 
-<div class=page>
+        <link rel="stylesheet" href="http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css" />
 
-    <h1>AstrodbWeb: BDNYC Database</h1>
+        <script>
+            $(document).ready( function () {
+              $('.dataframe').DataTable( {
+                "paging": false,
+                "info": false,
+                "searching": false
+              } );
+            } );
+        </script>
 
-    <div class=metanav>
-        <p>
-            The BDNYC Database contains records for {{bd_num}} brown dwarfs and includes information such as
-            photometry, parallaxes, spectra, etc. <br>
-            The list of all available tables within the database can be found <b><a href="schema">here</a></b>. <br>
-            The forms below allow you to explore the database by submitting an <a href="#sql">SQL query</a>;
-            performing a <a href="#search">search</a> by source ID, name, or coordinates; <a href="#plot">plot</a> a spectrum;
-            and check the <a href="#inventory">inventory</a> for a specific source. <br>
-            You can also <a href="browse">browse</a> the database and examine the sources in a <a href="skyplot">sky plot</a>.
-        </p>
-        <p>
-            The current version of this database is that of
-            <a href="http://adsabs.harvard.edu/abs/2015ApJ...810..158F">Filippazzo et al. 2015</a>.
-            You can grab a copy of the BDNYC database <a href="https://github.com/BDNYC/BDNYCdb">here</a>. <br>
-            We encourage additions to the database via its <a href="https://github.com/BDNYC/BDNYCdb">Github repository</a>.
-        </p>
-        <p>
-            This application runs on Python and utilizes the
-            <a href="http://astrodbkit.readthedocs.org/en/latest/index.html">astrodbkit</a> package to
-            generate queries to the database.
-            We recommend using <a href="https://github.com/BDNYC/astrodbkit">astrodbkit</a>
-            to work with your astronomy SQL databases. <br>
-            This application has been created by <a href="http://dr-rodriguez.github.io/">David R. Rodriguez</a>;
-            you can grab a copy of the code <a href="https://github.com/dr-rodriguez/BDNYC_WebApp">here</a> for
-            use with your own databases. <br>
-        </p>
-        <p>
-            Publications that benefit from the BDNYC database should cite its
-            <a href="http://dx.doi.org/10.5281/zenodo.45169">Zenodo record</a>;
-            those that benefit from this application should also cite this
-            <a href="http://dx.doi.org/10.5281/zenodo.47866">record</a>.
-        </p>
+        {{ script|safe }}
+    
+    </head>
+    <body>
+        
+        <script>
+            $(document).ready(function(){
+                $("#header").load('{{ url_for('static',filename='header.html')}}');
+                $("#footer").load('{{ url_for('static',filename='footer.html')}}');
+            });
+        </script>
+            
+        <div id="header"></div>
 
-        <hr>
-            <center><h2 style="font-size: 1.6em; border-bottom: 0px"><a href="browse">Browse the Database</a></h2></center>
-        <hr>
+        <div class=page>
 
-        <h4 id="sql">Please type your SQL query below</h4>
+            <h4 id="sql">Please type your SQL query below</h4>
 
-        <form id='queryform' method='post' action='runquery' >
-            <p>
-                <textarea name="query_to_run" cols="80" rows="8">{{defquery}}</textarea>
-            </p>
-            <p>
-                <input type='submit' value='Submit' />
-            </p>
-        </form>
+            <form id='queryform' method='post' action='runquery' >
+                <p>
+                    <textarea name="query_to_run" cols="80" rows="8">{{defquery}}</textarea>
+                </p>
+                <p>
+                    <input type='submit' value='Submit' />
+                </p>
+            </form>
 
-        <p>Want some example queries? Try these out:</p>
-        <ul>
-            <li>SELECT shortname, ra, dec FROM sources WHERE (22&lt;ra AND ra&lt;24) AND (-15&lt;dec AND dec&lt;15)</li>
-            <li>SELECT band, magnitude, magnitude_unc FROM photometry WHERE source_id=4</li>
-            <li>SELECT source_id, band, magnitude FROM photometry WHERE band='z' AND magnitude<15</li>
-            <li>SELECT t.name, p.band, p.magnitude, p.magnitude_unc FROM telescopes as t
-                JOIN photometry AS p ON p.telescope_id=t.id WHERE p.source_id=4</li>
-            <li>SELECT p1.magnitude-p2.magnitude FROM photometry AS p1
-                JOIN photometry AS p2 ON p1.source_id=p2.source_id WHERE p1.band='J' AND p2.band='H'</li>
-            <li>SELECT s.id, p.parallax, p.parallax_unc, p.publication_id FROM sources as s JOIN parallaxes AS p ON p.source_id=s.id</li>
-            <li>SELECT s.id, s.ra, s.dec, s.shortname, p.source_id, p.band, p.magnitude
-                FROM sources as s
-                JOIN photometry as p
-                ON s.id=p.source_id
-                WHERE s.dec<=-10 AND (p.band IN ("J","H","Ks","W1","W2"))</li>
-        </ul>
+            <p>Want some example queries? Try these out:</p>
+            <ul>
+                <li>SELECT shortname, ra, dec FROM sources WHERE (22&lt;ra AND ra&lt;24) AND (-15&lt;dec AND dec&lt;15)</li>
+                <li>SELECT band, magnitude, magnitude_unc FROM photometry WHERE source_id=4</li>
+                <li>SELECT source_id, band, magnitude FROM photometry WHERE band='z' AND magnitude<15</li>
+                <li>SELECT t.name, p.band, p.magnitude, p.magnitude_unc FROM telescopes as t
+                    JOIN photometry AS p ON p.telescope_id=t.id WHERE p.source_id=4</li>
+                <li>SELECT p1.magnitude-p2.magnitude FROM photometry AS p1
+                    JOIN photometry AS p2 ON p1.source_id=p2.source_id WHERE p1.band='J' AND p2.band='H'</li>
+                <li>SELECT s.id, p.parallax, p.parallax_unc, p.publication_id FROM sources as s JOIN parallaxes AS p ON p.source_id=s.id</li>
+                <li>SELECT s.id, s.ra, s.dec, s.shortname, p.source_id, p.band, p.magnitude
+                    FROM sources as s
+                    JOIN photometry as p
+                    ON s.id=p.source_id
+                    WHERE s.dec<=-10 AND (p.band IN ("J","H","Ks","W1","W2"))</li>
+            </ul>
 
-        <hr>
+            <hr>
 
-        <h4 id="search">Perform a Search</h4>
+            <h4 id="search">Perform a Search</h4>
 
-        <form id='searchform' method='post' action='search' >
-            <p> Search for objects by partial name matching or within 1 arcminute of an RA, Dec coordinate (in degrees):
-                <input type="text" name="search_to_run" size="20" rows="1" value="{{defsearch}}" />
-                <input type='submit' value='Search' />
-            </p>
-        </form>
+            <form id='searchform' method='post' action='search' >
+                <p> Search for objects by partial name matching or within 1 arcminute of an RA, Dec coordinate (in degrees):
+                    <input type="text" name="search_to_run" size="20" rows="1" value="{{defsearch}}" />
+                    <input type='submit' value='Search' />
+                </p>
+            </form>
 
-        <hr>
+            <hr>
 
-        <h4 id="plot">Plot a Spectrum</h4>
+            <h4 id="plot">Plot a Spectrum</h4>
 
-        <form id="spectrumform" method="post" action="spectrum">
-            <p> Plot the spectrum of an object by providing the spectrum ID (from the spectra table):
-                <input type="text" name="spectrum_to_plot" size="10" rows="1" value="{{specid}}" />
-                <input type='submit' value='Plot' />
-                <br> To get the IDs, you can do something like:
-                <i>SELECT sp.id, s.shortname, s.names FROM spectra AS sp JOIN sources as s WHERE s.id=sp.source_id</i>
-            </p>
-        </form>
+            <form id="spectrumform" method="post" action="spectrum">
+                <p> Plot the spectrum of an object by providing the spectrum ID (from the spectra table):
+                    <input type="text" name="spectrum_to_plot" size="10" rows="1" value="{{specid}}" />
+                    <input type='submit' value='Plot' />
+                    <br> To get the IDs, you can do something like:
+                    <i>SELECT sp.id, s.shortname, s.names FROM spectra AS sp JOIN sources as s WHERE s.id=sp.source_id</i>
+                </p>
+            </form>
 
-        <hr>
+            <hr>
 
-        <h4 id="inventory">Check Inventory</h4>
+            <h4 id="inventory">Check Inventory</h4>
 
-        <form id="inventoryform" method="post" action="inventory">
-            <p> Search the database for information on a particular source ID:
-                <input type="text" name="id_to_check" size="10" rows="1" value="{{source_id}}" />
-                <input type="submit" value="Check Inventory" />
-            </p>
-        </form>
+            <form id="inventoryform" method="post" action="inventory">
+                <p> Search the database for information on a particular source ID:
+                    <input type="text" name="id_to_check" size="10" rows="1" value="{{source_id}}" />
+                    <input type="submit" value="Check Inventory" />
+                </p>
+            </form>
 
-    </div>
-
-    <hr>
-
-    <p id="grey_note">
-        Created by <a href="http://dr-rodriguez.github.io/">David R. Rodriguez</a> for the
-        <a href="http://www.bdnyc.org/">Brown Dwarfs in New York City (BDNYC)</a> research team.
-        <a href="http://dx.doi.org/10.5281/zenodo.47866">
-            <img src="https://zenodo.org/badge/doi/10.5281/zenodo.47866.svg" alt="10.5281/zenodo.47866">
-        </a><br>
-        Running astrodbkit version {{version|safe}}.
-    </p>
-
-</div>
+        </div>
+    </body>
+</html>
 
 <!-- Script for Google Analytics Tracking -->
-<script>
+<!-- <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -141,4 +114,4 @@
   ga('create', 'UA-75424601-1', 'auto');
   ga('send', 'pageview');
 
-</script>
+</script> -->

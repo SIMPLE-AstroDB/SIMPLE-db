@@ -1,48 +1,65 @@
 <!doctype html>
 <title>Query Results</title>
-<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-<script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
-<script>
-    $(document).ready( function () {
-      $('.dataframe').DataTable();
-    } );
-</script>
+<html lang="en">
+    <head>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+        <script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script>
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
 
-<header id="branding">
-    <img src="static/images/BDNYC-logo.gif" width="500px">
-    <ul>
-        <li><a href="query">Return to Query Form</a></li>
-        <li><a href="http://www.bdnyc.org">Return to BDNYC Blog</a></li>
-        <li><a href="browse">Browse the Database</a></li>
-        <li><a href="skyplot">Sky Plot</a></li>
-        <li><a href="feedback">Feedback/Questions</a></li>
-    </ul>
-</header>
+        <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.css" type="text/css" />
+        <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.js"></script>
 
-<div class=page>
-    <h1>Query Results</h1>
-    <br>
+        <link rel="stylesheet" href="http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css" />
 
-    {{ table|safe }}
+        <script>
+            $(document).ready( function () {
+              $('.dataframe').DataTable( {
+                "paging": false,
+                "info": false,
+                "searching": false
+              } );
+            } );
+        </script>
 
-    <form id='formatselect' method='post' action='savefile' >
-        <p>Save to a file:
-            <select name="format">
-                <option value="ascii">ASCII</option>
-                <option value="votable">VOTable</option>
-            </select>
-            <input type='submit' value='Save' />
-        </p>
-    </form>
+        {{ script|safe }}
+    
+    </head>
+    <body>
+        
+        <script>
+            $(document).ready(function(){
+                $("#header").load('{{ url_for('static',filename='header.html')}}');
+                $("#footer").load('{{ url_for('static',filename='footer.html')}}');
+            });
+        </script>
+            
+        <div id="header"></div>
 
-    <p><a href="query">Return to query</a></p>
-    <p>Encountered an error or mistake? Let us know with our <a href="feedback">feedback form</a>.</p>
+        <div class=page>
+            <h1>Query Results</h1>
+            <br>
 
-</div>
+            {{ table|safe }}
+
+            <form id='formatselect' method='post' action='savefile' >
+                <p>Save to a file:
+                    <select name="format">
+                        <option value="ascii">ASCII</option>
+                        <option value="votable">VOTable</option>
+                    </select>
+                    <input type='submit' value='Save' />
+                </p>
+            </form>
+
+            <p><a href="query">Return to query</a></p>
+            <p>Encountered an error or mistake? Let us know with our <a href="feedback">feedback form</a>.</p>
+
+        </div>
+    </body>
+</html>
 
 <!-- Script for Google Analytics Tracking -->
-<script>
+<!-- <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -51,4 +68,4 @@
   ga('create', 'UA-75424601-1', 'auto');
   ga('send', 'pageview');
 
-</script>
+</script> -->

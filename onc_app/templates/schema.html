@@ -1,56 +1,69 @@
 <!doctype html>
 <title>Database Schema</title>
-<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-<script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
-<script>
-    $(document).ready( function () {
-      $('.dataframe').DataTable( {
-        "paging": false,
-        "info": false,
-        "searching": false
-      } );
-    } );
-</script>
+<html lang="en">
+    <head>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+        <script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script>
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
 
-<header id="branding">
-    <img src="static/images/BDNYC-logo.gif" width="500px">
-    <ul>
-        <li><a href="query">Return to Query Form</a></li>
-        <li><a href="http://www.bdnyc.org">Return to BDNYC Blog</a></li>
-        <li><a href="browse">Browse the Database</a></li>
-        <li><a href="skyplot">Sky Plot</a></li>
-        <li><a href="feedback">Feedback/Questions</a></li>
-    </ul>
-</header>
+        <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.css" type="text/css" />
+        <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.js"></script>
 
-<div class=page>
-    <h1 id="top">Database Schema</h1>
+        <link rel="stylesheet" href="http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css" />
 
-    <p><a href="static/images/full_database.png"><img src="static/images/full_database.png" width="1000px"></a></p>
+        <script>
+            $(document).ready( function () {
+              $('.dataframe').DataTable( {
+                "paging": false,
+                "info": false,
+                "searching": false
+              } );
+            } );
+        </script>
 
-    <p><br>In more detail, the following tables are part of the database:
-        {% for table in tables %}
-        <a href="#{{titles[loop.index]}}">{{titles[loop.index]}} </a>
-        {% endfor %}
-    </p>
-    <br>
+        {{ script|safe }}
+    
+    </head>
+    <body>
+        
+        <script>
+            $(document).ready(function(){
+                $("#header").load('{{ url_for('static',filename='header.html')}}');
+                $("#footer").load('{{ url_for('static',filename='footer.html')}}');
+            });
+        </script>
+            
+        <div id="header"></div>
 
-    {% for table in tables %}
-        <h2 id="{{titles[loop.index]}}">{{titles[loop.index]}}</h2>
-        {{ table|safe }}
-    <br>
-    <a href="#top">Back to top</a>
-    <hr><br>
-    {% endfor %}
+        <div class=page>
+            <h1 id="top">Database Schema</h1>
+
+            <p><a href="static/images/full_database.png"><img src="static/images/full_database.png" width="1000px"></a></p>
+
+            <p><br>In more detail, the following tables are part of the database:
+                {% for table in tables %}
+                <a href="#{{titles[loop.index]}}">{{titles[loop.index]}} </a>
+                {% endfor %}
+            </p>
+            <br>
+
+            {% for table in tables %}
+                <h2 id="{{titles[loop.index]}}">{{titles[loop.index]}}</h2>
+                {{ table|safe }}
+            <br>
+            <a href="#top">Back to top</a>
+            <hr><br>
+            {% endfor %}
 
 
-    <p><a href="query">Return to query</a></p>
+            <p><a href="query">Return to query</a></p>
 
-</div>
+        </div>
+    </body>
+</html>
 
 <!-- Script for Google Analytics Tracking -->
-<script>
+<!-- <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -59,4 +72,4 @@
   ga('create', 'UA-75424601-1', 'auto');
   ga('send', 'pageview');
 
-</script>
+</script> -->

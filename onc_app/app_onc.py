@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, redirect, make_response
+app_onc = Flask(__name__)
+
 import astrodbkit
 from astrodbkit import astrodb
 import os
@@ -8,6 +10,7 @@ from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models import ColumnDataSource, HoverTool, OpenURL, TapTool
 from bokeh.models.widgets import Panel, Tabs
+from ONCdb import make_onc
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 import pandas as pd
@@ -15,14 +18,13 @@ from collections import OrderedDict
 from math import sqrt
 import numpy as np
 
-app_onc = Flask(__name__)
-
 app_onc.vars = dict()
 app_onc.vars['query'] = ''
 app_onc.vars['search'] = ''
 app_onc.vars['specid'] = ''
 app_onc.vars['source_id'] = ''
 
+db_file = os.path.join(os.path.dirname(make_onc.__file__),'orion.db')
 
 # Redirect to the main page
 @app_onc.route('/')
@@ -40,7 +42,7 @@ def onc_query():
         app_onc.vars['query'] = defquery
 
     # Get the number of objects
-    db = astrodb.Database('./orion.db')
+    db = astrodb.Database(db_file)
     t = db.query('SELECT id FROM sources', fmt='table')
     bd_num = len(t)
 
@@ -53,11 +55,9 @@ def onc_query():
 # Grab results of query and display them
 @app_onc.route('/runquery', methods=['POST'])
 def onc_runquery():
+    db = astrodb.Database(db_file)
     app_onc.vars['query'] = request.form['query_to_run']
     htmltxt = app_onc.vars['query'].replace('<', '&lt;')
-
-    # Load the database
-    db = astrodb.Database('./orion.db')
 
     # Only SELECT commands are allowed
     if not app_onc.vars['query'].lower().startswith('select'):
@@ -99,13 +99,13 @@ def onc_runquery():
 
 @app_onc.route('/savefile', methods=['POST'])
 def onc_savefile():
+    db = astrodb.Database(db_file)
     export_fmt = request.form['format']
     if export_fmt == 'votable':
         filename = 'onc_table.vot'
     else:
         filename = 'onc_table.txt'
-
-    db = astrodb.Database('./orion.db')
+        
     db.query(app_onc.vars['query'], fmt='table', export=filename, use_converters=False)
     with open(filename, 'r') as f:
         file_as_string = f.read()
@@ -118,13 +118,11 @@ def onc_savefile():
 # Perform a search
 @app_onc.route('/search', methods=['POST'])
 def onc_search():
+    db = astrodb.Database(db_file)
     app_onc.vars['search'] = request.form['search_to_run']
     search_table = 'sources'
     search_value = app_onc.vars['search']
-
-    # Load the database
-    db = astrodb.Database('./orion.db')
-
+    
     # Process search
     search_value = search_value.replace(',', ' ').split()
     if len(search_value) == 1:
@@ -155,16 +153,14 @@ def onc_search():
 # Plot a spectrum
 @app_onc.route('/spectrum', methods=['POST'])
 def onc_plot():
+    db = astrodb.Database(db_file)
     app_onc.vars['specid'] = request.form['spectrum_to_plot']
 
     # If not a number, error
     if not app_onc.vars['specid'].isdigit():
         return render_template('error.html', headermessage='Error in Input',
                                errmess='<p>Input was not a number.</p>')
-
-    # Load the database
-    db = astrodb.Database('./orion.db')
-
+                               
     # Grab the spectrum
     stdout = sys.stdout  # Keep a handle on the real standard output
     sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
@@ -207,16 +203,14 @@ def onc_plot():
 @app_onc.route('/inventory', methods=['POST'])
 @app_onc.route('/inventory/<int:source_id>')
 def onc_inventory(source_id=None):
+    db = astrodb.Database(db_file)
     if source_id is None:
         app_onc.vars['source_id'] = request.form['id_to_check']
         path = ''
     else:
         app_onc.vars['source_id'] = source_id
         path = '../'
-
-    # Load the database
-    db = astrodb.Database('./orion.db')
-
+    
     # Grab inventory
     stdout = sys.stdout
     sys.stdout = mystdout = StringIO()
@@ -235,17 +229,14 @@ def onc_inventory(source_id=None):
 
     return render_template('inventory.html',
                            tables=[t[x].to_pandas().to_html(classes='display', index=False) for x in t.keys()],
-                           titles=['na']+t.keys(), path=path, source_id=app_onc.vars['source_id'])
+                           titles=['na']+list(t.keys()), path=path, source_id=app_onc.vars['source_id'])
 
 
 # Check Schema
 @app_onc.route('/schema.html', methods=['GET', 'POST'])
 @app_onc.route('/schema', methods=['GET', 'POST'])
 def onc_schema():
-
-    # Load the database
-    db = astrodb.Database('./orion.db')
-
+    db = astrodb.Database(db_file)
     # Get table names and their structure
     try:
         table_names = db.query("SELECT name FROM sqlite_sequence", unpack=True)[0]
@@ -266,10 +257,8 @@ def onc_schema():
 @app_onc.route('/summary/<int:source_id>')
 def onc_summary(source_id):
     """Create a summary page for the requested star"""
-
-    # Load the database
-    db = astrodb.Database('./orion.db')
-
+    db = astrodb.Database(db_file)
+    # Get the inventory
     t = db.inventory(source_id, fetch=True, fmt='table')
 
     # Grab object information
@@ -432,10 +421,7 @@ def onc_summary(source_id):
 @app_onc.route('/browse')
 def onc_browse():
     """Examine the full source list with clickable links to object summaries"""
-
-    # Load the database
-    db = astrodb.Database('./orion.db')
-
+    db = astrodb.Database(db_file)
     # Run the query
     t = db.query('SELECT id, ra, dec, shortname, names, comments FROM sources', fmt='table')
 
@@ -482,8 +468,8 @@ def onc_skyplot():
     """
     Create a sky plot of the database objects
     """
+    db = astrodb.Database(db_file)
     # Load the database
-    db = astrodb.Database('./orion.db')
     t = db.query('SELECT id, ra, dec, shortname FROM sources', fmt='table')
 
     # Convert to Pandas data frame
