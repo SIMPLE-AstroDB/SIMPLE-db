@@ -1,12 +1,74 @@
+a               { color: #377BA8; text-decoration: none; }
+a:hover         { text-decoration: underline; }
+h1, h2          { font-family: 'Georgia', serif; margin: 0; }
+h2              { font-size: 1.2em; }
+.error          { background: #F0D6D6; padding: 0.5em; margin: 2em auto; width: 35em; border: 5px solid #ccc;
+                  padding: 0.8em; }
+
+.page           { background: white; padding: 0.8em;}
+.page div.block {margin:10px 0; padding:20px; }
+.page div.grey {border:1px #ccc solid; background-color:#eee;}
+.page div.grey h2 {border-bottom:1px #ccc solid;}
+.page #skyplot {float:right; width:500px; border:1px black solid; padding:20px; margin-bottom:20px;}
+
+#footer      { color: #A9A9A9; overflow:hidden;}
+#footer a    { color: #808080; text-decoration: none; }
+#footer a:hover  { text-decoration: underline; }
+
+/* Header (image and menu items) */
+#header { background: #ffffff; overflow:hidden; white-space: nowrap;}
+#header img {float:left;}
+#header ul { list-style-type: none; margin: 0; padding: 0; overflow: hidden;
+               border:1px; border-color: #000000; background-color: #1E68AD; }
+#header li { float: left; }
+#header li a { display: block; color: white; text-align: center;
+                 padding: 14px 16px; text-decoration: none; }
+#header li a:hover { background-color: #eeeeee; color: #373737; }
+#header div.head {padding:30px; overflow: hidden;}
+#header div.head h1 {float:left; padding:20px; font-size:50px; color:black; border-bottom:none;}
+
+/* Hover box for Browse page */
+a span {
+    display: none;
+    position: absolute;
+    color: #000;
+    background: #dcdcdc;
+    border:1px solid #377BA8; border-radius: 10px;
+    padding: 5px; width: 200px;
+    left:50px; z-index: 9; }
+a {position: relative; }
+a:hover span {display: block; text-align: center; }
+
+/* Summary page layout */
+.basicinfo {
+    float:left;
+}
+.basicinfo {
+    list-style: none;
+    padding:0;
+}
+.basicinfo li {
+    margin-bottom: 10px;
+}
+
+#aladin-lite-div {
+    width: 400px;
+    height: 400px;
+    float: right;
+    margin: 10px;
+    border:1px black solid;
+}
+.clearfix { clear:both }
 /*
  * Table styles
  */
 table.dataTable {
   width: 100%;
-  margin: 0 auto;
+  margin: 20px 0 0 auto;
   clear: both;
   border-collapse: separate;
   border-spacing: 0;
+  border:0 !important;
   /*
    * Header and footer styles
    */
@@ -17,7 +79,7 @@ table.dataTable {
 table.dataTable thead th,
 table.dataTable tfoot th {
   font-weight: bold;
-  background-color: #2474E3
+  background-color: #1E68AD
   /* #add8e6; */
   /*color: white;*/
 }
@@ -50,19 +112,19 @@ table.dataTable thead .sorting_desc_disabled {
   background-position: center right;
 }
 table.dataTable thead .sorting {
-  background-image: url("../static/images/sort_both.png");
+  background-image: url("../static/sort_both.png");
 }
 table.dataTable thead .sorting_asc {
-  background-image: url("../static/images/sort_asc.png");
+  background-image: url("../static/sort_asc.png");
 }
 table.dataTable thead .sorting_desc {
-  background-image: url("../static/images/sort_desc.png");
+  background-image: url("../static/sort_desc.png");
 }
 table.dataTable thead .sorting_asc_disabled {
-  background-image: url("../static/images/sort_asc_disabled.png");
+  background-image: url("../static/sort_asc_disabled.png");
 }
 table.dataTable thead .sorting_desc_disabled {
-  background-image: url("../static/images/sort_desc_disabled.png");
+  background-image: url("../static/sort_desc_disabled.png");
 }
 table.dataTable tbody tr {
   background-color: #ffffff;
@@ -465,70 +527,3 @@ table.dataTable td {
     margin-top: 0.5em;
   }
 }
-
-a               { color: #377BA8; text-decoration: none; }
-a:hover         { text-decoration: underline; }
-h1, h2          { font-family: 'Georgia', serif; margin: 0; }
-h1              { border-bottom: 2px solid #eee; }
-h2              { font-size: 1.2em; }
-.page           { background: white; padding: 0.8em; margin: 1em auto;}
-.error          { background: #F0D6D6; padding: 0.5em; margin: 2em auto; width: 35em; border: 5px solid #ccc;
-                  padding: 0.8em; }
-
-#grey_note      { color: #A9A9A9; }
-#grey_note a    { color: #808080; text-decoration: none; }
-#grey_note a:hover  { text-decoration: underline; }
-
-/* Header (image and menu items) */
-#branding       { background: #000000; }
-
-#branding ul { list-style-type: none; margin: 0; padding: 0; overflow: hidden;
-               border: 0px; background-color: #000000; }
-#branding li { float: left; }
-#branding li a { display: block; color: white; text-align: center;
-                 padding: 14px 16px; text-decoration: none; }
-#branding li a:hover { background-color: #f9f9f9; color: #373737; }
-
-#footer      { color: #A9A9A9; width:1048px;}
-#footer a    { color: #808080; text-decoration: none; }
-#footer a:hover  { text-decoration: underline; }
-
-/* Header (image and menu items) */
-#header { background: #ffffff;}
-#header div {overflow:hidden;}
-#header img {padding: 20px; float:left;}
-#header h1 {float:left; padding:30px 30px 30px 10px; margin-top:10px; font-size:50px; 
-			vertical-align:center; color: #000000; border-bottom:none;}
-
-#header ul { list-style-type: none; margin: 0; padding: 0; overflow: hidden;
-               border:1px; border-color: #000000; background-color: #1E68AD; }
-#header li { float: left; }
-#header li a { display: block; color: white; text-align: center;
-                 padding: 14px 16px; text-decoration: none; }
-#header li a:hover { background-color: #eeeeee; color: #373737; }
-
-/* Hover box for Browse page */
-a span {
-    display: none;
-    position: absolute;
-    color: #000;
-    background: #dcdcdc;
-    border:1px solid #377BA8; border-radius: 10px;
-    padding: 5px; width: 200px;
-    left:50px; z-index: 9; }
-a {position: relative; }
-a:hover span {display: block; text-align: center; }
-
-/* Summary page layout */
-.basicinfo {
-    width: 60%;
-    float: left;
-    margin: 0px 10px 0px 10px;
-}
-#aladin-lite-div {
-    width: 400px;
-    height: 400px;
-    float: right;
-    margin: 10px 10px 10px 10px;
-}
-.clearfix { clear:both }

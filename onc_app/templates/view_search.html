@@ -6,8 +6,8 @@
         <script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script>
         <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
 
-        <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.css" type="text/css" />
-        <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.11.0.min.js"></script>
+        <link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.css" type="text/css" />
+        <script type="text/javascript" src="http://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.css"></script>
 
         <link rel="stylesheet" href="http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css" />
 
@@ -36,15 +36,28 @@
         <div id="header"></div>
 
         <div class=page>
-            <h1>Search Results</h1>
-            <br>
+            
+            <div class='block'>
+                
+                <div style='float:left;'>
+                    <h1>Search Results</h1>
+                    <p>Input: <code>{{ query|safe }}</code></p>
+                </div>
+                <div id='skyplot'>
+                    {{ plot|safe }}
 
-            {{ table|safe }}
+                    <p>Hammer projection of the Equatorial and Galactic locations of sources in the BDNYC database.
+                        You can hover over individual points to identify sources and can click on them to go their summary page.</p>
+            
+                    <p>{{ warning|safe }}</p>
+                </div>
+            </div>
+            
+            <div class='block'>{{ table|safe }}</div>
 
-            <p><a href="query">Return to query</a></p>
-            <p>Encountered an error or mistake? Let us know with our <a href="feedback">feedback form</a>.</p>
 
         </div>
+        <div id="footer"></div>
     </body>
 </html>
 

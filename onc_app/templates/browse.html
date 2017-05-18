@@ -1,5 +1,5 @@
 <!doctype html>
-<title>Query Results</title>
+<title>ONCdb Results</title>
 <html lang="en">
     <head>
         <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
@@ -36,12 +36,13 @@
         <div id="header"></div>
 
         <div class=page>
-            <h1>BDNYC Database</h1>
-            <br>
-
-            {{ table|safe }}
-
+            <div class='block'>
+                <h1>ONCdb Database</h1>
+                
+                <div>{{ table|safe }}</div>
+            </div>
         </div>
+        <div id="footer"></div>
     </body>
 </html>
 

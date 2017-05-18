@@ -1,5 +1,5 @@
 <!doctype html>
-<title>Database Schema</title>
+<title>ONCdb Schema</title>
 <html lang="en">
     <head>
         <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
@@ -36,29 +36,32 @@
         <div id="header"></div>
 
         <div class=page>
-            <h1 id="top">Database Schema</h1>
-
-            <p><a href="static/images/full_database.png"><img src="static/images/full_database.png" width="1000px"></a></p>
-
-            <p><br>In more detail, the following tables are part of the database:
+            
+            <div class='block'>
+                
+                <h1>ONCdb Schema</h1>
+                
+                <p>Jump to: 
+                    <ul>
+                        {% for table in tables %}
+                        <li><a href="#{{titles[loop.index]}}">{{titles[loop.index]}} </a></li>
+                        {% endfor %}
+                    </ul>
+                </p>
+            </div>
+            
+            <div class='block'>
                 {% for table in tables %}
-                <a href="#{{titles[loop.index]}}">{{titles[loop.index]}} </a>
+                    <h2 id="{{titles[loop.index]}}">{{titles[loop.index]}}</h2>
+                    {{ table|safe }}
+                <br>
+                <a href="#top">Back to top</a>
+                <hr><br>
                 {% endfor %}
-            </p>
-            <br>
-
-            {% for table in tables %}
-                <h2 id="{{titles[loop.index]}}">{{titles[loop.index]}}</h2>
-                {{ table|safe }}
-            <br>
-            <a href="#top">Back to top</a>
-            <hr><br>
-            {% endfor %}
-
-
-            <p><a href="query">Return to query</a></p>
+            </div>
 
         </div>
+        <div id="footer"></div>
     </body>
 </html>
 
