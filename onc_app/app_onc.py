@@ -47,14 +47,15 @@ def onc_query():
                            defsearch=app_onc.vars['search'], specid=app_onc.vars['specid'],
                            source_id=app_onc.vars['source_id'], version=astrodbkit.__version__)
 
-@app_onc.route('/selection', methods=['POST','GET'])
-def onc_selection():
-    # Create query from selection
-    ids = list(filter(None,[request.form.get(str(n)) for n in range(5)]))
-    q = 'SELECT * FROM sources WHERE id in ({})'.format(','.join(ids))
-    print(q)
-    
-    return redirect(url_for('onc_runquery'))
+# @app_onc.route('/selection', methods=['POST','GET'])
+# def onc_selection():
+#     # Create query from selection
+#     ids = list(filter(None,[request.form.get(str(n)) for n in range(5)]))
+#     q = 'SELECT * FROM sources WHERE id in ({})'.format(','.join(ids))
+#     print(q)
+#
+#     return render_template('view_search.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=app_onc.vars['query'],
+#                             script=script, plot=div, warning=warning_message)
 
 # Grab results of query and display them
 @app_onc.route('/runquery', methods=['POST','GET'])
@@ -100,36 +101,45 @@ def onc_runquery():
 
     # Create checkbox first column
     buttonlist = []
-    for i in list(data['id']):
-        button = '<input type="checkbox" name="{0}" value="{0}">'.format(i)
+    for index, row in data.iterrows():
+        button = '<input type="checkbox" name="{}" value="{}">'.format(str(index),repr(list(row)))
         buttonlist.append(button)
     data['Select'] = buttonlist
     cols = data.columns.tolist()
     cols.pop(cols.index('Select'))
     data = data[['Select']+cols]
 
-    script, div, warning_message = onc_skyplot(t)
+    try:
+        script, div, warning_message = onc_skyplot(t)
+    except:
+        script = div = warning_message = ''
 
     return render_template('view_search.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=app_onc.vars['query'],
                             script=script, plot=div, warning=warning_message)
 
 
-@app_onc.route('/savefile', methods=['POST'])
-def onc_savefile():
-    db = astrodb.Database(db_file)
-    export_fmt = request.form['format']
-    if export_fmt == 'votable':
-        filename = 'onc_table.vot'
-    else:
-        filename = 'onc_table.txt'
-        
-    db.query(app_onc.vars['query'], fmt='table', export=filename, use_converters=False)
+@app_onc.route('/export', methods=['POST'])
+def onc_export():
+    
+    # Get all the checked rows
+    checked = request.form
+    results = []
+    for k in sorted(checked):
+        if k.isdigit():
+            results.append(eval(checked[k]))
+    
+    # Mkae an array to export
+    results = np.array(results, dtype=str)
+    filename = 'results.txt'
+    np.savetxt(filename, results, delimiter='|', fmt='%s')
+    
     with open(filename, 'r') as f:
         file_as_string = f.read()
     os.remove(filename)  # Delete the file after it's read
 
-    response = make_response(file_as_string)
-    response.headers["Content-Disposition"] = "attachment; filename=%s" % filename
+    response = make_response(str(file_as_string))
+    response.headers["Content-type"] = 'text; charset=utf-8'
+    response.headers["Content-Disposition"] = "attachment; filename={}".format(filename)
     return response
 
 # Perform a search
@@ -168,8 +178,8 @@ def onc_search():
                                
     # Create checkbox first column
     buttonlist = []
-    for i in list(data['id']):
-        button = '<input type="checkbox" name="{0}" value="{0}">'.format(i)
+    for index, row in data.iterrows():
+        button = '<input type="checkbox" name="{}" value="{}">'.format(str(index),repr(list(row)))
         buttonlist.append(button)
     data['Select'] = buttonlist
     cols = data.columns.tolist()
@@ -458,8 +468,8 @@ def onc_browse():
     
     # Create checkbox first column
     buttonlist = []
-    for i in list(data['id']):
-        button = '<input type="checkbox" name="{0}" value="{0}">'.format(i)
+    for index, row in data.iterrows():
+        button = '<input type="checkbox" name="{}" value="{}">'.format(str(index),repr(list(row)))
         buttonlist.append(button)
     data['Select'] = buttonlist
     cols = data.columns.tolist()
