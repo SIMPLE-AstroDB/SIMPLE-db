@@ -38,8 +38,15 @@
         <div class=page>
             <div class='block'>
                 <h1>ONCdb Database</h1>
+
+                <form id='searchform' method='post' action='selection' >
+                    {{ table|safe }}
+                    <br>
+                    <input type='submit' value='Export Selected' />
+                </form>
+            </div>
+            
                 
-                <div>{{ table|safe }}</div>
             </div>
         </div>
         <div id="footer"></div>

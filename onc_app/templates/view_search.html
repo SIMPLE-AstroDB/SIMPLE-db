@@ -46,14 +46,20 @@
                 <div id='skyplot'>
                     {{ plot|safe }}
 
-                    <p>Hammer projection of the Equatorial and Galactic locations of sources in the BDNYC database.
+                    <p>Hammer projection of the Equatorial and Galactic locations of sources in the table below.
                         You can hover over individual points to identify sources and can click on them to go their summary page.</p>
             
                     <p>{{ warning|safe }}</p>
                 </div>
             </div>
-            
-            <div class='block'>{{ table|safe }}</div>
+
+            <div class='block'>
+                <form id='searchform' method='post' action='selection' >
+                    {{ table|safe }}
+                    <br>
+                    <input type='submit' value='Export Selected' />
+                </form>
+            </div>
 
 
         </div>

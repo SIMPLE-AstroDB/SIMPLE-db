@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, make_response
+from flask import Flask, render_template, request, redirect, make_response, url_for
 app_onc = Flask(__name__)
 
 import astrodbkit
@@ -26,6 +26,7 @@ app_onc.vars['specid'] = ''
 app_onc.vars['source_id'] = ''
 
 db_file = os.path.join(os.path.dirname(make_onc.__file__),'orion.db')
+pd.set_option('max_colwidth', 150)
 
 # Redirect to the main page
 @app_onc.route('/')
@@ -46,9 +47,17 @@ def onc_query():
                            defsearch=app_onc.vars['search'], specid=app_onc.vars['specid'],
                            source_id=app_onc.vars['source_id'], version=astrodbkit.__version__)
 
+@app_onc.route('/selection', methods=['POST','GET'])
+def onc_selection():
+    # Create query from selection
+    ids = list(filter(None,[request.form.get(str(n)) for n in range(5)]))
+    q = 'SELECT * FROM sources WHERE id in ({})'.format(','.join(ids))
+    print(q)
+    
+    return redirect(url_for('onc_runquery'))
 
 # Grab results of query and display them
-@app_onc.route('/runquery', methods=['POST'])
+@app_onc.route('/runquery', methods=['POST','GET'])
 def onc_runquery():
     db = astrodb.Database(db_file)
     app_onc.vars['query'] = request.form['query_to_run']
@@ -89,9 +98,19 @@ def onc_runquery():
         return render_template('error.html', headermessage='Error in Query',
                                errmess='<p>Error for query:</p><p>'+htmltxt+'</p>')
 
+    # Create checkbox first column
+    buttonlist = []
+    for i in list(data['id']):
+        button = '<input type="checkbox" name="{0}" value="{0}">'.format(i)
+        buttonlist.append(button)
+    data['Select'] = buttonlist
+    cols = data.columns.tolist()
+    cols.pop(cols.index('Select'))
+    data = data[['Select']+cols]
+
     script, div, warning_message = onc_skyplot(t)
 
-    return render_template('view_search.html', table=data.to_html(classes='display', index=False), query=app_onc.vars['query'],
+    return render_template('view_search.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=app_onc.vars['query'],
                             script=script, plot=div, warning=warning_message)
 
 
@@ -146,10 +165,20 @@ def onc_search():
     except AttributeError:
         return render_template('error.html', headermessage='Error in Search',
                                errmess=mystdout.getvalue().replace('<', '&lt;'))
+                               
+    # Create checkbox first column
+    buttonlist = []
+    for i in list(data['id']):
+        button = '<input type="checkbox" name="{0}" value="{0}">'.format(i)
+        buttonlist.append(button)
+    data['Select'] = buttonlist
+    cols = data.columns.tolist()
+    cols.pop(cols.index('Select'))
+    data = data[['Select']+cols]
 
     script, div, warning_message = onc_skyplot(t)
 
-    return render_template('view_search.html', table=data.to_html(classes='display', index=False), query=search_value,
+    return render_template('view_search.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=search_value,
                             script=script, plot=div, warning=warning_message)
 
 
@@ -229,6 +258,9 @@ def onc_inventory(source_id=None):
     if len(t) == 0:
         return render_template('error.html', headermessage='Error',
                                errmess="<p>You typed: "+app_onc.vars['source_id']+"</p>")
+                               
+    # Add links to plot spectra and images in inventory tables
+    # Direct to data_product view (/spectrum view above) with option to download
     
     # Grab object information
     objname = t['sources']['designation'][0]
@@ -270,11 +302,16 @@ def onc_inventory(source_id=None):
     # Grab comments
     comments = t['sources']['comments'][0]
     
+    # Get external queries
+    # smbd = 'http://simbad.u-strasbg.fr/simbad/sim-id?Ident='
+    # vzr = 
+    smbd, vzr = '', ''
+    
     return render_template('inventory.html',
                            tables=[t[x].to_pandas().to_html(classes='display', index=False) for x in t.keys()],
                            titles=['na']+list(t.keys()), path=path, source_id=app_onc.vars['source_id'],
                            name=objname, coords=coords, allnames=allnames, distance=dist_string,
-                           comments=comments, sptypes=sptype_txt, ra=ra, dec=dec)
+                           comments=comments, sptypes=sptype_txt, ra=ra, dec=dec, simbad=smbd, vizier=vzr)
 
     # # Photometry text
     # try:
@@ -401,171 +438,6 @@ def onc_schema():
                                    for x in sorted(table_dict.keys())],
                            titles=['na']+sorted(table_dict.keys()))
 
-
-# @app_onc.route('/summary/<int:source_id>')
-# def onc_summary(source_id):
-#     """Create a summary page for the requested star"""
-#     db = astrodb.Database(db_file)
-#     # Get the inventory
-#     t = db.inventory(source_id, fetch=True, fmt='table')
-#
-#     # Grab object information
-#     objname = t['sources']['designation'][0]
-#     ra = t['sources']['ra'][0]
-#     dec = t['sources']['dec'][0]
-#     c = SkyCoord(ra=ra * u.degree, dec=dec * u.degree)
-#     coords = c.to_string('hmsdms', sep=':', precision=2)
-#     allnames = t['sources']['names'][0]
-#
-#     # Grab distance
-#     try:
-#         distance = 1000./t['parallaxes']['parallax']
-#         dist_string = ', '.join(['{0:.2f}'.format(i) for i in distance])
-#         dist_string += ' pc'
-#     except:
-#         dist_string = 'N/A'
-#
-#     # Grab spectral types; gravity indicators are ignored for now
-#     try:
-#         sptype_txt = ''
-#         types = np.array(t['spectral_types']['spectral_type'].tolist())
-#         regime = np.array(t['spectral_types']['regime'].tolist())
-#         if 'OPT' in regime:
-#             sptype_txt += 'Optical: '
-#             # Parse string
-#             ind = np.where(regime == 'OPT')
-#             sptype_txt += ', '.join([parse_sptype(s) for s in types[ind]])
-#             sptype_txt += ' '
-#         if 'IR' in regime:
-#             sptype_txt += 'Infrared: '
-#             ind = np.where(regime == 'IR')
-#             sptype_txt += ', '.join([parse_sptype(s) for s in types[ind]])
-#             sptype_txt += ' '
-#         else:
-#             sptype_txt += ', '.join([parse_sptype(s) for s in types])
-#     except:
-#         sptype_txt = ''
-#
-#     # Grab comments
-#     comments = t['sources']['comments'][0]
-#
-#     # Photometry dictionary in microns
-#     phot_dict = {'J': 1.24, 'H': 1.66, 'K': 2.19, 'Ks': 2.16, 'W1': 3.35, 'W2': 4.6, 'W3': 11.56, 'W4': 22.09,
-#                  '[3.6]': 3.51, '[4.5]': 4.44, '[5.8]': 5.63, '[8]': 7.59, '[24]': 23.68, 'g': .48, 'i': .76, 'r': .62,
-#                  'u': .35, 'z': .91, '2MASS_J': 1.24, '2MASS_H': 1.66, '2MASS_Ks': 2.16, 'WISE_W1': 3.35,
-#                  'WISE_W2': 4.6, 'WISE_W3': 11.56, 'WISE_W4': 22.09, 'IRAC_ch1': 3.51, 'IRAC_ch2': 4.44,
-#                  'IRAC_ch3': 5.63, 'IRAC_ch4': 7.59, 'SDSS_g': .48, 'SDSS_i': .76, 'SDSS_r': .62, 'SDSS_u': .35,
-#                  'SDSS_z': .91, 'HST_F105W': 1.0552, 'HST_F110W': 1.1534, 'HST_F125W': 1.2486, 'HST_F140W': 1.3923,
-#                  'Johnson_B': 0.442, 'Johnson_U': 0.364, 'Johnson_V': 0.540,
-#                  'MKO_H': 1.635, 'MKO_J': 1.25, 'MKO_K': 2.20, "MKO_L'": 3.77, "MKO_M'": 4.68, 'MKO_Y': 1.02,
-#                  'DENIS_I': 0.82, 'DENIS_J': 1.25, 'DENIS_K': 2.15, 'DENIS_Ks': 2.15,
-#                  'Cousins_I': 0.647, 'Cousins_R': 0.7865,
-#                  'I': 0.806, 'L': 3.45, 'Y': 1.02, 'Z': 0.9, 'y': 1.02,
-#                  'GALEX_FUV': 0.1528, 'GALEX_NUV': 0.2271,
-#                  'FourStar_J2': 1.144, 'FourStar_J3': 1.287}
-#
-#     # Photometry text
-#     try:
-#         phot_data = t['photometry'].to_pandas()
-#         phot_txt = '<p>'
-#         for band in OrderedDict(sorted(phot_dict.items(), key=lambda t: t[1])):
-#             if band in phot_data['band'].tolist():
-#                 unc = phot_data[phot_data['band']==band]['magnitude_unc'].values[0]
-#                 if unc == 'null' or unc is None:
-#                     phot_txt += '<strong>{0}</strong>: ' \
-#                                 '>{1:.2f}<br>'.format(band, phot_data[phot_data['band'] == band]['magnitude'].values[0])
-#                 else:
-#                     phot_txt += '<strong>{0}</strong>: ' \
-#                                 '{1:.2f} +/- {2:.2f}<br>'.format(band,
-#                                                                  phot_data[phot_data['band'] == band]['magnitude'].values[0],
-#                                                                  float(phot_data[phot_data['band'] == band]['magnitude_unc'].values[0]))
-#         for band in phot_data['band'].tolist():
-#             if band in phot_dict.keys():  # Skip those already displayed (which match the dictionary)
-#                 continue
-#
-#             unc = phot_data[phot_data['band'] == band]['magnitude_unc'].values[0]
-#             if unc == 'null' or unc is None:
-#                 phot_txt += '<strong>{0}</strong>: ' \
-#                             '>{1:.2f}<br>'.format(band, phot_data[phot_data['band'] == band]['magnitude'].values[0])
-#             else:
-#                 phot_txt += '<strong>{0}</strong>: ' \
-#                             '{1:.2f} +/- {2:.2f}<br>'.format(band,
-#                                                              phot_data[phot_data['band'] == band]['magnitude'].values[0],
-#                                                              float(phot_data[phot_data['band'] == band][
-#                                                                        'magnitude_unc'].values[0]))
-#
-#         phot_txt += '</p>'
-#     except:
-#         phot_txt = '<p>None in database</p>'
-#
-#     # Grab spectra
-#     warnings = list()
-#     spectra_download = list()
-#     try:
-#         spec_list = t['spectra']['id']
-#         plot_list = list()
-#
-#         for i, spec_id in enumerate(spec_list):
-#             stdout = sys.stdout  # Keep a handle on the real standard output
-#             sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
-#             query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id ' + \
-#                     'FROM spectra WHERE id={}'.format(spec_id)
-#             q = db.query(query, fetch='one', fmt='dict')
-#             sys.stdout = stdout
-#
-#             if mystdout.getvalue().lower().startswith('could not retrieve spectrum'):
-#                 warnings.append(mystdout.getvalue())
-#                 continue
-#
-#             spec = q['spectrum']
-#
-#             # Get spectrum name
-#             try:
-#                 query = 'SELECT name FROM telescopes WHERE id={}'.format(q['telescope_id'])
-#                 n1 = db.query(query, fetch='one', fmt='array')[0]
-#                 query = 'SELECT name FROM instruments WHERE id={}'.format(q['instrument_id'])
-#                 n2 = db.query(query, fetch='one', fmt='array')[0]
-#                 plot_name = 'Spectrum {}: {}:{}'.format(i+1, n1, n2)
-#             except:
-#                 plot_name = 'Spectrum {}'.format(i+1)
-#
-#             # Make the plot
-#             tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
-#
-#             # create a new plot
-#             if q['wavelength_units'] is not None:
-#                 wav = 'Wavelength (' + q['wavelength_units'] + ')'
-#             else:
-#                 wav = 'Wavelength'
-#
-#             if q['flux_units'] is not None:
-#                 flux = 'Flux (' + q['flux_units'] + ')'
-#             else:
-#                 flux = 'Flux'
-#
-#             # can specify plot_width if needed
-#             p = figure(tools=tools, title=plot_name, x_axis_label=wav, y_axis_label=flux, plot_width=600)
-#
-#             p.line(spec.data[0], spec.data[1], line_width=2)
-#
-#             plot_list.append(p)
-#
-#             # Make download link
-#             query = 'SELECT spectrum FROM spectra WHERE id={}'.format(spec_id)
-#             q = db.query(query, fetch='one', fmt='dict', use_converters=False)
-#             spectra_download.append('<a href="{}" download="">Download {}</a>'.format(q['spectrum'], plot_name))
-#
-#         script, div = components(plot_list)
-#     except:
-#         script, div = '', ''
-#         spectra_download = ['None in database']
-#
-#     return render_template('summary.html',
-#                            table=phot_txt, script=script, plot=div, name=objname, coords=coords,
-#                            allnames=allnames, warnings=warnings, source_id=source_id, distance=dist_string,
-#                            comments=comments, sptypes=sptype_txt, spectra_download=spectra_download, ra=ra, dec=dec)
-
-
 @app_onc.route('/browse')
 def onc_browse():
     """Examine the full source list with clickable links to object summaries"""
@@ -583,8 +455,16 @@ def onc_browse():
         link = '<a href="inventory/{0}">{1}<span>{2}</span></a>'.format(data.iloc[i]['id'], elem[0], elem[1])
         linklist.append(link)
     data['shortname'] = linklist
-
-    pd.set_option('max_colwidth', 150)  # Ensure columns are wide enough for the new text
+    
+    # Create checkbox first column
+    buttonlist = []
+    for i in list(data['id']):
+        button = '<input type="checkbox" name="{0}" value="{0}">'.format(i)
+        buttonlist.append(button)
+    data['Select'] = buttonlist
+    cols = data.columns.tolist()
+    cols.pop(cols.index('Select'))
+    data = data[['Select']+cols]
 
     # Rename columns
     translation = {'id': 'Source ID', 'ra': '<span title="Right Ascension (deg)">RA</span>',
