@@ -39,7 +39,8 @@
             <div class='block'>
                 <h1>ONCdb Database</h1>
 
-                <form id='searchform' method='post' action='selection' >
+                <form id='searchform' method='post' action='export' >
+                    {{ cols|safe }}
                     {{ table|safe }}
                     <br>
                     <input type='submit' value='Export Selected' />

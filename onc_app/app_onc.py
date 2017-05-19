@@ -5,6 +5,7 @@ import astrodbkit
 from astrodbkit import astrodb
 import os
 import sys
+import re
 from io import StringIO
 from bokeh.plotting import figure
 from bokeh.embed import components
@@ -98,7 +99,7 @@ def onc_runquery():
     except AttributeError:
         return render_template('error.html', headermessage='Error in Query',
                                errmess='<p>Error for query:</p><p>'+htmltxt+'</p>')
-
+    
     # Create checkbox first column
     buttonlist = []
     for index, row in data.iterrows():
@@ -113,9 +114,13 @@ def onc_runquery():
         script, div, warning_message = onc_skyplot(t)
     except:
         script = div = warning_message = ''
+        
+    # Get column names
+    cols = [strip_html(str(i)) for i in list(data)[1:]]
+    cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
 
     return render_template('view_search.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=app_onc.vars['query'],
-                            script=script, plot=div, warning=warning_message)
+                            script=script, plot=div, warning=warning_message, cols=cols)
 
 
 @app_onc.route('/export', methods=['POST'])
@@ -123,14 +128,26 @@ def onc_export():
     
     # Get all the checked rows
     checked = request.form
-    results = []
+    
+    # Get column names
+    results = [list(eval(checked.get('cols')))]
+    
     for k in sorted(checked):
         if k.isdigit():
-            results.append(eval(checked[k]))
+            
+            # Convert string to list and strip HTML
+            vals = eval(checked[k])
+            for i,v in enumerate(vals):
+                try:
+                    vals[i] = str(v).split('>')[1].split('<')[0]
+                except:
+                    pass
+            
+            results.append(vals)
     
-    # Mkae an array to export
+    # Make an array to export
     results = np.array(results, dtype=str)
-    filename = 'results.txt'
+    filename = 'ONCdb_results.txt'
     np.savetxt(filename, results, delimiter='|', fmt='%s')
     
     with open(filename, 'r') as f:
@@ -186,10 +203,17 @@ def onc_search():
     cols.pop(cols.index('Select'))
     data = data[['Select']+cols]
 
-    script, div, warning_message = onc_skyplot(t)
+    try:
+        script, div, warning_message = onc_skyplot(t)
+    except:
+        script = div = warning_message = ''
+        
+    # Get column names
+    cols = [strip_html(str(i)) for i in list(data)[1:]]
+    cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
 
     return render_template('view_search.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=search_value,
-                            script=script, plot=div, warning=warning_message)
+                            script=script, plot=div, warning=warning_message, cols=cols)
 
 
 # # Plot a spectrum
@@ -461,15 +485,16 @@ def onc_browse():
 
     # Change column to a link
     linklist = []
-    for i, elem in enumerate(zip(data['shortname'], data['names'])):
-        link = '<a href="inventory/{0}">{1}<span>{2}</span></a>'.format(data.iloc[i]['id'], elem[0], elem[1])
+    for i, elem in enumerate(data['shortname']):
+        link = '<a href="inventory/{0}">{1}</a>'.format(data.iloc[i]['id'], elem)
         linklist.append(link)
     data['shortname'] = linklist
     
     # Create checkbox first column
     buttonlist = []
     for index, row in data.iterrows():
-        button = '<input type="checkbox" name="{}" value="{}">'.format(str(index),repr(list(row)))
+        row = [strip_html(str(i)) for i in list(row)]
+        button = '<input type="checkbox" name="{}" value="{}">'.format(str(index),repr(row))
         buttonlist.append(button)
     data['Select'] = buttonlist
     cols = data.columns.tolist()
@@ -497,9 +522,14 @@ def onc_browse():
     final_data = pd.concat([data, phot_counts, spec_counts], axis=1, join='outer')
     final_data['<span title="Amount of photometry data available">Photometry</span>'].fillna(value=0, inplace=True)
     final_data['<span title="Amount of spectroscopic observations available">Spectroscopy</span>'].fillna(value=0, inplace=True)
+    
+    cols = [strip_html(str(i)) for i in list(column_names)[1:]]
+    cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
 
-    return render_template('browse.html', table=final_data.to_html(classes='display', index=False, escape=False))
+    return render_template('browse.html', table=final_data.to_html(classes='display', index=False, escape=False), cols=cols)
 
+def strip_html(s):
+    return re.sub(r'<[^<]*?/?>','',s)
 
 def onc_skyplot(t):
     """

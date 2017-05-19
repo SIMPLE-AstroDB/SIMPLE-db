@@ -55,6 +55,7 @@
 
             <div class='block'>
                 <form id='searchform' method='post' action='export' >
+                    {{ cols|safe }}
                     {{ table|safe }}
                     <br>
                     <input type='submit' value='Export Selected' />
