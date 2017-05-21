@@ -48,16 +48,6 @@ def onc_query():
                            defsearch=app_onc.vars['search'], specid=app_onc.vars['specid'],
                            source_id=app_onc.vars['source_id'], version=astrodbkit.__version__)
 
-# @app_onc.route('/selection', methods=['POST','GET'])
-# def onc_selection():
-#     # Create query from selection
-#     ids = list(filter(None,[request.form.get(str(n)) for n in range(5)]))
-#     q = 'SELECT * FROM sources WHERE id in ({})'.format(','.join(ids))
-#     print(q)
-#
-#     return render_template('view_search.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=app_onc.vars['query'],
-#                             script=script, plot=div, warning=warning_message)
-
 # Grab results of query and display them
 @app_onc.route('/runquery', methods=['POST','GET'])
 def onc_runquery():
@@ -121,7 +111,6 @@ def onc_runquery():
 
     return render_template('view_search.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=app_onc.vars['query'],
                             script=script, plot=div, warning=warning_message, cols=cols)
-
 
 @app_onc.route('/export', methods=['POST'])
 def onc_export():
@@ -216,55 +205,114 @@ def onc_search():
                             script=script, plot=div, warning=warning_message, cols=cols)
 
 
-# # Plot a spectrum
-# @app_onc.route('/spectrum', methods=['POST'])
-# def onc_plot():
-#     db = astrodb.Database(db_file)
-#     app_onc.vars['specid'] = request.form['spectrum_to_plot']
-#
-#     # If not a number, error
-#     if not app_onc.vars['specid'].isdigit():
-#         return render_template('error.html', headermessage='Error in Input',
-#                                errmess='<p>Input was not a number.</p>')
-#
-#     # Grab the spectrum
-#     stdout = sys.stdout  # Keep a handle on the real standard output
-#     sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
-#     query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id ' + \
-#             'FROM spectra WHERE id=' + app_onc.vars['specid']
-#     t = db.query(query, fetch='one', fmt='dict')
-#     sys.stdout = stdout
-#
-#     # Check for errors first
-#     if mystdout.getvalue().lower().startswith('could not execute'):
-#         return render_template('error.html', headermessage='Error in Query',
-#                                errmess='<p>Error in query:</p><p>'+mystdout.getvalue().replace('<', '&lt;')+'</p>')
-#
-#     # Check if found anything
-#     if isinstance(t, type(None)):
-#         return render_template('error.html', headermessage='No Result', errmess='<p>No spectrum found.</p>')
-#
-#     spec = t['spectrum']
-#
-#     query = 'SELECT shortname FROM sources WHERE id='+str(t['source_id'])
-#     shortname = db.query(query, fetch='one', fmt='dict')['shortname']
-#
-#     # Make the plot
-#     tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
-#
-#     # create a new plot
-#     wav = 'Wavelength ('+t['wavelength_units']+')'
-#     flux = 'Flux ('+t['flux_units']+')'
-#     # can specify plot_width if needed
-#     p = figure(tools=tools, title=shortname, x_axis_label=wav, y_axis_label=flux, plot_width=800)
-#
-#     p.line(spec.data[0], spec.data[1], line_width=2)
-#
-#     script, div = components(p)
-#
-#     return render_template('spectrum.html', script=script, plot=div)
+# Plot a spectrum
+@app_onc.route('/spectrum', methods=['POST'])
+@app_onc.route('/spectrum/<int:specid>')
+def onc_spectrum(specid=None):
+    db = astrodb.Database(db_file)
+    if specid is None:
+        app_onc.vars['specid'] = request.form['spectrum_to_plot']
+        path = ''
+    else:
+        app_onc.vars['specid'] = specid
+        path = '../'
+        
+    # If not a number, error
+    if not str(app_onc.vars['specid']).isdigit():
+        return render_template('error.html', headermessage='Error in Input',
+                               errmess='<p>Input was not a number.</p>')
 
+    # Grab the spectrum
+    stdout = sys.stdout  # Keep a handle on the real standard output
+    sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
+    query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id ' + \
+            'FROM spectra WHERE id={}'.format(app_onc.vars['specid'])
+    t = db.query(query, fetch='one', fmt='dict')
+    sys.stdout = stdout
 
+    # Check for errors first
+    if mystdout.getvalue().lower().startswith('could not execute'):
+        return render_template('error.html', headermessage='Error in Query',
+                               errmess='<p>Error in query:</p><p>'+mystdout.getvalue().replace('<', '&lt;')+'</p>')
+
+    # Check if found anything
+    if isinstance(t, type(None)):
+        return render_template('error.html', headermessage='No Result', errmess='<p>No spectrum found.</p>')
+
+    spec = t['spectrum']
+
+    query = 'SELECT shortname FROM sources WHERE id='+str(t['source_id'])
+    shortname = db.query(query, fetch='one', fmt='dict')['shortname']
+    filepath = t['spectrum'].path
+
+    # Make the plot
+    tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
+
+    # create a new plot
+    wav = 'Wavelength ('+t['wavelength_units']+')'
+    flux = 'Flux ('+t['flux_units']+')'
+    # can specify plot_width if needed
+    p = figure(tools=tools, title=shortname, x_axis_label=wav, y_axis_label=flux, plot_width=800)
+
+    p.line(spec.data[0], spec.data[1], line_width=2)
+
+    script, div = components(p)
+
+    return render_template('spectrum.html', script=script, plot=div, download=filepath)
+
+# Plot a spectrum
+@app_onc.route('/image', methods=['POST'])
+@app_onc.route('/image/<int:imgid>')
+def onc_image(imgid=None):
+    db = astrodb.Database(db_file)
+    if imgid is None:
+        app_onc.vars['imgid'] = request.form['image_to_plot']
+        path = ''
+    else:
+        app_onc.vars['imgid'] = imgid
+        path = '../'
+        
+    # If not a number, error
+    if not str(app_onc.vars['imgid']).isdigit():
+        return render_template('error.html', headermessage='Error in Input',
+                               errmess='<p>Input was not a number.</p>')
+
+    # Grab the spectrum
+    stdout = sys.stdout  # Keep a handle on the real standard output
+    sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
+    query = 'SELECT image, source_id, instrument_id, telescope_id ' + \
+            'FROM images WHERE id={}'.format(app_onc.vars['imgid'])
+    t = db.query(query, fetch='one', fmt='dict')
+    sys.stdout = stdout
+
+    # Check for errors first
+    if mystdout.getvalue().lower().startswith('could not execute'):
+        return render_template('error.html', headermessage='Error in Query',
+                               errmess='<p>Error in query:</p><p>'+mystdout.getvalue().replace('<', '&lt;')+'</p>')
+
+    # Check if found anything
+    if isinstance(t, type(None)):
+        return render_template('error.html', headermessage='No Result', errmess='<p>No image found.</p>')
+
+    img = t['image'].data
+
+    query = 'SELECT shortname FROM sources WHERE id='+str(t['source_id'])
+    shortname = db.query(query, fetch='one', fmt='dict')['shortname']
+    filepath = t['image'].path
+
+    # Make the plot
+    tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
+
+    # create a new plot
+    p = figure(tools=tools, title=shortname, plot_width=800)
+
+    # Make the plot
+    p.image(image=[img], x=[0], y=[0], dw=[img.shape[0]], dh=[img.shape[1]])
+
+    script, div = components(p)
+
+    return render_template('image.html', script=script, plot=div, download=filepath)
+    
 # Check inventory
 @app_onc.route('/inventory', methods=['POST'])
 @app_onc.route('/inventory/<int:source_id>')
@@ -300,7 +348,7 @@ def onc_inventory(source_id=None):
     objname = t['sources']['designation'][0]
     ra = t['sources']['ra'][0]
     dec = t['sources']['dec'][0]
-    c = SkyCoord(ra=ra * u.degree, dec=dec * u.degree)
+    c = SkyCoord(ra=ra*u.degree, dec=dec*u.degree)
     coords = c.to_string('hmsdms', sep=':', precision=2)
     allnames = t['sources']['names'][0]
 
@@ -337,12 +385,33 @@ def onc_inventory(source_id=None):
     comments = t['sources']['comments'][0]
     
     # Get external queries
-    # smbd = 'http://simbad.u-strasbg.fr/simbad/sim-id?Ident='
-    # vzr = 
-    smbd, vzr = '', ''
+    smbd = 'http://simbad.u-strasbg.fr/simbad/sim-coo?Coord={}+%2B{}&CooFrame=ICRS&CooEpoch=2000&CooEqui=2000&CooDefinedFrames=none&Radius=10&Radius.unit=arcsec&submit=submit+query'.format(ra,dec)
+    vzr = ''
+    
+    # Create link to spectra
+    if 'spectra' in t:
+        speclist = []
+        for idx,row in enumerate(t['spectra']):
+            spec = '<a href="../spectrum/{}"><img class="view" src="../static/view.png" /></a>'.format(row['id'])
+            speclist.append(spec)
+        t['spectra']['view'] = speclist
+        cols = t['spectra'].colnames
+        cols.pop(cols.index('view'))
+        t['spectra'] = t['spectra'][['view']+cols]
+    
+    # Create link to images
+    if 'images' in t:
+        imglist = []
+        for idx,row in enumerate(t['images']):
+            img = '<a href="../image/{}"><img class="view" src="../static/view.png" /></a>'.format(row['id'])
+            imglist.append(img)
+        t['images']['view'] = imglist
+        cols = t['images'].colnames
+        cols.pop(cols.index('view'))
+        t['images'] = t['images'][['view']+cols]
     
     return render_template('inventory.html',
-                           tables=[t[x].to_pandas().to_html(classes='display', index=False) for x in t.keys()],
+                           tables=[t[x].to_pandas().to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>') for x in t.keys()],
                            titles=['na']+list(t.keys()), path=path, source_id=app_onc.vars['source_id'],
                            name=objname, coords=coords, allnames=allnames, distance=dist_string,
                            comments=comments, sptypes=sptype_txt, ra=ra, dec=dec, simbad=smbd, vizier=vzr)

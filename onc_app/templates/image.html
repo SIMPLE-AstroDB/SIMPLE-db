@@ -1,5 +1,5 @@
 <!doctype html>
-<title>View Spectrum</title>
+<title>View Image</title>
 <html lang="en">
     <head>
         <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
@@ -38,14 +38,14 @@
         <div class=page>
             
             <div class='block'>
-                <h1>Spectrum</h1>
-                <br>
+                <h1>Image</h1>
+                
                 {{ plot|safe }}
 
             </div>
             <div class='block'>
                 <form method="get" action="{{ download|safe }}">
-                <button type="submit">Download Spectrum</button>
+                <button type="submit">Download Observation</button>
                 </form>
                                 
                 <p><a href="javascript:history.go(-1)">Back to inventory</a></p>

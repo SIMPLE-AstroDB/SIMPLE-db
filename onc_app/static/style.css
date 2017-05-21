@@ -51,6 +51,8 @@ a:hover span {display: block; text-align: center; }
     margin-bottom: 10px;
 }
 
+img.view {height:14px;}
+
 #aladin-lite-div {
     width: 400px;
     height: 400px;
@@ -63,6 +65,12 @@ a:hover span {display: block; text-align: center; }
 /*
  * Table styles
  */
+td a {
+  display: inline-block;
+  height:100%;
+  width:100%;
+}
+
 table.dataTable {
   width: 100%;
   margin: 20px 0 0 auto;
