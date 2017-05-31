@@ -276,7 +276,7 @@ def onc_image(imgid=None):
     if not str(app_onc.vars['imgid']).isdigit():
         return render_template('error.html', headermessage='Error in Input',
                                errmess='<p>Input was not a number.</p>')
-
+                               
     # Grab the spectrum
     stdout = sys.stdout  # Keep a handle on the real standard output
     sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
@@ -284,33 +284,38 @@ def onc_image(imgid=None):
             'FROM images WHERE id={}'.format(app_onc.vars['imgid'])
     t = db.query(query, fetch='one', fmt='dict')
     sys.stdout = stdout
-
+    
     # Check for errors first
     if mystdout.getvalue().lower().startswith('could not execute'):
         return render_template('error.html', headermessage='Error in Query',
                                errmess='<p>Error in query:</p><p>'+mystdout.getvalue().replace('<', '&lt;')+'</p>')
-
+                               
     # Check if found anything
     if isinstance(t, type(None)):
         return render_template('error.html', headermessage='No Result', errmess='<p>No image found.</p>')
-
-    img = t['image'].data
-
-    query = 'SELECT shortname FROM sources WHERE id='+str(t['source_id'])
-    shortname = db.query(query, fetch='one', fmt='dict')['shortname']
-    filepath = t['image'].path
-
-    # Make the plot
-    tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
-
-    # create a new plot
-    p = figure(tools=tools, title=shortname, plot_width=800)
-
-    # Make the plot
-    p.image(image=[img], x=[0], y=[0], dw=[img.shape[0]], dh=[img.shape[1]])
-
-    script, div = components(p)
-
+        
+    print(t['image'])
+    try:
+        img = t['image'].data
+        
+        query = 'SELECT shortname FROM sources WHERE id='+str(t['source_id'])
+        shortname = db.query(query, fetch='one', fmt='dict')['shortname']
+        filepath = t['image'].path
+        
+        # Make the plot
+        tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
+        
+        # create a new plot
+        p = figure(tools=tools, title=shortname, plot_width=800)
+        
+        # Make the plot
+        p.image(image=[img], x=[0], y=[0], dw=[img.shape[0]], dh=[img.shape[1]])
+        
+        script, div = components(p)
+        
+    except:
+        script, div, filepath = '', '', ''
+    
     return render_template('image.html', script=script, plot=div, download=filepath)
     
 # Check inventory
