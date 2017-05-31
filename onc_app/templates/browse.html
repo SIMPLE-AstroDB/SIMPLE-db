@@ -37,8 +37,21 @@
 
         <div class=page>
             <div class='block'>
-                <h1>ONCdb Database</h1>
+                
+                <div style='float:left;'>
+                    <h1>Browse Database</h1>
+                    <p>Maybe a little summary of the database here?</p>
+                </div>
+                <div id='skyplot'>
+                    {{ plot|safe }}
 
+                    <p>Locations of sources in the table below. You can hover over individual points to identify sources and can click on them to go their inventory page.</p>
+            
+                    <p>{{ warning|safe }}</p>
+                </div>
+            </div>
+
+            <div class='block'>
                 <form id='searchform' method='post' action='export' >
                     {{ cols|safe }}
                     {{ table|safe }}

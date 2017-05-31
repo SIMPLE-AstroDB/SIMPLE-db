@@ -260,7 +260,7 @@ def onc_spectrum(specid=None):
 
     return render_template('spectrum.html', script=script, plot=div, download=filepath)
 
-# Plot a spectrum
+# Display an image
 @app_onc.route('/image', methods=['POST'])
 @app_onc.route('/image/<int:imgid>')
 def onc_image(imgid=None):
@@ -552,6 +552,11 @@ def onc_browse():
     db = astrodb.Database(db_file)
     # Run the query
     t = db.query('SELECT id, ra, dec, shortname, names, comments FROM sources', fmt='table')
+    
+    try:
+        script, div, warning_message = onc_skyplot(t)
+    except IOError:
+        script = div = warning_message = ''
 
     # Convert to Pandas data frame
     data = t.to_pandas()
@@ -600,7 +605,7 @@ def onc_browse():
     cols = [strip_html(str(i)) for i in list(column_names)[1:]]
     cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
 
-    return render_template('browse.html', table=final_data.to_html(classes='display', index=False, escape=False), cols=cols)
+    return render_template('browse.html', script=script, div=div, table=final_data.to_html(classes='display', index=False, escape=False), cols=cols)
 
 def strip_html(s):
     return re.sub(r'<[^<]*?/?>','',s)
@@ -624,24 +629,27 @@ def onc_skyplot(t):
     # Coerce to numeric
     data['ra'] = pd.to_numeric(data['ra'])
     data['dec'] = pd.to_numeric(data['dec'])
+    
+    source = ColumnDataSource(data=data)
 
-    # Coordinate conversion
-    c = SkyCoord(ra=data['ra'] * u.degree, dec=data['dec'] * u.degree)
-    pi = np.pi
-    proj = 'hammer'
-    data['x'], data['y'] = projection(c.ra.radian - pi, c.dec.radian, use=proj)
-    data['l'], data['b'] = c.galactic.l, c.galactic.b
+    tools = "resize,tap,pan,wheel_zoom,box_zoom,reset"
+    p = figure(tools=tools, title='', plot_width=500, plot_height=300, min_border=0, min_border_bottom=0)
 
-    # Make the plots
-    p1 = make_sky_plot(data, proj)
-    data['x'], data['y'] = projection(c.galactic.l.radian - pi, c.galactic.b.radian, use=proj)
-    p2 = make_sky_plot(data, proj)
+    # Add the data
+    p.scatter('ra', 'dec', source=source, size=8, alpha=0.6)
+    tooltip = [("Source ID", "@id"), ("Name", "@shortname"), ("(RA, Dec)", "(@ra, @dec)")]
+    p.add_tools(HoverTool(tooltips=tooltip))
 
-    tab1 = Panel(child=p1, title="Equatorial")
-    tab2 = Panel(child=p2, title="Galactic")
-    tabs = Tabs(tabs=[tab1, tab2])
+    # When clicked, go to the Summary page
+    url = "inventory/@id"
+    taptool = p.select(type=TapTool)
+    taptool.callback = OpenURL(url=url)
+    
+    # Axis labels
+    p.yaxis.axis_label = 'Decl. (deg)'
+    p.xaxis.axis_label = 'R.A. (deg)'
 
-    script, div = components(tabs)
+    script, div = components(p)
 
     return script, div, warning_message
 
@@ -649,83 +657,6 @@ def onc_skyplot(t):
 @app_onc.route('/feedback')
 def onc_feedback():
     return render_template('feedback.html')
-
-def projection(lon, lat, use='hammer'):
-    """
-    Convert x,y to Aitoff or Hammer projection. Lat and Lon should be in radians. RA=lon, Dec=lat
-    """
-    # TODO: Figure out why Aitoff is failing
-
-    # Note that np.sinc is normalized (hence the division by pi)
-    if use.lower() == 'hammer': # Hammer
-        x = 2.0 ** 1.5 * np.cos(lat) * np.sin(lon / 2.0) / np.sqrt(1.0 + np.cos(lat) * np.cos(lon / 2.0))
-        y = sqrt(2.0) * np.sin(lat) / np.sqrt(1.0 + np.cos(lat) * np.cos(lon / 2.0))
-    else:  # Aitoff, not yet working
-        alpha_c = np.arccos(np.cos(lat) * np.cos(lon / 2.0))
-        x = 2.0 * np.cos(lat) * np.sin(lon) / np.sinc(alpha_c / np.pi)
-        y = np.sin(lat) / np.sinc(alpha_c / np.pi)
-    return x, y
-
-
-def make_sky_plot(data, proj='hammer'):
-    """
-    Make a sky plot and return a Bokeh figure
-    Adapted from: https://github.com/astrocatalogs/astrocats/blob/master/scripts/hammertime.py#L93-L132 and the Open Supernova Catalog (https://sne.space/statistics/sky-locations/)
-    """
-    source = ColumnDataSource(data=data)
-
-    tools = "resize,tap,pan,wheel_zoom,box_zoom,reset"
-    p = figure(tools=tools, title='', plot_width=800, plot_height=600,
-               x_range=(-1.05 * (2.0 ** 1.5), 1.3 * 2.0 ** 1.5), y_range=(-2.0 * sqrt(2.0), 1.2 * sqrt(2.0)),
-               min_border=0, min_border_bottom=0)
-
-    # Initial figure formatting
-    p.axis.visible = None
-    p.outline_line_color = None
-    p.xgrid.grid_line_color = None
-    p.ygrid.grid_line_color = None
-
-    # Add the grid
-    pi = np.pi
-    rangepts = 50
-    raseps = 12
-    decseps = 12
-    rarange = [-pi + i * 2.0 * pi / rangepts for i in range(0, rangepts + 1)]
-    decrange = [-pi / 2.0 + i * pi / rangepts for i in range(0, rangepts + 1)]
-    ragrid = [-pi + i * 2.0 * pi / raseps for i in range(0, raseps + 1)]
-    decgrid = [-pi / 2.0 + i * pi / decseps for i in range(0, decseps + 1)]
-
-    raxs = []
-    rays = []
-    for rg in ragrid:
-        t1 = [projection(rg, x, use=proj) for x in decrange]
-        tx, ty = zip(*t1)
-        raxs.append(tx)
-        rays.append(ty)
-
-    decxs = []
-    decys = []
-    for dg in decgrid:
-        t1 = [projection(x, dg, use=proj) for x in rarange]
-        tx, ty = zip(*t1)
-        decxs.append(tx)
-        decys.append(ty)
-
-    p.multi_line(raxs, rays, color='#bbbbbb')
-    p.multi_line(decxs, decys, color='#bbbbbb')
-
-    # Add the data
-    p.scatter('x', 'y', source=source, size=8, alpha=0.6)
-    tooltip = [("Source ID", "@id"), ("Name", "@shortname"), ("(RA, Dec)", "(@ra, @dec)"), ("(l, b)", "(@l, @b)")]
-    p.add_tools(HoverTool(tooltips=tooltip))
-
-    # When clicked, go to the Summary page
-    url = "summary/@id"
-    taptool = p.select(type=TapTool)
-    taptool.callback = OpenURL(url=url)
-
-    return p
-
 
 # Photometry dictionary in microns
 phot_dict = {'J': 1.24, 'H': 1.66, 'K': 2.19, 'Ks': 2.16, 'W1': 3.35, 'W2': 4.6, 'W3': 11.56, 'W4': 22.09,
