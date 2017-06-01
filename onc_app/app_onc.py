@@ -110,16 +110,23 @@ def onc_runquery():
     cols = [strip_html(str(i)) for i in list(data)[1:]]
     cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
     
+    # Add links to columns
+    data = link_columns(data, db, ['source_id','spectrum','image'])
+        
+    return render_template('view_search.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=app_onc.vars['query'],
+                            script=script, plot=div, warning=warning_message, cols=cols)
+    
+def link_columns(data, db, columns):
     # Change id column to a link
-    if 'source_id' in data:
+    if 'source_id' in columns and 'source_id' in data:
         linklist = []
         for i, elem in enumerate(data['source_id']):
             link = '<a href="inventory/{}">{}</a>'.format(data.iloc[i]['source_id'], elem)
             linklist.append(link)
         data['source_id'] = linklist
-    
+        
     # Change spectrum column to a link
-    if 'spectrum' in data:
+    if 'spectrum' in columns and 'spectrum' in data:
         speclist = []
         for index, row in data.iterrows():
             spec = '<a href="../spectrum/{}"><img class="view" src="static/view.png" /></a>'.format(row['id'])
@@ -127,15 +134,14 @@ def onc_runquery():
         data['spectrum'] = speclist
         
     # Change image column to a link
-    if 'image' in data:
+    if 'image' in columns and 'image' in data:
         imglist = []
         for index, row in data.iterrows():
             img = '<a href="../image/{}"><img class="view" src="static/view.png" /></a>'.format(row['id'])
             imglist.append(img)
         data['image'] = imglist
-
-    return render_template('view_search.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=app_onc.vars['query'],
-                            script=script, plot=div, warning=warning_message, cols=cols)
+    
+    return data
 
 @app_onc.route('/export', methods=['POST'])
 def onc_export():
@@ -422,6 +428,14 @@ def onc_inventory(source_id=None):
     # Get external queries
     smbd = 'http://simbad.u-strasbg.fr/simbad/sim-coo?Coord={}+%2B{}&CooFrame=ICRS&CooEpoch=2000&CooEqui=2000&CooDefinedFrames=none&Radius=10&Radius.unit=arcsec&submit=submit+query'.format(ra,dec)
     vzr = ''
+    
+    # # Create link to spectra
+    # if 'spectra' in t:
+    #     t['spectra'] = link_columns(t['spectra'], db, ['spectrum'])
+    #
+    # # Create link to images
+    # if 'images' in t:
+    #     t['images'] = link_columns(t['images'], db, ['image'])
     
     # Create link to spectra
     if 'spectra' in t:
