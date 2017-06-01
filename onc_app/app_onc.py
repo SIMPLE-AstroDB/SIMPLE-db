@@ -9,12 +9,13 @@ import re
 from io import StringIO
 from bokeh.plotting import figure
 from bokeh.embed import components
-from bokeh.models import ColumnDataSource, HoverTool, OpenURL, TapTool
+from bokeh.models import ColumnDataSource, HoverTool, OpenURL, TapTool, Range1d
 from bokeh.models.widgets import Panel, Tabs
 from ONCdb import make_onc
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 from astroquery.simbad import Simbad
+from scipy.ndimage.interpolation import zoom
 import pandas as pd
 from collections import OrderedDict
 from math import sqrt
@@ -294,9 +295,11 @@ def onc_image(imgid=None):
     if isinstance(t, type(None)):
         return render_template('error.html', headermessage='No Result', errmess='<p>No image found.</p>')
         
-    print(t['image'])
     try:
         img = t['image'].data
+        
+        # Down sample so the figure displays faster
+        img = zoom(img, 0.05, prefilter=False)
         
         query = 'SELECT shortname FROM sources WHERE id='+str(t['source_id'])
         shortname = db.query(query, fetch='one', fmt='dict')['shortname']
@@ -311,9 +314,12 @@ def onc_image(imgid=None):
         # Make the plot
         p.image(image=[img], x=[0], y=[0], dw=[img.shape[0]], dh=[img.shape[1]])
         
+        p.x_range = Range1d(0, img.shape[0])
+        p.y_range = Range1d(0, img.shape[1])
+        
         script, div = components(p)
         
-    except:
+    except IOError:
         script, div, filepath = '', '', ''
     
     return render_template('image.html', script=script, plot=div, download=filepath)
