@@ -28,7 +28,7 @@ app_onc.vars['specid'] = ''
 app_onc.vars['source_id'] = ''
 
 db_file = os.path.join(os.path.dirname(make_onc.__file__),'orion.db')
-pd.set_option('max_colwidth', 150)
+pd.set_option('max_colwidth', -1)
 
 # Redirect to the main page
 @app_onc.route('/')
@@ -94,7 +94,7 @@ def onc_runquery():
     # Create checkbox first column
     buttonlist = []
     for index, row in data.iterrows():
-        button = '<input type="checkbox" name="{}" value="{}">'.format(str(index),repr(list(row)))
+        button = '<input type="checkbox" name="{}" value="{}" />'.format(str(index),repr(list(row)))
         buttonlist.append(button)
     data['Select'] = buttonlist
     cols = data.columns.tolist()
@@ -109,6 +109,30 @@ def onc_runquery():
     # Get column names
     cols = [strip_html(str(i)) for i in list(data)[1:]]
     cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
+    
+    # Change id column to a link
+    if 'source_id' in data:
+        linklist = []
+        for i, elem in enumerate(data['source_id']):
+            link = '<a href="inventory/{}">{}</a>'.format(data.iloc[i]['source_id'], elem)
+            linklist.append(link)
+        data['source_id'] = linklist
+    
+    # Change spectrum column to a link
+    if 'spectrum' in data:
+        speclist = []
+        for index, row in data.iterrows():
+            spec = '<a href="../spectrum/{}"><img class="view" src="static/view.png" /></a>'.format(row['id'])
+            speclist.append(spec)
+        data['spectrum'] = speclist
+        
+    # Change image column to a link
+    if 'image' in data:
+        imglist = []
+        for index, row in data.iterrows():
+            img = '<a href="../image/{}"><img class="view" src="static/view.png" /></a>'.format(row['id'])
+            imglist.append(img)
+        data['image'] = imglist
 
     return render_template('view_search.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=app_onc.vars['query'],
                             script=script, plot=div, warning=warning_message, cols=cols)
@@ -405,10 +429,7 @@ def onc_inventory(source_id=None):
         for idx,row in enumerate(t['spectra']):
             spec = '<a href="../spectrum/{}"><img class="view" src="../static/view.png" /></a>'.format(row['id'])
             speclist.append(spec)
-        t['spectra']['view'] = speclist
-        cols = t['spectra'].colnames
-        cols.pop(cols.index('view'))
-        t['spectra'] = t['spectra'][['view']+cols]
+        t['spectra']['spectrum'] = speclist
     
     # Create link to images
     if 'images' in t:
@@ -416,119 +437,13 @@ def onc_inventory(source_id=None):
         for idx,row in enumerate(t['images']):
             img = '<a href="../image/{}"><img class="view" src="../static/view.png" /></a>'.format(row['id'])
             imglist.append(img)
-        t['images']['view'] = imglist
-        cols = t['images'].colnames
-        cols.pop(cols.index('view'))
-        t['images'] = t['images'][['view']+cols]
+        t['images']['image'] = imglist
     
     return render_template('inventory.html',
                            tables=[t[x].to_pandas().to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>') for x in t.keys()],
                            titles=['na']+list(t.keys()), path=path, source_id=app_onc.vars['source_id'],
                            name=objname, coords=coords, allnames=allnames, distance=dist_string,
                            comments=comments, sptypes=sptype_txt, ra=ra, dec=dec, simbad=smbd, vizier=vzr)
-
-    # # Photometry text
-    # try:
-    #     phot_data = t['photometry'].to_pandas()
-    #     phot_txt = '<p>'
-    #     for band in OrderedDict(sorted(phot_dict.items(), key=lambda t: t[1])):
-    #         if band in phot_data['band'].tolist():
-    #             unc = phot_data[phot_data['band']==band]['magnitude_unc'].values[0]
-    #             if unc == 'null' or unc is None:
-    #                 phot_txt += '<strong>{0}</strong>: ' \
-    #                             '>{1:.2f}<br>'.format(band, phot_data[phot_data['band'] == band]['magnitude'].values[0])
-    #             else:
-    #                 phot_txt += '<strong>{0}</strong>: ' \
-    #                             '{1:.2f} +/- {2:.2f}<br>'.format(band,
-    #                                                              phot_data[phot_data['band'] == band]['magnitude'].values[0],
-    #                                                              float(phot_data[phot_data['band'] == band]['magnitude_unc'].values[0]))
-    #     for band in phot_data['band'].tolist():
-    #         if band in phot_dict.keys():  # Skip those already displayed (which match the dictionary)
-    #             continue
-    #
-    #         unc = phot_data[phot_data['band'] == band]['magnitude_unc'].values[0]
-    #         if unc == 'null' or unc is None:
-    #             phot_txt += '<strong>{0}</strong>: ' \
-    #                         '>{1:.2f}<br>'.format(band, phot_data[phot_data['band'] == band]['magnitude'].values[0])
-    #         else:
-    #             phot_txt += '<strong>{0}</strong>: ' \
-    #                         '{1:.2f} +/- {2:.2f}<br>'.format(band,
-    #                                                          phot_data[phot_data['band'] == band]['magnitude'].values[0],
-    #                                                          float(phot_data[phot_data['band'] == band][
-    #                                                                    'magnitude_unc'].values[0]))
-    #
-    #     phot_txt += '</p>'
-    # except:
-    #     phot_txt = '<p>None in database</p>'
-    #
-    # # Grab spectra
-    # warnings = list()
-    # spectra_download = list()
-    # try:
-    #     spec_list = t['spectra']['id']
-    #     plot_list = list()
-    #
-    #     for i, spec_id in enumerate(spec_list):
-    #         stdout = sys.stdout  # Keep a handle on the real standard output
-    #         sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
-    #         query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id ' + \
-    #                 'FROM spectra WHERE id={}'.format(spec_id)
-    #         q = db.query(query, fetch='one', fmt='dict')
-    #         sys.stdout = stdout
-    #
-    #         if mystdout.getvalue().lower().startswith('could not retrieve spectrum'):
-    #             warnings.append(mystdout.getvalue())
-    #             continue
-    #
-    #         spec = q['spectrum']
-    #
-    #         # Get spectrum name
-    #         try:
-    #             query = 'SELECT name FROM telescopes WHERE id={}'.format(q['telescope_id'])
-    #             n1 = db.query(query, fetch='one', fmt='array')[0]
-    #             query = 'SELECT name FROM instruments WHERE id={}'.format(q['instrument_id'])
-    #             n2 = db.query(query, fetch='one', fmt='array')[0]
-    #             plot_name = 'Spectrum {}: {}:{}'.format(i+1, n1, n2)
-    #         except:
-    #             plot_name = 'Spectrum {}'.format(i+1)
-    #
-    #         # Make the plot
-    #         tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
-    #
-    #         # create a new plot
-    #         if q['wavelength_units'] is not None:
-    #             wav = 'Wavelength (' + q['wavelength_units'] + ')'
-    #         else:
-    #             wav = 'Wavelength'
-    #
-    #         if q['flux_units'] is not None:
-    #             flux = 'Flux (' + q['flux_units'] + ')'
-    #         else:
-    #             flux = 'Flux'
-    #
-    #         # can specify plot_width if needed
-    #         p = figure(tools=tools, title=plot_name, x_axis_label=wav, y_axis_label=flux, plot_width=600)
-    #
-    #         p.line(spec.data[0], spec.data[1], line_width=2)
-    #
-    #         plot_list.append(p)
-    #
-    #         # Make download link
-    #         query = 'SELECT spectrum FROM spectra WHERE id={}'.format(spec_id)
-    #         q = db.query(query, fetch='one', fmt='dict', use_converters=False)
-    #         spectra_download.append('<a href="{}" download="">Download {}</a>'.format(q['spectrum'], plot_name))
-    #
-    #     script, div = components(plot_list)
-    # except:
-    #     script, div = '', ''
-    #     spectra_download = ['None in database']
-        
-    # return render_template('inventory.html',
-    #                        tables=[t[x].to_pandas().to_html(classes='display', index=False) for x in t.keys()],
-    #                        titles=['na']+list(t.keys()), path=path, source_id=app_onc.vars['source_id'],
-    #                        table=phot_txt, script=script, plot=div, name=objname, coords=coords,
-    #                        allnames=allnames, warnings=warnings, distance=dist_string,
-    #                        comments=comments, sptypes=sptype_txt, spectra_download=spectra_download, ra=ra, dec=dec)
 
 
 # Check Schema
@@ -570,10 +485,10 @@ def onc_browse():
 
     # Change column to a link
     linklist = []
-    for i, elem in enumerate(data['shortname']):
+    for i, elem in enumerate(data['id']):
         link = '<a href="inventory/{0}">{1}</a>'.format(data.iloc[i]['id'], elem)
         linklist.append(link)
-    data['shortname'] = linklist
+    data['id'] = linklist
     
     # Create checkbox first column
     buttonlist = []
