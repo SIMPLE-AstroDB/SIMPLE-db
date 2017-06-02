@@ -164,7 +164,7 @@ def onc_plot():
 def link_columns(data, db, columns):
     
     # Change id to a link
-    if 'id' in columns and 'id' in data:
+    if 'id' in columns and 'id' in data and 'source_id' not in data:
         linklist = []
         for i, elem in enumerate(data['id']):
             link = '<a href="inventory/{0}">{1}</a>'.format(data.iloc[i]['id'], elem)
@@ -287,7 +287,7 @@ def onc_search():
     cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
 
     # Add links to columns
-    data = link_columns(data, db, ['id'])
+    data = link_columns(data, db, ['id', 'source_id'])
 
     # Get numerical x and y axes for plotting
     columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
