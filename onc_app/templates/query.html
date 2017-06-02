@@ -53,11 +53,24 @@
             </div>
 
             <div class="block grey">
-                <h2 id="search">Search by Coordinates or Identifier</h2>
+                <h2 id="search">Search the Database</h2>
 
                 <form id='searchform' method='post' action='search' >
                     <p>Search for objects by partial name matching or within 1 arcminute of an RAJ2000, DEJ2000 coordinate (in decimal degrees):</p>
-                    <p><input type="text" name="search_to_run" size="40" rows="1" value="{{defsearch}}" /><input type='submit' value='Search' /></p>
+
+                    <p>
+                        Search for
+                        <input type="text" name="search_to_run" size="40" rows="1" value="{{defsearch}}" />
+                        in
+                        <select name="table">
+                            {{tables|safe}}
+                        </select>
+                        table.
+                        <input type='submit' value='Search' />
+                    </p>
+
+
+                </form>
                 
                 </form>
             </div>

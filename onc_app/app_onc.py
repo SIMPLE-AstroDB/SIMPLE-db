@@ -41,13 +41,20 @@ def onc_home():
 # Page with a text box to take the SQL query
 @app_onc.route('/query', methods=['GET', 'POST'])
 def onc_query():
+    db = astrodb.Database(db_file)
     defquery = 'SELECT * FROM sources'
     if app_onc.vars['query']=='':
         app_onc.vars['query'] = defquery
 
+    table_names = db.query("select * from sqlite_master where type='table'")['name']
+
+    tables = '\n'.join(['<option value="{0}" {1}> {0}</option>'.format(t, "selected='selected'" if t=='sources' else '') for t in table_names])
+    print(tables)
+
     return render_template('query.html', defquery=app_onc.vars['query'],
                            defsearch=app_onc.vars['search'], specid=app_onc.vars['specid'],
-                           source_id=app_onc.vars['source_id'], version=astrodbkit.__version__)
+                           source_id=app_onc.vars['source_id'], version=astrodbkit.__version__,
+                           tables=tables)
 
 # Grab results of query and display them
 @app_onc.route('/runquery', methods=['POST','GET'])
@@ -231,7 +238,7 @@ def onc_export():
 def onc_search():
     db = astrodb.Database(db_file)
     app_onc.vars['search'] = request.form['search_to_run']
-    search_table = 'sources'
+    search_table = request.form['table']
     search_value = app_onc.vars['search']
 
     # Process search
