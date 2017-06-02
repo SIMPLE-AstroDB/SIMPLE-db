@@ -445,7 +445,7 @@ def onc_inventory(source_id=None):
     
     # Get external queries
     smbd = 'http://simbad.u-strasbg.fr/simbad/sim-coo?Coord={}+%2B{}&CooFrame=ICRS&CooEpoch=2000&CooEqui=2000&CooDefinedFrames=none&Radius=10&Radius.unit=arcsec&submit=submit+query'.format(ra,dec)
-    vzr = ''
+    vzr = 'http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=&-out.add=_r&-out.add=_RAJ%2C_DEJ&-sort=_r&-to=&-out.max=20&-meta.ucd=2&-meta.foot=1&-c.rs=20&-c={}+{}'.format(ra,dec)
     
     # Create link to spectra
     if 'spectra' in t:
