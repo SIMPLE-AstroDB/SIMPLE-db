@@ -83,7 +83,16 @@ def onc_runquery():
         return render_template('error.html', headermessage='No Results Found',
                                errmess='<p>No entries found for query:</p><p>' + htmltxt +
                                        '</p><p>'+mystdout.getvalue().replace('<', '&lt;')+'</p>')
-
+                                        
+    # Remane RA and Dec columns
+    for idx,name in enumerate(t.colnames):
+        if name.endswith('.ra'):
+            t[name].name =  'ra'
+        if name.endswith('.dec'):
+            t[name].name =  'dec'
+        if name.endswith('.id'):
+            t[name].name =  'id'
+            
     # Convert to Pandas data frame
     try:
         data = t.to_pandas()
@@ -111,13 +120,22 @@ def onc_runquery():
     cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
     
     # Add links to columns
-    data = link_columns(data, db, ['source_id','spectrum','image'])
+    data = link_columns(data, db, ['id','source_id','spectrum','image'])
         
     return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=app_onc.vars['query'],
                             script=script, plot=div, warning=warning_message, cols=cols)
     
 def link_columns(data, db, columns):
-    # Change id column to a link
+    
+    # Change id to a link
+    if 'id' in columns and 'id' in data:
+        linklist = []
+        for i, elem in enumerate(data['id']):
+            link = '<a href="inventory/{0}">{1}</a>'.format(data.iloc[i]['id'], elem)
+            linklist.append(link)
+        data['id'] = linklist
+    
+    # Change source_id column to a link
     if 'source_id' in columns and 'source_id' in data:
         linklist = []
         for i, elem in enumerate(data['source_id']):
@@ -231,6 +249,9 @@ def onc_search():
     # Get column names
     cols = [strip_html(str(i)) for i in list(data)[1:]]
     cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
+
+    # Add links to columns
+    data = link_columns(data, db, ['id'])
 
     return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=search_value,
                             script=script, plot=div, warning=warning_message, cols=cols)
@@ -381,9 +402,6 @@ def onc_inventory(source_id=None):
     if len(t) == 0:
         return render_template('error.html', headermessage='Error',
                                errmess="<p>You typed: "+app_onc.vars['source_id']+"</p>")
-                               
-    # Add links to plot spectra and images in inventory tables
-    # Direct to data_product view (/spectrum view above) with option to download
     
     # Grab object information
     objname = t['sources']['designation'][0]
