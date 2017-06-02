@@ -1,0 +1,63 @@
+<!doctype html>
+<title>Plot Results</title>
+<html lang="en">
+    <head>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+        <script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script>
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
+
+        <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.css" type="text/css" />
+        <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.js"></script>
+
+        <link rel="stylesheet" href="http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css" />
+
+        <script>
+            $(document).ready( function () {
+              $('.dataframe').DataTable( {
+                "paging": false,
+                "info": false,
+                "searching": false
+              } );
+            } );
+        </script>
+
+        {{ script|safe }}
+
+    </head>
+    <body>
+
+        <script>
+            $(document).ready(function(){
+                $("#header").load('{{ url_for('static',filename='header.html')}}');
+                $("#footer").load('{{ url_for('static',filename='footer.html')}}');
+            });
+        </script>
+
+        <div id="header"></div>
+
+        <div class=page>
+
+            <div class='block'>
+                <h1>{{title|safe}}</h1>
+                <br>
+                {{ plot|safe }}
+
+            </div>
+
+            <div class="block">
+
+                {{ table|safe }}
+
+            </div>
+            <div class='block'>
+                <!--<form method="get" action="{{ download|safe }}">-->
+                <!--<button type="submit">Download Spectrum</button>-->
+                <!--</form>-->
+
+                <p><a href="javascript:history.go(-1)">Back to inventory</a></p>
+            </div>
+
+        </div>
+        <div id="footer"></div>
+    </body>
+</html>

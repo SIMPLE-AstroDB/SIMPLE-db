@@ -61,6 +61,34 @@
                 </form>
             </div>
 
+            <div class='block'>
+
+                <h1>Plot Results</h1>
+                <br>
+
+                <form id='plotform' method='post' action='plot' >
+
+                    <p>
+                        Select the column data to plot:
+                    </p>
+
+                    <p>
+                        X-axis:
+                        <select name="xaxis">
+                            {{axes|safe}}
+                        </select>
+                    </p>
+                    <p>
+                        Y-axis:
+                        <select name="yaxis">
+                            {{axes|safe}}
+                        </select>
+                    </p>
+                    <p>
+                        <input type='submit' value='Plot' />
+                    </p>
+                </form>
+            </div>
 
         </div>
         <div id="footer"></div>

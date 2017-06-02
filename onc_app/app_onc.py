@@ -118,13 +118,42 @@ def onc_runquery():
     # Get column names
     cols = [strip_html(str(i)) for i in list(data)[1:]]
     cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
+    # TODO Differentiate between source.id and other table ids
     
     # Add links to columns
     data = link_columns(data, db, ['id','source_id','spectrum','image'])
-        
+
+    # Get numerical x and y axes for plotting
+    columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
+    axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b)+","+repr(list(t[b])), b) for b in columns])
+
     return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=app_onc.vars['query'],
-                            script=script, plot=div, warning=warning_message, cols=cols)
-    
+                            script=script, plot=div, warning=warning_message, cols=cols, axes=axes)
+
+# Grab results of query and display them
+@app_onc.route('/plot', methods=['POST','GET'])
+def onc_plot():
+
+    # Get the axes to plot
+    xaxis, xdata = eval(request.form['xaxis'])
+    yaxis, ydata = eval(request.form['yaxis'])
+
+    # Make the plot
+    tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
+    p = figure(tools=tools, x_axis_label=xaxis, y_axis_label=yaxis, plot_width=800)
+    p.circle(xdata, ydata)
+
+    title = '{} v. {}'.format(xaxis,yaxis)
+
+    script, div = components(p)
+
+    # Also make a table
+    table = pd.DataFrame(np.array([xdata,ydata]).T, columns=[xaxis,yaxis])
+    table = table.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>')
+
+    return render_template('plot.html', title=title, script=script, plot=div, table=table)
+
+
 def link_columns(data, db, columns):
     
     # Change id to a link
@@ -253,8 +282,12 @@ def onc_search():
     # Add links to columns
     data = link_columns(data, db, ['id'])
 
+    # Get numerical x and y axes for plotting
+    columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
+    axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b)+","+repr(list(t[b])), b) for b in columns])
+
     return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=search_value,
-                            script=script, plot=div, warning=warning_message, cols=cols)
+                            script=script, plot=div, warning=warning_message, cols=cols, axes=axes)
 
 
 # Plot a spectrum
@@ -528,8 +561,12 @@ def onc_browse():
     cols = [strip_html(str(i)) for i in data.columns.tolist()[1:]]
     cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
 
+    # Get numerical x and y axes for plotting
+    columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
+    axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b)+","+repr(list(t[b])), b) for b in columns])
+
     return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query='SELECT * FROM browse',
-                            script=script, plot=div, warning=warning_message, cols=cols)
+                            script=script, plot=div, warning=warning_message, cols=cols, axes=axes)
 
 def strip_html(s):
     return re.sub(r'<[^<]*?/?>','',s)
