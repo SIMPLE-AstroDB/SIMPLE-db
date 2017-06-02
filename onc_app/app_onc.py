@@ -113,7 +113,7 @@ def onc_runquery():
     # Add links to columns
     data = link_columns(data, db, ['source_id','spectrum','image'])
         
-    return render_template('view_search.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=app_onc.vars['query'],
+    return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=app_onc.vars['query'],
                             script=script, plot=div, warning=warning_message, cols=cols)
     
 def link_columns(data, db, columns):
@@ -232,7 +232,7 @@ def onc_search():
     cols = [strip_html(str(i)) for i in list(data)[1:]]
     cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
 
-    return render_template('view_search.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=search_value,
+    return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=search_value,
                             script=script, plot=div, warning=warning_message, cols=cols)
 
 
@@ -429,14 +429,6 @@ def onc_inventory(source_id=None):
     smbd = 'http://simbad.u-strasbg.fr/simbad/sim-coo?Coord={}+%2B{}&CooFrame=ICRS&CooEpoch=2000&CooEqui=2000&CooDefinedFrames=none&Radius=10&Radius.unit=arcsec&submit=submit+query'.format(ra,dec)
     vzr = ''
     
-    # # Create link to spectra
-    # if 'spectra' in t:
-    #     t['spectra'] = link_columns(t['spectra'], db, ['spectrum'])
-    #
-    # # Create link to images
-    # if 'images' in t:
-    #     t['images'] = link_columns(t['images'], db, ['image'])
-    
     # Create link to spectra
     if 'spectra' in t:
         speclist = []
@@ -486,7 +478,7 @@ def onc_browse():
     """Examine the full source list with clickable links to object summaries"""
     db = astrodb.Database(db_file)
     # Run the query
-    t = db.query('SELECT id, ra, dec, shortname, names, comments FROM sources', fmt='table')
+    t = db.query('SELECT * FROM browse', fmt='table')
     
     try:
         script, div, warning_message = onc_skyplot(t)
@@ -514,33 +506,12 @@ def onc_browse():
     cols = data.columns.tolist()
     cols.pop(cols.index('Select'))
     data = data[['Select']+cols]
-
-    # Rename columns
-    translation = {'id': 'Source ID', 'ra': '<span title="Right Ascension (deg)">RA</span>',
-                   'dec': '<span title="Declination (deg)">Dec</span>', 'names': 'Alternate Designations',
-                   'comments': 'Comments', 'shortname': 'Object Shortname'}
-    column_names = data.columns.tolist()
-    for i, name in enumerate(column_names):
-        if name in translation.keys():
-            column_names[i] = translation[name]
-    data.columns = column_names
-
-    # Count up photometry and spectroscopy for new columns
-    df_phot = db.query('SELECT id, source_id FROM photometry', fmt='table').to_pandas()
-    phot_counts = df_phot.groupby(by='source_id').count()
-    phot_counts.columns = ['<span title="Amount of photometry data available">Photometry</span>']
-    df_spec = db.query('SELECT id, source_id FROM spectra', fmt='table').to_pandas()
-    spec_counts = df_spec.groupby(by='source_id').count()
-    spec_counts.columns = ['<span title="Amount of spectroscopic observations available">Spectroscopy</span>']
-
-    final_data = pd.concat([data, phot_counts, spec_counts], axis=1, join='outer')
-    final_data['<span title="Amount of photometry data available">Photometry</span>'].fillna(value=0, inplace=True)
-    final_data['<span title="Amount of spectroscopic observations available">Spectroscopy</span>'].fillna(value=0, inplace=True)
     
-    cols = [strip_html(str(i)) for i in list(column_names)[1:]]
+    cols = [strip_html(str(i)) for i in data.columns.tolist()[1:]]
     cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
 
-    return render_template('browse.html', script=script, div=div, table=final_data.to_html(classes='display', index=False, escape=False), cols=cols)
+    return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query='SELECT * FROM browse',
+                            script=script, plot=div, warning=warning_message, cols=cols)
 
 def strip_html(s):
     return re.sub(r'<[^<]*?/?>','',s)
@@ -592,21 +563,6 @@ def onc_skyplot(t):
 @app_onc.route('/feedback')
 def onc_feedback():
     return render_template('feedback.html')
-
-# Photometry dictionary in microns
-phot_dict = {'J': 1.24, 'H': 1.66, 'K': 2.19, 'Ks': 2.16, 'W1': 3.35, 'W2': 4.6, 'W3': 11.56, 'W4': 22.09,
-             '[3.6]': 3.51, '[4.5]': 4.44, '[5.8]': 5.63, '[8]': 7.59, '[24]': 23.68, 'g': .48, 'i': .76, 'r': .62,
-             'u': .35, 'z': .91, '2MASS_J': 1.24, '2MASS_H': 1.66, '2MASS_Ks': 2.16, 'WISE_W1': 3.35,
-             'WISE_W2': 4.6, 'WISE_W3': 11.56, 'WISE_W4': 22.09, 'IRAC_ch1': 3.51, 'IRAC_ch2': 4.44,
-             'IRAC_ch3': 5.63, 'IRAC_ch4': 7.59, 'SDSS_g': .48, 'SDSS_i': .76, 'SDSS_r': .62, 'SDSS_u': .35,
-             'SDSS_z': .91, 'HST_F105W': 1.0552, 'HST_F110W': 1.1534, 'HST_F125W': 1.2486, 'HST_F140W': 1.3923,
-             'Johnson_B': 0.442, 'Johnson_U': 0.364, 'Johnson_V': 0.540,
-             'MKO_H': 1.635, 'MKO_J': 1.25, 'MKO_K': 2.20, "MKO_L'": 3.77, "MKO_M'": 4.68, 'MKO_Y': 1.02,
-             'DENIS_I': 0.82, 'DENIS_J': 1.25, 'DENIS_K': 2.15, 'DENIS_Ks': 2.15,
-             'Cousins_I': 0.647, 'Cousins_R': 0.7865,
-             'I': 0.806, 'L': 3.45, 'Y': 1.02, 'Z': 0.9, 'y': 1.02,
-             'GALEX_FUV': 0.1528, 'GALEX_NUV': 0.2271,
-             'FourStar_J2': 1.144, 'FourStar_J3': 1.287}
 
 def parse_sptype(spnum):
     """Parse a spectral type number and return a string"""

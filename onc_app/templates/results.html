@@ -1,5 +1,5 @@
 <!doctype html>
-<title>ONCdb Results</title>
+<title>Query Results</title>
 <html lang="en">
     <head>
         <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
@@ -36,11 +36,12 @@
         <div id="header"></div>
 
         <div class=page>
+            
             <div class='block'>
                 
-                <div style='float:left;'>
-                    <h1>Browse Database</h1>
-                    <p>Maybe a little summary of the database here?</p>
+                <div style='float:left; width:500px;'>
+                    <h1>Search Results</h1>
+                    <p>Input: <code>{{ query|safe }}</code></p>
                 </div>
                 <div id='skyplot'>
                     {{ plot|safe }}
@@ -59,9 +60,8 @@
                     <input type='submit' value='Export Selected' />
                 </form>
             </div>
-            
-                
-            </div>
+
+
         </div>
         <div id="footer"></div>
     </body>
