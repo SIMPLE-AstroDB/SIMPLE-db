@@ -18,6 +18,20 @@
                 "info": false,
                 "searching": false
               } );
+              $('#select-all').click(function(event) {
+                if(this.checked) {
+                    // Iterate each checkbox
+                    $(':checkbox').each(function() {
+                        this.checked = true;
+                    });
+                }
+                else {
+                    // Iterate each checkbox
+                    $(":checkbox").each(function() {
+                        this.checked = false;
+                    });
+                }
+            });
             } );
         </script>
 
@@ -53,12 +67,18 @@
             </div>
 
             <div class='block'>
+
                 <form id='searchform' method='post' action='export' >
+
                     {{ cols|safe }}
                     {{ table|safe }}
+                    <p>
+                        <input type="checkbox" name="select-all" id="select-all" /> Select all
+                    </p>
                     <br>
                     <input type='submit' value='Export Selected' />
                 </form>
+
             </div>
 
             <div class='block'>
