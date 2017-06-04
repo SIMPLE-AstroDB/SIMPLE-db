@@ -46,7 +46,6 @@ def onc_query():
     table_names = db.query("select * from sqlite_master where type='table'")['name']
 
     tables = '\n'.join(['<option value="{0}" {1}> {0}</option>'.format(t, "selected='selected'" if t=='sources' else '') for t in table_names])
-    print(tables)
 
     return render_template('query.html', defquery=app_onc.vars['query'],
                            defsearch=app_onc.vars['search'], specid=app_onc.vars['specid'],
