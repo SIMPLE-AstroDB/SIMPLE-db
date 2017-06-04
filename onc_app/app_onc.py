@@ -14,11 +14,8 @@ from bokeh.models.widgets import Panel, Tabs
 from ONCdb import make_onc
 from astropy import units as u
 from astropy.coordinates import SkyCoord
-from astroquery.simbad import Simbad
 from scipy.ndimage.interpolation import zoom
 import pandas as pd
-from collections import OrderedDict
-from math import sqrt
 import numpy as np
 
 app_onc.vars = dict()
@@ -319,7 +316,7 @@ def onc_spectrum(specid=None):
     sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
     query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id ' + \
             'FROM spectra WHERE id={}'.format(app_onc.vars['specid'])
-    t = db.query(query, fetch='one', fmt='dict')
+    t = db.query(query, fmt='table')
     sys.stdout = stdout
 
     # Check for errors first
@@ -331,26 +328,23 @@ def onc_spectrum(specid=None):
     if isinstance(t, type(None)):
         return render_template('error.html', headermessage='No Result', errmess='<p>No spectrum found.</p>')
 
-    spec = t['spectrum']
-
-    query = 'SELECT shortname FROM sources WHERE id='+str(t['source_id'])
-    shortname = db.query(query, fetch='one', fmt='dict')['shortname']
-    filepath = t['spectrum'].path
+    # Get data
+    wav = 'Wavelength ('+t[0]['wavelength_units']+')'
+    flux = 'Flux ('+t[0]['flux_units']+')'
+    spec = t[0]['spectrum']
+    filepath = spec.path
 
     # Make the plot
     tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
-
-    # create a new plot
-    wav = 'Wavelength ('+t['wavelength_units']+')'
-    flux = 'Flux ('+t['flux_units']+')'
-    # can specify plot_width if needed
-    p = figure(tools=tools, title=shortname, x_axis_label=wav, y_axis_label=flux, plot_width=800)
-
+    p = figure(tools=tools, x_axis_label=wav, y_axis_label=flux, plot_width=800)
     p.line(spec.data[0], spec.data[1], line_width=2)
 
     script, div = components(p)
 
-    return render_template('spectrum.html', script=script, plot=div, download=filepath)
+    t['spectrum'] = [sp.path for sp in t['spectrum']]
+    meta = t.to_pandas().to_html(classes='display', index=False)
+
+    return render_template('spectrum.html', script=script, plot=div, meta=meta, download=filepath)
 
 # Display an image
 @app_onc.route('/image', methods=['POST'])
@@ -374,7 +368,7 @@ def onc_image(imgid=None):
     sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
     query = 'SELECT image, source_id, instrument_id, telescope_id ' + \
             'FROM images WHERE id={}'.format(app_onc.vars['imgid'])
-    t = db.query(query, fetch='one', fmt='dict')
+    t = db.query(query, fmt='table')
     sys.stdout = stdout
     
     # Check for errors first
@@ -387,20 +381,18 @@ def onc_image(imgid=None):
         return render_template('error.html', headermessage='No Result', errmess='<p>No image found.</p>')
         
     try:
-        img = t['image'].data
+        img = t[0]['image'].data
         
         # Down sample so the figure displays faster
         img = zoom(img, 0.05, prefilter=False)
         
-        query = 'SELECT shortname FROM sources WHERE id='+str(t['source_id'])
-        shortname = db.query(query, fetch='one', fmt='dict')['shortname']
-        filepath = t['image'].path
+        filepath = t[0]['image'].path
         
         # Make the plot
         tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
         
         # create a new plot
-        p = figure(tools=tools, title=shortname, plot_width=800)
+        p = figure(tools=tools, plot_width=800)
         
         # Make the plot
         p.image(image=[img], x=[0], y=[0], dw=[img.shape[0]], dh=[img.shape[1]])
@@ -409,11 +401,14 @@ def onc_image(imgid=None):
         p.y_range = Range1d(0, img.shape[1])
         
         script, div = components(p)
+
+        t['image'] = [sp.path for sp in t['image']]
+        meta = t.to_pandas().to_html(classes='display', index=False)
         
     except IOError:
         script, div, filepath = '', '', ''
     
-    return render_template('image.html', script=script, plot=div, download=filepath)
+    return render_template('image.html', script=script, plot=div, meta=meta, download=filepath)
     
 # Check inventory
 @app_onc.route('/inventory', methods=['POST'])
