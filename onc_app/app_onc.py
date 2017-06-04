@@ -314,8 +314,7 @@ def onc_spectrum(specid=None):
     # Grab the spectrum
     stdout = sys.stdout  # Keep a handle on the real standard output
     sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
-    query = 'SELECT spectrum, flux_units, wavelength_units, source_id, instrument_id, telescope_id ' + \
-            'FROM spectra WHERE id={}'.format(app_onc.vars['specid'])
+    query = 'SELECT * FROM spectra WHERE id={}'.format(app_onc.vars['specid'])
     t = db.query(query, fmt='table')
     sys.stdout = stdout
 
@@ -366,8 +365,7 @@ def onc_image(imgid=None):
     # Grab the spectrum
     stdout = sys.stdout  # Keep a handle on the real standard output
     sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
-    query = 'SELECT image, source_id, instrument_id, telescope_id ' + \
-            'FROM images WHERE id={}'.format(app_onc.vars['imgid'])
+    query = 'SELECT * FROM images WHERE id={}'.format(app_onc.vars['imgid'])
     t = db.query(query, fmt='table')
     sys.stdout = stdout
     
@@ -409,7 +407,7 @@ def onc_image(imgid=None):
         script, div, filepath = '', '', ''
     
     return render_template('image.html', script=script, plot=div, meta=meta, download=filepath)
-    
+
 # Check inventory
 @app_onc.route('/inventory', methods=['POST'])
 @app_onc.route('/inventory/<int:source_id>')
