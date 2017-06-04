@@ -287,7 +287,7 @@ def onc_search():
     cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
 
     # Add links to columns
-    data = link_columns(data, db, ['id', 'source_id'])
+    data = link_columns(data, db, ['id', 'source_id', 'image','spectrum'])
 
     # Get numerical x and y axes for plotting
     columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
