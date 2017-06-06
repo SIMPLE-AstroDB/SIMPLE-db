@@ -25,6 +25,7 @@ app_onc.vars['specid'] = ''
 app_onc.vars['source_id'] = ''
 
 db_file = os.path.join(os.path.dirname(make_onc.__file__),'orion.db')
+db = astrodb.Database(db_file)
 pd.set_option('max_colwidth', -1)
 
 # Redirect to the main page
@@ -38,7 +39,6 @@ def onc_home():
 # Page with a text box to take the SQL query
 @app_onc.route('/query', methods=['GET', 'POST'])
 def onc_query():
-    db = astrodb.Database(db_file)
     defquery = 'SELECT * FROM sources'
     if app_onc.vars['query']=='':
         app_onc.vars['query'] = defquery
@@ -55,7 +55,7 @@ def onc_query():
 # Grab results of query and display them
 @app_onc.route('/runquery', methods=['POST','GET'])
 def onc_runquery():
-    db = astrodb.Database(db_file)
+    # db = astrodb.Database(db_file)
     app_onc.vars['query'] = request.form['query_to_run']
     htmltxt = app_onc.vars['query'].replace('<', '&lt;')
 
@@ -130,7 +130,9 @@ def onc_runquery():
     columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
     axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b)+","+repr(list(t[b])), b) for b in columns])
 
-    return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=app_onc.vars['query'],
+    table_html = data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>')
+
+    return render_template('results.html', table=table_html, query=app_onc.vars['query'],
                             script=script, plot=div, warning=warning_message, cols=cols, axes=axes)
 
 # Grab results of query and display them
@@ -232,7 +234,7 @@ def onc_export():
 # Perform a search
 @app_onc.route('/search', methods=['POST'])
 def onc_search():
-    db = astrodb.Database(db_file)
+    # db = astrodb.Database(db_file)
     app_onc.vars['search'] = request.form['search_to_run']
     search_table = request.form['table']
     search_value = app_onc.vars['search']
@@ -297,7 +299,7 @@ def onc_search():
 @app_onc.route('/spectrum', methods=['POST'])
 @app_onc.route('/spectrum/<int:specid>')
 def onc_spectrum(specid=None):
-    db = astrodb.Database(db_file)
+    # db = astrodb.Database(db_file)
     if specid is None:
         app_onc.vars['specid'] = request.form['spectrum_to_plot']
         path = ''
@@ -348,7 +350,7 @@ def onc_spectrum(specid=None):
 @app_onc.route('/image', methods=['POST'])
 @app_onc.route('/image/<int:imgid>')
 def onc_image(imgid=None):
-    db = astrodb.Database(db_file)
+    # db = astrodb.Database(db_file)
     if imgid is None:
         app_onc.vars['imgid'] = request.form['image_to_plot']
         path = ''
@@ -411,7 +413,7 @@ def onc_image(imgid=None):
 @app_onc.route('/inventory', methods=['POST'])
 @app_onc.route('/inventory/<int:source_id>')
 def onc_inventory(source_id=None):
-    db = astrodb.Database(db_file)
+    # db = astrodb.Database(db_file)
     if source_id is None:
         app_onc.vars['source_id'] = request.form['id_to_check']
         path = ''
@@ -506,7 +508,8 @@ def onc_inventory(source_id=None):
 # @app_onc.route('/schema.html', methods=['GET', 'POST'])
 @app_onc.route('/schema', methods=['GET', 'POST'])
 def onc_schema():
-    db = astrodb.Database(db_file)
+    # db = astrodb.Database(db_file)
+
     # Get table names and their structure
     try:
         table_names = db.query("SELECT name FROM sqlite_sequence", unpack=True)[0]
@@ -526,7 +529,8 @@ def onc_schema():
 @app_onc.route('/browse')
 def onc_browse():
     """Examine the full source list with clickable links to object summaries"""
-    db = astrodb.Database(db_file)
+    # db = astrodb.Database(db_file)
+
     # Run the query
     t = db.query('SELECT * FROM browse', fmt='table')
     

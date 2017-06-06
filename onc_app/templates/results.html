@@ -22,34 +22,29 @@
                     } ]
                   } );
 
-              $('#select-all').click(function(event) {
-                if(this.checked) {
-                    // Iterate each checkbox
-                    $(':checkbox').each(function() {
-                        this.checked = true;
-                    });
-                }
-                else {
-                    // Iterate each checkbox
-                    $(":checkbox").each(function() {
-                        this.checked = false;
-                    });
-                }
+                $('#select-all').click(function(event) {
+                    if(this.checked) {
+                        // Iterate each checkbox
+                        $(':checkbox').each(function() {
+                            this.checked = true;
+                        });
+                    }
+                    else {
+                        // Iterate each checkbox
+                        $(":checkbox").each(function() {
+                            this.checked = false;
+                        });
+                    }
+                });
+                $("#header").load('{{ url_for('static',filename='header.html')}}');
+                $("#footer").load('{{ url_for('static',filename='footer.html')}}');
             });
-            } );
         </script>
 
         {{ script|safe }}
     
     </head>
     <body>
-        
-        <script>
-            $(document).ready(function(){
-                $("#header").load('{{ url_for('static',filename='header.html')}}');
-                $("#footer").load('{{ url_for('static',filename='footer.html')}}');
-            });
-        </script>
             
         <div id="header"></div>
 
