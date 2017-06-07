@@ -45,12 +45,26 @@ def onc_query():
 
     table_names = db.query("select * from sqlite_master where type='table'")['name']
 
-    tables = '\n'.join(['<option value="{0}" {1}> {0}</option>'.format(t, "selected='selected'" if t=='sources' else '') for t in table_names])
+    tables = '\n'.join(['<option value="{0}"> {0}</option>'.format(t) for t in table_names])
+
+    columns_html = []
+    columns_js = []
+    for tab in table_names:
+        cols = list(db.query("pragma table_info('{}')".format(tab))['name'])
+
+        col_html = ''.join(['<input type="checkbox" value="{0}" name="selections"> {0}<br>'.format(c) for c in cols])
+        columns_html.append('<div id="{}" class="columns" style="display:none">{}</div>'.format(tab,col_html))
+
+        col_js = ','.join(["{id:'"+c+"',label:'"+c+"',type:'string'}" for c in cols])
+        columns_js.append(col_js)
+
+    column_select = ''.join(columns_html)
+    column_script = ''.join(columns_js)
 
     return render_template('query.html', defquery=app_onc.vars['query'],
                            defsearch=app_onc.vars['search'], specid=app_onc.vars['specid'],
                            source_id=app_onc.vars['source_id'], version=astrodbkit.__version__,
-                           tables=tables)
+                           tables=tables, column_select=column_select, column_script=col_js)
 
 # Grab results of query and display them
 @app_onc.route('/runquery', methods=['POST','GET'])

@@ -541,3 +541,40 @@ table.dataTable td {
     margin-top: 0.5em;
   }
 }
+
+ul#sql-builder {
+    list-style-type: none;
+    margin:10px 0;
+    padding:0;
+}
+
+ul#sql-builder li {
+    padding:10px 0;
+}
+
+ul#sql-builder .pull-right {
+    float: right;
+    padding-right:10px;
+}
+
+ul#sql-builder div.rule-filter-container, ul#sql-builder div.rule-operator-container, ul#sql-builder div.rule-value-container {
+    float: left;
+    position: relative;
+    bottom:11px;
+}
+
+ul#sql-builder ul.rules-list {
+    border:1px solid #ccc;
+    list-style-type:none;
+    margin:20px 10px;
+    padding:10px;
+}
+
+ul#sql-builder ul.rules-list li.rule-container{
+    clear:both;
+}
+
+ul#sql-builder li.rule-container .btn-danger {
+    position: relative;
+    bottom:11px;
+}

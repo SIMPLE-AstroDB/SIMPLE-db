@@ -1,6 +1,6 @@
 <!doctype html>
 <title>ONCdb Query</title>
-<html lang="en">
+<div lang="en">
     <head>
         <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
         <script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script>
@@ -14,11 +14,16 @@
 
         <script>
             $(document).ready( function () {
-              $('.dataframe').DataTable( {
-                "paging": false,
-                "info": false,
-                "searching": false
-              } );
+                $('.dataframe').DataTable( {
+                    "paging": false,
+                    "info": false,
+                    "searching": false
+                } );
+
+                $('#tableselector').change(function(){
+                    $('.columns').hide();
+                    $('#' + $(this).val()).show();
+                });
 
                 $("#header").load('{{ url_for('static',filename='header.html')}}');
                 $("#footer").load('{{ url_for('static',filename='footer.html')}}');
@@ -28,16 +33,15 @@
         {{ script|safe }}
     
     </head>
-    <body>
-            
+
         <div id="header"></div>
 
-        <div class=page>
+        <div class="page">
             
             <div class='block'>
                 
                 <h1>Target Search</h1>
-                <p>There are four different ways to find target data:</p>
+                <p>There are five different ways to find target data:</p>
             </div>
             
             <div class="block grey">
@@ -71,10 +75,10 @@
 
 
                 </form>
-                
+
                 </form>
             </div>
-            
+
             <div class="block grey">
                 <h2 id="inventory">Check Inventory</h2>
 
@@ -90,58 +94,33 @@
 
                 <h2 id="sql">SQL Builder</h2>
 
-                <div id="builder"></div>
+                <ul id="sql-builder">
+                    <li>
+                        FROM
+                        <select id="tableselector">
+                            <option name="none" value="none" selected='selected'>--</option>
+                            {{tables|safe}}
+                        </select>
 
-                    <script>
-                      $('#builder').queryBuilder({
-                        filters: [{
-                            id: 'name',
-                            label: 'Name',
-                            type: 'string'
-                          }, {
-                            id: 'category',
-                            label: 'Category',
-                            type: 'integer',
-                            input: 'select',
-                            values: {
-                              1: 'Books',
-                              2: 'Movies',
-                              3: 'Music',
-                              4: 'Tools',
-                              5: 'Goodies',
-                              6: 'Clothes'
-                            },
-                            operators: ['equal', 'not_equal', 'in', 'not_in', 'is_null', 'is_not_null']
-                          }, {
-                            id: 'in_stock',
-                            label: 'In stock',
-                            type: 'integer',
-                            input: 'radio',
-                            values: {
-                              1: 'Yes',
-                              0: 'No'
-                            },
-                            operators: ['equal']
-                          }, {
-                            id: 'price',
-                            label: 'Price',
-                            type: 'double',
-                            validation: {
-                              min: 0,
-                              step: 0.01
-                            }
-                          }, {
-                            id: 'id',
-                            label: 'Identifier',
-                            type: 'string',
-                            placeholder: '____-____-____',
-                            operators: ['equal', 'not_equal'],
-                            validation: {
-                              format: /^.{4}-.{4}-.{4}$/
-                            }
-                          }]
-                      });
-                    </script>
+                    </li>
+                    <li>
+                        SELECT
+                        {{ column_select | safe}}
+
+                    </li>
+
+                    <li>
+                        WHERE
+
+                        <div id="builder"></div>
+
+                        <script>
+                          $('#builder').queryBuilder({
+                            filters: [{{column_script|safe}}]
+                          });
+                        </script>
+                    </li>
+                </ul>
             </div>
 
             <div class="block grey">
