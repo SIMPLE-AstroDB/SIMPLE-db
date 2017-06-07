@@ -61,7 +61,7 @@ def onc_query():
     column_select = ''.join(columns_html)
     column_script = ''.join(columns_js)
 
-    return render_template('query.html', defquery=app_onc.vars['query'],
+    return render_template('query.html',
                            defsearch=app_onc.vars['search'], specid=app_onc.vars['specid'],
                            source_id=app_onc.vars['source_id'], version=astrodbkit.__version__,
                            tables=tables, column_select=column_select, column_script=col_js)
@@ -148,6 +148,102 @@ def onc_runquery():
 
     return render_template('results.html', table=table_html, query=app_onc.vars['query'],
                             script=script, plot=div, warning=warning_message, cols=cols, axes=axes)
+
+
+# Grab results of query and display them
+@app_onc.route('/buildquery', methods=['POST', 'GET'])
+def onc_buildquery():
+
+    # Build the query from all the input
+    entries = request.form
+    selections = []
+    for key in entries.keys():
+        for value in entries.getlist(key):
+            if key=='selections':
+                selections.append(value)
+
+    build_query = "SELECT {} FROM {}".format(','.join(selections),entries['table'])
+
+    # db = astrodb.Database(db_file)
+    app_onc.vars['query'] = build_query
+    htmltxt = app_onc.vars['query'].replace('<', '&lt;')
+
+    # Only SELECT commands are allowed
+    if not app_onc.vars['query'].lower().startswith('select'):
+        return render_template('error.html', headermessage='Error in Query',
+                               errmess='<p>Only SELECT queries are allowed. You typed:</p><p>' + htmltxt + '</p>')
+
+    # Run the query
+    stdout = sys.stdout  # Keep a handle on the real standard output
+    sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
+    try:
+        t = db.query(app_onc.vars['query'], fmt='table', use_converters=False)
+    except ValueError:
+        t = db.query(app_onc.vars['query'], fmt='array', use_converters=False)
+    except:
+        return render_template('error.html', headermessage='Error in Query',
+                               errmess='<p>Error in query:</p><p>' + htmltxt + '</p>')
+    sys.stdout = stdout
+
+    # Check for any errors from mystdout
+    if mystdout.getvalue().lower().startswith('could not execute'):
+        return render_template('error.html', headermessage='Error in Query',
+                               errmess='<p>Error in query:</p><p>' + mystdout.getvalue().replace('<', '&lt;') + '</p>')
+
+    # Check how many results were found
+    if type(t) == type(None):
+        return render_template('error.html', headermessage='No Results Found',
+                               errmess='<p>No entries found for query:</p><p>' + htmltxt +
+                                       '</p><p>' + mystdout.getvalue().replace('<', '&lt;') + '</p>')
+
+    # Remane RA and Dec columns
+    for idx, name in enumerate(t.colnames):
+        if name.endswith('.ra'):
+            t[name].name = 'ra'
+        if name.endswith('.dec'):
+            t[name].name = 'dec'
+        if name.endswith('.id'):
+            t[name].name = 'id'
+
+    # Convert to Pandas data frame
+    try:
+        data = t.to_pandas()
+    except AttributeError:
+        return render_template('error.html', headermessage='Error in Query',
+                               errmess='<p>Error for query:</p><p>' + htmltxt + '</p>')
+
+    # Create checkbox first column
+    buttonlist = []
+    for index, row in data.iterrows():
+        button = '<input type="checkbox" name="{}" value="{}" />'.format(str(index), repr(list(row)))
+        buttonlist.append(button)
+    data['Select'] = buttonlist
+    cols = data.columns.tolist()
+    cols.pop(cols.index('Select'))
+    data = data[['Select'] + cols]
+
+    try:
+        script, div, warning_message = onc_skyplot(t)
+    except:
+        script = div = warning_message = ''
+
+    # Get column names
+    cols = [strip_html(str(i)) for i in list(data)[1:]]
+    cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
+    # TODO Differentiate between source.id and other table ids
+
+    # Add links to columns
+    data = link_columns(data, db, ['id', 'source_id', 'spectrum', 'image'])
+
+    # Get numerical x and y axes for plotting
+    columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
+    axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b) + "," + repr(list(t[b])), b) for b in columns])
+
+    table_html = data.to_html(classes='display', index=False).replace('&lt;', '<').replace('&gt;', '>')
+
+    return render_template('results.html', table=table_html, query=app_onc.vars['query'],
+                           script=script, plot=div, warning=warning_message, cols=cols, axes=axes)
+
 
 # Grab results of query and display them
 @app_onc.route('/plot', methods=['POST','GET'])

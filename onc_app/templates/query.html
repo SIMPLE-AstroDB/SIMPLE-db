@@ -56,12 +56,11 @@
             <div class="block grey">
                 <h2 id="search">Search the Database</h2>
 
+                <ol>
+                    <li>Search the sources table for objects within 1 arcminute of a J2000 (RA, Dec) coordinate in decimal degrees</li>
+                    <li>Search any table for alphanumeric matches</li>
+                </ol>
                 <form id='searchform' method='post' action='search' >
-                    <ol>
-                        <li>Search the sources table for objects within 1 arcminute of a J2000 (RA, Dec) coordinate in decimal degrees</li>
-                        <li>Search any table for alphanumeric matches</li>
-                    </ol>
-
                     <p>
                         Search for
                         <input type="text" name="search_to_run" size="40" rows="1" value="{{defsearch}}" />
@@ -76,7 +75,6 @@
 
                 </form>
 
-                </form>
             </div>
 
             <div class="block grey">
@@ -94,49 +92,52 @@
 
                 <h2 id="sql">SQL Builder</h2>
 
-                <ul id="sql-builder">
-                    <li>
-                        FROM
-                        <select id="tableselector">
-                            <option name="none" value="none" selected='selected'>--</option>
-                            {{tables|safe}}
-                        </select>
+                <p>
+                    Construct a SQL query by selecting the table, selections, and conditions for your search:
+                </p>
 
-                    </li>
-                    <li>
-                        SELECT
-                        {{ column_select | safe}}
+                <form id='buildqueryform' method='post' action='buildquery' >
 
-                    </li>
+                    <ul id="sql-builder">
+                        <li>
+                            FROM
+                            <select name="table" id="tableselector">
+                                <option value="none" selected='selected'>--</option>
+                                {{tables|safe}}
+                            </select>
 
-                    <li>
-                        WHERE
+                        </li>
+                        <li>
+                            SELECT
+                            {{ column_select | safe}}
 
-                        <div id="builder"></div>
+                        </li>
 
-                        <script>
-                          $('#builder').queryBuilder({
-                            filters: [{{column_script|safe}}]
-                          });
-                        </script>
-                    </li>
-                </ul>
+                        <li>
+                            WHERE
+
+                            <div id="builder"></div>
+
+                            <script>
+                              $('#builder').queryBuilder({
+                                filters: [{{column_script|safe}}]
+                              });
+                            </script>
+                        </li>
+                    </ul>
+                    <p>
+                        <input type='submit' value='Submit' />
+                    </p>
+                </form>
             </div>
 
             <div class="block grey">
 
                 <h2 id="sql">SQL Query</h2>
 
-                <form id='queryform' method='post' action='runquery' >
-                    <p>
-                        <textarea name="query_to_run" cols="80" rows="8">{{defquery}}</textarea>
-                    </p>
-                    <p>
-                        <input type='submit' value='Submit' />
-                    </p>
-                </form>
-
-                <p>Not familiar with SQL queries? Here are some examples:</p>
+                <p>
+                    Write your own SQL query in the box below! Not familiar with SQL queries? Here are some examples:
+                </p>
                 <ul>
                     <li>SELECT shortname, ra, dec FROM sources WHERE (22&lt;ra AND ra&lt;24) AND (-15&lt;dec AND dec&lt;15)</li>
                     <li>SELECT band, magnitude, magnitude_unc FROM photometry WHERE source_id=4</li>
@@ -152,6 +153,15 @@
                         ON s.id=p.source_id
                         WHERE s.dec<=-10 AND (p.band IN ("J","H","Ks","W1","W2"))</li>
                 </ul>
+
+                <form id='queryform' method='post' action='runquery' >
+                    <p>
+                        <textarea name="query_to_run" cols="80" rows="8">SELECT * FROM sources</textarea>
+                    </p>
+                    <p>
+                        <input type='submit' value='Submit' />
+                    </p>
+                </form>
             </div>
 
         </div>
