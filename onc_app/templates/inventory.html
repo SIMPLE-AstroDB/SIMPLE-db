@@ -70,42 +70,32 @@
                 </div>
             
             </div>
-            
-            <!-- <div class='block'>
-                <h2>Photometry</h2>
 
-                <p>{{ table|safe }}</p>
+            <form id='sedform' method='post' action='sed' >
+                <div class='block'>
+                    <h1>Inventory</h1>
+                    <br>
 
-            </div>
+                    {% for table in tables %}
+                        <h2>{{titles[loop.index]}}</h2>
+                        <p>{{ table|safe }}</p>
+                    {% endfor %}
+                </div>
 
-            <div class='block'>
-                <h2>Spectroscopy</h2>
+                <div class='block'>
+                    <h1>Create Spectral Energy Distribution</h1>
+                    <p>
+                        To construct a spectral energy distribution for this source using the methods of <a href="http://iopscience.iop.org/article/10.1088/0004-637X/810/2/158" target="_blank">Filippazzo et al. (2015)</a>, check the boxes of the data you would like to include, specify an age range, then click the button below!
+                    </p>
+                    <p>
+                        Age: <input type="text" name="age_min" size="10" rows="1" value="500" /> - <input type="text" name="age_max" size="10" rows="1" value="3000" /> Myr
+                    </p>
+                    <p>
+                        <input type='submit' value='Create SED' />
+                    </p>
 
-                {% for one_plot in plot %}
-                    {{ one_plot|safe }}
-                <br>
-                {% endfor %}
-
-                {% for spectrum in spectra_download %}
-                    {{ spectrum|safe }}
-                <br>
-                {% endfor %}
-
-                {% for warning in warnings %}
-                    {{ warning|safe }}
-                <br>
-                {% endfor %}
-            </div> -->
-
-            <div class='block'>
-                <h1>Inventory</h1>
-                <br>
-
-                {% for table in tables %}
-                    <h2>{{titles[loop.index]}}</h2>
-                    <p>{{ table|safe }}</p>
-                {% endfor %}
-            </div>
+                </div>
+            </form>
 
         </div>
         

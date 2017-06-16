@@ -3,6 +3,7 @@ app_onc = Flask(__name__)
 
 import astrodbkit
 from astrodbkit import astrodb
+from SEDkit import SEDs
 import os
 import sys
 import re
@@ -118,14 +119,7 @@ def onc_runquery():
                                errmess='<p>Error for query:</p><p>'+htmltxt+'</p>')
     
     # Create checkbox first column
-    buttonlist = []
-    for index, row in data.iterrows():
-        button = '<input type="checkbox" name="{}" value="{}" />'.format(str(index),repr(list(row)))
-        buttonlist.append(button)
-    data['Select'] = buttonlist
-    cols = data.columns.tolist()
-    cols.pop(cols.index('Select'))
-    data = data[['Select']+cols]
+    data = add_checkboxes(data)
 
     try:
         script, div, warning_message = onc_skyplot(t)
@@ -156,6 +150,7 @@ def onc_buildquery():
 
     # Build the query from all the input
     entries = request.form
+    print(entries)
     selections = []
     for key in entries.keys():
         for value in entries.getlist(key):
@@ -213,14 +208,7 @@ def onc_buildquery():
                                errmess='<p>Error for query:</p><p>' + htmltxt + '</p>')
 
     # Create checkbox first column
-    buttonlist = []
-    for index, row in data.iterrows():
-        button = '<input type="checkbox" name="{}" value="{}" />'.format(str(index), repr(list(row)))
-        buttonlist.append(button)
-    data['Select'] = buttonlist
-    cols = data.columns.tolist()
-    cols.pop(cols.index('Select'))
-    data = data[['Select'] + cols]
+    data = add_checkboxes(data)
 
     try:
         script, div, warning_message = onc_skyplot(t)
@@ -267,6 +255,68 @@ def onc_plot():
     table = table.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>')
 
     return render_template('plot.html', title=title, script=script, plot=div, table=table)
+
+# Grab selected inventory and plot SED
+@app_onc.route('/inventory/sed', methods=['POST','GET'])
+def onc_sed():
+
+    # Get the ids of all the data to use
+    entries = request.form
+    source_id = int(entries['sources'])
+    spt_id = entries.get('spectral_types', 'NULL')
+    plx_id = entries.get('parallaxes', 'NULL')
+
+    # Collect all spec_ids and phot_ids
+    phot_ids, spec_ids = [], []
+    for key in entries.keys():
+        for value in entries.getlist(key):
+            if key=='photometry':
+                phot_ids.append(str(value))
+            elif key=='spectra':
+                spec_ids.append(str(value))
+    spec_ids = ','.join(spec_ids)
+    phot_ids = ','.join(phot_ids)
+
+    # Make the astropy tables
+    sed_dict = {}
+    sed_dict['sources'] = db.query("SELECT * FROM sources WHERE id={}".format(source_id), fmt='table')
+    sed_dict['spectral_types'] = db.query("SELECT * FROM spectral_types WHERE id={}".format(spt_id), fmt='table')
+    sed_dict['parallaxes'] = db.query("SELECT * FROM parallaxes WHERE id={}".format(plx_id), fmt='table')
+    sed_dict['photometry'] = db.query("SELECT * FROM photometry WHERE id IN ({})".format(phot_ids), fmt='table')
+    sed_dict['spectra'] = db.query("SELECT * FROM spectra WHERE id IN ({})".format(spec_ids), fmt='table', use_converters=False)
+
+    # Add dtypes
+    sed_dict['_dtypes_sources'] = ['INTEGER','REAL','REAL','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT']
+    sed_dict['_dtypes_spectral_types'] = ['INTEGER','INTEGER','REAL','REAL','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT']
+    # sed_dict['_dtypes_parallaxes'] = []
+    sed_dict['_dtypes_photometry'] = ['INTEGER','INTEGER','TEXT','REAL','REAL','INTEGER','INTEGER','INTEGER','TEXT','TEXT','TEXT','TEXT']
+    sed_dict['_dtypes_spectra'] = ['INTEGER','INTEGER','SPECTRUM','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT','INTEGER','INTEGER','INTEGER','TEXT','TEXT','TEXT','TEXT','TEXT']
+
+    # Load the db into memory and pass it to SEDkit
+    temp_db = astrodb.Database(sed_dict)
+    sed = SEDs.MakeSED(source_id, temp_db)
+
+    # # Get the axes to plot
+    # xaxis, xdata = eval(request.form['xaxis'])
+    # yaxis, ydata = eval(request.form['yaxis'])
+
+    # # Make the plot
+    # tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
+    # p = figure(tools=tools, x_axis_label=xaxis, y_axis_label=yaxis, plot_width=800)
+    # p.circle(xdata, ydata)
+    #
+    # title = '{} v. {}'.format(xaxis,yaxis)
+    #
+    # script, div = components(p)
+    #
+    # # Also make a table
+    # table = pd.DataFrame(np.array([xdata,ydata]).T, columns=[xaxis,yaxis])
+    # table = table.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>')
+
+    title = 'Awesome SED'
+    script = plot = table = ''
+
+    return render_template('sed.html', title=title, script=script, plot=plot, table=table)
 
 
 def link_columns(data, db, columns):
@@ -341,6 +391,25 @@ def onc_export():
     response.headers["Content-Disposition"] = "attachment; filename={}".format(filename)
     return response
 
+def add_checkboxes(data, type='checkbox', id_only=False, table_name='', all_checked=False):
+    """
+    Create checkbox first column in Pandas dataframe
+    """
+    buttonlist = []
+    for index, row in data.iterrows():
+        val = strip_html(repr(list(row)))
+        if id_only:
+            val = val.split(',')[0].replace('[','')
+        tab = table_name or str(index)
+        button = '<input type="{}" name="{}" value="{}"{}>'.format(type,tab,val,' checked' if (index==0 and type=='radio') or (all_checked and type=='checkbox') else ' checked')
+        buttonlist.append(button)
+    data['Select'] = buttonlist
+    cols = data.columns.tolist()
+    cols.pop(cols.index('Select'))
+    data = data[['Select']+cols]
+
+    return data
+
 # Perform a search
 @app_onc.route('/search', methods=['POST'])
 def onc_search():
@@ -376,14 +445,7 @@ def onc_search():
                                errmess=mystdout.getvalue().replace('<', '&lt;'))
                                
     # Create checkbox first column
-    buttonlist = []
-    for index, row in data.iterrows():
-        button = '<input type="checkbox" name="{}" value="{}">'.format(str(index),repr(list(row)))
-        buttonlist.append(button)
-    data['Select'] = buttonlist
-    cols = data.columns.tolist()
-    cols.pop(cols.index('Select'))
-    data = data[['Select']+cols]
+    data = add_checkboxes(data)
 
     try:
         script, div, warning_message = onc_skyplot(t)
@@ -606,9 +668,21 @@ def onc_inventory(source_id=None):
             img = '<a href="../image/{}"><img class="view" src="../static/view.png" /></a>'.format(row['id'])
             imglist.append(img)
         t['images']['image'] = imglist
-    
+
+    # Convert tables to pandas
+    all_tables = [t[x].to_pandas() for x in t.keys()]
+
+    # Add checkboxes for SED creation
+    for n,(tab,name) in enumerate(zip(all_tables,t.keys())):
+        type = 'radio' if name in ['sources','spectral_types','parallaxes'] else 'checkbox'
+
+        all_tables[n] = add_checkboxes(tab, type=type, id_only=True, table_name=name)
+
+    # Convert tables to html
+    html_tables = [p.to_html(classes='display', index=False).replace('&lt;', '<').replace('&gt;', '>') for p in all_tables]
+
     return render_template('inventory.html',
-                           tables=[t[x].to_pandas().to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>') for x in t.keys()],
+                           tables=html_tables,
                            titles=['na']+list(t.keys()), path=path, source_id=app_onc.vars['source_id'],
                            name=objname, coords=coords, allnames=allnames, distance=dist_string,
                            comments=comments, sptypes=sptype_txt, ra=ra, dec=dec, simbad=smbd, vizier=vzr)
@@ -661,15 +735,7 @@ def onc_browse():
     data['id'] = linklist
     
     # Create checkbox first column
-    buttonlist = []
-    for index, row in data.iterrows():
-        row = [strip_html(str(i)) for i in list(row)]
-        button = '<input type="checkbox" name="{}" value="{}">'.format(str(index),repr(row))
-        buttonlist.append(button)
-    data['Select'] = buttonlist
-    cols = data.columns.tolist()
-    cols.pop(cols.index('Select'))
-    data = data[['Select']+cols]
+    data = add_checkboxes(data)
     
     cols = [strip_html(str(i)) for i in data.columns.tolist()[1:]]
     cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
