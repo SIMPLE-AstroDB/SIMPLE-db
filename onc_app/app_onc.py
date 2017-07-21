@@ -32,10 +32,6 @@ pd.set_option('max_colwidth', -1)
 # Redirect to the main page
 @app_onc.route('/')
 @app_onc.route('/index')
-@app_onc.route('/index.html')
-# @app_onc.route('/query.html')
-def onc_home():
-    return redirect('/index')
 
 # Page with a text box to take the SQL query
 @app_onc.route('/index', methods=['GET', 'POST'])
