@@ -12,7 +12,6 @@ from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models import ColumnDataSource, HoverTool, OpenURL, TapTool, Range1d
 from bokeh.models.widgets import Panel, Tabs
-from ONCdb import make_onc
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 from scipy.ndimage.interpolation import zoom
@@ -25,7 +24,7 @@ app_onc.vars['search'] = ''
 app_onc.vars['specid'] = ''
 app_onc.vars['source_id'] = ''
 
-db_file = os.path.join(os.path.dirname(make_onc.__file__),'orion.db')
+db_file = os.environ['ONC_database']
 db = astrodb.Database(db_file)
 pd.set_option('max_colwidth', -1)
 
@@ -251,67 +250,68 @@ def onc_plot():
     return render_template('plot.html', title=title, script=script, plot=div, table=table)
 
 # Grab selected inventory and plot SED
-@app_onc.route('/inventory/sed', methods=['POST','GET'])
+@app_onc.route('/sed', methods=['POST'])
+# @app_onc.route('/inventory/sed', methods=['POST','GET'])
 def onc_sed():
 
     # Get the ids of all the data to use
     entries = request.form
     source_id = int(entries['sources'])
-    spt_id = entries.get('spectral_types', 'NULL')
-    plx_id = entries.get('parallaxes', 'NULL')
-
+    spt_id = int(entries.get('spectral_types', 0))
+    plx_id = int(entries.get('parallaxes', 0))
+    
     # Collect all spec_ids and phot_ids
     phot_ids, spec_ids = [], []
     for key in entries.keys():
         for value in entries.getlist(key):
             if key=='photometry':
-                phot_ids.append(str(value))
+                phot_ids.append(int(value))
             elif key=='spectra':
-                spec_ids.append(str(value))
-    spec_ids = ','.join(spec_ids)
-    phot_ids = ','.join(phot_ids)
-
+                spec_ids.append(int(value))
+                
     # Make the astropy tables
     sed_dict = {}
-    sed_dict['sources'] = db.query("SELECT * FROM sources WHERE id={}".format(source_id), fmt='table')
-    sed_dict['spectral_types'] = db.query("SELECT * FROM spectral_types WHERE id={}".format(spt_id), fmt='table')
-    sed_dict['parallaxes'] = db.query("SELECT * FROM parallaxes WHERE id={}".format(plx_id), fmt='table')
-    sed_dict['photometry'] = db.query("SELECT * FROM photometry WHERE id IN ({})".format(phot_ids), fmt='table')
-    sed_dict['spectra'] = db.query("SELECT * FROM spectra WHERE id IN ({})".format(spec_ids), fmt='table', use_converters=False)
-
-    # Add dtypes
-    sed_dict['_dtypes_sources'] = ['INTEGER','REAL','REAL','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT']
-    sed_dict['_dtypes_spectral_types'] = ['INTEGER','INTEGER','REAL','REAL','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT']
-    # sed_dict['_dtypes_parallaxes'] = []
-    sed_dict['_dtypes_photometry'] = ['INTEGER','INTEGER','TEXT','REAL','REAL','INTEGER','INTEGER','INTEGER','TEXT','TEXT','TEXT','TEXT']
-    sed_dict['_dtypes_spectra'] = ['INTEGER','INTEGER','SPECTRUM','TEXT','TEXT','TEXT','TEXT','TEXT','TEXT','INTEGER','INTEGER','INTEGER','TEXT','TEXT','TEXT','TEXT','TEXT']
-
-    # Load the db into memory and pass it to SEDkit
-    temp_db = astrodb.Database(sed_dict)
-    SED = sed.MakeSED(source_id, temp_db)
-
-    # # Get the axes to plot
-    # xaxis, xdata = eval(request.form['xaxis'])
-    # yaxis, ydata = eval(request.form['yaxis'])
-
-    # # Make the plot
-    # tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
-    # p = figure(tools=tools, x_axis_label=xaxis, y_axis_label=yaxis, plot_width=800)
-    # p.circle(xdata, ydata)
-    #
-    # title = '{} v. {}'.format(xaxis,yaxis)
-    #
-    # script, div = components(p)
-    #
-    # # Also make a table
-    # table = pd.DataFrame(np.array([xdata,ydata]).T, columns=[xaxis,yaxis])
-    # table = table.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>')
-
-    title = 'Awesome SED'
-    script = plot = table = ''
-
-    return render_template('sed.html', title=title, script=script, plot=plot, table=table)
-
+    sed_dict['sources'] = source_id
+    if plx_id:
+        sed_dict['spectral_types'] = spt_id
+    if plx_id:
+        sed_dict['parallaxes'] = plx_id
+    if spec_ids:
+        sed_dict['spectra'] = spec_ids
+    if phot_ids:
+        sed_dict['photometry'] = phot_ids
+    
+    # Make the SED
+    SED = sed.MakeSED(source_id, db, from_dict=sed_dict)
+    
+    # Get photometric and spectroscopic data
+    phot = SED.app_phot_SED
+    spec = SED.app_spec_SED
+    
+    # Put the fundamental parameters into a table for display
+    # TODO
+    
+    # Get the axes to plot
+    xaxis = 'Wavelength [{}]'.format(SED.wave_units)
+    yaxis = 'Flux [{}]'.format(SED.flux_units)
+    
+    # Make the plot
+    tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
+    p = figure(tools=tools, x_axis_label=xaxis, y_axis_label=yaxis, plot_width=800)
+    title = '{} v. {}'.format(xaxis,yaxis)
+    
+    # PLot photometry
+    if phot!='':
+        p.circle(phot[0], phot[1])
+        
+    # Plot spectra
+    if spec!='':
+        p.line(spec[0], spec[1])
+        
+    # Generate the HTML
+    script, div = components(p)
+    
+    return render_template('sed.html', title=title, script=script, plot=div)
 
 def link_columns(data, db, columns):
     
@@ -650,7 +650,7 @@ def onc_inventory(source_id=None):
     if 'spectra' in t:
         speclist = []
         for idx,row in enumerate(t['spectra']):
-            spec = '<a href="../spectrum/{}"><img class="view" src="../static/view.png" /></a>'.format(row['id'])
+            spec = '<a href="../spectrum/{}"><img class="view" src="../static/images/view.png" /></a>'.format(row['id'])
             speclist.append(spec)
         t['spectra']['spectrum'] = speclist
     
@@ -658,7 +658,7 @@ def onc_inventory(source_id=None):
     if 'images' in t:
         imglist = []
         for idx,row in enumerate(t['images']):
-            img = '<a href="../image/{}"><img class="view" src="../static/view.png" /></a>'.format(row['id'])
+            img = '<a href="../image/{}"><img class="view" src="../static/images/view.png" /></a>'.format(row['id'])
             imglist.append(img)
         t['images']['image'] = imglist
 

@@ -38,25 +38,28 @@
 
         <script>
             $(document).ready( function () {
-                // $('.dataframe').DataTable( {
-                //     "paging": false,
-                //     "info": false,
-                //     "searching": false
-                // } );
-
+                
                 $('#tableselector').change(function(){
                     $('.columns').hide();
                     $('#' + $(this).val()).show();
                 });
                 
-                $('.dataframe').DataTable( {
-                    "pageLength": 20,
-                    "paging": true,
-                    "columnDefs": [ {
-                        "visible": false,
-                        "targets": [4]
-                    } ]
-                });
+                {% if True %}
+                    $('.dataframe').DataTable( {
+                        "pageLength": 20,
+                        "paging": true,
+                        "columnDefs": [ {
+                            "visible": false,
+                            "targets": [4]
+                        } ]
+                    });
+                {% else %}
+                    $('.dataframe').DataTable( {
+                        "paging": false,
+                        "info": false,
+                        "searching": false
+                    } );
+                {% endif %}
                 
                 $('#select-all').click(function(event) {
                     if(this.checked) {
@@ -91,7 +94,7 @@
             </div>
             <div class='clearfix'>
             <ul>
-                <li><a href="../query">Query the Database</a></li>
+                <li><a href="../index">Query the Database</a></li>
                 <li><a href="../browse">Browse the Database</a></li>
                 <li><a href="../schema">View Schema</a></li>
                 <li><a href="feedback">Feedback/Questions</a></li>
