@@ -825,7 +825,10 @@ def parse_sptype(spnum):
 
     return sptxt
     
-    
+## -- RUN
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app_onc.run(host='0.0.0.0', port=port, debug=True)
     
     
     
