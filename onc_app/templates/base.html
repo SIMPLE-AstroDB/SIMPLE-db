@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Orion Nebula Cluster Database</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <!-- <link rel="stylesheet" href="/../static/css/bootstrap.min.css"> -->
+        <!-- <link rel="icon" type="image/png" href="/../static/images/favicon.png"> -->
+        <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+        <script src='{{ url_for('static',filename='js/jquery-1.12.0.min.js')}}'></script>
+        <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.6.min.css" type="text/css" />
+        <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.6.min.css" type="text/css" />
+
+        <link rel="stylesheet" href="/../static/css/bootstrap-responsive.min.css">
+
+        <!-- <script src="/../static/js/vendor/modernizr-2.6.2.min.js"></script> -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+        <!-- <script>window.jQuery || document.write('<script src="/../static/js/vendor/jquery-1.10.1.min.js"><\/script>')</script> -->
+
+        
+        <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.6.min.js"></script>
+        <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.6.min.js"></script>
+        <script type="text/javascript">Bokeh.set_log_level("info");</script>
+            
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
+        <!-- <script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script> -->
+        <script src="{{ url_for('static', filename='js/query-builder.standalone.min.js')}} "></script>
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
+
+        <link rel="stylesheet" href="http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css" />
+
+        <script>
+            $(document).ready( function () {
+                // $('.dataframe').DataTable( {
+                //     "paging": false,
+                //     "info": false,
+                //     "searching": false
+                // } );
+
+                $('#tableselector').change(function(){
+                    $('.columns').hide();
+                    $('#' + $(this).val()).show();
+                });
+                
+                $('.dataframe').DataTable( {
+                    "pageLength": 20,
+                    "paging": true,
+                    "columnDefs": [ {
+                        "visible": false,
+                        "targets": [4]
+                    } ]
+                });
+                
+                $('#select-all').click(function(event) {
+                    if(this.checked) {
+                        // Iterate each checkbox
+                        $(':checkbox').each(function() {
+                            this.checked = true;
+                        });
+                    }
+                    else {
+                        // Iterate each checkbox
+                        $(":checkbox").each(function() {
+                            this.checked = false;
+                        });
+                    }
+                } );
+                
+            });
+        </script>
+            
+        {{ script|safe }}
+            
+    </head>
+    <body>
+        <div id="header">
+            <div class='head'>
+                <a href='/'>
+                    <div>
+                        <img src="../static/images/oncdb.gif" height="100"/>
+                        <h1>Orion Nebula Cluster Database</h1>
+                    </div>
+                </a>
+            </div>
+            <div class='clearfix'>
+            <ul>
+                <li><a href="../query">Query the Database</a></li>
+                <li><a href="../browse">Browse the Database</a></li>
+                <li><a href="../schema">View Schema</a></li>
+                <li><a href="feedback">Feedback/Questions</a></li>
+            </ul>
+        </div>
+        
+        <div class=page>
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    <footer>
+        <div id="footer" style='border-top:1px black solid; padding:20px;'>
+    
+            <div syle='float:left;'>
+                <p style='float:left; margin:0;'>Encountered an error or mistake? We'd love your <a href="../feedback">feedback</a>!</p>
+            </div>
+
+            <div style="float:right;">
+                <a style="float:right;" href='http://stsci.edu'><img src="../static/images/stsci.png" width="100px" /></a>
+            </div>
+            <div class='clearfix'></div>
+        </div>
+    </footer>
+
+        </div> <!-- /container -->
+
+        <!-- <script src="/../static/js/vendor/bootstrap.min.js"></script>
+        <script src="/../static/js/plugins.js"></script>
+        <script src="/../static/js/main.js"></script> -->
+    </body>
+</html>

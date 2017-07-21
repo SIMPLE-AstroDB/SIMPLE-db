@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+            
+    <div class='block'>
+        
+        <h1>Target Search</h1>
+        <p>There are five different ways to find target data:</p>
+    </div>
+    
+    <div class="block grey">
+        <h2 id="browse">Browse the Database</h2>
+
+        <form method="GET" action="../browse">
+            <p>See all database sources in a sortable table: <input type="submit" value="Browse"></p>
+        </form>
+
+    </div>
+
+    <div class="block grey">
+        <h2 id="search">Search the Database</h2>
+
+        <ol>
+            <li>Search the sources table for objects within 1 arcminute of a J2000 (RA, Dec) coordinate in decimal degrees</li>
+            <li>Search any table for alphanumeric matches</li>
+        </ol>
+        <form id='searchform' method='post' action='search' >
+            <p>
+                Search for
+                <input type="text" name="search_to_run" size="40" rows="1" value="{{defsearch}}" />
+                in
+                <select name="table">
+                    {{tables|safe}}
+                </select>
+                table.
+                <input type='submit' value='Search' />
+            </p>
+
+
+        </form>
+
+    </div>
+
+    <div class="block grey">
+        <h2 id="inventory">Check Inventory</h2>
+
+        <form id="inventoryform" method="post" action="inventory">
+            <p> Search the database for information on a particular source ID:
+                <input type="text" name="id_to_check" size="10" rows="1" value="{{source_id}}" />
+                <input type="submit" value="Check Inventory" />
+            </p>
+        </form>
+    </div>
+
+    <div class="block grey">
+
+        <h2 id="sql">SQL Builder</h2>
+
+        <p>
+            Construct a SQL query by selecting the table, selections, and conditions for your search:
+        </p>
+
+        <form id='buildqueryform' method='post' action='buildquery' >
+
+            <ul id="sql-builder">
+                <li>
+                    FROM
+                    <select name="table" id="tableselector">
+                        <option value="none" selected='selected'>--</option>
+                        {{tables|safe}}
+                    </select>
+
+                </li>
+                <li>
+                    SELECT
+                    {{ column_select | safe}}
+
+                </li>
+
+                <li>
+                    WHERE
+
+                    <div id="builder"></div>
+
+                    <script>
+                      $('#builder').queryBuilder({
+                        filters: [{{column_script|safe}}]
+                      });
+                    </script>
+                </li>
+            </ul>
+            <p>
+                <input type='submit' value='Submit' />
+            </p>
+        </form>
+    </div>
+
+    <div class="block grey">
+
+        <h2 id="sql">SQL Query</h2>
+
+        <p>
+            Write your own SQL query in the box below! Not familiar with SQL queries? Here are some examples:
+        </p>
+        <ul>
+            <li>SELECT shortname, ra, dec FROM sources WHERE (22&lt;ra AND ra&lt;24) AND (-15&lt;dec AND dec&lt;15)</li>
+            <li>SELECT band, magnitude, magnitude_unc FROM photometry WHERE source_id=4</li>
+            <li>SELECT source_id, band, magnitude FROM photometry WHERE band='z' AND magnitude<15</li>
+            <li>SELECT t.name, p.band, p.magnitude, p.magnitude_unc FROM telescopes as t
+                JOIN photometry AS p ON p.telescope_id=t.id WHERE p.source_id=4</li>
+            <li>SELECT p1.magnitude-p2.magnitude FROM photometry AS p1
+                JOIN photometry AS p2 ON p1.source_id=p2.source_id WHERE p1.band='J' AND p2.band='H'</li>
+            <li>SELECT s.id, p.parallax, p.parallax_unc, p.publication_id FROM sources as s JOIN parallaxes AS p ON p.source_id=s.id</li>
+            <li>SELECT s.id, s.ra, s.dec, s.shortname, p.source_id, p.band, p.magnitude
+                FROM sources as s
+                JOIN photometry as p
+                ON s.id=p.source_id
+                WHERE s.dec<=-10 AND (p.band IN ("J","H","Ks","W1","W2"))</li>
+        </ul>
+
+        <form id='queryform' method='post' action='runquery' >
+            <p>
+                <textarea name="query_to_run" cols="80" rows="8">SELECT * FROM sources</textarea>
+            </p>
+            <p>
+                <input type='submit' value='Submit' />
+            </p>
+        </form>
+    </div>
+    
+{% endblock %}

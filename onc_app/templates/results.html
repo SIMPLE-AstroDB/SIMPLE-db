@@ -1,132 +1,69 @@
-<!doctype html>
-<title>Query Results</title>
-<html lang="en">
-    <head>
-        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-        <script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script>
-        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
+{% extends "base.html" %}
 
-        <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.css" type="text/css" />
-        <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.js"></script>
-
-        <link rel="stylesheet" href="http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css" />
-
-        <script>
-            $(document).ready( function () {
-                $('.dataframe').DataTable( {
-                    "pageLength": 20,
-                    "paging": true,
-                    "columnDefs": [ {
-                        "visible": false,
-                        "targets": [4]
-                    } ]
-                  } );
-
-                $('#select-all').click(function(event) {
-                    if(this.checked) {
-                        // Iterate each checkbox
-                        $(':checkbox').each(function() {
-                            this.checked = true;
-                        });
-                    }
-                    else {
-                        // Iterate each checkbox
-                        $(":checkbox").each(function() {
-                            this.checked = false;
-                        });
-                    }
-                });
-                $("#header").load('{{ url_for('static',filename='header.html')}}');
-                $("#footer").load('{{ url_for('static',filename='footer.html')}}');
-            });
-        </script>
-
-        {{ script|safe }}
-    
-    </head>
-    <body>
+{% block content %}
             
-        <div id="header"></div>
-
-        <div class=page>
-            
-            <div class='block'>
-                
-                <div style='float:left; width:500px;'>
-                    <h1>Search Results</h1>
-                    <p>Input: <code>{{ query|safe }}</code></p>
-                </div>
-                {% if plot %}
-                    <div id='skyplot'>
-
-
-                        {{ plot|safe }}
-
-                        <p>Locations of sources in the table below. You can hover over individual points to identify sources and can click on them to go their inventory page.</p>
-
-                        <p>{{ warning|safe }}</p>
-
-                    </div>
-                {% endif %}
-            </div>
-
-            <div class='block'>
-
-                <form id='searchform' method='post' action='export' >
-
-                    {{ cols|safe }}
-                    {{ table|safe }}
-                    <p>
-                        <input type="checkbox" name="select-all" id="select-all" /> Select all
-                    </p>
-                    <br>
-                    <input type='submit' value='Export Selected' />
-                </form>
-
-            </div>
-
-            <div class='block'>
-
-                <h1>Plot Results</h1>
-                <br>
-
-                <form id='plotform' method='post' action='plot' >
-
-                    <p>
-                        Select the column data to plot:
-                    </p>
-
-                    <p>
-                        X-axis:
-                        <select name="xaxis">
-                            {{axes|safe}}
-                        </select>
-                    </p>
-                    <p>
-                        Y-axis:
-                        <select name="yaxis">
-                            {{axes|safe}}
-                        </select>
-                    </p>
-                    <p>
-                        <input type='submit' value='Plot' />
-                    </p>
-                </form>
-            </div>
-
+    <div class='block'>
+        
+        <div style='float:left; width:500px;'>
+            <h1>Search Results</h1>
+            <p>Input: <code>{{ query|safe }}</code></p>
         </div>
-        <div id="footer"></div>
-    </body>
-</html>
+        {% if plot %}
+            <div id='skyplot'>
 
-<!-- Script for Google Analytics Tracking -->
-<!-- <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-75424601-1', 'auto');
-  ga('send', 'pageview');
+                {{ plot|safe }}
 
-</script> -->
+                <p>Locations of sources in the table below. You can hover over individual points to identify sources and can click on them to go their inventory page.</p>
+
+                <p>{{ warning|safe }}</p>
+
+            </div>
+        {% endif %}
+    </div>
+
+    <div class='block'>
+
+        <form id='searchform' method='post' action='export' >
+
+            {{ cols|safe }}
+            {{ table|safe }}
+            <p>
+                <input type="checkbox" name="select-all" id="select-all" /> Select all
+            </p>
+            <br>
+            <input type='submit' value='Export Selected' />
+        </form>
+
+    </div>
+
+    <div class='block'>
+
+        <h1>Plot Results</h1>
+        <br>
+
+        <form id='plotform' method='post' action='plot' >
+
+            <p>
+                Select the column data to plot:
+            </p>
+
+            <p>
+                X-axis:
+                <select name="xaxis">
+                    {{axes|safe}}
+                </select>
+            </p>
+            <p>
+                Y-axis:
+                <select name="yaxis">
+                    {{axes|safe}}
+                </select>
+            </p>
+            <p>
+                <input type='submit' value='Plot' />
+            </p>
+        </form>
+    </div>
+
+{% endblock %}

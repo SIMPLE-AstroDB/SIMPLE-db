@@ -3,7 +3,7 @@ app_onc = Flask(__name__)
 
 import astrodbkit
 from astrodbkit import astrodb
-from SEDkit import SEDs
+from SEDkit import sed
 import os
 import sys
 import re
@@ -33,12 +33,12 @@ pd.set_option('max_colwidth', -1)
 @app_onc.route('/')
 @app_onc.route('/index')
 @app_onc.route('/index.html')
-@app_onc.route('/query.html')
+# @app_onc.route('/query.html')
 def onc_home():
-    return redirect('/query')
+    return redirect('/index')
 
 # Page with a text box to take the SQL query
-@app_onc.route('/query', methods=['GET', 'POST'])
+@app_onc.route('/index', methods=['GET', 'POST'])
 def onc_query():
     defquery = 'SELECT * FROM sources'
     if app_onc.vars['query']=='':
@@ -62,7 +62,7 @@ def onc_query():
     column_select = ''.join(columns_html)
     column_script = ''.join(columns_js)
 
-    return render_template('query.html',
+    return render_template('index.html',
                            defsearch=app_onc.vars['search'], specid=app_onc.vars['specid'],
                            source_id=app_onc.vars['source_id'], version=astrodbkit.__version__,
                            tables=tables, column_select=column_select, column_script=col_js)
@@ -142,7 +142,6 @@ def onc_runquery():
 
     return render_template('results.html', table=table_html, query=app_onc.vars['query'],
                             script=script, plot=div, warning=warning_message, cols=cols, axes=axes)
-
 
 # Grab results of query and display them
 @app_onc.route('/buildquery', methods=['POST', 'GET'])
@@ -232,7 +231,6 @@ def onc_buildquery():
     return render_template('results.html', table=table_html, query=app_onc.vars['query'],
                            script=script, plot=div, warning=warning_message, cols=cols, axes=axes)
 
-
 # Grab results of query and display them
 @app_onc.route('/plot', methods=['POST','GET'])
 def onc_plot():
@@ -294,7 +292,7 @@ def onc_sed():
 
     # Load the db into memory and pass it to SEDkit
     temp_db = astrodb.Database(sed_dict)
-    sed = SEDs.MakeSED(source_id, temp_db)
+    SED = sed.MakeSED(source_id, temp_db)
 
     # # Get the axes to plot
     # xaxis, xdata = eval(request.form['xaxis'])
@@ -465,7 +463,6 @@ def onc_search():
 
     return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=search_value,
                             script=script, plot=div, warning=warning_message, cols=cols, axes=axes)
-
 
 # Plot a spectrum
 @app_onc.route('/spectrum', methods=['POST'])
@@ -687,7 +684,6 @@ def onc_inventory(source_id=None):
                            name=objname, coords=coords, allnames=allnames, distance=dist_string,
                            comments=comments, sptypes=sptype_txt, ra=ra, dec=dec, simbad=smbd, vizier=vzr)
 
-
 # Check Schema
 # @app_onc.route('/schema.html', methods=['GET', 'POST'])
 @app_onc.route('/schema', methods=['GET', 'POST'])
@@ -792,7 +788,6 @@ def onc_skyplot(t):
     script, div = components(p)
 
     return script, div, warning_message
-
 
 @app_onc.route('/feedback')
 def onc_feedback():
