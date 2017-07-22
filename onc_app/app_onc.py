@@ -296,9 +296,8 @@ def onc_sed():
     yaxis = 'Flux [{}]'.format(SED.flux_units)
     
     # Make the plot
-    tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
-    p = figure(tools=tools, x_axis_label=xaxis, y_axis_label=yaxis, plot_width=800)
-    title = '{} v. {}'.format(xaxis,yaxis)
+    tools = "resize,pan,wheel_zoom,box_zoom,reset"
+    p = figure(tools=tools, x_axis_label=xaxis, y_axis_label=yaxis, plot_width=800, title=SED.name)
     
     # PLot photometry
     if phot!='':
@@ -306,12 +305,19 @@ def onc_sed():
         
     # Plot spectra
     if spec!='':
-        p.line(spec[0], spec[1])
+        
+        source = ColumnDataSource(data=dict(x=spec[0], y=spec[1]))
+        
+        hover = HoverTool(tooltips=[( 'wavelength', '$x'),( 'flux', '$y')], mode='vline')
+        
+        p.add_tools(hover)
+        
+        p.line('x', 'y', source=source)
         
     # Generate the HTML
     script, div = components(p)
     
-    return render_template('sed.html', title=title, script=script, plot=div)
+    return render_template('sed.html', script=script, plot=div)
 
 def link_columns(data, db, columns):
     
@@ -500,9 +506,12 @@ def onc_spectrum(specid=None):
     filepath = spec.path
 
     # Make the plot
-    tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset"
+    tools = "resize,pan,wheel_zoom,box_zoom,reset"
     p = figure(tools=tools, x_axis_label=wav, y_axis_label=flux, plot_width=800)
-    p.line(spec.data[0], spec.data[1], line_width=2)
+    source = ColumnDataSource(data=dict(x=spec.data[0], y=spec.data[1]))
+    hover = HoverTool(tooltips=[( 'wavelength', '$x'),( 'flux', '$y')], mode='vline')
+    p.add_tools(hover)
+    p.line('x', 'y', source=source)
 
     script, div = components(p)
 
