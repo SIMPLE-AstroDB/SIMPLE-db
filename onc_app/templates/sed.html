@@ -4,7 +4,25 @@
             
     <div class='block'>
         
-        <h1>Spectral Energy Distribution</h1>
+        <h1>{{title|safe}}</h1>
+        
+        <div style='margin:20px 0;'>
+            <table>
+                <tr>
+                    <td>Spectral Type</td>
+                    <td>  {{SpT|safe}}</td>
+                </tr>
+                <tr>
+                    <td>\(L_\text{bol}\) [dex]</td>
+                    <td>  {{Lbol|safe}}</td>
+                </tr>
+                <tr>
+                    <td>\(T_\text{eff}\) [K]</td>
+                    <td>  {{Teff|safe}}</td>
+                </tr>
+            </table>
+        </div>
+        
         <br>
 
         {{ plot|safe }}

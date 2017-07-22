@@ -297,7 +297,7 @@ def onc_sed():
     
     # Make the plot
     tools = "resize,pan,wheel_zoom,box_zoom,reset"
-    p = figure(tools=tools, x_axis_label=xaxis, y_axis_label=yaxis, plot_width=800, title=SED.name)
+    p = figure(tools=tools, x_axis_label=xaxis, y_axis_label=yaxis, plot_width=1000, plot_height=500)
     
     # PLot photometry
     if phot!='':
@@ -305,19 +305,21 @@ def onc_sed():
         
     # Plot spectra
     if spec!='':
-        
         source = ColumnDataSource(data=dict(x=spec[0], y=spec[1]))
-        
         hover = HoverTool(tooltips=[( 'wavelength', '$x'),( 'flux', '$y')], mode='vline')
-        
         p.add_tools(hover)
-        
         p.line('x', 'y', source=source)
         
     # Generate the HTML
     script, div = components(p)
     
-    return render_template('sed.html', script=script, plot=div)
+    # Get params to print
+    teff = '\({} \pm {}\)'.format(SED.Teff,SED.Teff_unc)
+    Lbol = '\({} \pm {}\)'.format(SED.Lbol,SED.Lbol_unc)
+    radius = '\({} \pm {}\)'.format(SED.radius,SED.radius_unc)
+    
+    return render_template('sed.html', script=script, plot=div, spt=SED.SpT,
+                            teff=teff, Lbol=Lbol, radius=radius, title=SED.name)
 
 def link_columns(data, db, columns):
     
@@ -341,7 +343,7 @@ def link_columns(data, db, columns):
     if 'spectrum' in columns and 'spectrum' in data:
         speclist = []
         for index, row in data.iterrows():
-            spec = '<a href="../spectrum/{}"><img class="view" src="static/view.png" /></a>'.format(row['id'])
+            spec = '<a href="../spectrum/{}"><img class="view" src="static/images/view.png" /></a>'.format(row['id'])
             speclist.append(spec)
         data['spectrum'] = speclist
         
@@ -349,7 +351,7 @@ def link_columns(data, db, columns):
     if 'image' in columns and 'image' in data:
         imglist = []
         for index, row in data.iterrows():
-            img = '<a href="../image/{}"><img class="view" src="static/view.png" /></a>'.format(row['id'])
+            img = '<a href="../image/{}"><img class="view" src="static/images/view.png" /></a>'.format(row['id'])
             imglist.append(img)
         data['image'] = imglist
     
