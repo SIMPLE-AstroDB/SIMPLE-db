@@ -4,6 +4,7 @@ app_onc = Flask(__name__)
 import astrodbkit
 from astrodbkit import astrodb
 from SEDkit import sed
+from SEDkit import utilities as u
 import os
 import sys
 import re
@@ -12,7 +13,7 @@ from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models import ColumnDataSource, HoverTool, OpenURL, TapTool, Range1d
 from bokeh.models.widgets import Panel, Tabs
-from astropy import units as u
+from astropy import units as q
 from astropy.coordinates import SkyCoord
 from scipy.ndimage.interpolation import zoom
 import pandas as pd
@@ -596,18 +597,19 @@ def onc_inventory(source_id=None):
     else:
         app_onc.vars['source_id'] = source_id
         path = '../'
-    
+        
     # Grab inventory
     stdout = sys.stdout
     sys.stdout = mystdout = StringIO()
     t = db.inventory(app_onc.vars['source_id'], fetch=True, fmt='table')
     sys.stdout = stdout
-
+    t = {name:t[name][[col for col in t[name].colnames if col!='source_id']] for name in t.keys()}
+    
     # Check for errors (no results)
     if mystdout.getvalue().lower().startswith('no source'):
         return render_template('error.html', headermessage='No Results Found',
                                errmess='<p>'+mystdout.getvalue().replace('<', '&lt;')+'</p>')
-
+                               
     # Empty because of invalid input
     if len(t) == 0:
         return render_template('error.html', headermessage='Error',
@@ -617,10 +619,10 @@ def onc_inventory(source_id=None):
     objname = t['sources']['designation'][0]
     ra = t['sources']['ra'][0]
     dec = t['sources']['dec'][0]
-    c = SkyCoord(ra=ra*u.degree, dec=dec*u.degree)
+    c = SkyCoord(ra=ra*q.degree, dec=dec*q.degree)
     coords = c.to_string('hmsdms', sep=':', precision=2)
     allnames = t['sources']['names'][0]
-
+    
     # Grab distance
     try:
         distance = 1000./t['parallaxes']['parallax']
@@ -628,28 +630,19 @@ def onc_inventory(source_id=None):
         dist_string += ' pc'
     except:
         dist_string = 'N/A'
-
-    # Grab spectral types; gravity indicators are ignored for now
+        
+    # Grab spectral type
     try:
-        sptype_txt = ''
-        types = np.array(t['spectral_types']['spectral_type'].tolist())
-        regime = np.array(t['spectral_types']['regime'].tolist())
-        if 'OPT' in regime:
-            sptype_txt += 'Optical: '
-            # Parse string
-            ind = np.where(regime == 'OPT')
-            sptype_txt += ', '.join([parse_sptype(s) for s in types[ind]])
-            sptype_txt += ' '
-        if 'IR' in regime:
-            sptype_txt += 'Infrared: '
-            ind = np.where(regime == 'IR')
-            sptype_txt += ', '.join([parse_sptype(s) for s in types[ind]])
-            sptype_txt += ' '
-        else:
-            sptype_txt += ', '.join([parse_sptype(s) for s in types])
-    except:
-        sptype_txt = ''
-
+        sptype_txt = []
+        for row in t['spectral_types'][['spectral_type','spectral_type_unc','suffix','gravity','luminosity_class']]:
+            spt = u.specType(list(row))
+            sptype_txt.append(spt.replace('None',''))
+            
+        sptype_txt = ' / '.join(sptype_txt)
+        
+    except IOError:
+        sptype_txt = 'N/A'
+        
     # Grab comments
     comments = t['sources']['comments'][0]
     
@@ -664,7 +657,7 @@ def onc_inventory(source_id=None):
             spec = '<a href="../spectrum/{}"><img class="view" src="../static/images/view.png" /></a>'.format(row['id'])
             speclist.append(spec)
         t['spectra']['spectrum'] = speclist
-    
+        
     # Create link to images
     if 'images' in t:
         imglist = []
@@ -672,22 +665,31 @@ def onc_inventory(source_id=None):
             img = '<a href="../image/{}"><img class="view" src="../static/images/view.png" /></a>'.format(row['id'])
             imglist.append(img)
         t['images']['image'] = imglist
-
-    # Convert tables to pandas
-    all_tables = [t[x].to_pandas() for x in t.keys()]
-
-    # Add checkboxes for SED creation
-    for n,(tab,name) in enumerate(zip(all_tables,t.keys())):
+        
+    # Add order to names for consistent printing
+    ordered_names = []
+    for name in ['sources','spectral_types','parallaxes','photometry','spectra','images']:
+        if name in t:
+            ordered_names.append(name)
+            
+    # Make the HTML
+    html_tables = []
+    for name in ordered_names:
+        
+        # Convert to pandas
+        table = t[name].to_pandas()
+        
+        # Add checkboxes for SED creation
         type = 'radio' if name in ['sources','spectral_types','parallaxes'] else 'checkbox'
-
-        all_tables[n] = add_checkboxes(tab, type=type, id_only=True, table_name=name)
-
-    # Convert tables to html
-    html_tables = [p.to_html(classes='display', index=False).replace('&lt;', '<').replace('&gt;', '>') for p in all_tables]
-
-    return render_template('inventory.html',
-                           tables=html_tables,
-                           titles=['na']+list(t.keys()), path=path, source_id=app_onc.vars['source_id'],
+        table = add_checkboxes(table, type=type, id_only=True, table_name=name)
+        
+        # Convert to HTML
+        table = table.to_html(classes='display no_pagination', index=False).replace('&lt;', '<').replace('&gt;', '>')
+        
+        html_tables.append(table)
+        
+    return render_template('inventory.html', tables=html_tables,
+                           titles=['sources']+ordered_names, path=path, source_id=app_onc.vars['source_id'],
                            name=objname, coords=coords, allnames=allnames, distance=dist_string,
                            comments=comments, sptypes=sptype_txt, ra=ra, dec=dec, simbad=smbd, vizier=vzr)
 
@@ -800,33 +802,6 @@ def onc_skyplot(t):
 def onc_feedback():
     return render_template('feedback.html')
 
-def parse_sptype(spnum):
-    """Parse a spectral type number and return a string"""
-
-    # Attempt to convert to float
-    try:
-        spnum = float(spnum)
-    except ValueError:
-        pass
-
-    if spnum >= 30:
-        sptxt = 'Y'
-    if (spnum >= 20) & (spnum < 30):
-        sptxt = 'T'
-    if (spnum >= 10) & (spnum < 20):
-        sptxt = 'L'
-    if (spnum >= 0) & (spnum < 10):
-        sptxt = 'M'
-    if spnum < 0:
-        sptxt = 'K'
-
-    if isinstance(spnum, type('')):
-        sptxt = spnum
-    else:
-        sptxt += '{0:.1f}'.format(abs(spnum) % 10)
-
-    return sptxt
-    
 ## -- RUN
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
