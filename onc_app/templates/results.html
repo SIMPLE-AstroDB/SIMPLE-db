@@ -10,23 +10,23 @@
         </div>
         {% if plot %}
             <div id='skyplot'>
-
-
+                
                 {{ plot|safe }}
-
+                
                 <p>Locations of sources in the table below. You can hover over individual points to identify sources and can click on them to go their inventory page.</p>
-
+                
                 <p>{{ warning|safe }}</p>
-
+                
             </div>
         {% endif %}
     </div>
-
+    
+    <div class='clearfix'></div>
+    
     <div class='block'>
-
+        {{ cols|safe }}
         <form id='searchform' method='post' action='export' >
-
-            {{ cols|safe }}
+            
             {{ table|safe }}
             <p>
                 <input type="checkbox" name="select-all" id="select-all" /> Select all
@@ -34,20 +34,20 @@
             <br>
             <input type='submit' value='Export Selected' />
         </form>
-
+        
     </div>
-
+    
     <div class='block'>
-
+        
         <h1>Plot Results</h1>
         <br>
-
+        
         <form id='plotform' method='post' action='plot' >
-
+            
             <p>
                 Select the column data to plot:
             </p>
-
+            
             <p>
                 X-axis:
                 <select name="xaxis">

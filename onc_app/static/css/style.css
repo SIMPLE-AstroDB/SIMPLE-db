@@ -82,17 +82,11 @@ th {
 
 table.dataTable {
   width: 100%;
-  margin: 20px 0 0 auto;
+/*  margin: 20px 0 0 auto;*/
   clear: both;
   border-collapse: separate;
   border-spacing: 0;
   border:0 !important;
-  /*
-   * Header and footer styles
-   */
-  /*
-   * Body styles
-   */
 }
 table.dataTable thead th,
 table.dataTable tfoot th {
@@ -104,7 +98,7 @@ table.dataTable tfoot th {
 table.dataTable thead th,
 table.dataTable thead td {
   padding: 0.5em 0.8em;
-  border-bottom: 1px solid #111;
+/*  border-bottom: 1px solid #111;*/
 }
 table.dataTable thead th:active,
 table.dataTable thead td:active {
@@ -154,7 +148,7 @@ table.dataTable tbody th,
 table.dataTable tbody td {
   padding: 8px 10px;
 }
-table.dataTable.row-border tbody th, table.dataTable.row-border tbody td, table.dataTable.display tbody th, table.dataTable.display tbody td {
+table.dataTable.row-border tbody th, table.dataTable.row-border tbody td, table.dataTable./tbody th, table.dataTable.display tbody td {
   border-top: 1px solid #ddd;
 }
 table.dataTable.row-border tbody tr:first-child th,
@@ -379,6 +373,8 @@ table.dataTable td {
 .dataTables_wrapper .dataTables_filter {
   float: right;
   text-align: right;
+  position:relative;
+  top:-1.2em;
 }
 .dataTables_wrapper .dataTables_filter input {
   margin-left: 0.5em;

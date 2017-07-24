@@ -32,7 +32,10 @@
         <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
         <!-- <script src="{{ url_for('static', filename='jquery-1.12.0.min.js')}} "></script> -->
         <script src="{{ url_for('static', filename='js/query-builder.standalone.min.js')}} "></script>
-        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
+        
+        <!-- DataTables -->
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+        <link rel=stylesheet type=text/css href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
 
         <link rel="stylesheet" href="http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css" />
 
@@ -44,22 +47,31 @@
                     $('#' + $(this).val()).show();
                 });
                 
-                {% if True %}
-                    $('.dataframe').DataTable( {
-                        "pageLength": 20,
-                        "paging": true,
-                        "columnDefs": [ {
-                            "visible": false,
-                            "targets": [4]
-                        } ]
-                    });
-                {% else %}
-                    $('.dataframe').DataTable( {
-                        "paging": false,
-                        "info": false,
-                        "searching": false
-                    } );
-                {% endif %}
+                // $('.dataframe').DataTable( {
+                //     "pageLength": 20,
+                //     "paging": true,
+                //     // "columnDefs": [ {
+                //     //     "visible": true,
+                //     //     "targets": [4]
+                //     // } ]
+                // });
+                
+                var table = $('.dataframe').DataTable( {
+                    "scrollY": "500px",
+                    "scrollX": false,
+                    "scrollCollapse": true, 
+                    "paging": false
+                } );
+ 
+                $('a.toggle-vis').on( 'click', function (e) {
+                    e.preventDefault();
+ 
+                    // Get the column API object
+                    var column = table.column( $(this).attr('data-column') );
+ 
+                    // Toggle the visibility
+                    column.visible( ! column.visible() );
+                } );
                 
                 $('#select-all').click(function(event) {
                     if(this.checked) {

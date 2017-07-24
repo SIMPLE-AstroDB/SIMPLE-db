@@ -122,22 +122,20 @@ def onc_runquery():
     except:
         script = div = warning_message = ''
         
-    # Get column names
-    cols = [strip_html(str(i)) for i in list(data)[1:]]
-    cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
-    # TODO Differentiate between source.id and other table ids
+    # Toggle columns
+    cols = 'Toggle Column: '+' - '.join(['<a class="toggle-vis" />{}</a>'.format(name) for i,name in enumerate(t.colnames)])
     
     # Add links to columns
     data = link_columns(data, db, ['id','source_id','spectrum','image'])
-
+    
     # Get numerical x and y axes for plotting
     columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
     axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b)+","+repr(list(t[b])), b) for b in columns])
-
+    
     table_html = data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>')
-
-    return render_template('results.html', table=table_html, query=app_onc.vars['query'],
-                            script=script, plot=div, warning=warning_message, cols=cols, axes=axes)
+    
+    return render_template('results.html', table=table_html, query=app_onc.vars['query'], cols=cols,
+                            script=script, plot=div, warning=warning_message, axes=axes)
 
 # Grab results of query and display them
 @app_onc.route('/buildquery', methods=['POST', 'GET'])
@@ -210,11 +208,6 @@ def onc_buildquery():
     except:
         script = div = warning_message = ''
 
-    # Get column names
-    cols = [strip_html(str(i)) for i in list(data)[1:]]
-    cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
-    # TODO Differentiate between source.id and other table ids
-
     # Add links to columns
     data = link_columns(data, db, ['id', 'source_id', 'spectrum', 'image'])
 
@@ -225,7 +218,7 @@ def onc_buildquery():
     table_html = data.to_html(classes='display', index=False).replace('&lt;', '<').replace('&gt;', '>')
 
     return render_template('results.html', table=table_html, query=app_onc.vars['query'],
-                           script=script, plot=div, warning=warning_message, cols=cols, axes=axes)
+                           script=script, plot=div, warning=warning_message, axes=axes)
 
 # Grab results of query and display them
 @app_onc.route('/plot', methods=['POST','GET'])
@@ -252,7 +245,6 @@ def onc_plot():
 
 # Grab selected inventory and plot SED
 @app_onc.route('/sed', methods=['POST'])
-# @app_onc.route('/inventory/sed', methods=['POST','GET'])
 def onc_sed():
 
     # Get the ids of all the data to use
@@ -640,7 +632,7 @@ def onc_inventory(source_id=None):
             
         sptype_txt = ' / '.join(sptype_txt)
         
-    except IOError:
+    except:
         sptype_txt = 'N/A'
         
     # Grab comments
@@ -667,24 +659,27 @@ def onc_inventory(source_id=None):
         t['images']['image'] = imglist
         
     # Add order to names for consistent printing
-    ordered_names = []
-    for name in ['sources','spectral_types','parallaxes','photometry','spectra','images']:
-        if name in t:
-            ordered_names.append(name)
+    ordered_names = ['sources','spectral_types','parallaxes','photometry','spectra','images']
             
     # Make the HTML
     html_tables = []
     for name in ordered_names:
         
-        # Convert to pandas
-        table = t[name].to_pandas()
+        try:
         
-        # Add checkboxes for SED creation
-        type = 'radio' if name in ['sources','spectral_types','parallaxes'] else 'checkbox'
-        table = add_checkboxes(table, type=type, id_only=True, table_name=name)
+            # Convert to pandas
+            table = t[name].to_pandas()
         
-        # Convert to HTML
-        table = table.to_html(classes='display no_pagination', index=False).replace('&lt;', '<').replace('&gt;', '>')
+            # Add checkboxes for SED creation
+            type = 'radio' if name in ['sources','spectral_types','parallaxes'] else 'checkbox'
+            table = add_checkboxes(table, type=type, id_only=True, table_name=name)
+        
+            # Convert to HTML
+            table = table.to_html(classes='display no_pagination', index=False).replace('&lt;', '<').replace('&gt;', '>')
+            
+        except KeyError:
+            
+            table = 'No records in the <code>{}</code> table for this source.'.format(name)
         
         html_tables.append(table)
         
