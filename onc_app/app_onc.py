@@ -286,7 +286,7 @@ def onc_sed():
     # Make the SED
     try:
         SED = sed.MakeSED(source_id, db, from_dict=sed_dict)
-    except:
+    except IOError:
         return render_template('error.html', headermessage='SED Error', errmess='<p>Error in SED data</p>')
     
     # Get photometric and spectroscopic data
