@@ -100,22 +100,19 @@
         <h2 id="sql">SQL Query</h2>
 
         <p>
-            Write your own SQL query in the box below! Not familiar with SQL queries? Here are some examples:
+            Write your own SQL query in the box below! <a href='/schema'>Check the database scema</a> for column and table names.
+        </p>
+        <p>
+            Not familiar with SQL queries? Here are some examples:
         </p>
         <ul>
-            <li>SELECT shortname, ra, dec FROM sources WHERE (22&lt;ra AND ra&lt;24) AND (-15&lt;dec AND dec&lt;15)</li>
+            <li>SELECT shortname, ra, dec FROM sources WHERE (ra BETWEEN 83.64 AND 83.66) AND (dec BETWEEN -5.33 AND -5.32)</li>
+            
             <li>SELECT band, magnitude, magnitude_unc FROM photometry WHERE source_id=4</li>
-            <li>SELECT source_id, band, magnitude FROM photometry WHERE band='z' AND magnitude<15</li>
-            <li>SELECT t.name, p.band, p.magnitude, p.magnitude_unc FROM telescopes as t
+            <li>SELECT source_id, band, magnitude FROM photometry WHERE band='ACS_HRC.F435W' AND magnitude>26</li>
+            <li>SELECT t.name, p.band, p.magnitude, p.magnitude_unc FROM telescopes AS t
                 JOIN photometry AS p ON p.telescope_id=t.id WHERE p.source_id=4</li>
-            <li>SELECT p1.magnitude-p2.magnitude FROM photometry AS p1
-                JOIN photometry AS p2 ON p1.source_id=p2.source_id WHERE p1.band='J' AND p2.band='H'</li>
-            <li>SELECT s.id, p.parallax, p.parallax_unc, p.publication_id FROM sources as s JOIN parallaxes AS p ON p.source_id=s.id</li>
-            <li>SELECT s.id, s.ra, s.dec, s.shortname, p.source_id, p.band, p.magnitude
-                FROM sources as s
-                JOIN photometry as p
-                ON s.id=p.source_id
-                WHERE s.dec<=-10 AND (p.band IN ("J","H","Ks","W1","W2"))</li>
+            <li>SELECT p1.magnitude-p2.magnitude as color FROM photometry AS p1 JOIN photometry AS p2 ON p1.source_id=p2.source_id WHERE p1.band='ACS_HRC.F555W' AND p2.band='ACS_HRC.F850LP' AND color BETWEEN 4.5 AND 4.6</li>
         </ul>
 
         <form id='queryform' method='post' action='runquery' >

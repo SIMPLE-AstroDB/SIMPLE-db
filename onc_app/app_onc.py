@@ -125,17 +125,21 @@ def onc_runquery():
     # Toggle columns
     cols = 'Toggle Column: '+' - '.join(['<a class="toggle-vis" />{}</a>'.format(name) for i,name in enumerate(t.colnames)])
     
+    # Data for export
+    export = [strip_html(str(i)) for i in list(data)[1:]]
+    export = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(export)
+    
     # Add links to columns
     data = link_columns(data, db, ['id','source_id','spectrum','image'])
     
     # Get numerical x and y axes for plotting
-    columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
+    columns = [c for c in t.colnames if any([isinstance(i, (int, float)) for i in t[c]])]
     axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b)+","+repr(list(t[b])), b) for b in columns])
     
     table_html = data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>')
     
     return render_template('results.html', table=table_html, query=app_onc.vars['query'], cols=cols,
-                            script=script, plot=div, warning=warning_message, axes=axes)
+                            script=script, plot=div, warning=warning_message, axes=axes, export=export)
 
 # Grab results of query and display them
 @app_onc.route('/buildquery', methods=['POST', 'GET'])
@@ -214,11 +218,16 @@ def onc_buildquery():
     # Get numerical x and y axes for plotting
     columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
     axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b) + "," + repr(list(t[b])), b) for b in columns])
+    
+    # Data for export
+    export = [strip_html(str(i)) for i in list(data)[1:]]
+    export = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(export)
 
+    # Generate HTML
     table_html = data.to_html(classes='display', index=False).replace('&lt;', '<').replace('&gt;', '>')
 
     return render_template('results.html', table=table_html, query=app_onc.vars['query'],
-                           script=script, plot=div, warning=warning_message, axes=axes)
+                           script=script, plot=div, warning=warning_message, axes=axes, export=export)
 
 # Grab results of query and display them
 @app_onc.route('/plot', methods=['POST','GET'])
@@ -357,6 +366,7 @@ def onc_export():
     checked = request.form
     
     # Get column names
+    print(checked.get('cols'))
     results = [list(eval(checked.get('cols')))]
     
     for k in sorted(checked):
@@ -447,9 +457,12 @@ def onc_search():
     except:
         script = div = warning_message = ''
         
-    # Get column names
-    cols = [strip_html(str(i)) for i in list(data)[1:]]
-    cols = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(cols)
+    # Toggle columns
+    cols = 'Toggle Column: '+' - '.join(['<a class="toggle-vis" />{}</a>'.format(name) for i,name in enumerate(t.colnames)])
+        
+    # Data for export
+    export = [strip_html(str(i)) for i in list(data)[1:]]
+    export = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(export)
 
     # Add links to columns
     data = link_columns(data, db, ['id', 'source_id', 'image','spectrum'])
@@ -459,7 +472,7 @@ def onc_search():
     axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b)+","+repr(list(t[b])), b) for b in columns])
 
     return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=search_value,
-                            script=script, plot=div, warning=warning_message, cols=cols, axes=axes)
+                            script=script, plot=div, warning=warning_message, cols=cols, axes=axes, export=export)
 
 # Plot a spectrum
 @app_onc.route('/spectrum', methods=['POST'])

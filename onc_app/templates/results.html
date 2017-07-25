@@ -26,6 +26,7 @@
     <div class='block'>
         {{ cols|safe }}
         <form id='searchform' method='post' action='export' >
+            {{ export|safe }}
             
             {{ table|safe }}
             <p>
