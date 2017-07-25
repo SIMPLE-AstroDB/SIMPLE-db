@@ -284,7 +284,10 @@ def onc_sed():
         sed_dict['photometry'] = phot_ids
     
     # Make the SED
-    SED = sed.MakeSED(source_id, db, from_dict=sed_dict)
+    try:
+        SED = sed.MakeSED(source_id, db, from_dict=sed_dict)
+    except:
+        return render_template('error.html', headermessage='SED Error', errmess='<p>Error in SED data</p>')
     
     # Get photometric and spectroscopic data
     phot = SED.app_phot_SED
