@@ -330,21 +330,22 @@ def onc_sed():
     script, div = components(p)
     
     # Get params to print
-    teff = '\({} \pm {}\)'.format(SED.Teff,SED.Teff_unc)
-    Lbol = '\({} \pm {}\)'.format(SED.Lbol,SED.Lbol_unc)
-    radius = '\({} \pm {}\)'.format(SED.radius,SED.radius_unc)
+    fbol = '\({:.3e} \pm {:.3e}\)'.format(SED.fbol.value,SED.fbol_unc.value)
+    mbol = '\({} \pm {}\)'.format(SED.mbol,SED.mbol_unc)
+    teff = '\({} \pm {}\)'.format(SED.Teff,SED.Teff_unc) if SED.distance else '-'
+    Lbol = '\({} \pm {}\)'.format(SED.Lbol,SED.Lbol_unc) if SED.distance else '-'
+    radius = '\({} \pm {}\)'.format(SED.radius,SED.radius_unc) if SED.distance else '-'
     
-    return render_template('sed.html', script=script, plot=div, spt=SED.SpT,
+    return render_template('sed.html', script=script, plot=div, spt=SED.SpT or '-', mbol=mbol, fbol=fbol, 
                             teff=teff, Lbol=Lbol, radius=radius, title=SED.name)
 
 def error_bars(xs, ys, zs):
-    
-    # create the coordinates for the errorbars
-    err_xs = []
-    err_ys = []
-
+    """
+    Generate errorbars for the photometry since Bokeh doesn't do it
+    """
+    # Create the coordinates for the errorbars
+    err_xs, err_ys = [], []
     for x, y, yerr in zip(xs, ys, zs):
-        
         if not np.isnan(yerr):
             err_xs.append((x, x))
             err_ys.append((y-yerr, y+yerr))

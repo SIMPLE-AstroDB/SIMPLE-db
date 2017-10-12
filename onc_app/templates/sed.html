@@ -7,10 +7,18 @@
         <h1>{{title|safe}}</h1>
         
         <div style='margin:20px 0;'>
-            <table>
+            <table style="border-collapse: separate; border-spacing: 10px;">
                 <tr>
                     <td>Spectral Type</td>
-                    <td>  {{SpT|safe}}</td>
+                    <td>  {{spt|safe}}</td>
+                </tr>
+                <tr>
+                    <td>\(f_\text{bol}\) [erg/s/cm2]</td>
+                    <td>  {{fbol|safe}}</td>
+                </tr>
+                <tr>
+                    <td>\(m_\text{bol}\)</td>
+                    <td>  {{mbol|safe}}</td>
                 </tr>
                 <tr>
                     <td>\(L_\text{bol}\) [dex]</td>
@@ -18,13 +26,13 @@
                 </tr>
                 <tr>
                     <td>\(T_\text{eff}\) [K]</td>
-                    <td>  {{Teff|safe}}</td>
+                    <td>  {{teff|safe}}</td>
                 </tr>
             </table>
         </div>
         
         <br>
-
+        
         {{ plot|safe }}
 
     </div>
