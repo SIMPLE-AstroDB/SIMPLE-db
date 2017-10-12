@@ -15,6 +15,7 @@ from bokeh.models import ColumnDataSource, HoverTool, OpenURL, TapTool, Range1d
 from bokeh.models.widgets import Panel, Tabs
 from astropy import units as q
 from astropy.coordinates import SkyCoord
+import astropy.constants as ac
 from scipy.ndimage.interpolation import zoom
 import pandas as pd
 import numpy as np
@@ -293,17 +294,21 @@ def onc_sed():
     # Get photometric and spectroscopic data
     phot = SED.app_phot_SED
     spec = SED.app_spec_SED
+    full_sed = SED.app_SED
     
     # Put the fundamental parameters into a table for display
     # TODO
     
     # Get the axes to plot
     xaxis = 'Wavelength [{}]'.format(SED.wave_units)
-    yaxis = 'Flux [{}]'.format(SED.flux_units)
+    yaxis = 'Flux Density [{}]'.format(SED.flux_units)
     
     # Make the plot
     tools = "resize,pan,wheel_zoom,box_zoom,reset"
-    p = figure(tools=tools, x_axis_label=xaxis, y_axis_label=yaxis, plot_width=1000, plot_height=500)
+    p = figure(tools=tools, x_axis_label=xaxis, y_axis_label=yaxis, plot_width=1000, plot_height=500, \
+                y_axis_type="log", x_axis_type="log")
+    p.xgrid.grid_line_color = None
+    p.ygrid.grid_line_color = None
     
     # PLot photometry
     if phot!='':
@@ -320,11 +325,16 @@ def onc_sed():
         
     # Plot spectra
     if spec!='':
-        # print(spec[1])
         source = ColumnDataSource(data=dict(x=spec[0], y=spec[1], z=spec[2]))
         hover = HoverTool(tooltips=[( 'wavelength', '$x'),( 'flux', '$y'),('unc','$z')], mode='vline')
         p.add_tools(hover)
         p.line('x', 'y', source=source)
+        
+    # Plot curve of integration
+    if full_sed!='':
+        sed_w, sed_f, sed_e = [full_sed[i][(full_sed[0]>0.4)&(full_sed[0]<15)] for i in [0,1,2]]
+        
+        p.line(sed_w, sed_f, line_color='grey', line_dash='dashed', line_alpha=0.5)
         
     # Generate the HTML
     script, div = components(p)
@@ -332,9 +342,9 @@ def onc_sed():
     # Get params to print
     fbol = '\({:.3e} \pm {:.3e}\)'.format(SED.fbol.value,SED.fbol_unc.value)
     mbol = '\({} \pm {}\)'.format(SED.mbol,SED.mbol_unc)
-    teff = '\({} \pm {}\)'.format(SED.Teff,SED.Teff_unc) if SED.distance else '-'
-    Lbol = '\({} \pm {}\)'.format(SED.Lbol,SED.Lbol_unc) if SED.distance else '-'
-    radius = '\({} \pm {}\)'.format(SED.radius,SED.radius_unc) if SED.distance else '-'
+    teff = '\({} \pm {}\)'.format(int(SED.Teff.value),SED.Teff_unc.value if np.isnan(SED.Teff_unc.value) else int(SED.Teff_unc.value)) if SED.distance else '-'
+    Lbol = '\({:.3e} \pm {:.3e}\)'.format(SED.Lbol.value,SED.Lbol_unc.value) if SED.distance else '-'
+    radius = '\({:.3f} \pm {:.3f}\)'.format(SED.radius.to(ac.R_sun).value,SED.radius_unc.to(ac.R_sun).value) if SED.radius else '-'
     
     return render_template('sed.html', script=script, plot=div, spt=SED.SpT or '-', mbol=mbol, fbol=fbol, 
                             teff=teff, Lbol=Lbol, radius=radius, title=SED.name)
