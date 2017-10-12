@@ -43,13 +43,11 @@ a:hover span {display: block; text-align: center; }
 /* Summary page layout */
 .basicinfo {
     float:left;
+    margin: 20px 0;
 }
-.basicinfo {
-    list-style: none;
-    padding:0;
-}
-.basicinfo li {
-    margin-bottom: 10px;
+
+.basicinfo td {
+    padding:10px 20px 0px 0;
 }
 
 img.view {height:14px;}
@@ -71,6 +69,10 @@ td a {
   height:100%;
   width:100%;
   vertical-align: middle;
+}
+
+.basicinfo a {
+  display: inline;
 }
 
 td {

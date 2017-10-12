@@ -52,7 +52,7 @@
         </form>
     </div>
 
-    <div class="block grey">
+    <!-- <div class="block grey">
 
         <h2 id="sql">SQL Builder</h2>
 
@@ -93,7 +93,7 @@
                 <input type='submit' value='Submit' />
             </p>
         </form>
-    </div>
+    </div> -->
 
     <div class="block grey">
 
@@ -112,7 +112,7 @@
             <li>SELECT source_id, band, magnitude FROM photometry WHERE band='ACS_HRC.F435W' AND magnitude>26</li>
             <li>SELECT t.name, p.band, p.magnitude, p.magnitude_unc FROM telescopes AS t
                 JOIN photometry AS p ON p.telescope_id=t.id WHERE p.source_id=4</li>
-            <li>SELECT p1.magnitude-p2.magnitude as color FROM photometry AS p1 JOIN photometry AS p2 ON p1.source_id=p2.source_id WHERE p1.band='ACS_HRC.F555W' AND p2.band='ACS_HRC.F850LP' AND color BETWEEN 4.5 AND 4.6</li>
+            <li>SELECT p1.magnitude-p2.magnitude as color FROM photometry AS p1 JOIN photometry AS p2 ON p1.source_id=p2.source_id WHERE p1.band='ACS_HRC.F555W' AND p2.band='ACS_HRC.F850LP' AND color BETWEEN 4.5 AND 4.505</li>
         </ul>
 
         <form id='queryform' method='post' action='runquery' >

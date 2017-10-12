@@ -254,6 +254,7 @@ def onc_plot():
 
 # Grab selected inventory and plot SED
 @app_onc.route('/sed', methods=['POST'])
+@app_onc.route('/inventory/sed', methods=['POST'])
 def onc_sed():
 
     # Get the ids of all the data to use
@@ -287,7 +288,7 @@ def onc_sed():
     try:
         SED = sed.MakeSED(source_id, db, from_dict=sed_dict)
     except IOError:
-        return render_template('error.html', headermessage='SED Error', errmess='<p>Error in SED data</p>')
+        return render_template('error.html', headermessage='SED Error', errmess='<p>Please select at least one spectrum or photometric point to construct an SED.</p>')
     
     # Get photometric and spectroscopic data
     phot = SED.app_phot_SED
@@ -306,12 +307,22 @@ def onc_sed():
     
     # PLot photometry
     if phot!='':
-        p.circle(phot[0], phot[1])
+        
+        # Plot points with errors
+        pts = np.array([(x,y,z) for x,y,z in zip(*phot) if not np.isnan(z)]).T
+        p.circle(pts[0], pts[1], size=8)
+        errs = error_bars(*pts)
+        p.multi_line(*errs)
+        
+        # Plot the upper and lower limits
+        err = np.array([(x,y,z) for x,y,z in zip(*phot) if np.isnan(z)]).T
+        p.circle(err[0], err[1], size=8, fill_color='white')
         
     # Plot spectra
     if spec!='':
-        source = ColumnDataSource(data=dict(x=spec[0], y=spec[1]))
-        hover = HoverTool(tooltips=[( 'wavelength', '$x'),( 'flux', '$y')], mode='vline')
+        # print(spec[1])
+        source = ColumnDataSource(data=dict(x=spec[0], y=spec[1], z=spec[2]))
+        hover = HoverTool(tooltips=[( 'wavelength', '$x'),( 'flux', '$y'),('unc','$z')], mode='vline')
         p.add_tools(hover)
         p.line('x', 'y', source=source)
         
@@ -325,6 +336,20 @@ def onc_sed():
     
     return render_template('sed.html', script=script, plot=div, spt=SED.SpT,
                             teff=teff, Lbol=Lbol, radius=radius, title=SED.name)
+
+def error_bars(xs, ys, zs):
+    
+    # create the coordinates for the errorbars
+    err_xs = []
+    err_ys = []
+
+    for x, y, yerr in zip(xs, ys, zs):
+        
+        if not np.isnan(yerr):
+            err_xs.append((x, x))
+            err_ys.append((y-yerr, y+yerr))
+            
+    return (err_xs, err_ys)
 
 def link_columns(data, db, columns):
     
@@ -624,7 +649,7 @@ def onc_inventory(source_id=None):
                                errmess="<p>You typed: "+app_onc.vars['source_id']+"</p>")
     
     # Grab object information
-    objname = t['sources']['designation'][0]
+    objname = t['sources']['designation'][0] or 'Source {}'.format(app_onc.vars['source_id'])
     ra = t['sources']['ra'][0]
     dec = t['sources']['dec'][0]
     c = SkyCoord(ra=ra*q.degree, dec=dec*q.degree)

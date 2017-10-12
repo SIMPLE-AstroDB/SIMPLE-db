@@ -6,15 +6,32 @@
         <div style='float:left;'>
             <h1>{{ name|safe }}</h1>
         
-            <p><ul class="basicinfo">
-                <li><strong>Coordinates:</strong> {{coords|safe}}</li>
-                <li><strong>Distance:</strong> {{distance|safe}}</li>
-                <li><strong>Spectral Types:</strong> {{sptypes|safe}}</li>
-                <li><strong>Comments:</strong> {{comments|safe}}</li>
-                <li><strong>Alternate designations:</strong> {{allnames|safe}}</li>
-                <li><strong><a href="{{simbad|safe}}" target='_'>See record in SIMBAD</a></strong></li>
-                <li><strong><a href="{{vizier|safe}}" target='_'>See data in Vizier</a></strong></li>
-            </ul></p>
+            <table class='basicinfo'>
+                <tr>
+                    <td><strong>Coordinates:</strong></td>
+                    <td>{{coords|safe}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Distance:</strong></td>
+                    <td>{{distance|safe}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Spectral Types:</strong></td>
+                    <td>{{sptypes|safe}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Comments:</strong></td>
+                    <td>{{comments|safe}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Alternate designations:</strong></td>
+                    <td>{{allnames|safe}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Catalog search:</strong></td>
+                    <td><a href="{{simbad|safe}}" target='_'>SIMBAD</a>, <a href="{{vizier|safe}}" target='_'>Vizier</a></td>
+                </tr>
+            </table>
         </div>
         
         <div id="aladin-lite-div">
@@ -22,15 +39,15 @@
             <script type="text/javascript">
                 var aladin = A.aladin('#aladin-lite-div', {cooFrame: "J2000", showFrame: false, showGotoControl: false,
                 survey: "P/2MASS/color", fov:0.1, target: "{{coords|safe}}", showReticle: true});
-                <!-- Other surveys: P/DSS2/color  P/allWISE/color -->
-
-                <!--var catsim = A.catalogFromSimbad("{{coords|safe}}", 0.1, {onClick: 'showPopup', limit: 100});-->
-                <!--aladin.addCatalog(catsim);-->
-
-                <!--var cat = A.catalog({name: 'BDNYC Source', sourceSize: 10});-->
-                <!--aladin.addCatalog(cat);-->
-                <!--cat.addSources([A.marker({{ra|safe}}, {{dec|safe}}, {popupTitle: '{{name|safe}}'})]);-->
-
+                // Other surveys: P/DSS2/color  P/allWISE/color -->
+                
+                var catsim = A.catalogFromSimbad("{{coords|safe}}", 0.1, {onClick: 'showPopup', limit: 100});
+                aladin.addCatalog(catsim);
+                
+                var cat = A.catalog({name: 'ONCdb Source', sourceSize: 10});
+                aladin.addCatalog(cat);
+                cat.addSources([A.marker({{ra|safe}}, {{dec|safe}}, {popupTitle: '{{name|safe}}', popupDesc:'{{desc|safe}}'})]);
+                
             </script>
         </div>
     
