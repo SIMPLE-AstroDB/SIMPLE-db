@@ -292,7 +292,7 @@ def onc_sed():
         return render_template('error.html', headermessage='SED Error', errmess='<p>Please select at least one spectrum or photometric point to construct an SED.</p>')
     
     # Get photometric and spectroscopic data
-    phot = SED.app_phot_SED
+    phot = SED.photometry
     spec = SED.app_spec_SED
     full_sed = SED.app_SED
     
@@ -314,27 +314,41 @@ def onc_sed():
     if phot!='':
         
         # Plot points with errors
-        pts = np.array([(x,y,z) for x,y,z in zip(*phot) if not np.isnan(z)]).T
-        p.circle(pts[0], pts[1], size=8)
-        errs = error_bars(*pts)
-        p.multi_line(*errs)
+        pts = np.array([(x,y,z) for x,y,z in np.array(phot['eff','app_flux','app_flux_unc']) if not np.isnan(z)]).T
+        # pts = np.array([(x,y,z) for x,y,z in zip(*phot) if not np.isnan(z)]).T
+        try:
+            p.circle(pts[0], pts[1], size=8, legend='Photometry')
+            errs = error_bars(*pts)
+            p.multi_line(*errs)
+        except:
+            pass
         
-        # Plot the upper and lower limits
-        err = np.array([(x,y,z) for x,y,z in zip(*phot) if np.isnan(z)]).T
-        p.circle(err[0], err[1], size=8, fill_color='white')
+        # Plot saturated photometry
+        err = np.array([(x,y,z) for x,y,z in np.array(phot['eff','app_flux','app_flux_unc']) if np.isnan(z)]).T
+        try:
+            p.circle_x(err[0], err[1], size=8, fill_color='white', legend='Saturated')
+        except:
+            pass
+            
+        # Plot upper limits
+        err = np.array([(x,y,z) for x,y,z in np.array(phot['eff','app_flux','app_flux_unc']) if np.isnan(z)]).T
+        try:
+            p.circle(err[0], err[1], size=8, fill_color='white', legend='Nondetection')
+        except:
+            pass
         
     # Plot spectra
     if spec!='':
         source = ColumnDataSource(data=dict(x=spec[0], y=spec[1], z=spec[2]))
         hover = HoverTool(tooltips=[( 'wavelength', '$x'),( 'flux', '$y'),('unc','$z')], mode='vline')
         p.add_tools(hover)
-        p.line('x', 'y', source=source)
+        p.line('x', 'y', source=source, legend='Spectra')
         
     # Plot curve of integration
     if full_sed!='':
         sed_w, sed_f, sed_e = [full_sed[i][(full_sed[0]>0.4)&(full_sed[0]<15)] for i in [0,1,2]]
         
-        p.line(sed_w, sed_f, line_color='grey', line_dash='dashed', line_alpha=0.5)
+        p.line(sed_w, sed_f, line_color='grey', line_dash='dashed', line_alpha=0.5, legend='SED')
         
     # Generate the HTML
     script, div = components(p)
@@ -343,7 +357,7 @@ def onc_sed():
     fbol = '\({:.3e} \pm {:.3e}\)'.format(SED.fbol.value,SED.fbol_unc.value)
     mbol = '\({} \pm {}\)'.format(SED.mbol,SED.mbol_unc)
     teff = '\({} \pm {}\)'.format(int(SED.Teff.value),SED.Teff_unc.value if np.isnan(SED.Teff_unc.value) else int(SED.Teff_unc.value)) if SED.distance else '-'
-    Lbol = '\({:.3e} \pm {:.3e}\)'.format(SED.Lbol.value,SED.Lbol_unc.value) if SED.distance else '-'
+    Lbol = '\({:.3f} \pm {:.3f}\)'.format(SED.Lbol_sun,SED.Lbol_sun_unc) if SED.distance else '-'
     radius = '\({:.3f} \pm {:.3f}\)'.format(SED.radius.to(ac.R_sun).value,SED.radius_unc.to(ac.R_sun).value) if SED.radius else '-'
     
     return render_template('sed.html', script=script, plot=div, spt=SED.SpT or '-', mbol=mbol, fbol=fbol, 
