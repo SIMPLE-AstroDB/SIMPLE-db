@@ -43,7 +43,7 @@ def onc_query():
 
     table_names = db.query("select * from sqlite_master where type='table'")['name']
 
-    tables = '\n'.join(['<option value="{0}"> {0}</option>'.format(t) for t in table_names])
+    tables = '\n'.join(['<option value="{0}" {1}> {0}</option>'.format(t,'selected=selected' if t=='sources' else '') for t in table_names])
 
     columns_html = []
     columns_js = []
@@ -149,13 +149,23 @@ def onc_buildquery():
     # Build the query from all the input
     entries = request.form
     print(entries)
-    selections = []
+    selections, builder_rules = [], []
     for key in entries.keys():
         for value in entries.getlist(key):
             if key=='selections':
                 selections.append(value)
+            if key.startswith('builder_rule'):
+                builder_rules.append((key,value))
+    
+    # Translate the builder rules into a SQL WHERE clause
+    where_clause = ''
+    for k,v in builder_rules:
+        pass
+    
+    if where_clause:
+        where_clause = ' WHERE {}'.format(where_clause)
 
-    build_query = "SELECT {} FROM {}".format(','.join(selections),entries['table'])
+    build_query = "SELECT {} FROM {}{}".format(','.join(selections), entries['table'], where_clause)
 
     # db = astrodb.Database(db_file)
     app_onc.vars['query'] = build_query
