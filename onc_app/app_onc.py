@@ -107,6 +107,8 @@ def onc_runquery():
             t[name].name =  'dec'
         if name.endswith('.id'):
             t[name].name =  'id'
+        if name.endswith('.source_id'):
+            t[name].name =  'source_id'
             
     # Convert to Pandas data frame
     try:
@@ -115,13 +117,18 @@ def onc_runquery():
         return render_template('error.html', headermessage='Error in Query',
                                errmess='<p>Error for query:</p><p>'+htmltxt+'</p>')
     
+    try:
+        sources = data[['ra','dec','id']].values.tolist()
+        sources = [[i[0], i[1], 'Source {}'.format(int(i[2])), int(i[2])] for i in sources]
+    except:
+        try:
+            sources = data[['ra','dec','source_id']].values.tolist()
+            sources = [[i[0], i[1], 'Source {}'.format(int(i[2])), int(i[2])] for i in sources]
+        except:
+            sources = ''
+    
     # Create checkbox first column
     data = add_checkboxes(data)
-
-    try:
-        script, div, warning_message = onc_skyplot(t)
-    except:
-        script = div = warning_message = ''
         
     # Toggle columns
     cols = 'Toggle Column: '+' - '.join(['<a class="toggle-vis" />{}</a>'.format(name) for i,name in enumerate(t.colnames)])
@@ -140,7 +147,7 @@ def onc_runquery():
     table_html = data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>')
     
     return render_template('results.html', table=table_html, query=app_onc.vars['query'], cols=cols,
-                            script=script, plot=div, warning=warning_message, axes=axes, export=export)
+                            sources=sources, axes=axes, export=export)
 
 # Grab results of query and display them
 @app_onc.route('/buildquery', methods=['POST', 'GET'])
@@ -792,7 +799,8 @@ def onc_browse():
     # db = astrodb.Database(db_file)
 
     # Run the query
-    t = db.query('SELECT * FROM browse', fmt='table')
+    query = 'SELECT * FROM browse LIMIT 100'
+    t = db.query(query, fmt='table')
     
     try:
         script, div, warning_message = onc_skyplot(t)
@@ -802,6 +810,12 @@ def onc_browse():
     # Convert to Pandas data frame
     data = t.to_pandas()
     data.index = data['id']
+    
+    try:
+        sources = data[['ra','dec','id']].values.tolist()
+        sources = [[i[0], i[1], 'Source {}'.format(int(i[2])), int(i[2])] for i in sources]
+    except:
+        sources = ''
 
     # Change column to a link
     linklist = []
@@ -820,8 +834,8 @@ def onc_browse():
     columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
     axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b)+","+repr(list(t[b])), b) for b in columns])
 
-    return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query='SELECT * FROM browse',
-                            script=script, plot=div, warning=warning_message, cols=cols, axes=axes)
+    return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=query,
+                            sources=sources, cols=cols, axes=axes)
 
 def strip_html(s):
     return re.sub(r'<[^<]*?/?>','',s)

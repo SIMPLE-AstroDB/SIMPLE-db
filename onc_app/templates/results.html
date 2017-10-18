@@ -8,15 +8,21 @@
             <h1>Search Results</h1>
             <p>Input: <code>{{ query|safe }}</code></p>
         </div>
-        {% if plot %}
-            <div id='skyplot'>
-                
-                {{ plot|safe }}
-                
-                <p>Locations of sources in the table below. You can hover over individual points to identify sources and can click on them to go their inventory page.</p>
-                
-                <p>{{ warning|safe }}</p>
-                
+        
+        {% if sources %} 
+            <div id="aladin-lite-div">
+                <script type="text/javascript" src="http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js" charset="utf-8"></script>
+                <script type="text/javascript">
+                    var aladin = A.aladin('#aladin-lite-div', {cooFrame: "J2000", showFrame: false, showGotoControl: false,
+                    survey: "P/2MASS/color", fov:1, target: "M42", showReticle: true});
+
+                    var cat = A.catalog({name: 'ONCdb Source', sourceSize: 10});
+                    aladin.addCatalog(cat);
+                    {% for source in sources %}
+                        cat.addSources([A.marker({{ source[0] }}, {{ source[1] }}, {popupTitle: '<a href="inventory/{{source[3]}}">{{source[2]}}</a>', popupDesc:'foobar' })]); 
+                    {% endfor %}
+            
+                </script>
             </div>
         {% endif %}
     </div>

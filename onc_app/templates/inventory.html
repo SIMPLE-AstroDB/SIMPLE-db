@@ -38,7 +38,7 @@
             <script type="text/javascript" src="http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js" charset="utf-8"></script>
             <script type="text/javascript">
                 var aladin = A.aladin('#aladin-lite-div', {cooFrame: "J2000", showFrame: false, showGotoControl: false,
-                survey: "P/2MASS/color", fov:0.1, target: "{{coords|safe}}", showReticle: true});
+                survey: "P/2MASS/color", fov:0.05, target: "{{coords|safe}}", showReticle: true});
                 // Other surveys: P/DSS2/color  P/allWISE/color -->
                 
                 var catsim = A.catalogFromSimbad("{{coords|safe}}", 0.1, {onClick: 'showPopup', limit: 100});

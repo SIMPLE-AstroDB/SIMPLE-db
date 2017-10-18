@@ -5,7 +5,7 @@
     <div class='block'>
         
         <h1>Target Search</h1>
-        <p>There are five different ways to find target data:</p>
+        <p>There are four different ways to find target data:</p>
     </div>
     
     <div class="block grey">
@@ -21,7 +21,7 @@
         <h2 id="search">Search the Database</h2>
 
         <ol>
-            <li>Search the sources table for objects within 1 arcminute of a J2000 (RA, Dec) coordinate in decimal degrees</li>
+            <li>Search the sources table for objects within 1 arcminute of a J2000 (RA, Dec) coordinate in decimal degrees (e.g. '83.64, -5.33')</li>
             <li>Search any table for alphanumeric matches</li>
         </ol>
         <form id='searchform' method='post' action='search' >
@@ -52,7 +52,7 @@
         </form>
     </div>
 
-    <div class="block grey">
+    <!-- <div class="block grey">
 
         <h2 id="sql">SQL Builder</h2>
 
@@ -93,14 +93,14 @@
                 <input type='submit' value='Submit' />
             </p>
         </form>
-    </div>
+    </div> -->
 
     <div class="block grey">
 
         <h2 id="sql">SQL Query</h2>
 
         <p>
-            Write your own SQL query in the box below! <a href='/schema'>Check the database scema</a> for column and table names.
+            Write your own SQL query in the box below! <a href='/schema'>Check the database schema</a> for column and table names.
         </p>
         <p>
             Not familiar with SQL queries? Here are some examples:
@@ -112,12 +112,12 @@
             <li>SELECT source_id, band, magnitude FROM photometry WHERE band='ACS_HRC.F435W' AND magnitude>26</li>
             <li>SELECT t.name, p.band, p.magnitude, p.magnitude_unc FROM telescopes AS t
                 JOIN photometry AS p ON p.telescope_id=t.id WHERE p.source_id=4</li>
-            <li>SELECT p1.magnitude-p2.magnitude as color FROM photometry AS p1 JOIN photometry AS p2 ON p1.source_id=p2.source_id WHERE p1.band='ACS_HRC.F555W' AND p2.band='ACS_HRC.F850LP' AND color BETWEEN 4.5 AND 4.505</li>
+            <li>SELECT p1.ra,p1.dec,p1.magnitude-p2.magnitude as color FROM photometry AS p1 JOIN photometry AS p2 ON p1.source_id=p2.source_id WHERE p1.band='ACS_HRC.F555W' AND p2.band='ACS_HRC.F850LP' AND color BETWEEN 4.5 AND 4.505</li>
         </ul>
 
         <form id='queryform' method='post' action='runquery' >
             <p>
-                <textarea name="query_to_run" cols="80" rows="8">SELECT * FROM sources</textarea>
+                <textarea name="query_to_run" cols="80" rows="8">SELECT * FROM sources LIMIT 20</textarea>
             </p>
             <p>
                 <input type='submit' value='Submit' />
