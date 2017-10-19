@@ -799,7 +799,7 @@ def onc_browse():
     # db = astrodb.Database(db_file)
 
     # Run the query
-    query = 'SELECT * FROM browse LIMIT 100'
+    query = 'SELECT * FROM browse WHERE id IN (SELECT id FROM browse ORDER BY RANDOM() LIMIT 100)'
     t = db.query(query, fmt='table')
     
     try:
