@@ -4,11 +4,11 @@
             
     <div class='block'>
         
-        <h1>ONCdb History</h1>
+        <h1>History</h1>
         
         <br>
                 
-        <table class='dataTable'>
+        <table class='info'>
             <thead>
                 <tr>
                     <td>Version</td>
@@ -35,21 +35,29 @@
 
     <div class='block'>
         
-        <h1>ONCdb Schema</h1>
+        <h1>Schema</h1>
         
-        <p>Jump to: 
-            <ul>
+        <p>
+            <table class='info'>
+                <thead>
+                    <td>Table</td>
+                    <td>Number of Records</td>
+                </thead>
                 {% for table in tables %}
-                <li><a href="#{{titles[loop.index]}}">{{titles[loop.index]}} </a></li>
+                    <tr>
+                        <td><a href="#{{titles[loop.index]}}">{{titles[loop.index]}}</a></td>
+                        <td>{{table[0]}}</td>
+                    </tr>
                 {% endfor %}
-            </ul>
+            </table>
         </p>
+        
     </div>
     
     <div class='block'>
         {% for table in tables %}
             <h2 id="{{titles[loop.index]}}">{{titles[loop.index]}}</h2>
-            {{ table|safe }}
+            {{ table[1]|safe }}
         <br>
         <a href="#top">Back to top</a>
         <hr><br>

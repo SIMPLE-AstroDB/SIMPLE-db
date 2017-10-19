@@ -802,10 +802,10 @@ def onc_schema():
         temptab = db.query('PRAGMA table_info('+name+')', fmt='table')
         table_dict[name] = temptab
 
-    return render_template('schema.html',
-                           tables=[table_dict[x].to_pandas().to_html(classes='display', index=False)
-                                   for x in sorted(table_dict.keys())],
-                           titles=['na']+sorted(table_dict.keys()))
+    table_html = [[db.query("select count(id) from {}".format(x))[0][0], table_dict[x].to_pandas().to_html(classes='display', index=False)] for x in sorted(table_dict.keys())]
+    titles = ['na']+sorted(table_dict.keys())
+    
+    return render_template('schema.html', tables=table_html, titles=titles)
 
 @app_onc.route('/browse')
 def onc_browse():
