@@ -302,9 +302,14 @@ def onc_sed():
     if phot_ids:
         sed_dict['photometry'] = phot_ids
     
+    # Include ONC distance as default if no parallax
+    dist = ''
+    if 'parallaxes' not in sed_dict:
+        dist = (388*q.pc,20*q.pc)
+    
     # Make the SED
     try:
-        SED = sed.MakeSED(source_id, db, from_dict=sed_dict)
+        SED = sed.MakeSED(source_id, db, from_dict=sed_dict, dist=dist)
     except IOError:
         return render_template('error.html', headermessage='SED Error', errmess='<p>Please select at least one spectrum or photometric point to construct an SED.</p>')
     
@@ -519,13 +524,18 @@ def onc_search():
         return render_template('error.html', headermessage='Error in Search',
                                errmess=mystdout.getvalue().replace('<', '&lt;'))
                                
+    try:
+        sources = data[['ra','dec','id']].values.tolist()
+        sources = [[i[0], i[1], 'Source {}'.format(int(i[2])), int(i[2])] for i in sources]
+    except:
+        try:
+            sources = data[['ra','dec','source_id']].values.tolist()
+            sources = [[i[0], i[1], 'Source {}'.format(int(i[2])), int(i[2])] for i in sources]
+        except:
+            sources = ''
+                               
     # Create checkbox first column
     data = add_checkboxes(data)
-
-    try:
-        script, div, warning_message = onc_skyplot(t)
-    except:
-        script = div = warning_message = ''
         
     # Toggle columns
     cols = 'Toggle Column: '+' - '.join(['<a class="toggle-vis" />{}</a>'.format(name) for i,name in enumerate(t.colnames)])
@@ -542,7 +552,7 @@ def onc_search():
     axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b)+","+repr(list(t[b])), b) for b in columns])
 
     return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=search_value,
-                            script=script, plot=div, warning=warning_message, cols=cols, axes=axes, export=export)
+                            sources=sources, cols=cols, axes=axes, export=export)
 
 # Plot a spectrum
 @app_onc.route('/spectrum', methods=['POST'])
@@ -719,7 +729,7 @@ def onc_inventory(source_id=None):
         sptype_txt = 'N/A'
         
     # Grab comments
-    comments = t['sources']['comments'][0]
+    comments = t['sources']['comments'][0] or ''
     
     # Get external queries
     smbd = 'http://simbad.u-strasbg.fr/simbad/sim-coo?Coord={}+%2B{}&CooFrame=ICRS&CooEpoch=2000&CooEqui=2000&CooDefinedFrames=none&Radius=10&Radius.unit=arcsec&submit=submit+query'.format(ra,dec)
@@ -765,8 +775,12 @@ def onc_inventory(source_id=None):
             table = 'No records in the <code>{}</code> table for this source.'.format(name)
         
         html_tables.append(table)
+    
+    warning = ''
+    if any(['d{}'.format(i) in comments for i in range(20)]):
+        warning = "Warning: This source is confused with its neighbors and the data listed below may not be trustworthy."
         
-    return render_template('inventory.html', tables=html_tables,
+    return render_template('inventory.html', tables=html_tables, warning=warning,
                            titles=['sources']+ordered_names, path=path, source_id=app_onc.vars['source_id'],
                            name=objname, coords=coords, allnames=allnames, distance=dist_string,
                            comments=comments, sptypes=sptype_txt, ra=ra, dec=dec, simbad=smbd, vizier=vzr)
@@ -788,10 +802,10 @@ def onc_schema():
         temptab = db.query('PRAGMA table_info('+name+')', fmt='table')
         table_dict[name] = temptab
 
-    return render_template('schema.html',
-                           tables=[table_dict[x].to_pandas().to_html(classes='display', index=False)
-                                   for x in sorted(table_dict.keys())],
-                           titles=['na']+sorted(table_dict.keys()))
+    table_html = [[db.query("select count(id) from {}".format(x))[0][0], table_dict[x].to_pandas().to_html(classes='display', index=False)] for x in sorted(table_dict.keys())]
+    titles = ['na']+sorted(table_dict.keys())
+    
+    return render_template('schema.html', tables=table_html, titles=titles)
 
 @app_onc.route('/browse')
 def onc_browse():
