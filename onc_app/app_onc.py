@@ -302,9 +302,14 @@ def onc_sed():
     if phot_ids:
         sed_dict['photometry'] = phot_ids
     
+    # Include ONC distance as default if no parallax
+    dist = ''
+    if 'parallaxes' not in sed_dict:
+        dist = (388*q.pc,20*q.pc)
+    
     # Make the SED
     try:
-        SED = sed.MakeSED(source_id, db, from_dict=sed_dict)
+        SED = sed.MakeSED(source_id, db, from_dict=sed_dict, dist=dist)
     except IOError:
         return render_template('error.html', headermessage='SED Error', errmess='<p>Please select at least one spectrum or photometric point to construct an SED.</p>')
     
