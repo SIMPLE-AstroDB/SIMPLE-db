@@ -39,16 +39,23 @@
         <div id="aladin-lite-div">
             <script type="text/javascript" src="http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js" charset="utf-8"></script>
             <script type="text/javascript">
-                var aladin = A.aladin('#aladin-lite-div', {cooFrame: "J2000", showFrame: false, showGotoControl: false,
-                survey: "P/2MASS/color", fov:0.05, target: "{{coords|safe}}", showReticle: true});
-                // Other surveys: P/DSS2/color  P/allWISE/color -->
+                var aladin = A.aladin('#aladin-lite-div', {cooFrame: "J2000", showFrame: false, showGotoControl: false, survey: "P/2MASS/color", fov:0.05, target: "{{coords|safe}}", showReticle: true});
                 
-                var catsim = A.catalogFromSimbad("{{coords|safe}}", 0.1, {onClick: 'showPopup', limit: 100});
-                aladin.addCatalog(catsim);
+                var cat_list = A.catalog({name: 'ONCdb Sources', sourceSize: 8, color: '#236AAB'});
+                aladin.addCatalog(cat_list);
+                {% for source in sources %}
+                    cat_list.addSources([A.marker({{ source[1] }}, {{ source[2] }}, {popupTitle: '<a href="../inventory/{{source[0]}}">Source {{source[0]}}</a>', popupDesc:'{{ source[3] }}' })]); 
+                {% endfor %}
                 
-                var cat = A.catalog({name: 'ONCdb Source', sourceSize: 10});
-                aladin.addCatalog(cat);
-                cat.addSources([A.marker({{ra|safe}}, {{dec|safe}}, {popupTitle: '{{name|safe}}', popupDesc:'{{desc|safe}}'})]);
+                var cat_phot = A.catalog({name: '{{ name|safe }} Photometry', sourceSize: 12, color:'#42f448'});
+                aladin.addCatalog(cat_phot);
+                {% for phot in phots %}
+                    cat_phot.addSources([A.marker({{ phot[0] }}, {{ phot[1] }}, {popupTitle: '{{ phot[2] }}', popupDesc:'{{ phot[3] }}\n{{ phot[4]}}' })]); 
+                {% endfor %}
+                
+                var target = A.catalog({name: '{{ name|safe }}', sourceSize: 15});
+                aladin.addCatalog(target);
+                target.addSources([A.marker({{ra|safe}}, {{dec|safe}}, {popupTitle: '{{name|safe}}', popupDesc:'{{desc|safe}}'})]);
                 
             </script>
         </div>

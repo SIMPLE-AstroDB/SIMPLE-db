@@ -303,15 +303,16 @@ def onc_sed():
         sed_dict['photometry'] = phot_ids
     
     # Include ONC distance as default if no parallax
-    dist = ''
+    dist, warning = '', ''
     if 'parallaxes' not in sed_dict:
         dist = (388*q.pc,20*q.pc)
+        warning = "No distance given for this source. Using \(388\pm 20 pc\) from Kounkel et al. (2016)"
     
     # Make the SED
     try:
         SED = sed.MakeSED(source_id, db, from_dict=sed_dict, dist=dist)
-    except IOError:
-        return render_template('error.html', headermessage='SED Error', errmess='<p>Please select at least one spectrum or photometric point to construct an SED.</p>')
+    except:
+        return render_template('error.html', headermessage='SED Error', errmess='<p>At least one spectrum or photometric point is required to construct an SED.</p>')
     
     # Get photometric and spectroscopic data
     phot = SED.photometry
@@ -383,7 +384,7 @@ def onc_sed():
     radius = '\({:.3f} \pm {:.3f}\)'.format(SED.radius.to(ac.R_sun).value,SED.radius_unc.to(ac.R_sun).value) if SED.radius else '-'
     
     return render_template('sed.html', script=script, plot=div, spt=SED.SpT or '-', mbol=mbol, fbol=fbol, 
-                            teff=teff, Lbol=Lbol, radius=radius, title=SED.name)
+                            teff=teff, Lbol=Lbol, radius=radius, title=SED.name, warning=warning)
 
 def error_bars(xs, ys, zs):
     """
@@ -776,11 +777,19 @@ def onc_inventory(source_id=None):
         
         html_tables.append(table)
     
+    if 'photometry' in t:
+        phots = [[p['ra'],p['dec'],p['band'],'{}, {}'.format(p['ra'],p['dec']), '{} ({})'.format(p['magnitude'],p['magnitude_unc'])] for p in t['photometry']]
+    else:
+        phots = []
+    
+    delta_ra = delta_dec = 0.025
+    sources = db.query("SELECT id,ra,dec,names FROM sources WHERE (ra BETWEEN {1}-{0} AND {1}+{0}) AND (dec BETWEEN {3}-{2} AND {3}+{2}) AND (ra<>{1} AND dec<>{3})".format(delta_ra, ra, delta_dec, dec), fmt='array')
+
     warning = ''
     if any(['d{}'.format(i) in comments for i in range(20)]):
         warning = "Warning: This source is confused with its neighbors and the data listed below may not be trustworthy."
         
-    return render_template('inventory.html', tables=html_tables, warning=warning,
+    return render_template('inventory.html', tables=html_tables, warning=warning, phots=phots, sources=sources,
                            titles=['sources']+ordered_names, path=path, source_id=app_onc.vars['source_id'],
                            name=objname, coords=coords, allnames=allnames, distance=dist_string,
                            comments=comments, sptypes=sptype_txt, ra=ra, dec=dec, simbad=smbd, vizier=vzr)
