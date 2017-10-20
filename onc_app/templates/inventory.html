@@ -69,7 +69,18 @@
 
             {% for table in tables %}
                 <h2>{{titles[loop.index]}}</h2>
-                <p>{{ table|safe }}</p>
+                
+                    <form id='searchform' method='post' action='export' >
+                        
+                        <p>{{ table[0]|safe }}</p>
+                        <br>
+                        
+                        {% if table[1]!='' %}
+                            {{ table[1]|safe }}
+                            <input type='submit' value='Export Selected' />
+                        {% endif %}
+                    </form>
+
                 <br></br>
             {% endfor %}
         </div>

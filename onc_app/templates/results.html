@@ -31,9 +31,9 @@
     <div class='block'>
         {{ cols|safe }}
         <form id='searchform' method='post' action='export' >
-            {{ export|safe }}
+            {{ table[1]|safe }}
             
-            {{ table|safe }}
+            {{ table[0]|safe }}
             <p>
                 <input type="checkbox" name="select-all" id="select-all" /> Select all
             </p>
