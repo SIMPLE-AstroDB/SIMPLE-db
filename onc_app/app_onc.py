@@ -498,6 +498,7 @@ def onc_search():
     app_onc.vars['search'] = request.form['search_to_run']
     search_table = request.form['table']
     search_value = app_onc.vars['search']
+    search_radius = 1/60.
 
     # Process search
     search_value = search_value.replace(',', ' ').split()
@@ -506,6 +507,7 @@ def onc_search():
     else:
         try:
             search_value = [float(s) for s in search_value]
+            search_radius = float(request.form['radius'])/60.
         except:
             return render_template('error.html', headermessage='Error in Search',
                                    errmess='<p>Could not process search input:</p>' +
@@ -516,7 +518,7 @@ def onc_search():
     sys.stdout = mystdout = StringIO()  # Choose a file-like object to write to
     
     # Get table of results
-    t = db.search(search_value, search_table, fetch=True)
+    t = db.search(search_value, search_table, radius=search_radius, fetch=True)
     sys.stdout = stdout
 
     try:
@@ -535,25 +537,31 @@ def onc_search():
         except:
             sources = ''
                                
-    # Create checkbox first column
-    data = add_checkboxes(data)
+    if not data.empty:
+        # Create checkbox first column
+        data = add_checkboxes(data)
         
-    # Toggle columns
-    cols = 'Toggle Column: '+' - '.join(['<a class="toggle-vis" />{}</a>'.format(name) for i,name in enumerate(t.colnames)])
+        # Toggle columns
+        cols = 'Toggle Column: '+' - '.join(['<a class="toggle-vis" />{}</a>'.format(name) for i,name in enumerate(t.colnames)])
         
-    # Data for export
-    export = [strip_html(str(i)) for i in list(data)[1:]]
-    export = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(export)
+        # Data for export
+        export = [strip_html(str(i)) for i in list(data)[1:]]
+        export = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(export)
 
-    # Add links to columns
-    data = link_columns(data, db, ['id', 'source_id', 'image','spectrum'])
+        # Add links to columns
+        data = link_columns(data, db, ['id', 'source_id', 'image','spectrum'])
 
-    # Get numerical x and y axes for plotting
-    columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
-    axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b)+","+repr(list(t[b])), b) for b in columns])
+        # Get numerical x and y axes for plotting
+        columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
+        axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b)+","+repr(list(t[b])), b) for b in columns])
 
-    return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=search_value,
-                            sources=sources, cols=cols, axes=axes, export=export)
+        return render_template('results.html', table=data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'), query=search_value,
+                                sources=sources, cols=cols, axes=axes, export=export)
+    
+    else:
+        return render_template('error.html', headermessage='Error in Search',
+                               errmess='<p>This input returns no results:</p>' +
+                                       '<p>' + app_onc.vars['search'] + '</p>')
 
 # Plot a spectrum
 @app_onc.route('/spectrum', methods=['POST'])

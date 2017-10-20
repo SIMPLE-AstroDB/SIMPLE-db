@@ -20,11 +20,11 @@
     <div class="block grey">
         <h2 id="search">Search the Database</h2>
 
+        <form id='searchform' method='post' action='search' >
         <ol>
-            <li>Search the sources table for objects within 1 arcminute of a J2000 (RA, Dec) coordinate in decimal degrees (e.g. '83.64, -5.33')</li>
+            <li>Search the sources table for objects within  <input type="text" name="radius" size="4" rows="1" value="1" />  arcminutes of a J2000 (RA, Dec) coordinate in decimal degrees (e.g. '83.64, -5.33')</li>
             <li>Search any table for alphanumeric matches</li>
         </ol>
-        <form id='searchform' method='post' action='search' >
             <p>
                 Search for
                 <input type="text" name="search_to_run" size="40" rows="1" value="{{defsearch}}" />
