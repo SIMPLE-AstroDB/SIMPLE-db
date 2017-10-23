@@ -41,6 +41,17 @@
         <br>
         
         {{ plot|safe }}
+        
+        <br><br>
+        
+        <h1>Data Used in SED</h1>
+        <br>
+        
+        {% for table in results %}
+            <h2>{{ table[0]|safe }}</h2>
+            {{ table[1]|safe }}
+            <br><br>
+        {% endfor %}
 
     </div>
 

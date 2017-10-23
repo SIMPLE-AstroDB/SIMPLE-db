@@ -136,7 +136,6 @@ def onc_runquery():
     # Data for export
     export = [strip_html(str(i)) for i in list(data)[1:]]
     export = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(export)
-    # print(export)
     
     # Add links to columns
     data = link_columns(data, db, ['id','source_id','spectrum','image'])
@@ -145,10 +144,10 @@ def onc_runquery():
     columns = [c for c in t.colnames if any([isinstance(i, (int, float)) for i in t[c]])]
     axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b)+","+repr(list(t[b])), b) for b in columns])
     
-    table_html = [data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>'),export]
+    table_html = data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>')
     
     return render_template('results.html', table=table_html, query=app_onc.vars['query'], cols=cols,
-                            sources=sources, axes=axes)
+                            sources=sources, axes=axes, export=export)
 
 # Grab results of query and display them
 @app_onc.route('/buildquery', methods=['POST', 'GET'])
@@ -195,18 +194,18 @@ def onc_buildquery():
         return render_template('error.html', headermessage='Error in Query',
                                errmess='<p>Error in query:</p><p>' + htmltxt + '</p>')
     sys.stdout = stdout
-    
+
     # Check for any errors from mystdout
     if mystdout.getvalue().lower().startswith('could not execute'):
         return render_template('error.html', headermessage='Error in Query',
                                errmess='<p>Error in query:</p><p>' + mystdout.getvalue().replace('<', '&lt;') + '</p>')
-                               
+
     # Check how many results were found
     if type(t) == type(None):
         return render_template('error.html', headermessage='No Results Found',
                                errmess='<p>No entries found for query:</p><p>' + htmltxt +
                                        '</p><p>' + mystdout.getvalue().replace('<', '&lt;') + '</p>')
-                                       
+
     # Remane RA and Dec columns
     for idx, name in enumerate(t.colnames):
         if name.endswith('.ra'):
@@ -215,25 +214,25 @@ def onc_buildquery():
             t[name].name = 'dec'
         if name.endswith('.id'):
             t[name].name = 'id'
-            
+
     # Convert to Pandas data frame
     try:
         data = t.to_pandas()
     except AttributeError:
         return render_template('error.html', headermessage='Error in Query',
                                errmess='<p>Error for query:</p><p>' + htmltxt + '</p>')
-                               
+
     # Create checkbox first column
     data = add_checkboxes(data)
-    
+
     try:
         script, div, warning_message = onc_skyplot(t)
     except:
         script = div = warning_message = ''
-        
+
     # Add links to columns
     data = link_columns(data, db, ['id', 'source_id', 'spectrum', 'image'])
-    
+
     # Get numerical x and y axes for plotting
     columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
     axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b) + "," + repr(list(t[b])), b) for b in columns])
@@ -241,13 +240,13 @@ def onc_buildquery():
     # Data for export
     export = [strip_html(str(i)) for i in list(data)[1:]]
     export = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(export)
-    
+
     # Generate HTML
     table_html = data.to_html(classes='display', index=False).replace('&lt;', '<').replace('&gt;', '>')
-    
+
     return render_template('results.html', table=table_html, query=app_onc.vars['query'],
                            script=script, plot=div, warning=warning_message, axes=axes, export=export)
-                           
+
 # Grab results of query and display them
 @app_onc.route('/plot', methods=['POST','GET'])
 def onc_plot():
@@ -311,7 +310,11 @@ def onc_sed():
     
     # Make the SED
     try:
+        # stdout = sys.stdout
+        # sys.stdout = mystdout = StringIO()
         SED = sed.MakeSED(source_id, db, from_dict=sed_dict, dist=dist)
+        # sys.stdout = stdout
+        # results = mystdout.getvalue()
     except:
         return render_template('error.html', headermessage='SED Error', errmess='<p>At least one spectrum or photometric point is required to construct an SED.</p>')
     
@@ -384,8 +387,9 @@ def onc_sed():
     Lbol = '\({:.3f} \pm {:.3f}\)'.format(SED.Lbol_sun,SED.Lbol_sun_unc) if SED.distance else '-'
     radius = '\({:.3f} \pm {:.3f}\)'.format(SED.radius.to(ac.R_sun).value,SED.radius_unc.to(ac.R_sun).value) if SED.radius else '-'
     
+    results = [[title,tbl2html(tab, roles='grid', classes='dataframe display no_pagination dataTable no-footer')] for tab,title in zip([SED.sources,SED.spectral_types,SED.parallaxes,SED.photometry,SED.spectra],['sources','spectral_types','parallaxes','photometry','spectra']) if len(tab)>0]
     return render_template('sed.html', script=script, plot=div, spt=SED.SpT or '-', mbol=mbol, fbol=fbol, 
-                            teff=teff, Lbol=Lbol, radius=radius, title=SED.name, warning=warning)
+                            teff=teff, Lbol=Lbol, radius=radius, title=SED.name, warning=warning, results=results)
 
 def error_bars(xs, ys, zs):
     """
@@ -443,6 +447,7 @@ def onc_export():
     checked = request.form
     
     # Get column names
+    print(checked.get('cols'))
     results = [list(eval(checked.get('cols')))]
     
     for k in sorted(checked):
@@ -761,50 +766,38 @@ def onc_inventory(source_id=None):
         t['images']['image'] = imglist
         
     # Add order to names for consistent printing
-    ordered_names = ['sources','spectral_types','parallaxes', 'photometry','spectra','images']
+    ordered_names = ['sources','spectral_types','parallaxes','photometry','spectra','images']
             
     # Make the HTML
     html_tables = []
     for name in ordered_names:
         
         try:
-            
+        
             # Convert to pandas
             table = t[name].to_pandas()
-            
+        
             # Add checkboxes for SED creation
             type = 'radio' if name in ['sources','spectral_types','parallaxes'] else 'checkbox'
-            table = add_checkboxes(table, type=type)
-            # table = add_checkboxes(table, type=type, id_only=True, table_name=name)
-            
-            # Data for export
-            export = [strip_html(str(i)) for i in list(table)[1:]]
-            export = """<input class='hidden' type='checkbox' name='cols' value="{}" checked=True />""".format(export)
-            
+            table = add_checkboxes(table, type=type, id_only=True, table_name=name)
+        
             # Convert to HTML
             table = table.to_html(classes='display no_pagination', index=False).replace('&lt;', '<').replace('&gt;', '>')
             
         except KeyError:
             
             table = 'No records in the <code>{}</code> table for this source.'.format(name)
-            export = ''
         
-        if name=='sources':
-            export = ''
-            
-        html_tables.append([table,export])
-        
-    # Photometry locations
+        html_tables.append(table)
+    
     if 'photometry' in t:
         phots = [[p['ra'],p['dec'],p['band'],'{}, {}'.format(p['ra'],p['dec']), '{} ({})'.format(p['magnitude'],p['magnitude_unc'])] for p in t['photometry']]
     else:
         phots = []
     
-    # Neighboring sources
     delta_ra = delta_dec = 0.025
     sources = db.query("SELECT id,ra,dec,names FROM sources WHERE (ra BETWEEN {1}-{0} AND {1}+{0}) AND (dec BETWEEN {3}-{2} AND {3}+{2}) AND (ra<>{1} AND dec<>{3})".format(delta_ra, ra, delta_dec, dec), fmt='array')
-    
-    # Confusion warning
+
     warning = ''
     if any(['d{}'.format(i) in comments for i in range(20)]):
         warning = "Warning: This source is confused with its neighbors and the data listed below may not be trustworthy."
@@ -882,6 +875,24 @@ def onc_browse():
 
 def strip_html(s):
     return re.sub(r'<[^<]*?/?>','',s)
+
+def tbl2html(table, classes='', ids='', roles=''):
+    """
+    Sloppily converts an astropy table to html (when mixin columns won't let you do table.)
+    """
+    # Get header
+    columns = ''.join(['<th>{}</th>'.format(col) for col in table.colnames])
+    
+    # Build table and header
+    out = "<table class='{}' id='{}' role='{}'><thead>{}</thead><tbody>".format(classes,ids,roles,columns)
+    
+    # Add rows
+    for row in np.array(table):
+        out += '<tr><td>'+'</td><td>'.join(list(map(str,row)))+'</td></tr>'
+    
+    out += "</tbody></table>"
+    
+    return out
 
 def onc_skyplot(t):
     """
