@@ -23,7 +23,7 @@ Then run the application with `python ONCdbWeb/onc_app/app_onc.py`. Launch a bro
 For feedback, questions, or if you've found an error, please [create an Issue here](https://github.com/ONCdb/ONCdbWeb/issues).
 
 ### The ONCdb Team at STScI
-[https://github.com/hover2pi](Joe Filippazzo)
-[https://github.com/mrobberto](Massimo Robberto)
+[Joe Filippazzo](https://github.com/hover2pi)
+[Massimo Robberto](https://github.com/mrobberto)
 Andrea Lin
-[https://github.com/mgennaro](Mario Gennaro)
+[Mario Gennaro](https://github.com/mgennaro)
