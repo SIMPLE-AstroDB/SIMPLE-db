@@ -42,10 +42,11 @@
         <script>
             $(document).ready( function () {
                 
-                $('#tableselector').change(function(){
-                    $('.columns').hide();
-                    $('#' + $(this).val()).show();
-                });
+                // // Toggle columns
+                // $('#tableselector').change(function(){
+                //     $('.columns').hide();
+                //     $('#' + $(this).val()).show();
+                // });
                 
                 // $('.dataframe').DataTable( {
                 //     "pageLength": 20,
@@ -58,7 +59,7 @@
                 
                 var table = $('.dataframe').DataTable( {
                     "scrollY": "500px",
-                    "scrollX": false,
+                    "scrollX": "500px",
                     "scrollCollapse": true, 
                     "paging": false
                 } );

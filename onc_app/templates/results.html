@@ -29,11 +29,12 @@
     <div class='clearfix'></div>
     
     <div class='block'>
-        {{ cols|safe }}
+        <!-- {{ cols|safe }} -->
         <form id='searchform' method='post' action='export' >
-            {{ table[1]|safe }}
-            
-            {{ table[0]|safe }}
+            <!-- {{ table[1]|safe }}
+
+            {{ table[0]|safe }} -->
+            {{ table|safe }}
             <p>
                 <input type="checkbox" name="select-all" id="select-all" /> Select all
             </p>

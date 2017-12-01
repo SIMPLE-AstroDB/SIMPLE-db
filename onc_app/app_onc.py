@@ -145,6 +145,7 @@ def onc_runquery():
     axes = '\n'.join(['<option value="{}"> {}</option>'.format(repr(b)+","+repr(list(t[b])), b) for b in columns])
     
     table_html = data.to_html(classes='display', index=False).replace('&lt;','<').replace('&gt;','>')
+    print(table_html)
     
     return render_template('results.html', table=table_html, query=app_onc.vars['query'], cols=cols,
                             sources=sources, axes=axes, export=export)
@@ -277,6 +278,8 @@ def onc_sed():
 
     # Get the ids of all the data to use
     entries = request.form
+    age = (float(entries['age_min'])*q.Myr, float(entries['age_max'])*q.Myr)
+    radius = (float(entries['radius'])*ac.R_sun,float(entries['radius_unc'])*ac.R_sun)
     source_id = int(entries['sources'])
     spt_id = int(entries.get('spectral_types', 0))
     plx_id = int(entries.get('parallaxes', 0))
@@ -312,7 +315,7 @@ def onc_sed():
     try:
         # stdout = sys.stdout
         # sys.stdout = mystdout = StringIO()
-        SED = sed.MakeSED(source_id, db, from_dict=sed_dict, dist=dist)
+        SED = sed.MakeSED(source_id, db, from_dict=sed_dict, dist=dist, age=age, radius=radius)
         # sys.stdout = stdout
         # results = mystdout.getvalue()
     except:
