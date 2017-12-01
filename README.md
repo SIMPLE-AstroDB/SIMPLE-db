@@ -12,8 +12,21 @@ git clone https://github.com/ONCdb/ONCdb.git
 export ONC_database="/path/to/ONCdb/orion.db"
 ```
 
+The dependencies include `SEDkit` and `astrodbkit`. Get and install them like so:
+```
+git clone https://github.com/hover2pi/SEDkit.git
+python SEDkit/setup.py install
+
+git clone https://github.com/bdnyc/astrodbkit.git
+python astrodbkit/setup.py install
+```
+
 Then run the application with `python ONCdbWeb/onc_app/app_onc.py`. Launch a browser and enter the URL `http://0.0.0.0:5000/`.
 
 For feedback, questions, or if you've found an error, please [create an Issue here](https://github.com/ONCdb/ONCdbWeb/issues).
 
-### The ONCdb Team
+### The ONCdb Team at STScI
+- [Joe Filippazzo](https://github.com/hover2pi)
+- [Massimo Robberto](https://github.com/mrobberto)
+- Andrea Lin
+- [Mario Gennaro](https://github.com/mgennaro)
