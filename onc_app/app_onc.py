@@ -391,6 +391,7 @@ def onc_sed():
     radius = '\({:.3f} \pm {:.3f}\)'.format(SED.radius.to(ac.R_sun).value,SED.radius_unc.to(ac.R_sun).value) if SED.radius else '-'
     
     results = [[title,tbl2html(tab, roles='grid', classes='dataframe display no_pagination dataTable no-footer')] for tab,title in zip([SED.sources,SED.spectral_types,SED.parallaxes,SED.photometry,SED.spectra],['sources','spectral_types','parallaxes','photometry','spectra']) if len(tab)>0]
+    
     return render_template('sed.html', script=script, plot=div, spt=SED.SpT or '-', mbol=mbol, fbol=fbol, 
                             teff=teff, Lbol=Lbol, radius=radius, title=SED.name, warning=warning, results=results)
 
