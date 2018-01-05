@@ -52,19 +52,19 @@
                 var table = $('.dataframe').DataTable( {
                     "scrollY": "500px",
                     "scrollX": "500px",
-                    "scrollCollapse": true, 
+                    "scrollCollapse": true,
                     "paging": false
                 } );
  
-                $('a.toggle-vis').on( 'click', function (e) {
-                    e.preventDefault();
- 
-                    // Get the column API object
-                    var column = table.column( $(this).attr('data-column') );
- 
-                    // Toggle the visibility
-                    column.visible( ! column.visible() );
-                } );
+                // $('a.toggle-vis').on( 'click', function (e) {
+                //     e.preventDefault();
+                //
+                //     // Get the column API object
+                //     var column = table.column( $(this).attr('data-column') );
+                //
+                //     // Toggle the visibility
+                //     column.visible( ! column.visible() );
+                // } );
                 
                 $('#select-all').click(function(event) {
                     if(this.checked) {

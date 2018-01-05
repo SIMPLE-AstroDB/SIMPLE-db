@@ -786,7 +786,7 @@ def onc_inventory(source_id=None):
             table = add_checkboxes(table, type=type, id_only=True, table_name=name)
         
             # Convert to HTML
-            table = table.to_html(classes='display no_pagination', index=False).replace('&lt;', '<').replace('&gt;', '>')
+            table = table.to_html(classes='display no_pagination no_wrap', index=False).replace('&lt;', '<').replace('&gt;', '>')
             
         except KeyError:
             
