@@ -326,9 +326,6 @@ def onc_sed():
     spec = SED.app_spec_SED
     full_sed = SED.app_SED
     
-    # Put the fundamental parameters into a table for display
-    # TODO
-    
     # Get the axes to plot
     xaxis = 'Wavelength [{}]'.format(SED.wave_units)
     yaxis = 'Flux Density [{}]'.format(SED.flux_units)
