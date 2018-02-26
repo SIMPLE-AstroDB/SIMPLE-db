@@ -296,7 +296,7 @@ def onc_sed():
     # Make the astropy tables
     sed_dict = {}
     sed_dict['sources'] = source_id
-    if plx_id:
+    if spt_id:
         sed_dict['spectral_types'] = spt_id
     if plx_id:
         sed_dict['parallaxes'] = plx_id
@@ -313,80 +313,43 @@ def onc_sed():
     
     # Make the SED
     try:
-        # stdout = sys.stdout
-        # sys.stdout = mystdout = StringIO()
-        SED = sed.MakeSED(source_id, db, from_dict=sed_dict, dist=dist, age=age, radius=radius)
-        # sys.stdout = stdout
-        # results = mystdout.getvalue()
-    except:
+        SED = sed.MakeSED(source_id, db, from_dict=sed_dict, dist=dist, age=age, radius=radius, phot_aliases='')
+        # SED.fit_blackbody()
+        p = SED.plot(output=True)
+        
+    except IOError:
         return render_template('error.html', headermessage='SED Error', errmess='<p>At least one spectrum or photometric point is required to construct an SED.</p>')
-    
-    # Get photometric and spectroscopic data
-    phot = SED.photometry
-    spec = SED.app_spec_SED
-    full_sed = SED.app_SED
-    
-    # Get the axes to plot
-    xaxis = 'Wavelength [{}]'.format(SED.wave_units)
-    yaxis = 'Flux Density [{}]'.format(SED.flux_units)
-    
-    # Make the plot
-    tools = "resize,pan,wheel_zoom,box_zoom,reset"
-    p = figure(tools=tools, x_axis_label=xaxis, y_axis_label=yaxis, plot_width=1000, plot_height=500, \
-                y_axis_type="log", x_axis_type="log")
-    p.xgrid.grid_line_color = None
-    p.ygrid.grid_line_color = None
-    
-    # PLot photometry
-    if phot!='':
-        
-        # Plot points with errors
-        pts = np.array([(x,y,z) for x,y,z in np.array(phot['eff','app_flux','app_flux_unc']) if not np.isnan(z)]).T
-        # pts = np.array([(x,y,z) for x,y,z in zip(*phot) if not np.isnan(z)]).T
-        try:
-            p.circle(pts[0], pts[1], size=8, legend='Photometry')
-            errs = error_bars(*pts)
-            p.multi_line(*errs)
-        except:
-            pass
-        
-        # Plot saturated photometry
-        err = np.array([(x,y,z) for x,y,z in np.array(phot['eff','app_flux','app_flux_unc']) if np.isnan(z)]).T
-        try:
-            p.circle_x(err[0], err[1], size=8, fill_color='white', legend='Saturated')
-        except:
-            pass
-            
-        # Plot upper limits
-        err = np.array([(x,y,z) for x,y,z in np.array(phot['eff','app_flux','app_flux_unc']) if np.isnan(z)]).T
-        try:
-            p.circle(err[0], err[1], size=8, fill_color='white', legend='Nondetection')
-        except:
-            pass
-        
-    # Plot spectra
-    if spec!='':
-        source = ColumnDataSource(data=dict(x=spec[0], y=spec[1], z=spec[2]))
-        hover = HoverTool(tooltips=[( 'wavelength', '$x'),( 'flux', '$y'),('unc','$z')], mode='vline')
-        p.add_tools(hover)
-        p.line('x', 'y', source=source, legend='Spectra')
-        
-    # Plot curve of integration
-    if full_sed!='':
-        sed_w, sed_f, sed_e = [full_sed[i][(full_sed[0]>0.4)&(full_sed[0]<15)] for i in [0,1,2]]
-        
-        p.line(sed_w, sed_f, line_color='grey', line_dash='dashed', line_alpha=0.5, legend='SED')
         
     # Generate the HTML
     script, div = components(p)
     
     # Get params to print
-    fbol = '\({:.3e} \pm {:.3e}\)'.format(SED.fbol.value,SED.fbol_unc.value)
-    mbol = '\({} \pm {}\)'.format(SED.mbol,SED.mbol_unc)
-    teff = '\({} \pm {}\)'.format(int(SED.Teff.value),SED.Teff_unc.value if np.isnan(SED.Teff_unc.value) else int(SED.Teff_unc.value)) if SED.distance else '-'
-    Lbol = '\({:.3f} \pm {:.3f}\)'.format(SED.Lbol_sun,SED.Lbol_sun_unc) if SED.distance else '-'
-    radius = '\({:.3f} \pm {:.3f}\)'.format(SED.radius.to(ac.R_sun).value,SED.radius_unc.to(ac.R_sun).value) if SED.radius else '-'
-    
+    fbol, mbol, teff, Lbol, radius = ['NaN']*5
+    try:
+        fbol = '\({:.3e} \pm {:.3e}\)'.format(SED.fbol.value,SED.fbol_unc.value)
+    except:
+        pass
+        
+    try:    
+        mbol = '\({} \pm {}\)'.format(SED.mbol,SED.mbol_unc)
+    except:
+        pass
+        
+    try:
+        teff = '\({} \pm {}\)'.format(int(SED.Teff.value),SED.Teff_unc.value if np.isnan(SED.Teff_unc.value) else int(SED.Teff_unc.value)) if SED.distance else '-'
+    except:
+        pass
+        
+    try:
+        Lbol = '\({:.3f} \pm {:.3f}\)'.format(SED.Lbol_sun,SED.Lbol_sun_unc) if SED.distance else '-'
+    except:
+        pass
+        
+    try:
+        radius = '\({:.3f} \pm {:.3f}\)'.format(SED.radius.to(ac.R_sun).value,SED.radius_unc.to(ac.R_sun).value) if SED.radius else '-'
+    except:
+        pass
+        
     results = [[title,tbl2html(tab, roles='grid', classes='dataframe display no_pagination dataTable no-footer')] for tab,title in zip([SED.sources,SED.spectral_types,SED.parallaxes,SED.photometry,SED.spectra],['sources','spectral_types','parallaxes','photometry','spectra']) if len(tab)>0]
     
     return render_template('sed.html', script=script, plot=div, spt=SED.SpT or '-', mbol=mbol, fbol=fbol, 
