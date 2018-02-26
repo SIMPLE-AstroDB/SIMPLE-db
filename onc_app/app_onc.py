@@ -907,8 +907,8 @@ def onc_feedback():
 
 ## -- RUN
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8000))
-    app_onc.run(host='0.0.0.0', port=port, debug=True)
+    # port = int(os.environ.get('PORT', 8000))
+    app_onc.run(host='127.0.0.1', port=8000, debug=True)
     
     
     
