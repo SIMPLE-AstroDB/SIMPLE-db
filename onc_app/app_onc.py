@@ -314,10 +314,9 @@ def onc_sed():
     # Make the SED
     try:
         SED = sed.MakeSED(source_id, db, from_dict=sed_dict, dist=dist, age=age, radius=radius, phot_aliases='')
-        # SED.fit_blackbody()
         p = SED.plot(output=True)
         
-    except IOError:
+    except:
         return render_template('error.html', headermessage='SED Error', errmess='<p>At least one spectrum or photometric point is required to construct an SED.</p>')
         
     # Generate the HTML
