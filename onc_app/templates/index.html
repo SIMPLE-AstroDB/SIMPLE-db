@@ -11,8 +11,14 @@
     <div class="block grey">
         <h2 id="browse">Browse the Database</h2>
 
-        <form method="GET" action="../browse">
-            <p>See all database sources in a sortable table: <input type="submit" value="Browse"></p>
+        <!-- <form method="GET" action="../browse"> -->
+        <form id='searchform' method='post' action='browse' >
+            <p>
+                <input type="submit" value="Browse" />
+                <select name="browse_table">
+                    {{tables|safe}}
+                </select>
+            </p>
         </form>
 
     </div>

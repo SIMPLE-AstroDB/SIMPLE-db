@@ -41,9 +41,9 @@ def onc_query():
     if app_onc.vars['query']=='':
         app_onc.vars['query'] = defquery
 
-    table_names = db.query("select * from sqlite_master where type='table'")['name']
+    table_names = db.query("select * from sqlite_master where type='table' or type='view'")['name']
 
-    tables = '\n'.join(['<option value="{0}" {1}> {0}</option>'.format(t,'selected=selected' if t=='sources' else '') for t in table_names])
+    tables = '\n'.join(['<option value="{0}" {1}> {0}</option>'.format(t,'selected=selected' if t=='browse' else '') for t in table_names])
 
     columns_html = []
     columns_js = []
@@ -118,11 +118,11 @@ def onc_runquery():
                                errmess='<p>Error for query:</p><p>'+htmltxt+'</p>')
     
     try:
-        sources = data[['ra','dec','id']].values.tolist()
+        sources = data[['ra','dec','source_id']].values.tolist()
         sources = [[i[0], i[1], 'Source {}'.format(int(i[2])), int(i[2])] for i in sources]
     except:
         try:
-            sources = data[['ra','dec','source_id']].values.tolist()
+            sources = data[['ra','dec','id']].values.tolist()
             sources = [[i[0], i[1], 'Source {}'.format(int(i[2])), int(i[2])] for i in sources]
         except:
             sources = ''
@@ -316,7 +316,7 @@ def onc_sed():
         SED = sed.MakeSED(source_id, db, from_dict=sed_dict, dist=dist, age=age, radius=radius, phot_aliases='')
         p = SED.plot(output=True)
         
-    except:
+    except IOError:
         return render_template('error.html', headermessage='SED Error', errmess='<p>At least one spectrum or photometric point is required to construct an SED.</p>')
         
     # Generate the HTML
@@ -496,11 +496,11 @@ def onc_search():
                                errmess=mystdout.getvalue().replace('<', '&lt;'))
                                
     try:
-        sources = data[['ra','dec','id']].values.tolist()
+        sources = data[['ra','dec','source_id']].values.tolist()
         sources = [[i[0], i[1], 'Source {}'.format(int(i[2])), int(i[2])] for i in sources]
     except:
         try:
-            sources = data[['ra','dec','source_id']].values.tolist()
+            sources = data[['ra','dec','id']].values.tolist()
             sources = [[i[0], i[1], 'Source {}'.format(int(i[2])), int(i[2])] for i in sources]
         except:
             sources = ''
@@ -792,13 +792,13 @@ def onc_schema():
     
     return render_template('schema.html', tables=table_html, titles=titles)
 
-@app_onc.route('/browse')
+@app_onc.route('/browse', methods=['GET', 'POST'])
 def onc_browse():
     """Examine the full source list with clickable links to object summaries"""
-    # db = astrodb.Database(db_file)
+    table = request.form['browse_table']
 
     # Run the query
-    query = 'SELECT * FROM browse WHERE id IN (SELECT id FROM browse ORDER BY RANDOM() LIMIT 100)'
+    query = 'SELECT * FROM {0} WHERE id IN (SELECT id FROM {0} ORDER BY RANDOM() LIMIT 100)'.format(table)
     t = db.query(query, fmt='table')
     
     try:
@@ -811,17 +811,17 @@ def onc_browse():
     data.index = data['id']
     
     try:
-        sources = data[['ra','dec','id']].values.tolist()
+        sources = data[['ra','dec','source_id']].values.tolist()
         sources = [[i[0], i[1], 'Source {}'.format(int(i[2])), int(i[2])] for i in sources]
     except:
-        sources = ''
+        try:
+            sources = data[['ra','dec','id']].values.tolist()
+            sources = [[i[0], i[1], 'Source {}'.format(int(i[2])), int(i[2])] for i in sources]
+        except:
+            sources = ''
 
     # Change column to a link
-    linklist = []
-    for i, elem in enumerate(data['id']):
-        link = '<a href="inventory/{0}">{1}</a>'.format(data.iloc[i]['id'], elem)
-        linklist.append(link)
-    data['id'] = linklist
+    data = link_columns(data, db, ['id','source_id','spectrum','image'])
     
     # Create checkbox first column
     data = add_checkboxes(data)
@@ -864,39 +864,42 @@ def onc_skyplot(t):
     # Convert to Pandas data frame
     data = t.to_pandas()
     data.index = data['id']
+    script, div, warning_message = '', '', ''
 
-    # Remove objects without RA/Dec
-    num_missing = np.sum(pd.isnull(data['ra']))
-    if num_missing > 0:
-        warning_message = 'Note: {} objects had missing coordinate information and were removed.'.format(num_missing)
-        data = data[pd.notnull(data['ra'])]
-    else:
-        warning_message = ''
+    if 'ra' in data and 'dec' in data:
+        
+        # Remove objects without RA/Dec
+        num_missing = np.sum(pd.isnull(data.get('ra')))
+        if num_missing > 0:
+            warning_message = 'Note: {} objects had missing coordinate information and were removed.'.format(num_missing)
+            data = data[pd.notnull(data.get('ra'))]
+        else:
+            warning_message = ''
 
-    # Coerce to numeric
-    data['ra'] = pd.to_numeric(data['ra'])
-    data['dec'] = pd.to_numeric(data['dec'])
-    
-    source = ColumnDataSource(data=data)
+        # Coerce to numeric
+        data['ra'] = pd.to_numeric(data['ra'])
+        data['dec'] = pd.to_numeric(data['dec'])
 
-    tools = "resize,tap,pan,wheel_zoom,box_zoom,reset"
-    p = figure(tools=tools, title='', plot_width=500, plot_height=300, min_border=0, min_border_bottom=0)
+        source = ColumnDataSource(data=data)
 
-    # Add the data
-    p.scatter('ra', 'dec', source=source, size=8, alpha=0.6)
-    tooltip = [("Source ID", "@id"), ("Name", "@shortname"), ("(RA, Dec)", "(@ra, @dec)")]
-    p.add_tools(HoverTool(tooltips=tooltip))
+        tools = "resize,tap,pan,wheel_zoom,box_zoom,reset"
+        p = figure(tools=tools, title='', plot_width=500, plot_height=300, min_border=0, min_border_bottom=0)
 
-    # When clicked, go to the Summary page
-    url = "inventory/@id"
-    taptool = p.select(type=TapTool)
-    taptool.callback = OpenURL(url=url)
-    
-    # Axis labels
-    p.yaxis.axis_label = 'Decl. (deg)'
-    p.xaxis.axis_label = 'R.A. (deg)'
+        # Add the data
+        p.scatter('ra', 'dec', source=source, size=8, alpha=0.6)
+        tooltip = [("Source ID", "@id"), ("Name", "@shortname"), ("(RA, Dec)", "(@ra, @dec)")]
+        p.add_tools(HoverTool(tooltips=tooltip))
 
-    script, div = components(p)
+        # When clicked, go to the Summary page
+        url = "inventory/@id"
+        taptool = p.select(type=TapTool)
+        taptool.callback = OpenURL(url=url)
+
+        # Axis labels
+        p.yaxis.axis_label = 'Decl. (deg)'
+        p.xaxis.axis_label = 'R.A. (deg)'
+
+        script, div = components(p)
 
     return script, div, warning_message
 
