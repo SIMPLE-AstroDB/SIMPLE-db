@@ -40,6 +40,11 @@ def onc_query():
     defquery = 'SELECT * FROM sources'
     if app_onc.vars['query']=='':
         app_onc.vars['query'] = defquery
+        
+    # Get list of the catalogs
+    source_count, = db.list("SELECT Count(*) FROM sources").fetchone()
+    catalogs = db.query("SELECT description FROM publications")
+    cat_names = ''.join(['<li>{}</li>'.format(cat[0].replace('VizieR Online Data Catalog: ','')) for cat in catalogs])
 
     table_names = db.query("select * from sqlite_master where type='table' or type='view'")['name']
 
@@ -59,7 +64,7 @@ def onc_query():
     column_select = ''.join(columns_html)
     column_script = ''.join(columns_js)
 
-    return render_template('index.html',
+    return render_template('index.html', cat_names=cat_names, source_count=source_count,
                            defsearch=app_onc.vars['search'], specid=app_onc.vars['specid'],
                            source_id=app_onc.vars['source_id'], version=astrodbkit.__version__,
                            tables=tables, column_select=column_select, column_script=col_js)
@@ -400,6 +405,17 @@ def link_columns(data, db, columns):
             img = '<a href="../image/{}"><img class="view" src="static/images/view.png" /></a>'.format(row['id'])
             imglist.append(img)
         data['image'] = imglist
+        
+    # Change vizier URL to a link
+    if 'record' in columns and 'record' in data:
+        reclist = []
+        for index, row in data.iterrows():
+            if row['record'] is None:
+                rec = None
+            else:
+                rec = '<a href="{}"><img class="view" src="static/images/view.png" /></a>'.format(row['record'])
+            reclist.append(rec)
+        data['record'] = reclist
     
     return data
 
@@ -517,7 +533,7 @@ def onc_search():
         export = """<input class='hidden' type='checkbox', name='cols' value="{}" checked=True />""".format(export)
 
         # Add links to columns
-        data = link_columns(data, db, ['id', 'source_id', 'image','spectrum'])
+        data = link_columns(data, db, ['id', 'source_id', 'image','spectrum','record'])
 
         # Get numerical x and y axes for plotting
         columns = [c for c in t.colnames if isinstance(t[c][0], (int, float))]
@@ -711,22 +727,6 @@ def onc_inventory(source_id=None):
     # Get external queries
     smbd = 'http://simbad.u-strasbg.fr/simbad/sim-coo?Coord={}+%2B{}&CooFrame=ICRS&CooEpoch=2000&CooEqui=2000&CooDefinedFrames=none&Radius=10&Radius.unit=arcsec&submit=submit+query'.format(ra,dec)
     vzr = 'http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=&-out.add=_r&-out.add=_RAJ%2C_DEJ&-sort=_r&-to=&-out.max=20&-meta.ucd=2&-meta.foot=1&-c.rs=20&-c={}+{}'.format(ra,dec)
-    
-    # Create link to spectra
-    if 'spectra' in t:
-        speclist = []
-        for idx,row in enumerate(t['spectra']):
-            spec = '<a href="../spectrum/{}"><img class="view" src="../static/images/view.png" /></a>'.format(row['id'])
-            speclist.append(spec)
-        t['spectra']['spectrum'] = speclist
-        
-    # Create link to images
-    if 'images' in t:
-        imglist = []
-        for idx,row in enumerate(t['images']):
-            img = '<a href="../image/{}"><img class="view" src="../static/images/view.png" /></a>'.format(row['id'])
-            imglist.append(img)
-        t['images']['image'] = imglist
         
     # Add order to names for consistent printing
     ordered_names = ['sources','spectral_types','parallaxes','photometry','spectra','images']
@@ -743,7 +743,10 @@ def onc_inventory(source_id=None):
             # Add checkboxes for SED creation
             type = 'radio' if name in ['sources','spectral_types','parallaxes'] else 'checkbox'
             table = add_checkboxes(table, type=type, id_only=True, table_name=name)
-        
+            
+            # Add links to the columns
+            table = link_columns(table, db, ['id', 'source_id', 'image','spectrum', 'record'])
+
             # Convert to HTML
             table = table.to_html(classes='display no_pagination no_wrap', index=False).replace('&lt;', '<').replace('&gt;', '>')
             
@@ -821,7 +824,7 @@ def onc_browse():
             sources = ''
 
     # Change column to a link
-    data = link_columns(data, db, ['id','source_id','spectrum','image'])
+    data = link_columns(data, db, ['id','source_id','spectrum','image', 'record'])
     
     # Create checkbox first column
     data = add_checkboxes(data)

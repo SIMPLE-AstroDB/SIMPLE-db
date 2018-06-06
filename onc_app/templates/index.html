@@ -4,12 +4,21 @@
             
     <div class='block'>
         
-        <h1>Target Search</h1>
-        <p>There are four different ways to find target data:</p>
+        <h1>Welcome!</h1>
+        <p style="line-height:1.5em;">The Orion Nebula Cluster Database is a cross-matched and curated collection of<br>
+            astrometry, photometry, spectra, and image data for {{source_count|safe}} sources in the ONC.</p>
+        <p>The catalogs currently included are:
+            <ul style="line-height:1.5em;">{{cat_names|safe}}</ul>
+        </p>
+        <p style="line-height:1.5em;">
+            Use the forms below to browse though tables, query the database, or see the full inventory of a particular source.<br>Then plot the results, click through interactive sky maps, or generate spectral energy distributions and caluclate fundamental parameters.
+        </p>
+        
     </div>
     
     <div class="block grey">
         <h2 id="browse">Browse the Database</h2>
+        <p>Take a look at 100 random records in the selected table.</p>
 
         <!-- <form method="GET" action="../browse"> -->
         <form id='searchform' method='post' action='browse' >
