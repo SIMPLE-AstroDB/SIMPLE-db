@@ -43,8 +43,8 @@ def onc_query():
         
     # Get list of the catalogs
     source_count, = db.list("SELECT Count(*) FROM sources").fetchone()
-    catalogs = db.query("SELECT description FROM publications")
-    cat_names = ''.join(['<li>{}</li>'.format(cat[0].replace('VizieR Online Data Catalog: ','')) for cat in catalogs])
+    catalogs = db.query("SELECT * FROM publications", fmt='table')
+    cat_names = ''.join(['<li><a href="https://doi.org/{}">{}</a></li>'.format(cat['DOI'],cat['description'].replace('VizieR Online Data Catalog: ','')) for cat in catalogs])
 
     table_names = db.query("select * from sqlite_master where type='table' or type='view'")['name']
 
