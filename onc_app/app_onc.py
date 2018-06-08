@@ -742,7 +742,7 @@ def onc_inventory(source_id=None):
     html_tables = []
     for name in ordered_names:
         
-        try:
+        if name in t:
         
             # Convert to pandas
             table = t[name].to_pandas()
@@ -757,10 +757,11 @@ def onc_inventory(source_id=None):
             # Convert to HTML
             table = table.to_html(classes='display no_pagination no_wrap', index=False).replace('&lt;', '<').replace('&gt;', '>')
             
-        except KeyError:
+        else:
             
-            table = '<p style="padding-top:30px;>No records in the <code>{}</code> table for this source.</p>'.format(name)
+            table = '<p style="padding-top:25px;">No records in the <code>{}</code> table for this source.</p>'.format(name)
         
+        table = '<h2 style="position:relative; bottom:-25px">{}</h2>'.format(name)+table
         html_tables.append(table)
     
     if 'photometry' in t:
@@ -776,11 +777,10 @@ def onc_inventory(source_id=None):
     warning = ''
     if any(['d{}'.format(i) in comments for i in range(20)]):
         warning = "Warning: This source is confused with its neighbors and the data listed below may not be trustworthy."
-        
+    print(html_tables)
     return render_template('inventory.html', tables=html_tables, warning=warning, phots=phots, sources=sources,
-                           titles=['sources']+ordered_names, path=path, source_id=app_onc.vars['source_id'],
-                           name=objname, coords=coords, allnames=allnames, distance=dist_string,
-                           comments=comments, sptypes=sptype_txt, ra=ra, dec=dec, simbad=smbd, vizier=vzr)
+                           path=path, source_id=app_onc.vars['source_id'], name=objname, coords=coords, allnames=allnames, 
+                           distance=dist_string, comments=comments, sptypes=sptype_txt, ra=ra, dec=dec, simbad=smbd, vizier=vzr)
 
 # Check Schema
 # @app_onc.route('/schema.html', methods=['GET', 'POST'])
