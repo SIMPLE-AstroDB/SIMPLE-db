@@ -16,20 +16,21 @@
         <link rel="stylesheet" href="//cdn.pydata.org/bokeh/release/bokeh-0.12.6.min.css" type="text/css" />
         <link rel="stylesheet" href="//cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.6.min.css" type="text/css" />
 
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-responsive.min.css">
-
+        <!--Bokeh -->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
         <script type="text/javascript" src="//cdn.pydata.org/bokeh/release/bokeh-0.12.6.min.js"></script>
         <script type="text/javascript" src="//cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.6.min.js"></script>
         <script type="text/javascript">Bokeh.set_log_level("info");</script>
             
-        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
-        <script src="{{ url_for('static', filename='js/query-builder.standalone.min.js')}}"></script>
+        <script src="static/js/query-builder.standalone.min.js')}}"></script>
         
         <!-- DataTables -->
-        <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-        <link rel=stylesheet type=text/css href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+        <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <link rel=stylesheet type=text/css href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+        
+        <!-- Aladin -->
         <link rel="stylesheet" href="//aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css" />
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
 
         <script>
             $(document).ready( function () {
@@ -51,7 +52,7 @@
                 
                 var table = $('.dataframe').DataTable( {
                     "scrollY": "500px",
-                    "scrollX": "500px",
+                    // "scrollX": "500px",
                     "scrollCollapse": true,
                     "paging": false
                 } );
@@ -115,7 +116,7 @@
         <div id="footer" style='border-top:1px black solid; padding:20px;'>
     
             <div syle='float:left;'>
-                <p style='float:left; margin:0;'>Encountered an error or mistake? We'd love your <a href="../feedback">feedback</a>!</p>
+                <p style='float:left; margin:0;'>Encountered an error or mistake? We'd love your <a href="feedback">feedback</a>!</p>
             </div>
 
             <div style="float:right;">

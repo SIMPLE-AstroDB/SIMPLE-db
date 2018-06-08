@@ -70,7 +70,7 @@
     <div class='block'>
         {% for table in tables %}
             <h2 id="{{titles[loop.index]}}">{{titles[loop.index]}}</h2>
-            {{ table[1]|safe }}
+            <div>{{ table[1]|safe }}</div>
         <br>
         <a href="#top">Back to top</a>
         <hr><br>

@@ -18,7 +18,7 @@
                     var cat = A.catalog({name: 'ONCdb Source', sourceSize: 10, color:'#236AAB'});
                     aladin.addCatalog(cat);
                     {% for source in sources %}
-                        cat.addSources([A.marker({{ source[0] }}, {{ source[1] }}, {popupTitle: '<a href="inventory/{{source[3]}}">{{source[2]}}</a>', popupDesc:'foobar' })]); 
+                        cat.addSources([A.marker({{ source[0]|safe }}, {{ source[1]|safe }}, {popupTitle: '<a href="inventory/{{source[3]|safe}}">{{source[2]|safe}}</a>' })]); 
                     {% endfor %}
             
                 </script>

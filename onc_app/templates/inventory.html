@@ -44,13 +44,13 @@
                 var cat_list = A.catalog({name: 'ONCdb Sources', sourceSize: 8, color: '#236AAB'});
                 aladin.addCatalog(cat_list);
                 {% for source in sources %}
-                    cat_list.addSources([A.marker({{ source[1] }}, {{ source[2] }}, {popupTitle: '<a href="../inventory/{{source[0]}}">Source {{source[0]}}</a>', popupDesc:'{{ source[3] }}' })]); 
+                    cat_list.addSources([A.marker({{ source[1]|safe}}, {{ source[2]|safe }}, {popupTitle: '<a href="../inventory/{{source[0]}}">Source {{source[0]|safe}}</a>', popupDesc:'{{ source[3]|safe }}' })]); 
                 {% endfor %}
                 
                 var cat_phot = A.catalog({name: '{{ name|safe }} Photometry', sourceSize: 12, color:'#42f448'});
                 aladin.addCatalog(cat_phot);
                 {% for phot in phots %}
-                    cat_phot.addSources([A.marker({{ phot[0] }}, {{ phot[1] }}, {popupTitle: '{{ phot[2] }}', popupDesc:'{{ phot[3] }}\n{{ phot[4]}}' })]); 
+                    cat_phot.addSources([A.marker({{ phot[0]|safe }}, {{ phot[1]|safe }}, {popupTitle: '{{ phot[2]|safe }}', popupDesc:'{{ phot[3]|safe }}\n{{ phot[4]|safe}}' })]); 
                 {% endfor %}
                 
                 var target = A.catalog({name: '{{ name|safe }}', sourceSize: 15});
@@ -68,20 +68,17 @@
             <br>
 
             {% for table in tables %}
-                <h2>{{titles[loop.index]}}</h2>
+                <h2 style='position:relative; bottom:-40px'>{{titles[loop.index]}}</h2>
                 
                     <!-- <form id='searchform' method='post' action='export' > -->
                         
                         <p>{{ table|safe }}</p>
-                        <br>
                         
                         <!-- {% if table[1]!='' %}
                             {{ table[1]|safe }}
                             <input type='submit' value='Export Selected' />
                         {% endif %} -->
                     <!-- </form> -->
-
-                <br></br>
             {% endfor %}
         </div>
 

@@ -20,6 +20,8 @@ from scipy.ndimage.interpolation import zoom
 import pandas as pd
 import numpy as np
 
+TABLE_CLASSES = 'display no-wrap hover table'
+
 app_onc.vars = dict()
 app_onc.vars['query'] = ''
 app_onc.vars['search'] = ''
@@ -44,7 +46,7 @@ def onc_query():
     # Get list of the catalogs
     source_count, = db.list("SELECT Count(*) FROM sources").fetchone()
     catalogs = db.query("SELECT * FROM publications", fmt='table')
-    cat_names = ''.join(['<li><a href="https://doi.org/{}">{}</a></li>'.format(cat['DOI'],cat['description'].replace('VizieR Online Data Catalog: ','')) for cat in catalogs])
+    cat_names = ''.join(['<li><a href="https://ui.adsabs.harvard.edu/?#abs/{}/abstract">{}</a></li>'.format(cat['bibcode'],cat['description'].replace('VizieR Online Data Catalog: ','')) for cat in catalogs])
 
     table_names = db.query("select * from sqlite_master where type='table' or type='view'")['name']
 
@@ -374,6 +376,8 @@ def error_bars(xs, ys, zs):
 
 def link_columns(data, db, columns):
     
+    view = 'View' #<img class="view" src="{{url_for("static", filename="images/view.png")}}" />
+    
     # Change id to a link
     if 'id' in columns and 'id' in data and 'source_id' not in data:
         linklist = []
@@ -394,7 +398,7 @@ def link_columns(data, db, columns):
     if 'spectrum' in columns and 'spectrum' in data:
         speclist = []
         for index, row in data.iterrows():
-            spec = '<a href="../spectrum/{}"><img class="view" src="static/images/view.png" /></a>'.format(row['id'])
+            spec = '<a href="../spectrum/{}">{}</a>'.format(row['id'],view)
             speclist.append(spec)
         data['spectrum'] = speclist
         
@@ -402,7 +406,7 @@ def link_columns(data, db, columns):
     if 'image' in columns and 'image' in data:
         imglist = []
         for index, row in data.iterrows():
-            img = '<a href="../image/{}"><img class="view" src="static/images/view.png" /></a>'.format(row['id'])
+            img = '<a href="../image/{}">{}</a>'.format(row['id'],view)
             imglist.append(img)
         data['image'] = imglist
         
@@ -413,7 +417,7 @@ def link_columns(data, db, columns):
             if row['record'] is None:
                 rec = None
             else:
-                rec = '<a href="{}"><img class="view" src="static/images/view.png" /></a>'.format(row['record'])
+                rec = '<a href="{}">{}</a>'.format(row['record'],view)
             reclist.append(rec)
         data['record'] = reclist
     
@@ -694,12 +698,15 @@ def onc_inventory(source_id=None):
                                errmess="<p>You typed: "+app_onc.vars['source_id']+"</p>")
     
     # Grab object information
-    objname = t['sources']['designation'][0] or 'Source {}'.format(app_onc.vars['source_id'])
+    allnames = t['sources']['names'][0]
+    altname = None
+    if allnames is not None:
+        altname = allnames.split(',')[0]
+    objname = t['sources']['designation'][0] or altname or 'Source {}'.format(app_onc.vars['source_id'])
     ra = t['sources']['ra'][0]
     dec = t['sources']['dec'][0]
     c = SkyCoord(ra=ra*q.degree, dec=dec*q.degree)
     coords = c.to_string('hmsdms', sep=':', precision=2)
-    allnames = t['sources']['names'][0]
     
     # Grab distance
     try:
@@ -745,14 +752,14 @@ def onc_inventory(source_id=None):
             table = add_checkboxes(table, type=type, id_only=True, table_name=name)
             
             # Add links to the columns
-            table = link_columns(table, db, ['id', 'source_id', 'image','spectrum', 'record'])
+            table = link_columns(table, db, ['source_id', 'image','spectrum', 'record'])
 
             # Convert to HTML
             table = table.to_html(classes='display no_pagination no_wrap', index=False).replace('&lt;', '<').replace('&gt;', '>')
             
         except KeyError:
             
-            table = 'No records in the <code>{}</code> table for this source.'.format(name)
+            table = '<p style="padding-top:30px;>No records in the <code>{}</code> table for this source.</p>'.format(name)
         
         html_tables.append(table)
     
@@ -763,7 +770,9 @@ def onc_inventory(source_id=None):
     
     delta_ra = delta_dec = 0.025
     sources = db.query("SELECT id,ra,dec,names FROM sources WHERE (ra BETWEEN {1}-{0} AND {1}+{0}) AND (dec BETWEEN {3}-{2} AND {3}+{2}) AND (ra<>{1} AND dec<>{3})".format(delta_ra, ra, delta_dec, dec), fmt='array')
-
+    if sources is None:
+        sources = []
+    
     warning = ''
     if any(['d{}'.format(i) in comments for i in range(20)]):
         warning = "Warning: This source is confused with its neighbors and the data listed below may not be trustworthy."
@@ -790,7 +799,7 @@ def onc_schema():
         temptab = db.query('PRAGMA table_info('+name+')', fmt='table')
         table_dict[name] = temptab
 
-    table_html = [[db.query("select count(id) from {}".format(x))[0][0], table_dict[x].to_pandas().to_html(classes='display', index=False)] for x in sorted(table_dict.keys())]
+    table_html = [[db.query("select count(id) from {}".format(x))[0][0], table_dict[x].to_pandas().to_html(classes=TABLE_CLASSES, index=False)] for x in sorted(table_dict.keys())]
     titles = ['na']+sorted(table_dict.keys())
     
     return render_template('schema.html', tables=table_html, titles=titles)
@@ -850,7 +859,7 @@ def tbl2html(table, classes='', ids='', roles=''):
     columns = ''.join(['<th>{}</th>'.format(col) for col in table.colnames])
     
     # Build table and header
-    out = "<table class='{}' id='{}' role='{}'><thead>{}</thead><tbody>".format(classes,ids,roles,columns)
+    out = "<table class='table {}' id='{}' role='{}'><thead>{}</thead><tbody>".format(classes,ids,roles,columns)
     
     # Add rows
     for row in np.array(table):
