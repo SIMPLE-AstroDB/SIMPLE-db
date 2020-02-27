@@ -22,7 +22,7 @@ class Sources(Base):
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     ra = Column(Float)
     dec = Column(Float)
-    designation = Column(String(100))
+    designation = Column(String(100), unique=True, nullable=False)
     shortname = Column(String(30))
     reference = Column(String(30), ForeignKey('publications.shortname'))
 

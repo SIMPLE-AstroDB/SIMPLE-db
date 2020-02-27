@@ -8,6 +8,7 @@ from simple.core import load_connection
 connection_string = 'postgresql+psycopg2://localhost/SIMPLE'  # postgres with psycopg2
 # connection_string = 'sqlite://'  # in memory sqlite
 connection_string = 'sqlite:///SIMPLE.db'
+
 session, base, engine = load_connection(connection_string)
 
 
