@@ -1,6 +1,5 @@
 # Using schema.py and db.py to handle the basic db connection and the database schema
 
-from sqlalchemy import Table
 from simple.core import load_connection
 
 # Establish connection to database
@@ -16,7 +15,9 @@ session, base, engine = load_connection(connection_string)
 from simple.schema import *
 base.metadata.create_all()  # this explicitly create the SQLite file
 
+
 # Add references
+from sqlalchemy import Table
 Sources = Table('sources', base.metadata, autoload=True)
 Publications = Table('publications', base.metadata, autoload=True)
 
@@ -31,6 +32,7 @@ sources_data = [{'ra': 12, 'dec': 23, 'designation': 'Fake 1', 'reference': 'Pen
 Sources.insert().execute(sources_data)
 
 # Add source without valid reference- should through an foreign key error
+# empty reference should be fine unless I set the column as nullable=False
 sources_data = [{'ra': 32, 'dec': 54, 'designation': 'Fake 3', 'reference': 'Unknown'}]
 Sources.insert().execute(sources_data)
 

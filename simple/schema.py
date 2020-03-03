@@ -65,11 +65,13 @@ class Gravity(enum.Enum):
 class Sources(Base):
     """ORM for the sources table. This stores the main identifiers for our objects along with ra and dec"""
     __tablename__ = 'Sources'
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    # id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    # designation = Column(String(100), unique=True, nullable=False)
+    name = Column(String(100), primary_key=True, nullable=False)
     ra = Column(Float)
     dec = Column(Float)
-    designation = Column(String(100), unique=True, nullable=False)
     shortname = Column(String(30))
+    other_names = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.shortname'))
     comments = Column(String(1000))
 
@@ -77,7 +79,8 @@ class Sources(Base):
 class SpectralTypes(Base):
     __tablename__ = 'SpectralTypes'
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    source_id = Column(Integer, ForeignKey('Sources.id'))
+    # source_id = Column(Integer, ForeignKey('Sources.id'))
+    source = Column(String(100), ForeignKey('Sources.name'), nullable=False)
     spectral_type = Column(Float)
     spectral_type_error = Column(Float)
     gravity = Column(Enum(Gravity))  # restricts to enumerated values
@@ -92,7 +95,8 @@ class SpectralTypes(Base):
 class Parallaxes(Base):
     __tablename__ = 'Parallaxes'
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    source_id = Column(Integer, ForeignKey('Sources.id'))
+    # source_id = Column(Integer, ForeignKey('Sources.id'))
+    source = Column(String(100), ForeignKey('Sources.name'), nullable=False)
     parallax = Column(Float)
     parallax_error = Column(Float)
     adopted = Column(Integer)
@@ -103,7 +107,8 @@ class Parallaxes(Base):
 class Photometry(Base):
     __tablename__ = 'Photometry'
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    source_id = Column(Integer, ForeignKey('Sources.id'))
+    # source_id = Column(Integer, ForeignKey('Sources.id'))
+    source = Column(String(100), ForeignKey('Sources.name'), nullable=False)
     band = Column(String(30))
     magnitude = Column(Float)
     magnitude_error = Column(Float)
@@ -118,7 +123,8 @@ class Photometry(Base):
 class ProperMotions(Base):
     __tablename__ = 'ProperMotions'
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    source_id = Column(Integer, ForeignKey('Sources.id'))
+    # source_id = Column(Integer, ForeignKey('Sources.id'))
+    source = Column(String(100), ForeignKey('Sources.name'), nullable=False)
     mu_ra = Column(Float)
     mu_ra_error = Column(Float)
     mu_dec = Column(Float)
@@ -132,7 +138,8 @@ class ProperMotions(Base):
 class Spectra(Base):
     __tablename__ = 'Spectra'
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    source_id = Column(Integer, ForeignKey('Sources.id'))
+    # source_id = Column(Integer, ForeignKey('Sources.id'))
+    source = Column(String(100), ForeignKey('Sources.name'), nullable=False)
     spectrum = Column(String(2000))  # URI/Path to file
     filename = Column(String(1000))  # filename
     wavelength_units = Column(String(30))
@@ -151,7 +158,8 @@ class Spectra(Base):
 class RadialVelocities(Base):
     __tablename__ = 'RadialVelocities'
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    source_id = Column(Integer, ForeignKey('Sources.id'))
+    # source_id = Column(Integer, ForeignKey('Sources.id'))
+    source = Column(String(100), ForeignKey('Sources.name'), nullable=False)
     radial_velocity = Column(Float)
     radial_velocity_error = Column(Float)
     spectrum_id = Column(Integer, ForeignKey('Spectra.id'))
