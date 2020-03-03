@@ -11,7 +11,7 @@ class Publications(Base):
     """
     __tablename__ = 'Publications'
     # id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    shortname = Column(String(30), primary_key=True, nullable=False)
+    name = Column(String(30), primary_key=True, nullable=False)
     bibcode = Column(String(100))
     doi = Column(String(100))
     description = Column(String(1000))
@@ -20,13 +20,13 @@ class Publications(Base):
 class Telescopes(Base):
     __tablename__ = 'Telescopes'
     name = Column(String(30), primary_key=True, nullable=False)
-    reference = Column(String(30), ForeignKey('Publications.shortname'))
+    reference = Column(String(30), ForeignKey('Publications.name'))
 
 
 class Instruments(Base):
     __tablename__ = 'Instruments'
     name = Column(String(30), primary_key=True, nullable=False)
-    reference = Column(String(30), ForeignKey('Publications.shortname'))
+    reference = Column(String(30), ForeignKey('Publications.name'))
 
 
 class Systems(Base):
@@ -70,9 +70,9 @@ class Sources(Base):
     name = Column(String(100), primary_key=True, nullable=False)
     ra = Column(Float)
     dec = Column(Float)
-    shortname = Column(String(30))
+    shortname = Column(String(30))  # not needed?
     other_names = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.shortname'))
+    reference = Column(String(30), ForeignKey('Publications.name'))
     comments = Column(String(1000))
 
 
@@ -86,10 +86,10 @@ class SpectralTypes(Base):
     gravity = Column(Enum(Gravity))  # restricts to enumerated values
     suffix = Column(String(30))
     regime = Column(Enum(Regime))  # restricts to two values: Optical, Infrared
-    adopted = Column(Integer)
+    best = Column(Boolean)  # flag for indicating if this is the best measurement or not
     comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.shortname'))
-    gravity_reference = Column(String(30), ForeignKey('Publications.shortname'))
+    reference = Column(String(30), ForeignKey('Publications.name'))
+    gravity_reference = Column(String(30), ForeignKey('Publications.name'))
 
 
 class Parallaxes(Base):
@@ -99,9 +99,9 @@ class Parallaxes(Base):
     source = Column(String(100), ForeignKey('Sources.name'), nullable=False)
     parallax = Column(Float)
     parallax_error = Column(Float)
-    adopted = Column(Integer)
+    best = Column(Boolean)  # flag for indicating if this is the best measurement or not
     comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.shortname'))
+    reference = Column(String(30), ForeignKey('Publications.name'))
 
 
 class Photometry(Base):
@@ -117,7 +117,7 @@ class Photometry(Base):
     instrument = Column(String(30), ForeignKey('Instruments.name'))
     epoch = Column(String(30))
     comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.shortname'))
+    reference = Column(String(30), ForeignKey('Publications.name'))
 
 
 class ProperMotions(Base):
@@ -132,7 +132,7 @@ class ProperMotions(Base):
     vtan = Column(Float)
     vtan_error = Column(Float)
     comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.shortname'))
+    reference = Column(String(30), ForeignKey('Publications.name'))
 
 
 class Spectra(Base):
@@ -140,7 +140,7 @@ class Spectra(Base):
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     # source_id = Column(Integer, ForeignKey('Sources.id'))
     source = Column(String(100), ForeignKey('Sources.name'), nullable=False)
-    spectrum = Column(String(2000))  # URI/Path to file
+    uri = Column(String(2000))  # URI/Path to file
     filename = Column(String(1000))  # filename
     wavelength_units = Column(String(30))
     flux_units = Column(String(30))
@@ -152,7 +152,7 @@ class Spectra(Base):
     mode = Column(String(30), ForeignKey('Modes.name'))
     best = Column(Boolean)  # flag for indicating if this is the best spectrum or not
     comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.shortname'))
+    reference = Column(String(30), ForeignKey('Publications.name'))
 
 
 class RadialVelocities(Base):
@@ -164,7 +164,22 @@ class RadialVelocities(Base):
     radial_velocity_error = Column(Float)
     spectrum_id = Column(Integer, ForeignKey('Spectra.id'))
     comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.shortname'))
+    reference = Column(String(30), ForeignKey('Publications.name'))
+
+
+class Images(Base):
+    __tablename__ = 'Images'
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    source = Column(String(100), ForeignKey('Sources.name'), nullable=False)
+    uri = Column(String(2000))  # URI/Path to file
+    filename = Column(String(1000))  # filename
+    obs_date = Column(DateTime)
+    telescope = Column(String(30), ForeignKey('Telescopes.name'))
+    instrument = Column(String(30), ForeignKey('Instruments.name'))
+    comments = Column(String(1000))
+    reference = Column(String(30), ForeignKey('Publications.name'))
+
+# TODO: As an alternative to Images, Spectra, we could consider ObsCore, though we may need some additions
 
 
 # -------------------------------------------------------------------------------------------------------------------
