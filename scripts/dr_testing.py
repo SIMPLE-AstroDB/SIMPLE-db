@@ -13,6 +13,7 @@ session, base, engine = load_connection(connection_string)
 
 # Create database (can skip if already done)
 from simple.schema import *
+base.metadata.drop_all()  # drop all the tables
 base.metadata.create_all()  # this explicitly create the SQLite file
 
 
