@@ -68,7 +68,7 @@ class Sources(Base):
     ra = Column(Float)
     dec = Column(Float)
     shortname = Column(String(30))  # not needed?
-    reference = Column(String(30), ForeignKey('Publications.name'))
+    reference = Column(String(30), ForeignKey('Publications.name'), nullable=False)
     comments = Column(String(1000))
 
 
@@ -182,8 +182,8 @@ class Images(Base):
 class TAPColumns(Base):
     """ORM for the TAP SCHEMA"""
     __tablename__ = 'TAPColumns'
-    table_name = Column(String(100))
-    column_name = Column(String(100))
+    table_name = Column(String(100), primary_key=True)
+    column_name = Column(String(100), primary_key=True)
     description = Column(String(1000))
     unit = Column(String(100))
     ucd = Column(String(100))
@@ -193,45 +193,40 @@ class TAPColumns(Base):
     principal = Integer
     indexed = Integer
     std = Integer
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)  # added to avoid SQLAlchemy errors
 
 
 class TAPKeyColumns(Base):
     """ORM for the TAP SCHEMA"""
     __tablename__ = 'TAPKeyColumns'
-    key_id = Column(String(100))
-    from_column = Column(String(100))
-    target_column = Column(String(100))
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)  # added to avoid SQLAlchemy errors
+    key_id = Column(String(100), primary_key=True)
+    from_column = Column(String(100), primary_key=True)
+    target_column = Column(String(100), primary_key=True)
 
 
 class TAPKeys(Base):
     """ORM for the TAP SCHEMA"""
     __tablename__ = 'TAPKeys'
-    key_id = Column(String(100))
-    from_table = Column(String(100))
-    target_table = Column(String(100))
+    key_id = Column(String(100), primary_key=True)
+    from_table = Column(String(100), primary_key=True)
+    target_table = Column(String(100), primary_key=True)
     description = Column(String(1000))
     utype = Column(String(100))
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)  # added to avoid SQLAlchemy errors
 
 
 class TAPSchemas(Base):
     """ORM for the TAP SCHEMA"""
     __tablename__ = 'TAPSchemas'
-    schema_name = Column(String(100))
+    schema_name = Column(String(100), primary_key=True)
     description = Column(String(1000))
     utype = Column(String(100))
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)  # added to avoid SQLAlchemy errors
 
 
 class TAPTables(Base):
     """ORM for the TAP SCHEMA"""
     __tablename__ = 'TAPTables'
-    schema_name = Column(String(100))
-    table_name = Column(String(100))
+    schema_name = Column(String(100), primary_key=True)
+    table_name = Column(String(100), primary_key=True)
     table_type = Column(String(100))
     description = Column(String(1000))
     utype = Column(String(100))
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)  # added to avoid SQLAlchemy errors
 
