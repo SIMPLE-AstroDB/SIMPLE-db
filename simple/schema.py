@@ -33,11 +33,6 @@ class Systems(Base):
     name = Column(String(30), primary_key=True, nullable=False)
 
 
-class Modes(Base):
-    __tablename__ = 'Modes'
-    name = Column(String(30), primary_key=True, nullable=False)
-
-
 # -------------------------------------------------------------------------------------------------------------------
 # Hard-coded enumerations
 class Regime(enum.Enum):
@@ -133,25 +128,6 @@ class ProperMotions(Base):
     reference = Column(String(30), ForeignKey('Publications.name'), primary_key=True)
 
 
-class Spectra(Base):
-    __tablename__ = 'Spectra'
-    # id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    source = Column(String(100), ForeignKey('Sources.name'), nullable=False, primary_key=True)
-    uri = Column(String(2000))  # URI/Path to file
-    filename = Column(String(1000))  # filename
-    wavelength_units = Column(String(30))
-    flux_units = Column(String(30))
-    order = Column(Integer)
-    regime = Column(Enum(Regime))
-    obs_date = Column(DateTime)
-    telescope = Column(String(30), ForeignKey('Telescopes.name'))
-    instrument = Column(String(30), ForeignKey('Instruments.name'))
-    mode = Column(String(30), ForeignKey('Modes.name'))
-    best = Column(Boolean)  # flag for indicating if this is the best spectrum or not
-    comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.name'), primary_key=True)
-
-
 class RadialVelocities(Base):
     __tablename__ = 'RadialVelocities'
     source = Column(String(100), ForeignKey('Sources.name'), nullable=False, primary_key=True)
@@ -161,19 +137,43 @@ class RadialVelocities(Base):
     reference = Column(String(30), ForeignKey('Publications.name'), primary_key=True)
 
 
-class Images(Base):
-    __tablename__ = 'Images'
-    # id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    source = Column(String(100), ForeignKey('Sources.name'), nullable=False, primary_key=True)
-    uri = Column(String(2000))  # URI/Path to file
-    filename = Column(String(1000))  # filename
-    obs_date = Column(DateTime)
-    telescope = Column(String(30), ForeignKey('Telescopes.name'))
-    instrument = Column(String(30), ForeignKey('Instruments.name'))
-    comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.name'), primary_key=True)
+class ObsCore(Base):
+    __tablename__ = 'ObsCore'
+    # __table_args__ = {'schema': 'ivoa'}  # ivoa schema; not the right way to define in SQLAlchemy? wont work on SQLite
+    dataproduct_type = Column(String(100))  # image, spectra, timeseries
+    calib_level = Column(Integer)  # enumeration 0,1,2,3,4
+    obs_collection = Column(String(100))
+    obs_id = Column(String(100), primary_key=True)
+    obs_publisher_did = Column(String(100))  # dataset identifier given by the publisher
+    access_url = Column(String(2000))
+    access_format = Column(String(100))
+    access_estsize = Column(Integer)  # estimated size in kbyte
+    target_name = Column(String(100), ForeignKey('Sources.name'), nullable=False, primary_key=True)  # source
+    s_ra = Column(Float)
+    s_dec = Column(Float)
+    s_fov = Column(Float)  # diameter in deg
+    s_region = Column(String(1000))
+    s_xel1 = Column(Integer)  # number of elements along the first spatial axis
+    s_xel2 = Column(Integer)
+    s_resolution = Column(Float)  # spatial resolution of data as FWHM
+    t_min = Column(Float)  # in MJD
+    t_max = Column(Float)  # in MJD
+    t_exptime = Column(Float)  # in sec
+    t_resolution = Column(Float)
+    t_xel = Column(Integer)  # number of elements along the time axis
+    em_min = Column(Float)
+    em_max = Column(Float)
+    em_res_power = Column(Float)
+    em_xel = Column(Integer)  # number of elements along the spectral axis
+    o_ucd = Column(String(100))  # UCD of observable (e.g. phot.flux.density, phot.count, etc.)
+    pol_states = Column(String(100))
+    pol_xel = Column(Integer)  # number of polarization samples
+    facility_name = Column(String(30), ForeignKey('Telescopes.name'))
+    instrument_name = Column(String(30), ForeignKey('Instruments.name'))
 
-# TODO: As an alternative to Images, Spectra, we could consider ObsCore, though we may need some additions
+    # My additions to ObsCore
+    comments = Column(String(1000))
+    reference = Column(String(30), ForeignKey('Publications.name'))
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -181,7 +181,8 @@ class Images(Base):
 # TODO: Read over TAP schema documentation and see what's really needed
 class TAPColumns(Base):
     """ORM for the TAP SCHEMA"""
-    __tablename__ = 'TAPColumns'
+    __tablename__ = 'columns'
+    # __table_args__ = {'schema': 'TAP_SCHEMA'}
     table_name = Column(String(100), primary_key=True)
     column_name = Column(String(100), primary_key=True)
     description = Column(String(1000))
@@ -197,7 +198,8 @@ class TAPColumns(Base):
 
 class TAPKeyColumns(Base):
     """ORM for the TAP SCHEMA"""
-    __tablename__ = 'TAPKeyColumns'
+    __tablename__ = 'key_columns'
+    # __table_args__ = {'schema': 'TAP_SCHEMA'}
     key_id = Column(String(100), primary_key=True)
     from_column = Column(String(100), primary_key=True)
     target_column = Column(String(100), primary_key=True)
@@ -205,7 +207,8 @@ class TAPKeyColumns(Base):
 
 class TAPKeys(Base):
     """ORM for the TAP SCHEMA"""
-    __tablename__ = 'TAPKeys'
+    __tablename__ = 'keys'
+    # __table_args__ = {'schema': 'TAP_SCHEMA'}
     key_id = Column(String(100), primary_key=True)
     from_table = Column(String(100), primary_key=True)
     target_table = Column(String(100), primary_key=True)
@@ -215,7 +218,8 @@ class TAPKeys(Base):
 
 class TAPSchemas(Base):
     """ORM for the TAP SCHEMA"""
-    __tablename__ = 'TAPSchemas'
+    __tablename__ = 'schemas'
+    # __table_args__ = {'schema': 'TAP_SCHEMA'}
     schema_name = Column(String(100), primary_key=True)
     description = Column(String(1000))
     utype = Column(String(100))
@@ -223,7 +227,8 @@ class TAPSchemas(Base):
 
 class TAPTables(Base):
     """ORM for the TAP SCHEMA"""
-    __tablename__ = 'TAPTables'
+    __tablename__ = 'tables'
+    # __table_args__ = {'schema': 'TAP_SCHEMA'}
     schema_name = Column(String(100), primary_key=True)
     table_name = Column(String(100), primary_key=True)
     table_type = Column(String(100))
