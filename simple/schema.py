@@ -54,6 +54,27 @@ class Gravity(enum.Enum):
     unknown = 'unknown'
 
 
+class DataProductType(enum.Enum):
+    """Enumeration for data product type, from IVOA ObsCore model"""
+    image = 'image'
+    cube = 'cube'
+    sed = 'sed'
+    spectrum = 'spectrum'
+    timeseries = 'timeseries'
+    visibility = 'visibility'
+    event = 'event'
+    measurements = 'measurements'
+
+
+class CalibrationLevel(enum.Enum):
+    """Calibration level"""
+    level0 = 0
+    level1 = 1
+    level2 = 2
+    level3 = 3
+    level4 = 4
+
+
 # -------------------------------------------------------------------------------------------------------------------
 # Main tables
 class Sources(Base):
@@ -140,8 +161,8 @@ class RadialVelocities(Base):
 class ObsCore(Base):
     __tablename__ = 'ObsCore'
     # __table_args__ = {'schema': 'ivoa'}  # ivoa schema; not the right way to define in SQLAlchemy? wont work on SQLite
-    dataproduct_type = Column(String(100))  # image, spectra, timeseries
-    calib_level = Column(Integer)  # enumeration 0,1,2,3,4
+    dataproduct_type = Column(Enum(DataProductType))  # image, spectra, timeseries
+    calib_level = Column(Enum(CalibrationLevel))  # enumeration 0,1,2,3,4
     obs_collection = Column(String(100))
     obs_id = Column(String(100), primary_key=True)
     obs_publisher_did = Column(String(100))  # dataset identifier given by the publisher
@@ -173,6 +194,7 @@ class ObsCore(Base):
 
     # My additions to ObsCore
     comments = Column(String(1000))
+    regime = Column(Enum(Regime))  # restricts to a few values: Optical, Infrared
     reference = Column(String(30), ForeignKey('Publications.name'))
 
 
