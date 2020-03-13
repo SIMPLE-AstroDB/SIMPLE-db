@@ -39,6 +39,11 @@ def load_connection(connection_string):
     # Enable foreign key checks in SQLite
     if 'sqlite' in connection_string:
         set_sqlite()
+    # elif 'postgresql' in connection_string:
+    #     # Set up schema in postgres (must be lower case?)
+    #     from sqlalchemy import DDL
+    #     event.listen(Base.metadata, 'before_create', DDL("CREATE SCHEMA IF NOT EXISTS ivoa"))
+    #     event.listen(Base.metadata, 'before_create', DDL("CREATE SCHEMA IF NOT EXISTS tap_schema"))
 
     return session, Base, engine
 
