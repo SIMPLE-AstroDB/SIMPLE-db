@@ -80,7 +80,7 @@ class CalibrationLevel(enum.Enum):
 class Sources(Base):
     """ORM for the sources table. This stores the main identifiers for our objects along with ra and dec"""
     __tablename__ = 'Sources'
-    name = Column(String(100), primary_key=True, nullable=False)
+    source = Column(String(100), primary_key=True, nullable=False)
     ra = Column(Float)
     dec = Column(Float)
     shortname = Column(String(30))  # not needed?
@@ -90,13 +90,13 @@ class Sources(Base):
 
 class Names(Base):
     __tablename__ = 'Names'
-    source = Column(String(100), ForeignKey('Sources.name'), nullable=False, primary_key=True)
+    source = Column(String(100), ForeignKey('Sources.source'), nullable=False, primary_key=True)
     other_name = Column(String(100), primary_key=True, nullable=False)
 
 
 class SpectralTypes(Base):
     __tablename__ = 'SpectralTypes'
-    source = Column(String(100), ForeignKey('Sources.name'), nullable=False, primary_key=True)
+    source = Column(String(100), ForeignKey('Sources.source'), nullable=False, primary_key=True)
     spectral_type = Column(Float)
     spectral_type_error = Column(Float)
     regime = Column(Enum(Regime), primary_key=True)  # restricts to a few values: Optical, Infrared
@@ -107,7 +107,7 @@ class SpectralTypes(Base):
 
 class Gravities(Base):
     __tablename__ = 'Gravities'
-    source = Column(String(100), ForeignKey('Sources.name'), nullable=False, primary_key=True)
+    source = Column(String(100), ForeignKey('Sources.source'), nullable=False, primary_key=True)
     gravity = Column(Enum(Gravity))  # restricts to enumerated values
     regime = Column(Enum(Regime), primary_key=True)  # restricts to a few values: Optical, Infrared
     comments = Column(String(1000))
@@ -116,7 +116,7 @@ class Gravities(Base):
 
 class Parallaxes(Base):
     __tablename__ = 'Parallaxes'
-    source = Column(String(100), ForeignKey('Sources.name'), nullable=False, primary_key=True)
+    source = Column(String(100), ForeignKey('Sources.source'), nullable=False, primary_key=True)
     parallax = Column(Float)
     parallax_error = Column(Float)
     best = Column(Boolean)  # flag for indicating if this is the best measurement or not
@@ -126,7 +126,7 @@ class Parallaxes(Base):
 
 class Photometry(Base):
     __tablename__ = 'Photometry'
-    source = Column(String(100), ForeignKey('Sources.name'), nullable=False, primary_key=True)
+    source = Column(String(100), ForeignKey('Sources.source'), nullable=False, primary_key=True)
     band = Column(String(30), primary_key=True)
     magnitude = Column(Float)
     magnitude_error = Column(Float)
@@ -140,7 +140,7 @@ class Photometry(Base):
 
 class ProperMotions(Base):
     __tablename__ = 'ProperMotions'
-    source = Column(String(100), ForeignKey('Sources.name'), nullable=False, primary_key=True)
+    source = Column(String(100), ForeignKey('Sources.source'), nullable=False, primary_key=True)
     mu_ra = Column(Float)
     mu_ra_error = Column(Float)
     mu_dec = Column(Float)
@@ -151,7 +151,7 @@ class ProperMotions(Base):
 
 class RadialVelocities(Base):
     __tablename__ = 'RadialVelocities'
-    source = Column(String(100), ForeignKey('Sources.name'), nullable=False, primary_key=True)
+    source = Column(String(100), ForeignKey('Sources.source'), nullable=False, primary_key=True)
     radial_velocity = Column(Float)
     radial_velocity_error = Column(Float)
     comments = Column(String(1000))
@@ -169,7 +169,7 @@ class ObsCore(Base):
     access_url = Column(String(2000))
     access_format = Column(String(100))
     access_estsize = Column(Integer)  # estimated size in kbyte
-    target_name = Column(String(100), ForeignKey('Sources.name'), nullable=False, primary_key=True)  # source
+    target_name = Column(String(100), ForeignKey('Sources.source'), nullable=False, primary_key=True)  # source
     s_ra = Column(Float)
     s_dec = Column(Float)
     s_fov = Column(Float)  # diameter in deg

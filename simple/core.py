@@ -55,3 +55,74 @@ def set_sqlite():
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
+
+
+class Database:
+    """
+    Wrapper for database calls and utility functions
+    """
+
+    def __init__(self, connection_string):
+        self.session, self.base, self.engine = load_connection(connection_string)
+
+        # Convenience method
+        self.query = self.session.query
+
+        # Prep the tables
+        self.metadata = self.base.metadata
+        self.metadata.reflect(bind=self.engine)
+
+        if len(self.metadata.tables) > 0:
+            self._prepare_tables()
+        else:
+            print('Database empty. Import schema (eg, from simple.schema import *) and then run db.create_database()')
+
+    def _prepare_tables(self):
+        self.Sources = self.metadata.tables['Sources']
+        self.Names = self.metadata.tables['Names']
+        self.Publications = self.metadata.tables['Publications']
+        self.SpectralTypes = self.metadata.tables['SpectralTypes']
+        self.Gravities = self.metadata.tables['Gravities']
+        self.Parallaxes = self.metadata.tables['Parallaxes']
+        self.ProperMotions = self.metadata.tables['ProperMotions']
+        self.ObsCore = self.metadata.tables['ObsCore']
+        self.Photometry = self.metadata.tables['Photometry']
+        self.RadialVelocities = self.metadata.tables['RadialVelocities']
+
+    def create_database(self):
+        # from simple.schema import *  # can't run from here?
+        # self.base.metadata.drop_all()  # drop all the tables
+        self.base.metadata.create_all()  # this explicitly create the SQLite file
+
+        self._prepare_tables()
+
+    def _inventory_query(self, data_dict, table, table_name, source_name):
+        if table_name == 'ObsCore':
+            results = self.session.query(table).filter(table.c.target_name == source_name).all()
+        else:
+            results = self.session.query(table).filter(table.c.source == source_name).all()
+
+        if results and table_name == 'Sources':
+            data_dict[table_name] = [row._asdict() for row in results]
+        elif results:
+            data_dict[table_name] = [self._row_cleanup(row) for row in results]
+
+    @staticmethod
+    def _row_cleanup(row):
+        row_dict = row._asdict()
+        del row_dict['source']
+        return row_dict
+
+    def inventory(self, name):
+        data_dict = {}
+        self._inventory_query(data_dict, self.Sources, 'Sources', name)
+        self._inventory_query(data_dict, self.Names, 'Names', name)
+        self._inventory_query(data_dict, self.Photometry, 'Photometry', name)
+        self._inventory_query(data_dict, self.Parallaxes, 'Parallaxes', name)
+        self._inventory_query(data_dict, self.ProperMotions, 'ProperMotions', name)
+        self._inventory_query(data_dict, self.SpectralTypes, 'SpectralTypes', name)
+        self._inventory_query(data_dict, self.Gravities, 'Gravities', name)
+        self._inventory_query(data_dict, self.RadialVelocities, 'RadialVelocities', name)
+        self._inventory_query(data_dict, self.ObsCore, 'ObsCore', name)
+
+        return data_dict
