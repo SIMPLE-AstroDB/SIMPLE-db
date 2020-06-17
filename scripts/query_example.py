@@ -11,7 +11,7 @@ results = db.query(db.Sources).all()
 print(results)
 
 # Query for all publications
-print(db.query(db.Publications).all())
+db.query(db.Publications).all()
 
 # Query for sources with declinations larger than 0
 db.query(db.Sources).filter(db.Sources.c.dec > 0).all()
@@ -44,4 +44,17 @@ db.engine.execute('SELECT * FROM sources').fetchall()
 data = db.inventory('2MASS J13571237+1428398', pretty_print=True)
 print(type(data))
 
-# TODO: Delete a row
+# Delete a row
+for row in db.query(db.Photometry).all():
+    print(row)
+db.Photometry.delete().where(db.Photometry.c.band == 'WISE_W1').execute()
+db.query(db.Photometry).all()
+db.query(db.Photometry).count()
+
+# Delete entire table
+db.Telescopes.delete().execute()
+db.query(db.Telescopes).count()
+
+# Reload via json file
+db.load_table('Telescopes', 'data')
+
