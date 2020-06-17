@@ -38,7 +38,9 @@ stmt = db.Sources.update()\
 db.engine.execute(stmt)
 
 # Direct SQL queries
-db.engine.execute('SELECT * FROM sources').fetchall()
+results = db.sql_query('select * from sources')
+print(results)
+print(results[0].keys())
 
 # Use inventory to check a single object (output is dictionary)
 data = db.inventory('2MASS J13571237+1428398', pretty_print=True)
@@ -52,9 +54,14 @@ db.query(db.Photometry).all()
 db.query(db.Photometry).count()
 
 # Delete entire table
+# NOTE: data linked via foreign keys are also deleted
+db.query(db.Telescopes).all()
 db.Telescopes.delete().execute()
 db.query(db.Telescopes).count()
 
 # Reload via json file
 db.load_table('Telescopes', 'data')
 
+# Reload everything
+# NOTE: this clears existing DB values to replace them with on-disk file data
+db.load_database('data')
