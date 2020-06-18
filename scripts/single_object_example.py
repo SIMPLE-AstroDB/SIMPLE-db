@@ -1,14 +1,16 @@
 # Example on how to load a single, manually created object into the database
 
-from astrodbkit2.astrodb import Database
+from astrodbkit2.astrodb import *
 
 # Establish connection to database
-connection_string = 'sqlite:///SIMPLE.db'
+connection_string = 'postgresql://localhost/SIMPLE'  # Postgres
+connection_string = 'sqlite:///SIMPLE.db'  # SQLite
 db = Database(connection_string)
 
-# If brand new database:
-# from astrodbkit2.schema import *
-# db.create_database()
+# If brand new database, run the following
+# NOTE: Some databases, like Postgres, will need an empty database created first before running this
+from astrodbkit2.schema import *
+create_database(connection_string)
 
 # Adding information for 2MASS J13571237+1428398
 
@@ -35,7 +37,10 @@ db.Sources.insert().execute(sources_data)
 
 # Additional names
 names_data = [{'source': '2MASS J13571237+1428398',
-               'other_name': 'SDSS J135712.40+142839.8'}]
+               'other_name': 'SDSS J135712.40+142839.8'},
+              {'source': '2MASS J13571237+1428398',
+               'other_name': '2MASS J13571237+1428398'},
+              ]
 db.Names.insert().execute(names_data)
 
 # Add Photometry
@@ -72,5 +77,8 @@ db.Photometry.insert().execute(phot_data)
 # Checking object
 _ = db.inventory('2MASS J13571237+1428398', pretty_print=True)
 
+# Save single object
+db.save_json('2MASS J13571237+1428398', 'data')
+
 # Save entire database to directory 'data'
-db.save('data')
+db.save_db('data')
