@@ -1,6 +1,6 @@
 # Example on how to load a single, manually created object into the database
 
-from astrodbkit2.astrodb import *
+from astrodbkit2.astrodb import Database, create_database
 
 # Establish connection to database
 connection_string = 'postgresql://localhost/SIMPLE'  # Postgres
