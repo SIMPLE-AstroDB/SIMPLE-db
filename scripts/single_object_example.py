@@ -9,7 +9,7 @@ db = Database(connection_string)
 
 # If brand new database, run the following
 # NOTE: Some databases, like Postgres, will need an empty database created first before running this
-from astrodbkit2.schema import *
+from simple.schema import *
 create_database(connection_string)
 
 # Adding information for 2MASS J13571237+1428398

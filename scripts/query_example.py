@@ -37,6 +37,15 @@ stmt = db.Sources.update()\
          .values(shortname='1357+1428')
 db.engine.execute(stmt)
 
+# Testing foreign key updates
+stmt = db.Publications.update()\
+         .where(db.Publications.c.name == 'Cutr12')\
+         .values(name='FAKEREF')
+db.engine.execute(stmt)
+db.query(db.Publications).filter(db.Publications.c.name == 'FAKEREF').all()
+results = db.query(db.Photometry).filter(db.Photometry.c.reference == 'FAKEREF').all()
+print(results)
+
 # Direct SQL queries
 results = db.sql_query('select * from sources')
 print(results)
@@ -64,4 +73,4 @@ db.load_table('Telescopes', 'data')
 
 # Reload everything
 # NOTE: this clears existing DB values to replace them with on-disk file data
-db.load_database('data')
+db.load_database('data', verbose=True)
