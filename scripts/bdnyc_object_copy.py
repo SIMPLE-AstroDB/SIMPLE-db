@@ -81,13 +81,53 @@ db.query(db.Sources).count()
 
 # ----------------------------------------------------------------------------------------
 # Names table
-# TODO: This needs some further work
 name_data = []
 for row in temp:
-    if row.designation not in [s['source'] for s in data]: continue
+    # First skip over those that we didn't add in the prior step
+    if row.designation not in [s['source'] for s in data]:
+        continue
+
     name_list = set([row.designation] + [s.strip() for s in row.names.split(',')])
+
+    # Names table contains both the source name and an alternate designation for each possible designation
     for n in name_list:
         name_data.append({'source': row.designation, 'other_name': n})
 
 db.Names.insert().execute(name_data)
 db.query(db.Names).count()
+
+# Some manual source name clean-ups (two many spaces, special characters)
+stmt = db.Sources.update()\
+         .where(db.Sources.c.source == 'L   97-3 B')\
+         .values(source='L 97-3B')
+db.engine.execute(stmt)
+
+name_updates = {'LEHPM 2-  50': 'LEHPM 2-50',
+                'LHS  2021': 'LHS 2021',
+                'G  51-15': 'GJ 1111',
+                'HD  42581B': 'Gl 229B',
+                'HD  44627B': 'AB Pic b',
+                'HD  36395': 'Gl 205',
+                '* bet Pic b': 'bet Pic b',
+                '*  54 Psc B': '54 Psc B',
+                '*  51 Eri b': '51 Eri b',
+                'LP  102-320': 'LHS 3339',
+                'LP  271-25': 'LHS 2924',
+                'LP  423-14': 'LHS 1937',
+                'LP  423-31': '2MASS J07522390+1612157',
+                'NAME CFBDSIR J214947.2-040308.9': 'CFBDSIR J214947.2-040308.9',
+                'NAME GU Psc b': 'GU Psc b',
+                'Wolf  359': 'Wolf 359',
+                'V* BK Vir': 'BK Vir',
+                'V* DY Psc': 'DY Psc',
+                'V* RT Vir': 'RT Vir',
+                'V* V2384 Ori': 'V2384 Ori'
+                }
+for old_name, new_name in name_updates.items():
+    print(f'{old_name} -> {new_name}')
+    stmt = db.Sources.update() \
+        .where(db.Sources.c.source == old_name) \
+        .values(source=new_name)
+    db.engine.execute(stmt)
+
+db.save_db('data')
