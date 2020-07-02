@@ -10,6 +10,11 @@ db = Database(connection_string)
 results = db.query(db.Sources).all()
 print(results)
 
+# Alternative output formats
+db.query(db.Sources).astropy()
+db.query(db.Sources).table()  # equivalent to astropy
+db.query(db.Sources).pandas()
+
 # Query for all publications
 db.query(db.Publications).all()
 
