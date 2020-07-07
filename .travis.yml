@@ -1,0 +1,29 @@
+language: python
+
+python:
+    - 3.7
+
+env:
+    global:
+        # The following versions are the 'default' for tests, unless
+        # overidden underneath. They are defined here in order to save having
+        # to repeat them for all configurations.
+        - NUMPY_VERSION=stable
+        - ASTROPY_VERSION=stable
+        # For this package-template, we include examples of Cython modules,
+        # so Cython is required for testing. If your package does not include
+        # Cython code, you can set CONDA_DEPENDENCIES=''
+        - CONDA_DEPENDENCIES='pandas'
+    matrix:
+        # Make sure that egg_info works without dependencies
+        # - SETUP_CMD='egg_info'
+        # Try all python versions with the latest numpy
+        # - SETUP_CMD='py.test'
+
+install:
+    - git clone git://github.com/astropy/ci-helpers.git
+    - source ci-helpers/travis/setup_conda_$TRAVIS_OS_NAME.sh
+    - pip install git+https://github.com/dr-rodriguez/AstrodbKit2
+
+script:
+    - py.test -s tests/test_integrity.py
