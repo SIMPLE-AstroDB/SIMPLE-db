@@ -1,6 +1,6 @@
 # Query examples against the database
 
-from astrodbkit2.astrodb import Database
+from astrodbkit2.astrodb import Database, and_, or_
 
 # Establish connection to database
 connection_string = 'sqlite:///SIMPLE.db'
@@ -59,6 +59,10 @@ print(results[0].keys())
 # Use inventory to check a single object (output is dictionary)
 data = db.inventory('2MASS J13571237+1428398', pretty_print=True)
 print(type(data))
+
+# Search method
+db.search_object('twa 27', format='astropy')
+db.search_object('1357+1428', output_table='Photometry', format='astropy')
 
 # Delete a row
 for row in db.query(db.Photometry).all():
