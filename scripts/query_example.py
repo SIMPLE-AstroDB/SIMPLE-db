@@ -62,6 +62,7 @@ print(type(data))
 
 # Search method
 db.search_object('twa 27', format='astropy')
+db.search_object('twa 27', format='astropy', resolve_simbad=True, output_table='Names')
 db.search_object('1357+1428', output_table='Photometry', format='astropy')
 
 # Delete a row
