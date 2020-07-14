@@ -24,6 +24,8 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest
+        # install dependencies. Eventually, this should all be in in requirements.txt 
+        pip install git+https://github.com/dr-rodriguez/AstrodbKit2
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 # Comment out Linter for now -- KC
 #    - name: Lint with flake8
