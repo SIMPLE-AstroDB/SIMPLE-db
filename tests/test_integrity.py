@@ -54,10 +54,27 @@ def test_reference_uniqueness(db):
         print(t)
 
 
-@pytest.mark.xfail
 def test_references(db):
-    # Verify that all sources point to an existing Publication
-    assert False
+    # Verify that all data point to an existing Publication
+
+    ref_list = []
+    for table in ('Sources', 'Photometry'):
+        # Get list of unique references
+        t = db.query(db.metadata.tables[table].c.reference).distinct().astropy()
+        ref_list = ref_list + t['reference'].tolist()
+
+    # Getting unique set
+    ref_list = list(set(ref_list))
+
+    # Confirm that all are in Publications
+    t = db.query(db.Publications.c.name).filter(db.Publications.c.name.in_(ref_list)).astropy()
+    assert len(t) == len(ref_list), 'Some references were not matched'
+
+    # List out publications that have not been used
+    t = db.query(db.Publications.c.name).filter(db.Publications.c.name.notin_(ref_list)).astropy()
+    if len(t) > 0:
+        print(f'{len(t)} publications not referenced by Sources')
+        print(t)
 
 
 @pytest.mark.xfail
