@@ -58,7 +58,8 @@ def test_references(db):
     # Verify that all data point to an existing Publication
 
     ref_list = []
-    for table in ('Sources', 'Photometry'):
+    table_list = ['Sources', 'Photometry']
+    for table in table_list:
         # Get list of unique references
         t = db.query(db.metadata.tables[table].c.reference).distinct().astropy()
         ref_list = ref_list + t['reference'].tolist()
@@ -73,7 +74,7 @@ def test_references(db):
     # List out publications that have not been used
     t = db.query(db.Publications.c.name).filter(db.Publications.c.name.notin_(ref_list)).astropy()
     if len(t) > 0:
-        print(f'{len(t)} publications not referenced by Sources')
+        print(f'{len(t)} publications not referenced by {table_list}')
         print(t)
 
 
