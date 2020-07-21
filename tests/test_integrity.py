@@ -3,7 +3,7 @@
 import os
 import pytest
 from simple.schema import *
-from astrodbkit2.astrodb import create_database, Database, or_
+from astrodbkit2.astrodb import create_database, Database, or_, and_
 from astropy.table import unique
 
 DB_NAME = 'temp.db'
@@ -112,7 +112,23 @@ def test_source_uniqueness2(db):
                "HAVING (Count(*) > 1)"
     duplicate_names = db.sql_query(sql_text, format='astropy')
     # if duplicate_names is non_zero, print out duplicate names
+    if len(duplicate_names) > 0:
+        print(duplicate_names)
     assert len(duplicate_names) == 0
+
+    # Get all names from Source.source and check them against Names.other_name to check for potential duplicates
+    # Note however, that Names.source = Names.other_name represents valid, non-duplicate cases
+    # A more robust (but time consuming) check would loop over all of them using Simbad designations
+    name_list = db.query(db.Sources.c.source).distinct().astropy()['source'].tolist()
+    t = db.query(db.Names).filter(and_(db.Names.c.other_name.in_(name_list),
+                                       db.Names.c.source != db.Names.c.other_name)).astropy()
+    if len(t) > 0:
+        print('Potential duplicates identified:')
+        print(t)
+        for name in t['source']:
+            temp = db.search_object(name, output_table='Names', resolve_simbad=True, format='astropy')
+            print(temp)
+    assert len(t) == 0
 
 
 # Clean up temporary database
