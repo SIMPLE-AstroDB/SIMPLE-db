@@ -126,9 +126,20 @@ def test_source_uniqueness2(db):
         print('Potential duplicates identified:')
         print(t)
         for name in t['source']:
-            temp = db.search_object(name, output_table='Names', resolve_simbad=True, format='astropy')
+            temp = db.search_object(name, output_table='Names', resolve_simbad=True, format='astropy', verbose=False)
             print(temp)
     assert len(t) == 0
+
+    # This takes too long as it goes one by one querying Simbad, plus it gets timed out by Simbad for too many queries
+    # Will want to rework this to get a full list of all possible names from Simbad first and then query them without
+    # resolving them one by one.
+    # name_count = {}
+    # for name in name_list:
+    #     temp = db.search_object(name, output_table='Names', resolve_simbad=True, format='astropy', verbose=False)
+    #     if len(unique(temp, keys='source')) > 1:
+    #         print(temp)
+    #         name_count[name] = len(unique(temp, keys='source'))
+    # assert len(name_count) == 0
 
 
 # Clean up temporary database
