@@ -77,9 +77,10 @@ def test_source_uniqueness2(db):
     # if duplicate_names is non_zero, print out duplicate names
     assert len(duplicate_names) == 0
 
+
 # Clean up temporary database
-#def test_remove_database(db):
-#    db.session.close()
-#    db.engine.dispose()
-#    if os.path.exists(DB_NAME):
-#        os.remove(DB_NAME)
+def test_remove_database(db):
+    db.session.close()
+    db.engine.dispose()
+    if os.path.exists(DB_NAME):
+        os.remove(DB_NAME)
