@@ -53,10 +53,12 @@ def test_coordinates(db):
     assert False
 
 
-@pytest.mark.xfail
 def test_source_names(db):
     # Verify that all sources have at least one entry in Names table
-    assert False
+    sql_text="SELECT Sources.source	FROM Sources LEFT JOIN Names " \
+             "ON Names.source=Sources.source WHERE Names.source IS NULL"
+    missing_names = db.sql_query(sql_text, format='astropy')
+    assert len(missing_names) == 0
 
 
 @pytest.mark.xfail
@@ -66,8 +68,8 @@ def test_source_uniqueness(db):
 
 
 # Clean up temporary database
-def test_remove_database(db):
-    db.session.close()
-    db.engine.dispose()
-    if os.path.exists(DB_NAME):
-        os.remove(DB_NAME)
+#def test_remove_database(db):
+#    db.session.close()
+#    db.engine.dispose()
+#    if os.path.exists(DB_NAME):
+#        os.remove(DB_NAME)
