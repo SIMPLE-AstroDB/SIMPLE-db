@@ -3,7 +3,7 @@
 import os
 import pytest
 from simple.schema import *
-from astrodbkit2.astrodb import create_database, Database
+from astrodbkit2.astrodb import create_database, Database, or_
 from astropy.table import unique
 
 DB_NAME = 'temp.db'
@@ -78,10 +78,17 @@ def test_references(db):
         print(t)
 
 
-@pytest.mark.xfail
 def test_coordinates(db):
     # Verify that all sources have valid coordinates
-    assert False
+    t = db.query(db.Sources.c.source, db.Sources.c.ra, db.Sources.c.dec).filter(
+        or_(db.Sources.c.ra.is_(None), db.Sources.c.ra < 0, db.Sources.c.ra > 360,
+            db.Sources.c.dec.is_(None), db.Sources.c.dec < -90, db.Sources.c.dec > 90)).astropy()
+
+    if len(t) > 0:
+        print(f'{len(t)} Sources failed coordinate checks')
+        print(t)
+
+    assert len(t) == 0, f'{len(t)} Sources failed coordinate checks'
 
 
 @pytest.mark.xfail
