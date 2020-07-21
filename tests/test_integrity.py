@@ -4,6 +4,7 @@ import os
 import pytest
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database
+from astropy.table import unique
 
 DB_NAME = 'temp.db'
 DB_PATH = 'data'
@@ -32,13 +33,25 @@ def db():
 def test_data_load(db):
     # Test that all data can be loaded into the database
     # This should take care of finding serious issues (key/column violations)
-    db.load_database(DB_PATH, verbose=True)
+    db.load_database(DB_PATH, verbose=False)
 
 
-@pytest.mark.xfail
 def test_reference_uniqueness(db):
     # Verify that all Publications.name values are unique
-    assert False
+    t = db.query(db.Publications.c.name).astropy()
+    assert len(t) == len(unique(t, keys='name')), 'Duplicated Publications found'
+
+    # Verify that DOI are supplied
+    t = db.query(db.Publications.c.name).filter(db.Publications.c.doi.is_(None)).astropy()
+    if len(t) > 0:
+        print(f'{len(t)} publications lacking DOI:')
+        print(t)
+
+    # Verify that Bibcodes are supplied
+    t = db.query(db.Publications.c.name).filter(db.Publications.c.bibcode.is_(None)).astropy()
+    if len(t) > 0:
+        print(f'{len(t)} publications lacking Bibcodes:')
+        print(t)
 
 
 @pytest.mark.xfail
