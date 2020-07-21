@@ -91,16 +91,28 @@ def test_coordinates(db):
     assert len(t) == 0, f'{len(t)} Sources failed coordinate checks'
 
 
-@pytest.mark.xfail
 def test_source_names(db):
     # Verify that all sources have at least one entry in Names table
-    assert False
+    sql_text = "SELECT Sources.source	FROM Sources LEFT JOIN Names " \
+             "ON Names.source=Sources.source WHERE Names.source IS NULL"
+    missing_names = db.sql_query(sql_text, format='astropy')
+    assert len(missing_names) == 0
 
 
-@pytest.mark.xfail
-def test_source_uniqueness(db):
+def test_source_uniqueness1(db):
     # Verify that all Sources.source values are unique
-    assert False
+    source_names = db.query(db.Sources.c.source).astropy()
+    unique_source_names = unique(source_names)
+    assert len(source_names) == len(unique_source_names)
+
+
+def test_source_uniqueness2(db):
+    # Verify that all Sources.source values are unique and find the duplicates
+    sql_text = "SELECT Sources.source FROM Sources GROUP BY source " \
+               "HAVING (Count(*) > 1)"
+    duplicate_names = db.sql_query(sql_text, format='astropy')
+    # if duplicate_names is non_zero, print out duplicate names
+    assert len(duplicate_names) == 0
 
 
 # Clean up temporary database
