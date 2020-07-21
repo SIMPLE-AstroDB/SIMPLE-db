@@ -4,6 +4,7 @@ import os
 import pytest
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database
+from astropy.table import unique
 
 DB_NAME = 'temp.db'
 DB_PATH = 'data'
@@ -55,17 +56,26 @@ def test_coordinates(db):
 
 def test_source_names(db):
     # Verify that all sources have at least one entry in Names table
-    sql_text="SELECT Sources.source	FROM Sources LEFT JOIN Names " \
+    sql_text = "SELECT Sources.source	FROM Sources LEFT JOIN Names " \
              "ON Names.source=Sources.source WHERE Names.source IS NULL"
     missing_names = db.sql_query(sql_text, format='astropy')
     assert len(missing_names) == 0
 
 
-@pytest.mark.xfail
-def test_source_uniqueness(db):
+def test_source_uniqueness1(db):
     # Verify that all Sources.source values are unique
-    assert False
+    source_names = db.query(db.Sources.c.source).astropy()
+    unique_source_names = unique(source_names)
+    assert len(source_names) == len(unique_source_names)
 
+
+def test_source_uniqueness2(db):
+    # Verify that all Sources.source values are unique and find the duplicates
+    sql_text = "SELECT Sources.source FROM Sources GROUP BY source " \
+               "HAVING (Count(*) > 1)"
+    duplicate_names = db.sql_query(sql_text, format='astropy')
+    # if duplicate_names is non_zero, print out duplicate names
+    assert len(duplicate_names) == 0
 
 # Clean up temporary database
 #def test_remove_database(db):
