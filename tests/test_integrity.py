@@ -106,6 +106,18 @@ def test_source_uniqueness1(db):
     assert len(source_names) == len(unique_source_names)
 
 
+def test_names_table(db):
+    # Verify that all Sources contain at least one entry in the Names table
+    name_list = db.query(db.Sources.c.source).astropy()
+    name_list = name_list['source'].tolist()
+    counts = db.query(db.Names.c.source).filter(db.Names.c.source.in_(name_list)).distinct().count()
+    assert len(name_list) == counts, 'ERROR: There are Sources without entries in the Names table'
+
+    # Verify that each Source contains an entry in Names with Names.source = Names.other_source
+    counts = db.query(db.Names.c.source).filter(db.Names.c.source == db.Names.c.other_name).distinct().count()
+    assert len(name_list) == counts, 'ERROR: There are entries in Names without Names.source == Names.other_name'
+
+
 def test_source_uniqueness2(db):
     # Verify that all Sources.source values are unique and find the duplicates
     sql_text = "SELECT Sources.source FROM Sources GROUP BY source " \
