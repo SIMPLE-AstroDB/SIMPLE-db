@@ -44,13 +44,13 @@ def test_reference_uniqueness(db):
     # Verify that DOI are supplied
     t = db.query(db.Publications.c.name).filter(db.Publications.c.doi.is_(None)).astropy()
     if len(t) > 0:
-        print(f'{len(t)} publications lacking DOI:')
+        print(f'\n{len(t)} publications lacking DOI:')
         print(t)
 
     # Verify that Bibcodes are supplied
     t = db.query(db.Publications.c.name).filter(db.Publications.c.bibcode.is_(None)).astropy()
     if len(t) > 0:
-        print(f'{len(t)} publications lacking Bibcodes:')
+        print(f'\n{len(t)} publications lacking Bibcodes:')
         print(t)
 
 
@@ -74,7 +74,7 @@ def test_references(db):
     # List out publications that have not been used
     t = db.query(db.Publications.c.name).filter(db.Publications.c.name.notin_(ref_list)).astropy()
     if len(t) > 0:
-        print(f'{len(t)} publications not referenced by {table_list}')
+        print(f'\n{len(t)} publications not referenced by {table_list}')
         print(t)
 
 
@@ -85,7 +85,7 @@ def test_coordinates(db):
             db.Sources.c.dec.is_(None), db.Sources.c.dec < -90, db.Sources.c.dec > 90)).astropy()
 
     if len(t) > 0:
-        print(f'{len(t)} Sources failed coordinate checks')
+        print(f'\n{len(t)} Sources failed coordinate checks')
         print(t)
 
     assert len(t) == 0, f'{len(t)} Sources failed coordinate checks'
