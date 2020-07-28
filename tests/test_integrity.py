@@ -44,13 +44,13 @@ def test_reference_uniqueness(db):
     # Verify that DOI are supplied
     t = db.query(db.Publications.c.name).filter(db.Publications.c.doi.is_(None)).astropy()
     if len(t) > 0:
-        print(f'{len(t)} publications lacking DOI:')
+        print(f'\n{len(t)} publications lacking DOI:')
         print(t)
 
     # Verify that Bibcodes are supplied
     t = db.query(db.Publications.c.name).filter(db.Publications.c.bibcode.is_(None)).astropy()
     if len(t) > 0:
-        print(f'{len(t)} publications lacking Bibcodes:')
+        print(f'\n{len(t)} publications lacking Bibcodes:')
         print(t)
 
 
@@ -74,7 +74,7 @@ def test_references(db):
     # List out publications that have not been used
     t = db.query(db.Publications.c.name).filter(db.Publications.c.name.notin_(ref_list)).astropy()
     if len(t) > 0:
-        print(f'{len(t)} publications not referenced by {table_list}')
+        print(f'\n{len(t)} publications not referenced by {table_list}')
         print(t)
 
 
@@ -85,7 +85,7 @@ def test_coordinates(db):
             db.Sources.c.dec.is_(None), db.Sources.c.dec < -90, db.Sources.c.dec > 90)).astropy()
 
     if len(t) > 0:
-        print(f'{len(t)} Sources failed coordinate checks')
+        print(f'\n{len(t)} Sources failed coordinate checks')
         print(t)
 
     assert len(t) == 0, f'{len(t)} Sources failed coordinate checks'
@@ -104,6 +104,18 @@ def test_source_uniqueness1(db):
     source_names = db.query(db.Sources.c.source).astropy()
     unique_source_names = unique(source_names)
     assert len(source_names) == len(unique_source_names)
+
+
+def test_names_table(db):
+    # Verify that all Sources contain at least one entry in the Names table
+    name_list = db.query(db.Sources.c.source).astropy()
+    name_list = name_list['source'].tolist()
+    counts = db.query(db.Names.c.source).filter(db.Names.c.source.in_(name_list)).distinct().count()
+    assert len(name_list) == counts, 'ERROR: There are Sources without entries in the Names table'
+
+    # Verify that each Source contains an entry in Names with Names.source = Names.other_source
+    counts = db.query(db.Names.c.source).filter(db.Names.c.source == db.Names.c.other_name).distinct().count()
+    assert len(name_list) == counts, 'ERROR: There are entries in Names without Names.source == Names.other_name'
 
 
 def test_source_uniqueness2(db):
