@@ -99,7 +99,7 @@ def test_source_names(db):
     assert len(missing_names) == 0
 
 
-def test_source_uniqueness1(db):
+def test_source_uniqueness(db):
     # Verify that all Sources.source values are unique
     source_names = db.query(db.Sources.c.source).astropy()
     unique_source_names = unique(source_names)
@@ -116,15 +116,6 @@ def test_names_table(db):
     # Verify that each Source contains an entry in Names with Names.source = Names.other_source
     counts = db.query(db.Names.c.source).filter(db.Names.c.source == db.Names.c.other_name).distinct().count()
     assert len(name_list) == counts, 'ERROR: There are entries in Names without Names.source == Names.other_name'
-
-
-def test_source_uniqueness2(db):
-    # Verify that all Sources.source values are unique and find the duplicates
-    sql_text = "SELECT Sources.source FROM Sources GROUP BY source " \
-               "HAVING (Count(*) > 1)"
-    duplicate_names = db.sql_query(sql_text, format='astropy')
-    # if duplicate_names is non_zero, print out duplicate names
-    assert len(duplicate_names) == 0
 
 
 # Clean up temporary database
