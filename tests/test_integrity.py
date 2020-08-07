@@ -2,6 +2,7 @@
 
 import os
 import pytest
+from sqlalchemy import func
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database, or_
 from astropy.table import unique
@@ -124,12 +125,38 @@ def test_names_table(db):
     # Verify that all Sources contain at least one entry in the Names table
     name_list = db.query(db.Sources.c.source).astropy()
     name_list = name_list['source'].tolist()
-    counts = db.query(db.Names.c.source).filter(db.Names.c.source.in_(name_list)).distinct().count()
-    assert len(name_list) == counts, 'ERROR: There are Sources without entries in the Names table'
+    source_name_counts = db.query(db.Names.c.source).\
+        filter(db.Names.c.source.in_(name_list)).\
+        distinct().\
+        count()
+    assert len(name_list) == source_name_counts, 'ERROR: There are Sources without entries in the Names table'
 
     # Verify that each Source contains an entry in Names with Names.source = Names.other_source
-    counts = db.query(db.Names.c.source).filter(db.Names.c.source == db.Names.c.other_name).distinct().count()
-    assert len(name_list) == counts, 'ERROR: There are entries in Names without Names.source == Names.other_name'
+    valid_name_counts = db.query(db.Names.c.source).\
+        filter(db.Names.c.source == db.Names.c.other_name).\
+        distinct().\
+        count()
+
+    # If the number of valid names don't match the number of sources, then there are cases that are missing
+    # The script below will gather them and print them out
+    if len(name_list) != valid_name_counts:
+        # Create a temporary table that groups entries in the Names table by their source name
+        # with a column containing a concatenation of all known names
+        t = db.query(db.Names.c.source,
+                     func.group_concat(db.Names.c.other_name).label('names')).\
+            group_by(db.Names.c.source).\
+            astropy()
+
+        # Get the list of entries whose source name are not present in the 'other_names' column
+        # Then return the Names table results so we can see what the DB has for these entries
+        results = [row['source'] for row in t if row['source'] not in row['names'].split(',')]
+        print('\nEntries in Names without Names.source == Names.other_name:')
+        print(db.query(db.Names).
+              filter(db.Names.c.source.in_(results)).
+              astropy())
+
+    assert len(name_list) == valid_name_counts, \
+        'ERROR: There are entries in Names without Names.source == Names.other_name'
 
 
 def test_source_uniqueness2(db):
