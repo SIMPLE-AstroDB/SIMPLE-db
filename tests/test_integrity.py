@@ -3,7 +3,7 @@
 import os
 import pytest
 from simple.schema import *
-from astrodbkit2.astrodb import create_database, Database, or_, and_
+from astrodbkit2.astrodb import create_database, Database, or_
 from astropy.table import unique
 
 DB_NAME = 'temp.db'
@@ -99,11 +99,23 @@ def test_source_names(db):
     assert len(missing_names) == 0
 
 
-def test_source_uniqueness1(db):
+def test_source_uniqueness(db):
     # Verify that all Sources.source values are unique
     source_names = db.query(db.Sources.c.source).astropy()
     unique_source_names = unique(source_names)
     assert len(source_names) == len(unique_source_names)
+
+    # Another method to find the duplicates
+    sql_text = "SELECT Sources.source FROM Sources GROUP BY source " \
+               "HAVING (Count(*) > 1)"
+    duplicate_names = db.sql_query(sql_text, format='astropy')
+
+    # if duplicate_names is non_zero, print out duplicate names
+    if len(duplicate_names) > 0:
+        print(f'\n{len(duplicate_names)} duplicated names')
+        print(duplicate_names)
+
+    assert len(duplicate_names) == 0
 
 
 def test_names_table(db):
@@ -124,34 +136,7 @@ def test_source_uniqueness2(db):
                "HAVING (Count(*) > 1)"
     duplicate_names = db.sql_query(sql_text, format='astropy')
     # if duplicate_names is non_zero, print out duplicate names
-    if len(duplicate_names) > 0:
-        print(duplicate_names)
     assert len(duplicate_names) == 0
-
-    # Get all names from Source.source and check them against Names.other_name to check for potential duplicates
-    # Note however, that Names.source = Names.other_name represents valid, non-duplicate cases
-    # A more robust (but time consuming) check would loop over all of them using Simbad designations
-    name_list = db.query(db.Sources.c.source).distinct().astropy()['source'].tolist()
-    t = db.query(db.Names).filter(and_(db.Names.c.other_name.in_(name_list),
-                                       db.Names.c.source != db.Names.c.other_name)).astropy()
-    if len(t) > 0:
-        print('Potential duplicates identified:')
-        print(t)
-        for name in t['source']:
-            temp = db.search_object(name, output_table='Names', resolve_simbad=True, format='astropy', verbose=False)
-            print(temp)
-    assert len(t) == 0
-
-    # This takes too long as it goes one by one querying Simbad, plus it gets timed out by Simbad for too many queries
-    # Will want to rework this to get a full list of all possible names from Simbad first and then query them without
-    # resolving them one by one.
-    # name_count = {}
-    # for name in name_list:
-    #     temp = db.search_object(name, output_table='Names', resolve_simbad=True, format='astropy', verbose=False)
-    #     if len(unique(temp, keys='source')) > 1:
-    #         print(temp)
-    #         name_count[name] = len(unique(temp, keys='source'))
-    # assert len(name_count) == 0
 
 
 # Clean up temporary database
