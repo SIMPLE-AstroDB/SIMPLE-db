@@ -105,6 +105,18 @@ def test_source_uniqueness(db):
     unique_source_names = unique(source_names)
     assert len(source_names) == len(unique_source_names)
 
+    # Another method to find the duplicates
+    sql_text = "SELECT Sources.source FROM Sources GROUP BY source " \
+               "HAVING (Count(*) > 1)"
+    duplicate_names = db.sql_query(sql_text, format='astropy')
+
+    # if duplicate_names is non_zero, print out duplicate names
+    if len(duplicate_names) > 0:
+        print(f'\n{len(duplicate_names)} duplicated names')
+        print(duplicate_names)
+
+    assert len(duplicate_names) == 0
+
 
 def test_names_table(db):
     # Verify that all Sources contain at least one entry in the Names table
