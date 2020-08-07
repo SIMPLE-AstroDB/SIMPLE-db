@@ -2,6 +2,7 @@
 
 import os
 import pytest
+from sqlalchemy import func
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database, or_
 from astropy.table import unique
@@ -127,16 +128,17 @@ def test_names_table(db):
 
     # Verify that each Source contains an entry in Names with Names.source = Names.other_source
     counts = db.query(db.Names.c.source).filter(db.Names.c.source == db.Names.c.other_name).distinct().count()
+
+    if len(name_list) != counts:
+        t = db.query(db.Names.c.source,
+                     func.group_concat(db.Names.c.other_name).label('names')).\
+            group_by(db.Names.c.source).\
+            astropy()
+        results = [row['source'] for row in t if row['source'] not in row['names'].split(',')]
+        print('Entries in Names without Names.source == Names.other_name')
+        print(db.query(db.Names).filter(db.Names.c.source.in_(results)).astropy())
+
     assert len(name_list) == counts, 'ERROR: There are entries in Names without Names.source == Names.other_name'
-
-
-def test_source_uniqueness2(db):
-    # Verify that all Sources.source values are unique and find the duplicates
-    sql_text = "SELECT Sources.source FROM Sources GROUP BY source " \
-               "HAVING (Count(*) > 1)"
-    duplicate_names = db.sql_query(sql_text, format='astropy')
-    # if duplicate_names is non_zero, print out duplicate names
-    assert len(duplicate_names) == 0
 
 
 # Clean up temporary database
