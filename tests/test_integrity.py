@@ -137,8 +137,8 @@ def test_source_simbad(db):
     name_list = [s[0] for s in results]
 
     # Add all IDS to the Simbad output as well as the user-provided id
-    Simbad.add_votable_fields('IDS')
-    Simbad.add_votable_fields('TYPED_ID')
+    Simbad.add_votable_fields('ids')
+    Simbad.add_votable_fields('typed_id')
     res = Simbad.query_objects(name_list)
 
     # Get a nicely formatted list of Simbad names for each input row
