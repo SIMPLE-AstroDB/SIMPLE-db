@@ -149,10 +149,11 @@ def test_source_simbad(db):
                         if _name_formatter(s) != '' and _name_formatter(s) is not None]
 
         if len(simbad_names) == 0:
+            print(f'No Simbad names for {name}')
             continue
 
         # Examine DB for each input, displaying results when more than one source matches
-        t = db.search_object(simbad_names, output_table='Sources', format='astropy')
+        t = db.search_object(simbad_names, output_table='Sources', format='astropy', fuzzy_search=False)
         if len(t) > 1:
             print(f'Multiple matches for {name}: {simbad_names}')
             print(db.query(db.Names).filter(db.Names.c.source.in_(t['source'])).astropy())
