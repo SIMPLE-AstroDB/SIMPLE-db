@@ -139,11 +139,11 @@ def test_source_simbad(db):
     # Add all IDS to the Simbad output as well as the user-provided id
     Simbad.add_votable_fields('ids')
     Simbad.add_votable_fields('typed_id')
-    res = Simbad.query_objects(name_list)
+    simbad_results = Simbad.query_objects(name_list)
 
     # Get a nicely formatted list of Simbad names for each input row
     duplicate_count = 0
-    for row in res[['TYPED_ID', 'IDS']].iterrows():
+    for row in simbad_results[['TYPED_ID', 'IDS']].iterrows():
         name, ids = row[0].decode("utf-8"), row[1].decode("utf-8")
         simbad_names = [_name_formatter(s) for s in ids.split('|')
                         if _name_formatter(s) != '' and _name_formatter(s) is not None]
