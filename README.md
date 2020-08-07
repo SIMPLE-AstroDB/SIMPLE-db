@@ -1,8 +1,8 @@
 # SIMPLE
 
-The vision of the SIMPLE project is to create a *collaborative* database of low-mass stars, brown dwarfs, and directly imaged exoplanets: a simple archive of complex objects. We plan to include coordinates, photometry, kinematics, spectra, images, as well as modeled and retrieved parameters. 
+The vision of the SIMPLE project is to create a *collaborative* database of low-mass stars, brown dwarfs, and directly imaged exoplanets: a simple archive of complex objects. We plan to include coordinates, photometry, kinematics, spectra, images, as well as modeled and retrieved parameters. We are developing methods to interact with the database via python, a website, and database browsers. 
 
-While we are using brown dwarfs to build out the SIMPLE database, our intention is to build a database schema and software which could be used by other subfields to roll their own collaborative databases.
+While we are using brown dwarfs to build out the SIMPLE database, our intention is to build a database schema and software which could be used by other subfields to roll their own collaborative databases and web interfaces.
 
 If you'd like to participate or just stay in the loop as this project progresses, please request to join this discussion list:
 https://groups.google.com/forum/#!forum/simple-archive
