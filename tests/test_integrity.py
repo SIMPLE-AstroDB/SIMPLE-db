@@ -2,9 +2,12 @@
 
 import os
 import pytest
+from sqlalchemy import func
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database, or_
 from astropy.table import unique
+from astroquery.simbad import Simbad
+from astrodbkit2.utils import _name_formatter
 
 DB_NAME = 'temp.db'
 DB_PATH = 'data'
@@ -99,23 +102,61 @@ def test_source_names(db):
     assert len(missing_names) == 0
 
 
-def test_source_uniqueness1(db):
+def test_source_uniqueness(db):
     # Verify that all Sources.source values are unique
     source_names = db.query(db.Sources.c.source).astropy()
     unique_source_names = unique(source_names)
     assert len(source_names) == len(unique_source_names)
+
+    # Another method to find the duplicates
+    sql_text = "SELECT Sources.source FROM Sources GROUP BY source " \
+               "HAVING (Count(*) > 1)"
+    duplicate_names = db.sql_query(sql_text, format='astropy')
+
+    # if duplicate_names is non_zero, print out duplicate names
+    if len(duplicate_names) > 0:
+        print(f'\n{len(duplicate_names)} duplicated names')
+        print(duplicate_names)
+
+    assert len(duplicate_names) == 0
 
 
 def test_names_table(db):
     # Verify that all Sources contain at least one entry in the Names table
     name_list = db.query(db.Sources.c.source).astropy()
     name_list = name_list['source'].tolist()
-    counts = db.query(db.Names.c.source).filter(db.Names.c.source.in_(name_list)).distinct().count()
-    assert len(name_list) == counts, 'ERROR: There are Sources without entries in the Names table'
+    source_name_counts = db.query(db.Names.c.source).\
+        filter(db.Names.c.source.in_(name_list)).\
+        distinct().\
+        count()
+    assert len(name_list) == source_name_counts, 'ERROR: There are Sources without entries in the Names table'
 
     # Verify that each Source contains an entry in Names with Names.source = Names.other_source
-    counts = db.query(db.Names.c.source).filter(db.Names.c.source == db.Names.c.other_name).distinct().count()
-    assert len(name_list) == counts, 'ERROR: There are entries in Names without Names.source == Names.other_name'
+    valid_name_counts = db.query(db.Names.c.source).\
+        filter(db.Names.c.source == db.Names.c.other_name).\
+        distinct().\
+        count()
+
+    # If the number of valid names don't match the number of sources, then there are cases that are missing
+    # The script below will gather them and print them out
+    if len(name_list) != valid_name_counts:
+        # Create a temporary table that groups entries in the Names table by their source name
+        # with a column containing a concatenation of all known names
+        t = db.query(db.Names.c.source,
+                     func.group_concat(db.Names.c.other_name).label('names')).\
+            group_by(db.Names.c.source).\
+            astropy()
+
+        # Get the list of entries whose source name are not present in the 'other_names' column
+        # Then return the Names table results so we can see what the DB has for these entries
+        results = [row['source'] for row in t if row['source'] not in row['names'].split(',')]
+        print('\nEntries in Names without Names.source == Names.other_name:')
+        print(db.query(db.Names).
+              filter(db.Names.c.source.in_(results)).
+              astropy())
+
+    assert len(name_list) == valid_name_counts, \
+        'ERROR: There are entries in Names without Names.source == Names.other_name'
 
 
 def test_source_uniqueness2(db):
@@ -125,6 +166,39 @@ def test_source_uniqueness2(db):
     duplicate_names = db.sql_query(sql_text, format='astropy')
     # if duplicate_names is non_zero, print out duplicate names
     assert len(duplicate_names) == 0
+
+
+def test_source_simbad(db):
+    # Query Simbad and confirm that there are no duplicates with different names
+
+    # Get list of all source names
+    results = db.query(db.Sources.c.source).all()
+    name_list = [s[0] for s in results]
+
+    # Add all IDS to the Simbad output as well as the user-provided id
+    Simbad.add_votable_fields('ids')
+    Simbad.add_votable_fields('typed_id')
+    simbad_results = Simbad.query_objects(name_list)
+
+    # Get a nicely formatted list of Simbad names for each input row
+    duplicate_count = 0
+    for row in simbad_results[['TYPED_ID', 'IDS']].iterrows():
+        name, ids = row[0].decode("utf-8"), row[1].decode("utf-8")
+        simbad_names = [_name_formatter(s) for s in ids.split('|')
+                        if _name_formatter(s) != '' and _name_formatter(s) is not None]
+
+        if len(simbad_names) == 0:
+            print(f'No Simbad names for {name}')
+            continue
+
+        # Examine DB for each input, displaying results when more than one source matches
+        t = db.search_object(simbad_names, output_table='Sources', format='astropy', fuzzy_search=False)
+        if len(t) > 1:
+            print(f'Multiple matches for {name}: {simbad_names}')
+            print(db.query(db.Names).filter(db.Names.c.source.in_(t['source'])).astropy())
+            duplicate_count += 1
+
+    assert duplicate_count == 0, 'Duplicate sources identified via Simbad queries'
 
 
 # Clean up temporary database
