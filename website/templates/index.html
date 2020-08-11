@@ -34,6 +34,14 @@
     <!-- Font Awesome v.5.0.12 -->
     <link rel="stylesheet" href="/static/css/all.css" crossorigin="anonymous">
 
+    <!-- jquery datatable -->
+    <script src="/static/js/jquery.dataTables.min.js"
+            crossorigin="anonymous">
+    </script>
+    <script src="/static/css/jquery.dataTables.min.css"
+            crossorigin="anonymous">
+    </script>
+
     <!-- Custom CSS Styling -->
     <style>
         /* reset */
@@ -60,9 +68,9 @@
 
 <body style="padding: 0; margin: 0; overflow-x: hidden">
     <!-- for embedding bokeh objects in jinja -->
-<!--    {%- macro embed(obj) -%}-->
-<!--    <div class="bk-root" id="{{ obj.elementid }}" {%- if obj.id -%} data-root-id="{{ obj.id }}" {%- endif -%}></div>-->
-<!--    {%- endmacro -%}-->
+    {%- macro embed(obj) -%}
+    <div class="bk-root" id="{{ obj.elementid }}" {%- if obj.id -%} data-root-id="{{ obj.id }}" {%- endif -%}></div>
+    {%- endmacro -%}
     {%- block contents -%}
 
 
@@ -111,6 +119,11 @@
                 {{ embed(roots.datatable) }}
                 {%- endblock -%}
             </div>
+            <script>
+            $(document).ready( function () {
+                $('#fullTable').DataTable();
+            } );
+            </script>
         </div>
     </div>
     {%- endblock -%}

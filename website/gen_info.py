@@ -31,7 +31,8 @@ def output(inventory: dict):
         The json string of data about given object
 
     """
-    del inventory['Photometry']  # will not print photometry data raw to page
+    if 'Photometry' in inventory.keys():
+        del inventory['Photometry']  # will not print photometry data raw to page
     inventory = json.dumps(inventory, indent=4)  # convert to json string and pretty print
     return inventory
 
