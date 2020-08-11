@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- jinja preamble-->
+    <!-- FIXME: something in the jinja makes the page have excess whitespace and overflow-x, ignoring CSS -->
+    {%- extends base -%}
+
+    {%- block title -%}
+    <title> {{ title }} </title>
+    {%- endblock -%}
+
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.86, maximum-scale=3.0, minimum-scale=0.86">
+
+    <!-- Bokeh -->
+    <script src="/static/js/bokeh-2.0.2.min.js"
+            crossorigin="anonymous">
+    </script>
+    <script src="/static/js/bokeh-widgets-2.0.2.min.js"
+            crossorigin="anonymous">
+    </script>
+    <script src="/static/js/bokeh-tables-2.0.2.min.js"
+            crossorigin="anonymous">
+    </script>
+    <script type="text/javascript">
+        Bokeh.set_log_level("info");
+    </script>
+
+    <!-- jQuery just in case needed-->
+    <script type="text/javascript" src="/static/js/jquery-1.12.4.min.js" charset="utf-8"></script>
+
+    <!-- Font Awesome v.5.0.12 -->
+    <link rel="stylesheet" href="/static/css/all.css" crossorigin="anonymous">
+
+    <!-- Custom CSS Styling -->
+    <style>
+        /* reset */
+        * {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            outline: 0;
+            font-size: 100%;
+            vertical-align: baseline;
+            background: transparent;
+            clear: both;
+            overflow-x: hidden;
+        }
+        .python {
+            padding: 0;
+            margin: auto;
+            outline-style: groove;
+            outline-color: aliceblue;
+        }
+    </style>
+
+</head>
+
+<body style="padding: 0; margin: 0; overflow-x: hidden">
+    <!-- for embedding bokeh objects in jinja -->
+<!--    {%- macro embed(obj) -%}-->
+<!--    <div class="bk-root" id="{{ obj.elementid }}" {%- if obj.id -%} data-root-id="{{ obj.id }}" {%- endif -%}></div>-->
+<!--    {%- endmacro -%}-->
+    {%- block contents -%}
+
+
+    <!-- header box -->
+    <div id="header" style="width: 100%; height: 100px; background-color: deepskyblue;
+     padding-bottom: 10px;">
+        <h1 style="color: floralwhite; position: relative; top: 45%; left: 45% ; width: 95%; font-size: xx-large">
+            Simple Browser</h1>
+    </div>
+
+    <!-- Following two divs are to get the content blocks centrally aligned on the page, under the header box -->
+    <div id="contentBody" style="text-align: center; background-color: aliceblue; padding-top: 10px">
+        <div id="wrapper" style="width: 90%; display: inline-block">
+            <!-- info about object and photometry (inventory) wrapper -->
+            <div id="objectSpecific" style="width: 100%; min-height: 200px; display: inline-block">
+                <!-- photometry table -->
+                <div id="photometryTable" class="python" style="float: left;
+                width: 30%; height: 200px; z-index: 1; background-color: whitesmoke; overflow-y: auto">
+                    <div id="photoTableWrap" style="display: inline-block; top: 50px">
+                        {%- block photodt -%}
+                        {{ embed(roots.photodt) }}
+                        {%- endblock -%}
+                    </div>
+                </div>
+
+                <!-- information about object -->
+                <div id="objectInfo" class="python" style="width: 70%; height: 200px; text-align: left;
+                 overflow-y: auto; z-index: 2; background-color: whitesmoke">
+                    {%- block objectinfo -%}
+                    {{ embed(roots.objectinfo) }}
+                    {%- endblock -%}
+                </div>
+            </div>
+
+            <!-- plotting spectra for an object -->
+            <div id="spectraPlot" class="python" style="width: 100%; height: 500px;">
+                {%- block spectraplot -%}
+                {{ embed(roots.spectraplot) }}
+                {%- endblock -%}
+            </div>
+
+            <!-- the full database table (probably multi page if I can) -->
+            <div id="fullTable" class="python" style="float: bottom; width: 100%; min-height: 200px;
+            display: inline-block">
+                {%- block datatable -%}
+                {{ embed(roots.datatable) }}
+                {%- endblock -%}
+            </div>
+        </div>
+    </div>
+    {%- endblock -%}
+</body>
+</html>
