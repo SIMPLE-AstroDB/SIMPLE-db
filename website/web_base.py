@@ -43,7 +43,7 @@ def load_db() -> Database:
     try:
         db = Database(CONNECTION_STRING)  # open database
     except RuntimeError as e:  # db not created
-        raise RuntimeError(e + f'\nDatabase not present in {path} for website initialisation')  # want it to die here
+        raise RuntimeError(f'{e}\nDatabase not present in {path} for website initialisation')  # want it to die here
     return db
 
 

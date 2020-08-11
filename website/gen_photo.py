@@ -31,14 +31,18 @@ def photometry_exists(inventory: dict):
     inventory
         Dictionary of the database output for that object
     """
+    bands, mags, errs = [], [], []
     try:
         if 'Photometry' not in inventory.keys():
             raise NotImplementedError('No "Photometry" key yet in db')
         elif type(inventory['Photometry']) != list:
             raise TypeError('Photometry entry needs to produce list')
-    finally:
+    except (NotImplementedError, TypeError):
+        bands = [*KNOWN_MAGS.keys(), ]
+        mags, errs = [None, ] * len(bands), [None, ] * len(bands)
+        return bands, mags, errs
+    else:
         photo = inventory['Photometry']
-    bands, mags, errs = [], [], []
     for band in photo:
         bands.append(band['band'])  # photometric band name
         mags.append(band['magnitude'])  # magnitude for object
