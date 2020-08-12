@@ -1,0 +1,39 @@
+# This workflow will install Python dependencies, run the python script to generate the database, and upload the regenerated database
+
+name: Generate database
+
+on:
+  workflow_dispatch:  # manual execution
+  schedule:
+    - cron:  '0 12 15 * *' # 12:00 UTC on the 15th of each month 
+#   pull_request:
+#     branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install git+https://github.com/dr-rodriguez/AstrodbKit2
+        
+    - name: Generate database
+      run: |
+        python scripts/tutorials/generate_database.py
+        
+    - name: Upload database
+      uses: actions/upload-artifact@v2.1.4
+      with:
+        name: Database
+        path: SIMPLE.db
+        if-no-files-found: error
