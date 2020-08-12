@@ -34,10 +34,3 @@ jobs:
         git commit -m "auto regenerating database"
         git push
       working-directory: .
-
-#    - name: Upload database
-#      uses: actions/upload-artifact@v2.1.4
-#      with:
-#        name: Database
-#        path: SIMPLE.db
-#        if-no-files-found: error
