@@ -1,6 +1,6 @@
 # This workflow will install Python dependencies, run the python script to generate the database, and upload the regenerated database
 
-name: Generate database
+name: Generate Database
 
 on:
   workflow_dispatch:  # manual execution
@@ -27,7 +27,6 @@ jobs:
         
     - name: Generate database
       run: |
-        ls
         python scripts/tutorials/generate_database.py
       working-directory: .
         

@@ -1,8 +1,10 @@
 # Script to generate database from JSON contents
 # This gets run automatically with Github Actions
 
+import sys
 import os
 from astrodbkit2.astrodb import create_database, Database
+sys.path.append(os.getcwd())  # hack to be able to discover simple
 from simple.schema import *
 
 DB_NAME = 'SIMPLE.db'
