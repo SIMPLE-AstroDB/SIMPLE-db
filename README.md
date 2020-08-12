@@ -24,7 +24,7 @@ A conda environment file exists for convenience.
 pip install git+https://github.com/dr-rodriguez/AstrodbKit2
 ```
 
-5. Create the database. If you already have a binary DB file (eg, with SQLite), skip to the next step. 
+5. Create the database. If you already have a database (eg, a binary db file with SQLite), skip to the next step. 
 
 ```python
 from astrodbkit2.astrodb import create_database
