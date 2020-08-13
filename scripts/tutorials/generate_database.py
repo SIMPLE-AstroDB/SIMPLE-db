@@ -21,6 +21,8 @@ create_database(connection_string)
 db = Database(connection_string)
 db.load_database(DB_PATH, verbose=False)
 
+print('New db file generated.')
+
 # Close all connections
 db.session.close()
 db.engine.dispose()
