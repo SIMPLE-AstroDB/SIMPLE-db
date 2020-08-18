@@ -201,8 +201,23 @@ def test_source_simbad(db):
     assert duplicate_count == 0, 'Duplicate sources identified via Simbad queries'
 
 
-# Clean up temporary database
+def test_parallaxes(db):
+    # Tests against the Parallaxes table
+
+    # While there may be many parallax measurements for a single source,
+    # there should be one and only one marked as best
+    t = db.query(db.Parallaxes.c.source,
+                 func.sum(db.Parallaxes.c.best).label('best_counts')). \
+        group_by(db.Parallaxes.c.source). \
+        having(func.sum(db.Parallaxes.c.best) != 1). \
+        astropy()
+    if len(t) > 0:
+        print(t)
+    assert len(t) == 0
+
+
 def test_remove_database(db):
+    # Clean up temporary database
     db.session.close()
     db.engine.dispose()
     if os.path.exists(DB_NAME):
