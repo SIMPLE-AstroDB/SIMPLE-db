@@ -227,6 +227,7 @@ def test_parallaxes(db):
         having(func.sum(db.Parallaxes.c.best) != 1). \
         astropy()
     if len(t) > 0:
+        print("\nParallax entries with incorrect 'best' labels")
         print(t)
     assert len(t) == 0
 

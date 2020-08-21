@@ -68,6 +68,7 @@ class Photometry(Base):
 
 
 class Parallaxes(Base):
+    # Table to store parallax values in milliarcseconds
     __tablename__ = 'Parallaxes'
     source = Column(String(100), ForeignKey('Sources.source'), nullable=False, primary_key=True)
     parallax = Column(Float)
