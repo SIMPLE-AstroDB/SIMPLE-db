@@ -81,10 +81,10 @@ class Parallaxes(Base):
 class ProperMotions(Base):
     # Table to store proper motions, in milliarcseconds per year
     __tablename__ = 'ProperMotions'
-    source = Column(String(100), ForeignKey('Sources.source'), nullable=False, primary_key=True)
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'), nullable=False, primary_key=True)
     mu_ra = Column(Float)
     mu_ra_error = Column(Float)
     mu_dec = Column(Float)
     mu_dec_error = Column(Float)
     comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.name'), primary_key=True)
+    reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
