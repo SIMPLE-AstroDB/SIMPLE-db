@@ -231,6 +231,20 @@ def test_parallaxes(db):
     assert len(t) == 0
 
 
+def test_propermotions(db):
+    # Tests against the ProperMotions table
+
+    # There should be no entries in the ProperMotions table without both mu_ra and mu_dec
+    t = db.query(db.ProperMotions.c.source).\
+        filter(or_(db.ProperMotions.c.mu_ra.is_(None),
+                   db.ProperMotions.c.mu_dec.is_(None))).\
+        astropy()
+    if len(t) > 0:
+        print('\nEntries found without proper motion values')
+        print(t)
+    assert len(t) == 0
+
+
 def test_remove_database(db):
     # Clean up temporary database
     db.session.close()
