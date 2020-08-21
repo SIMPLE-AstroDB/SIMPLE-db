@@ -245,6 +245,19 @@ def test_propermotions(db):
     assert len(t) == 0
 
 
+def test_radialvelocities(db):
+    # Tests against the RadialVelocities table
+
+    # There should be no entries in the RadialVelocities table without rv values
+    t = db.query(db.RadialVelocities.c.source).\
+        filter(db.RadialVelocities.c.radial_velocity.is_(None)).\
+        astropy()
+    if len(t) > 0:
+        print('\nEntries found without radial velocity values')
+        print(t)
+    assert len(t) == 0
+
+
 def test_remove_database(db):
     # Clean up temporary database
     db.session.close()

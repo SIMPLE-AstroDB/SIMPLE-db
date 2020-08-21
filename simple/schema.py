@@ -87,3 +87,13 @@ class ProperMotions(Base):
     mu_dec_error = Column(Float)
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name'), primary_key=True)
+
+
+class RadialVelocities(Base):
+    # Table to store radial velocities, in km/sec
+    __tablename__ = 'RadialVelocities'
+    source = Column(String(100), ForeignKey('Sources.source'), nullable=False, primary_key=True)
+    radial_velocity = Column(Float)
+    radial_velocity_error = Column(Float)
+    comments = Column(String(1000))
+    reference = Column(String(30), ForeignKey('Publications.name'), primary_key=True)
