@@ -201,6 +201,21 @@ def test_source_simbad(db):
     assert duplicate_count == 0, 'Duplicate sources identified via Simbad queries'
 
 
+def test_photometry(db):
+    # Tests for Photometry table
+
+    # Check that no negative magnitudes have been provided,
+    # nor any that are larger than 99 (if missing/limits, just use None)
+    t = db.query(db.Photometry). \
+        filter(or_(db.Photometry.c.magnitude < 0,
+                   db.Photometry.c.magnitude >= 99)). \
+        astropy()
+    if len(t) > 0:
+        print('\nInvalid magnitudes present')
+        print(t)
+    assert len(t) == 0
+
+
 def test_parallaxes(db):
     # Tests against the Parallaxes table
 
