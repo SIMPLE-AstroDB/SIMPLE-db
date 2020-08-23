@@ -47,7 +47,7 @@ source_dict = {}
 for i, row in sources.iterrows():
     bd_source = bdnyc.search_object(row['source'], output_table='sources',
                                     table_names={'sources': ['designation', 'names']},
-                                    format='pandas')
+                                    fmt='pandas')
     if len(bd_source) != 1:
         print(f"ERROR matching {row['source']}")
     else:
