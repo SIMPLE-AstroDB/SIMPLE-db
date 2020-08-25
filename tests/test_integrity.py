@@ -259,6 +259,34 @@ def test_radialvelocities(db):
     assert len(t) == 0
 
 
+def test_spectraltypes(db):
+    # Tests against the SpectralTypes table
+
+    # There should be no entries in the SpectralTypes table without a spectral type
+    t = db.query(db.SpectralTypes.c.source). \
+        filter(db.SpectralTypes.c.spectral_type.is_(None)). \
+        astropy()
+    if len(t) > 0:
+        print('\nEntries found without spectral type values')
+        print(t)
+    assert len(t) == 0
+
+    # While there may be many spectral type measurements for a single source,
+    # there should be one and only one marked as best
+    t = db.query(db.SpectralTypes.c.source,
+                 func.sum(db.SpectralTypes.c.best).label('best_counts')). \
+        group_by(db.SpectralTypes.c.source). \
+        having(func.sum(db.SpectralTypes.c.best) != 1). \
+        astropy()
+    if len(t) > 0:
+        print("\nSpectral Type entries with incorrect 'best' labels")
+        print(t)
+    assert len(t) == 0
+
+    # TODO: Test for the starting string (OBAFGKMLTY, sd, esd, usd)?
+    pass
+
+
 def test_remove_database(db):
     # Clean up temporary database
     db.session.close()

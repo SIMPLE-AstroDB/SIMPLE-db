@@ -130,7 +130,7 @@ class SpectralTypes(Base):
     __tablename__ = 'SpectralTypes'
     source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
                     nullable=False, primary_key=True)
-    spectral_type = Column(String(10))  # must start with OBAFGKMLTY
+    spectral_type = Column(String(10))
     spectral_type_error = Column(Float)
     regime = Column(Enum(Regime), primary_key=True)  # restricts to a few values: Optical, Infrared
     best = Column(Boolean)  # flag for indicating if this is the best measurement or not
