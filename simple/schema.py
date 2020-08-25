@@ -66,3 +66,13 @@ class Photometry(Base):
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), primary_key=True)
 
+
+class Parallaxes(Base):
+    # Table to store parallax values in milliarcseconds
+    __tablename__ = 'Parallaxes'
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'), nullable=False, primary_key=True)
+    parallax = Column(Float)
+    parallax_error = Column(Float)
+    best = Column(Boolean)  # flag for indicating if this is the best measurement or not
+    comments = Column(String(1000))
+    reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), primary_key=True)

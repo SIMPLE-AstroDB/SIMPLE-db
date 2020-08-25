@@ -216,6 +216,22 @@ def test_photometry(db):
     assert len(t) == 0
 
 
+def test_parallaxes(db):
+    # Tests against the Parallaxes table
+
+    # While there may be many parallax measurements for a single source,
+    # there should be one and only one marked as best
+    t = db.query(db.Parallaxes.c.source,
+                 func.sum(db.Parallaxes.c.best).label('best_counts')). \
+        group_by(db.Parallaxes.c.source). \
+        having(func.sum(db.Parallaxes.c.best) != 1). \
+        astropy()
+    if len(t) > 0:
+        print("\nParallax entries with incorrect 'best' labels")
+        print(t)
+    assert len(t) == 0
+
+
 def test_remove_database(db):
     # Clean up temporary database
     db.session.close()
