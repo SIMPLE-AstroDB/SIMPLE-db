@@ -1,6 +1,7 @@
 # Schema for the SIMPLE database
 
 from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, BigInteger, Enum, Date, DateTime
+import enum
 from astrodbkit2.astrodb import Base
 
 
@@ -32,6 +33,25 @@ class Instruments(Base):
 # -------------------------------------------------------------------------------------------------------------------
 # Hard-coded enumerations
 
+class Regime(enum.Enum):
+    """Enumeration for spectral type regime"""
+    gammaray = 'gammaray'
+    xray = 'xray'
+    ultraviolet = 'ultraviolet'
+    optical = 'optical'
+    infrared = 'infrared'
+    millimeter = 'millimeter'
+    radio = 'radio'
+
+
+class Gravity(enum.Enum):
+    """Enumeration for gravity"""
+    a = 'alpha'
+    b = 'beta'
+    g = 'gamma'
+    bg = 'beta/gamma'
+    unknown = 'unknown'
+
 
 # -------------------------------------------------------------------------------------------------------------------
 # Main tables
@@ -48,13 +68,15 @@ class Sources(Base):
 
 class Names(Base):
     __tablename__ = 'Names'
-    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'), nullable=False, primary_key=True)
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
+                    nullable=False, primary_key=True)
     other_name = Column(String(100), primary_key=True, nullable=False)
 
 
 class Photometry(Base):
     __tablename__ = 'Photometry'
-    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'), nullable=False, primary_key=True)
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
+                    nullable=False, primary_key=True)
     band = Column(String(30), primary_key=True)
     ucd = Column(String(100))
     magnitude = Column(Float)
@@ -70,7 +92,8 @@ class Photometry(Base):
 class Parallaxes(Base):
     # Table to store parallax values in milliarcseconds
     __tablename__ = 'Parallaxes'
-    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'), nullable=False, primary_key=True)
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
+                    nullable=False, primary_key=True)
     parallax = Column(Float)
     parallax_error = Column(Float)
     best = Column(Boolean)  # flag for indicating if this is the best measurement or not
@@ -81,7 +104,8 @@ class Parallaxes(Base):
 class ProperMotions(Base):
     # Table to store proper motions, in milliarcseconds per year
     __tablename__ = 'ProperMotions'
-    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'), nullable=False, primary_key=True)
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
+                    nullable=False, primary_key=True)
     mu_ra = Column(Float)
     mu_ra_error = Column(Float)
     mu_dec = Column(Float)
@@ -93,8 +117,22 @@ class ProperMotions(Base):
 class RadialVelocities(Base):
     # Table to store radial velocities, in km/sec
     __tablename__ = 'RadialVelocities'
-    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'), nullable=False, primary_key=True)
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
+                    nullable=False, primary_key=True)
     radial_velocity = Column(Float)
     radial_velocity_error = Column(Float)
+    comments = Column(String(1000))
+    reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
+
+
+class SpectralTypes(Base):
+    # Table to store spectral types, as strings
+    __tablename__ = 'SpectralTypes'
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
+                    nullable=False, primary_key=True)
+    spectral_type = Column(String(10))  # must start with OBAFGKMLTY
+    spectral_type_error = Column(Float)
+    regime = Column(Enum(Regime), primary_key=True)  # restricts to a few values: Optical, Infrared
+    best = Column(Boolean)  # flag for indicating if this is the best measurement or not
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
