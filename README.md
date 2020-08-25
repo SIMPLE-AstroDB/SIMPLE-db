@@ -24,7 +24,7 @@ A conda environment file exists for convenience.
 pip install git+https://github.com/dr-rodriguez/AstrodbKit2
 ```
 
-5. Create the database. If you already have a database (eg, a binary db file with SQLite), skip to the next step. 
+5. Create the database. If you already have a database (eg, a binary db file with SQLite), **skip to the next step**. 
 
 ```python
 from astrodbkit2.astrodb import create_database
@@ -48,3 +48,10 @@ db = Database(connection_string)
 ```python
 db.load_database('data')
 ```
+
+## Database Schema
+
+The database schema can be found in simple/schema.py using the SQLAlchemy ORM.
+
+Here is a graphical representation of that:
+![schema](documentation/figures/schema.png)
