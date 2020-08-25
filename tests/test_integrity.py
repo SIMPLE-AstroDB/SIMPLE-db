@@ -98,7 +98,7 @@ def test_source_names(db):
     # Verify that all sources have at least one entry in Names table
     sql_text = "SELECT Sources.source	FROM Sources LEFT JOIN Names " \
              "ON Names.source=Sources.source WHERE Names.source IS NULL"
-    missing_names = db.sql_query(sql_text, format='astropy')
+    missing_names = db.sql_query(sql_text, fmt='astropy')
     assert len(missing_names) == 0
 
 
@@ -111,7 +111,7 @@ def test_source_uniqueness(db):
     # Another method to find the duplicates
     sql_text = "SELECT Sources.source FROM Sources GROUP BY source " \
                "HAVING (Count(*) > 1)"
-    duplicate_names = db.sql_query(sql_text, format='astropy')
+    duplicate_names = db.sql_query(sql_text, fmt='astropy')
 
     # if duplicate_names is non_zero, print out duplicate names
     if len(duplicate_names) > 0:
@@ -163,7 +163,7 @@ def test_source_uniqueness2(db):
     # Verify that all Sources.source values are unique and find the duplicates
     sql_text = "SELECT Sources.source FROM Sources GROUP BY source " \
                "HAVING (Count(*) > 1)"
-    duplicate_names = db.sql_query(sql_text, format='astropy')
+    duplicate_names = db.sql_query(sql_text, fmt='astropy')
     # if duplicate_names is non_zero, print out duplicate names
     assert len(duplicate_names) == 0
 
@@ -192,7 +192,7 @@ def test_source_simbad(db):
             continue
 
         # Examine DB for each input, displaying results when more than one source matches
-        t = db.search_object(simbad_names, output_table='Sources', format='astropy', fuzzy_search=False)
+        t = db.search_object(simbad_names, output_table='Sources', fmt='astropy', fuzzy_search=False)
         if len(t) > 1:
             print(f'Multiple matches for {name}: {simbad_names}')
             print(db.query(db.Names).filter(db.Names.c.source.in_(t['source'])).astropy())

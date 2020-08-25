@@ -61,9 +61,9 @@ data = db.inventory('2MASS J13571237+1428398', pretty_print=True)
 print(type(data))
 
 # Search method
-db.search_object('twa 27', format='astropy')
-db.search_object('twa 27', format='astropy', resolve_simbad=True, output_table='Names')
-db.search_object('1357+1428', output_table='Photometry', format='astropy')
+db.search_object('twa 27', fmt='astropy')
+db.search_object('twa 27', fmt='astropy', resolve_simbad=True, output_table='Names')
+db.search_object('1357+1428', output_table='Photometry', fmt='astropy')
 
 # Delete a row
 for row in db.query(db.Photometry).all():
