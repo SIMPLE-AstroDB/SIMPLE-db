@@ -4,6 +4,8 @@ Generates the whole database as a table on page
 
 Methods
 -------
+Qry
+    For the query string check
 make_table
     Creates the columndatasource and datatable (bokeh objects) using query of sources
 main
@@ -15,6 +17,14 @@ import numpy as np
 
 # local libs
 from web_base import load_db
+
+
+class Qry:
+    def __init__(self, instr: str):
+        if instr == 'notanobject':
+            self.default = True
+        else:
+            self.default = False
 
 
 def make_table(results: list):
@@ -53,6 +63,29 @@ def make_table(results: list):
     return cds, dt
 
 
+def querying(qrystr: str = 'notanobject'):
+    """
+    Queries the database for an object
+
+    Parameters
+    ----------
+    qrystr
+        The partial string of an object
+
+    Returns
+    -------
+    The list of tuples of object info
+    """
+    qry = Qry(qrystr)
+    db = load_db()  # load the database
+    results = db.search_object(qrystr)
+    if qry.default:
+        return results
+    else:
+        results = [obj[:3] for obj in results]
+        return results
+
+
 def main():
     """
     Main module, queries database and returns the resultant table
@@ -64,10 +97,7 @@ def main():
     dt
         DataTable, the bokeh object to be displayed on page
     """
-    db = load_db()  # load the database
-    # TODO: what about when there are tonnes of objects, need to cut up table or have searching implemented
-    # TODO: a callback on the dt object to parse the next X sources
-    results = db.query(db.Sources).all()  # query all the sources into one list
+    results = querying()
     cds, dt = make_table(results)  # create the bokeh elements
     return cds, dt
 

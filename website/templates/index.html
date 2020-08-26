@@ -34,14 +34,6 @@
     <!-- Font Awesome v.5.0.12 -->
     <link rel="stylesheet" href="/static/css/all.css" crossorigin="anonymous">
 
-    <!-- jquery datatable -->
-    <script src="/static/js/jquery.dataTables.min.js"
-            crossorigin="anonymous">
-    </script>
-    <script src="/static/css/jquery.dataTables.min.css"
-            crossorigin="anonymous">
-    </script>
-
     <!-- Custom CSS Styling -->
     <style>
         /* reset */
@@ -77,8 +69,13 @@
     <!-- header box -->
     <div id="header" style="width: 100%; height: 100px; background-color: deepskyblue;
      padding-bottom: 10px;">
-        <h1 style="color: floralwhite; position: relative; top: 45%; left: 45% ; width: 95%; font-size: xx-large">
+        <h1 style="color: floralwhite; position: relative; top: 45%; left: 35% ; width: 85%; font-size: xx-large">
             Simple Browser</h1>
+        <div id="searchButton" style="width: 10%; position: absolute; right: 20%; display: none">
+            {%- block searchbutton -%}
+            {{ embed(roots.searchbutton) }}
+            {%- endblock -%}
+        </div>
     </div>
 
     <!-- Following two divs are to get the content blocks centrally aligned on the page, under the header box -->
@@ -119,11 +116,15 @@
                 {{ embed(roots.datatable) }}
                 {%- endblock -%}
             </div>
-            <script>
-            $(document).ready( function () {
-                $('#fullTable').DataTable();
-            } );
-            </script>
+        </div>
+    </div>
+
+    <div id="searchWrapper" style="position: absolute; top: 110px; width: 100%; text-align: center;
+     height: 740px; background-color: darkslateblue; overflow-y: hidden; z-index: 3">
+        <div id="searchBar" style="display: inline-block; width: 40%; top: 45%; font-size: large; position: relative">
+            {%- block searchbar -%}
+            {{ embed(roots.searchbar) }}
+            {%- endblock -%}
         </div>
     </div>
     {%- endblock -%}
