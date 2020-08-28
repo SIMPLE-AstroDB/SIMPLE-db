@@ -136,3 +136,14 @@ class SpectralTypes(Base):
     best = Column(Boolean)  # flag for indicating if this is the best measurement or not
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
+
+
+class Gravities(Base):
+    # Table to store gravity measurements
+    __tablename__ = 'Gravities'
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
+                    nullable=False, primary_key=True)
+    gravity = Column(Enum(Gravity))  # restricts to enumerated values
+    regime = Column(Enum(Regime), primary_key=True)  # restricts to a few values: Optical, Infrared
+    comments = Column(String(1000))
+    reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)

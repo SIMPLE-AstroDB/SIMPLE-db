@@ -283,8 +283,18 @@ def test_spectraltypes(db):
         print(t)
     assert len(t) == 0
 
-    # TODO: Test for the starting string (OBAFGKMLTY, sd, esd, usd)?
-    pass
+
+def test_gravities(db):
+    # Tests against the Gravities table
+
+    # There should be no entries in the SpectralTypes table without a spectral type
+    t = db.query(db.Gravities.c.source). \
+        filter(db.Gravities.c.gravity.is_(None)). \
+        astropy()
+    if len(t) > 0:
+        print('\nEntries found without gravity values')
+        print(t)
+    assert len(t) == 0
 
 
 def test_remove_database(db):
