@@ -43,10 +43,18 @@ connection_string = 'sqlite:///SIMPLE.db'  # SQLite
 db = Database(connection_string)
 ```
 
-7. Load database contents from repo, if needed.
+7. Load database contents from source, if needed. 
+This will ensure you are working with the latest version.
 
 ```python
 db.load_database('data')
+```
+
+8. Commit any changes back to source, if needed.
+This changes can then be submitted via pull request to the repo.
+
+```python
+db.save_database('data')
 ```
 
 ## Database Schema
