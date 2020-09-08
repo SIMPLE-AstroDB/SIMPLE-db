@@ -49,8 +49,12 @@ class Gravity(enum.Enum):
     a = 'alpha'
     b = 'beta'
     g = 'gamma'
+    d = 'delta'
     bg = 'beta/gamma'
     unknown = 'unknown'
+    vlg = 'vl-g'
+    intg = 'int-g'
+    fldg = 'fld-g'
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -96,7 +100,7 @@ class Parallaxes(Base):
                     nullable=False, primary_key=True)
     parallax = Column(Float)
     parallax_error = Column(Float)
-    best = Column(Boolean)  # flag for indicating if this is the best measurement or not
+    adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), primary_key=True)
 
@@ -133,7 +137,7 @@ class SpectralTypes(Base):
     spectral_type = Column(String(10))
     spectral_type_error = Column(Float)
     regime = Column(Enum(Regime), primary_key=True)  # restricts to a few values: Optical, Infrared
-    best = Column(Boolean)  # flag for indicating if this is the best measurement or not
+    adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
 

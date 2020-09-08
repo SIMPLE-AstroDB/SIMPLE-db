@@ -220,14 +220,14 @@ def test_parallaxes(db):
     # Tests against the Parallaxes table
 
     # While there may be many parallax measurements for a single source,
-    # there should be one and only one marked as best
+    # there should be one and only one marked as adopted
     t = db.query(db.Parallaxes.c.source,
-                 func.sum(db.Parallaxes.c.best).label('best_counts')). \
+                 func.sum(db.Parallaxes.c.adopted).label('adopted_counts')). \
         group_by(db.Parallaxes.c.source). \
-        having(func.sum(db.Parallaxes.c.best) != 1). \
+        having(func.sum(db.Parallaxes.c.adopted) != 1). \
         astropy()
     if len(t) > 0:
-        print("\nParallax entries with incorrect 'best' labels")
+        print("\nParallax entries with incorrect 'adopted' labels")
         print(t)
     assert len(t) == 0
 
@@ -272,14 +272,14 @@ def test_spectraltypes(db):
     assert len(t) == 0
 
     # While there may be many spectral type measurements for a single source,
-    # there should be one and only one marked as best
+    # there should be one and only one marked as adopted
     t = db.query(db.SpectralTypes.c.source,
-                 func.sum(db.SpectralTypes.c.best).label('best_counts')). \
+                 func.sum(db.SpectralTypes.c.adopted).label('adopted_counts')). \
         group_by(db.SpectralTypes.c.source). \
-        having(func.sum(db.SpectralTypes.c.best) != 1). \
+        having(func.sum(db.SpectralTypes.c.adopted) != 1). \
         astropy()
     if len(t) > 0:
-        print("\nSpectral Type entries with incorrect 'best' labels")
+        print("\nSpectral Type entries with incorrect 'adopted' labels")
         print(t)
     assert len(t) == 0
 
@@ -287,7 +287,7 @@ def test_spectraltypes(db):
 def test_gravities(db):
     # Tests against the Gravities table
 
-    # There should be no entries in the SpectralTypes table without a spectral type
+    # There should be no entries in the Gravities table without a gravity measurement
     t = db.query(db.Gravities.c.source). \
         filter(db.Gravities.c.gravity.is_(None)). \
         astropy()
