@@ -12,6 +12,8 @@ spectra_fig
 main
     Generating initial elements on current document and assigns callback to fill them on selection
 """
+# inbuilt libs
+from string import Template
 # 3rd party imports
 from bokeh.models import ColumnDataSource, PreText, DataTable, TableColumn, TextInput, CustomJS, Button
 from bokeh.plotting import curdoc, figure
@@ -19,8 +21,10 @@ import numpy as np
 # local imports
 import splash_table as st
 import gen_info as geninfo
-import gen_plot as genspec
+#  import gen_plot as genspec
 import gen_photo as genphot
+
+input_string = Template('$typed')
 
 
 def info_box():
@@ -150,7 +154,12 @@ def main():
         new
             The new object (required under hood)
         """
-        selected_index = dtcds.selected.indices[0]  # the index selected from datatable on page
+        for _ in (attrname, old, new):
+            pass  # make pycharm shut up about unused parameters
+        try:
+            selected_index = dtcds.selected.indices[0]  # the index selected from datatable on page
+        except IndexError:
+            return
         data = dtcds.data  # the data in table
         target = data['sname'][selected_index]  # pulling out object name
 
@@ -162,6 +171,8 @@ def main():
 
         specfig.title.text = target  # change title on spectra to object name
         # TODO: add spectra in here
+        sbar.value = 'bye'
+        sbar.value = ''
         return
 
     def sbar_update(attrname, old, new):
@@ -178,16 +189,86 @@ def main():
         new
             The new object (required under hood)
         """
-        qry = sbar.value_input
-        results = np.array(st.querying(qry))
-        snames, ras, decs = [], [], []
-        if results.size:  # not empty
-            snames = results[:, 0]
-            ras = results[:, 1]
-            decs = results[:, 2]
-        dtcds.data = dict(sname=snames, ra=ras, dec=decs)
+        for _ in (attrname, old, new):
+            pass  # make pycharm shut up about unused parameters
+        query_string = sbar.value_input
+        query_string = input_string.substitute(typed=query_string)
+        results = st.querying(query_string)
+        data = st.results_unpack(results)
+        dtcds.data = data
         return
 
+    def clear_page(event):
+        """
+        Python callback function for clearing the page on button press
+        The parameters shown are not used in shown script but are required in the bokeh callback manager
+
+        Parameters
+        ----------
+        event
+            The triggering event object (required under hood)
+        """
+        for _ in (event, ):
+            pass  # make pycharm shut up about unused parameters
+        dtcds.selected.indices = []
+        sbar.value_input = ''
+
+        km = [*genphot.KNOWN_MAGS.keys(), ]
+        vals, valserr = [None, ] * len(km), [None, ] * len(km)
+        photcds.data = dict(bands=km, vals=vals, valserr=valserr)
+
+        infopre.text = ''
+
+        specfig.title.text = ''
+        return
+
+    # TODO: the animates are not working properly, something weird with js as usual
+    # js callbacks
+    sbar_callback = CustomJS(code="""
+        var AnimationStep = 10; //pixels
+        var AnimationInterval = 100; //milliseconds
+    
+        var oDiv = document.getElementById("searchWrapper");
+        if (typeof this.value !== 'undefined') {
+            AnimateDown(oDiv, 0); 
+            oDiv.style.display = "none";
+            document.getElementById("searchButton").style.display = "block"; 
+        }
+    
+        function AnimateDown(element, targetHeight) {
+            let curHeight = element.clientHeight;
+            if (curHeight <= targetHeight)
+                return true;
+            let newHeight = curHeight - AnimationStep;
+            element.style.height = newHeight.toString() + "px";
+            setTimeout(function() {
+                AnimateDown(element, targetHeight);
+            }, AnimationInterval);
+            return false;
+        }
+    """)
+    sbutt_callback = CustomJS(code="""
+        var AnimationStep = 10; //pixels
+        var AnimationInterval = 10; //milliseconds
+
+        var oDiv = document.getElementById("searchWrapper");
+        oDiv.style.display = "block";
+        Animate(oDiv, 740);  
+
+        function Animate(element, targetHeight) {
+            let curHeight = element.clientHeight;
+            if (curHeight >= targetHeight)
+                return true;
+            let newHeight = curHeight + AnimationStep;
+            element.style.height = newHeight.toString() + "px";
+            setTimeout(function() {
+                Animate(element, targetHeight);
+            }, AnimationInterval);
+            return false;
+        }
+        document.getElementById("searchButton").style.display = "none";
+        document.getElementsByName("searchbar")[0].focus();
+        """)
     # document title
     curdoc().template_variables['title'] = 'Simple Browser'
     curdoc().title = 'Simple Browser'
@@ -206,55 +287,12 @@ def main():
     curdoc().add_root(dt)  # embed full table in page
 
     sbar = search_bar()  # the search bar object
-    # TODO: the animates are not working properly, something weird with js as usual
-    sbar_callback = CustomJS(code="""
-    var AnimationStep = 10; //pixels
-    var AnimationInterval = 100; //milliseconds
-    
-    var oDiv = document.getElementById("searchWrapper");
-    AnimateDown(oDiv, 0);  
-    
-    function AnimateDown(element, targetHeight) {
-        let curHeight = element.clientHeight;
-        if (curHeight <= targetHeight)
-            return true;
-        let newHeight = curHeight - AnimationStep;
-        element.style.height = newHeight.toString() + "px";
-        setTimeout(function() {
-            AnimateDown(element, targetHeight);
-        }, AnimationInterval);
-        return false;
-    }
-    oDiv.style.display = "none";
-    document.getElementById("searchButton").style.display = "block";
-    """)
     sbar.on_change('value_input', sbar_update)  # called on keypress
     sbar.js_on_change('value', sbar_callback)  # called on enter key or click away
     curdoc().add_root(sbar)
 
     sbutt = search_button()  # the search button
-    sbutt_callback = CustomJS(code="""
-    var AnimationStep = 10; //pixels
-    var AnimationInterval = 10; //milliseconds
-    
-    var oDiv = document.getElementById("searchWrapper");
-    oDiv.style.display = "block";
-    Animate(oDiv, 740);  
-    
-    function Animate(element, targetHeight) {
-        let curHeight = element.clientHeight;
-        if (curHeight >= targetHeight)
-            return true;
-        let newHeight = curHeight + AnimationStep;
-        element.style.height = newHeight.toString() + "px";
-        setTimeout(function() {
-            Animate(element, targetHeight);
-        }, AnimationInterval);
-        return false;
-    }
-    document.getElementById("searchButton").style.display = "none";
-    document.getElementsByName("searchbar")[0].focus();
-    """)
+    sbutt.on_click(clear_page)
     sbutt.js_on_click(sbutt_callback)
     curdoc().add_root(sbutt)
     return

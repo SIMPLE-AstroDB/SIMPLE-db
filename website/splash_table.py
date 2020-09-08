@@ -4,37 +4,54 @@ Generates the whole database as a table on page
 
 Methods
 -------
-Qry
-    For the query string check
+results_unpack
+    Unpacks the results query into name, ra, dec
 make_table
     Creates the columndatasource and datatable (bokeh objects) using query of sources
 main
     Control module, designed to be called directly, will query simple database return the make_table outputs
 """
 # 3rd party libs
-from bokeh.models import DataTable, TableColumn, ColumnDataSource, CustomJS
-import numpy as np
+from bokeh.models import DataTable, TableColumn, ColumnDataSource
+import pandas as pd
 
 # local libs
 from web_base import load_db
 
 
-class Qry:
-    def __init__(self, instr: str):
-        if instr == 'notanobject':
-            self.default = True
-        else:
-            self.default = False
+def results_unpack(results: pd.DataFrame):
+    """
+    Converts the results dataframe into a dictionary of just name, ra, dec
+
+    Parameters
+    ----------
+    results
+        The dataframe of the full returned results from queried string
+
+    Returns
+    -------
+    data
+        The dictionary of the searched for objects just name, ra, dec
+    """
+    if len(results):
+        data = dict(
+            sname=results['source'].astype(str).values,  # object name
+            ra=results['ra'].astype(float).values,  # object ra
+            dec=results['dec'].astype(float).values  # object dec
+        )
+    else:
+        data = dict(sname=[], ra=[], dec=[])
+    return data
 
 
-def make_table(results: list):
+def make_table(data: dict):
     """
     Creates the table and data source components
 
     Parameters
     ----------
-    results
-        The list of objects in the database
+    data
+        The dictionary of objects in the database
 
     Returns
     -------
@@ -43,14 +60,6 @@ def make_table(results: list):
     dt
         DataTable, the bokeh object to be displayed on page
     """
-    vals = np.empty((len(results), 3), dtype=object)
-    for i, obj in enumerate(results):
-        vals[i] = obj[:3]  # only take name, ra, dec
-    data = dict(
-        sname=vals[:, 0].astype(str),  # object name
-        ra=vals[:, 1].astype(float),  # object ra
-        dec=vals[:, 2].astype(float)  # object dec
-    )
     cds = ColumnDataSource(data)  # pack into CDS
     cols = [
         TableColumn(field="sname", title="Name"),  # the column appearing on page for object name
@@ -63,27 +72,22 @@ def make_table(results: list):
     return cds, dt
 
 
-def querying(qrystr: str = 'notanobject'):
+def querying(query_string: str = ''):
     """
     Queries the database for an object
 
     Parameters
     ----------
-    qrystr
+    query_string
         The partial string of an object
 
     Returns
     -------
     The list of tuples of object info
     """
-    qry = Qry(qrystr)
     db = load_db()  # load the database
-    results = db.search_object(qrystr)
-    if qry.default:
-        return results
-    else:
-        results = [obj[:3] for obj in results]
-        return results
+    results = db.search_object(query_string, format='pandas')
+    return results
 
 
 def main():
@@ -98,7 +102,8 @@ def main():
         DataTable, the bokeh object to be displayed on page
     """
     results = querying()
-    cds, dt = make_table(results)  # create the bokeh elements
+    data = results_unpack(results)
+    cds, dt = make_table(data)  # create the bokeh elements
     return cds, dt
 
 

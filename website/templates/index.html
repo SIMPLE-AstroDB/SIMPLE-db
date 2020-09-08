@@ -117,15 +117,24 @@
                 {%- endblock -%}
             </div>
         </div>
-    </div>
 
-    <div id="searchWrapper" style="position: absolute; top: 110px; width: 100%; text-align: center;
-     height: 740px; background-color: darkslateblue; overflow-y: hidden; z-index: 3">
-        <div id="searchBar" style="display: inline-block; width: 40%; top: 45%; font-size: large; position: relative">
-            {%- block searchbar -%}
-            {{ embed(roots.searchbar) }}
-            {%- endblock -%}
+        <div id="searchWrapper" style="position: absolute; top: 110px; width: 100%; text-align: center;
+         height: 740px; background-color: darkslateblue; overflow-y: hidden; z-index: 3; display: block">
+            <div id="searchBar" style="display: inline-block; width: 40%; top: 45%; font-size: large; position: relative">
+                {%- block searchbar -%}
+                {{ embed(roots.searchbar) }}
+                {%- endblock -%}
+            </div>
         </div>
+        <script>
+            setInterval(searchBarFocus, 2000);
+            function searchBarFocus() {
+                console.log(document.getElementById("searchWrapper").style.display);
+                if (document.getElementById("searchWrapper").style.display === 'block') {
+                    document.getElementsByName("searchbar")[0].focus();
+                }
+            }
+        </script>
     </div>
     {%- endblock -%}
 </body>
