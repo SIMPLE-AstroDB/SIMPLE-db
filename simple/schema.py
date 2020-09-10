@@ -30,6 +30,11 @@ class Instruments(Base):
     reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'))
 
 
+class Modes(Base):
+    __tablename__ = 'Modes'
+    name = Column(String(30), primary_key=True, nullable=False)
+
+
 # -------------------------------------------------------------------------------------------------------------------
 # Hard-coded enumerations
 
@@ -149,5 +154,30 @@ class Gravities(Base):
                     nullable=False, primary_key=True)
     gravity = Column(Enum(Gravity), nullable=False)  # restricts to enumerated values
     regime = Column(Enum(Regime), primary_key=True)  # restricts to a few values: Optical, Infrared
+    comments = Column(String(1000))
+    reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
+
+
+class Spectra(Base):
+    # Table to store references to spectra
+    __tablename__ = 'Spectra'
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
+                    nullable=False, primary_key=True)
+
+    # Data
+    spectrum = Column(String(1000), nullable=False)  # URL of spectrum location
+    local_spectrum = Column(String(1000))  # local directory (via environment variable) of spectrum location
+
+    # Metadata
+    regime = Column(Enum(Regime), primary_key=True)  # eg, Optical, Infrared, etc
+    telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'))
+    instrument = Column(String(30), ForeignKey('Instruments.name', onupdate='cascade'))
+    mode = Column(String(30), ForeignKey('Modes.name', onupdate='cascade'))  # eg, Prism, Echelle, etc
+    observation_date = Column(DateTime, nullable=False)
+    wavelength_units = Column(String(10))
+    flux_units = Column(String(10))
+    wavelength_order = Column(Integer)
+
+    # Common metadata
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
