@@ -20,7 +20,7 @@ spec_data = [{'source': '2MASS J00192626+4614078',
               'mode': 'Prism',
               'reference': 'Cruz18',
               'wavelength_units': 'um',
-              'flux_units': 'ergs-1 cm-2 A-1',
+              'flux_units': 'erg s-1 cm-2 A-1',
               'observation_date': datetime.fromisoformat('2004-11-08')
               }]
 db.Spectra.insert().execute(spec_data)
@@ -29,7 +29,11 @@ _ = db.inventory('2MASS J00192626+4614078', pretty_print=True)
 
 # Getting spectrum object
 db.query(db.Spectra.c.spectrum).filter(db.Spectra.c.source == '2MASS J00192626+4614078').table(spectra=['spectrum'])
-db.query(db.Spectra.c.spectrum).filter(db.Spectra.c.source == '2MASS J00192626+4614078').spectra()
+t = db.query(db.Spectra.c.spectrum).filter(db.Spectra.c.source == '2MASS J00192626+4614078').limit(1).spectra()
+
+# Confirm that it is a Spectrum1D object
+spec = t[0][0]
+print(type(spec))
 
 # Save into database folder
 db.save_database('data')
