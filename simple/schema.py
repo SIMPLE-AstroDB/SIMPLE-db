@@ -174,8 +174,8 @@ class Spectra(Base):
     instrument = Column(String(30), ForeignKey('Instruments.name', onupdate='cascade'))
     mode = Column(String(30), ForeignKey('Modes.name', onupdate='cascade'))  # eg, Prism, Echelle, etc
     observation_date = Column(DateTime, nullable=False)
-    wavelength_units = Column(String(10))
-    flux_units = Column(String(10))
+    wavelength_units = Column(String(20))
+    flux_units = Column(String(20))
     wavelength_order = Column(Integer)
 
     # Common metadata

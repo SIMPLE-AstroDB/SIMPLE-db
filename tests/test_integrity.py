@@ -309,6 +309,8 @@ def test_spectra(db):
         print(t)
     assert len(t) == 0
 
+    # TODO: Consider testing that units are astropy.units resolvable?
+
 
 def test_remove_database(db):
     # Clean up temporary database
