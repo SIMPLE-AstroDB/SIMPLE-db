@@ -9,7 +9,9 @@ db = Database(connection_string)
 # Add missing telescopes, etc
 db.Telescopes.insert().execute([{'name': 'IRTF'}])
 db.Instruments.insert().execute([{'name': 'SpeX'}])
-db.Modes.insert().execute([{'name': 'Prism'}])
+db.Modes.insert().execute([{'name': 'Prism',
+                            'instrument': 'SpeX',
+                            'telescope': 'IRTF'}])
 
 # Add actual Spectra
 spec_data = [{'source': '2MASS J00192626+4614078',

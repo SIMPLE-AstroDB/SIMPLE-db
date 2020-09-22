@@ -1,6 +1,6 @@
 # Schema for the SIMPLE database
 
-from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, BigInteger, Enum, Date, DateTime
+from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, Enum, DateTime, ForeignKeyConstraint
 import enum
 from astrodbkit2.astrodb import Base
 
@@ -33,6 +33,8 @@ class Instruments(Base):
 class Modes(Base):
     __tablename__ = 'Modes'
     name = Column(String(30), primary_key=True, nullable=False)
+    instrument = Column(String(30), ForeignKey('Instruments.name', onupdate='cascade'), primary_key=True)
+    telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'), primary_key=True)
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -170,10 +172,10 @@ class Spectra(Base):
 
     # Metadata
     regime = Column(Enum(Regime), primary_key=True)  # eg, Optical, Infrared, etc
-    telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'))
-    instrument = Column(String(30), ForeignKey('Instruments.name', onupdate='cascade'))
-    mode = Column(String(30), ForeignKey('Modes.name', onupdate='cascade'))  # eg, Prism, Echelle, etc
-    observation_date = Column(DateTime, nullable=False)
+    telescope = Column(String(30))
+    instrument = Column(String(30))
+    mode = Column(String(30))  # eg, Prism, Echelle, etc
+    observation_date = Column(DateTime, primary_key=True)
     wavelength_units = Column(String(20))
     flux_units = Column(String(20))
     wavelength_order = Column(Integer)
@@ -181,3 +183,9 @@ class Spectra(Base):
     # Common metadata
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
+
+    # Foreign key constraints for telescope, instrument, mode; all handled via reference to Modes table
+    __table_args__ = (ForeignKeyConstraint([telescope, instrument, mode],
+                                           [Modes.telescope, Modes.instrument, Modes.name],
+                                           onupdate="cascade"),
+                      {})
