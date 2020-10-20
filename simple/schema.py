@@ -72,6 +72,8 @@ class Sources(Base):
     source = Column(String(100), primary_key=True, nullable=False)
     ra = Column(Float)
     dec = Column(Float)
+    epoch = Column(String(10))  # eg, J2000
+    equinox = Column(Float)  # decimal year
     shortname = Column(String(30))  # not needed?
     reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), nullable=False)
     comments = Column(String(1000))
