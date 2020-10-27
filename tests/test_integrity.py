@@ -183,7 +183,12 @@ def test_source_simbad(db):
     # Get a nicely formatted list of Simbad names for each input row
     duplicate_count = 0
     for row in simbad_results[['TYPED_ID', 'IDS']].iterrows():
+        try:
         name, ids = row[0].decode("utf-8"), row[1].decode("utf-8")
+        except AttributeError:
+            # Catch decoding error
+            name, ids = row[0], row[1]
+
         simbad_names = [_name_formatter(s) for s in ids.split('|')
                         if _name_formatter(s) != '' and _name_formatter(s) is not None]
 
