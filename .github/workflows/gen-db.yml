@@ -4,8 +4,8 @@ name: Generate Database
 
 on:
   workflow_dispatch:  # manual execution
-  schedule:
-    - cron:  '0 12 15 * *' # 12:00 UTC on the 15th of each month
+#  schedule:
+#    - cron:  '0 12 15 * *' # 12:00 UTC on the 15th of each month
 
 jobs:
   build:
