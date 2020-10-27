@@ -184,7 +184,7 @@ def test_source_simbad(db):
     duplicate_count = 0
     for row in simbad_results[['TYPED_ID', 'IDS']].iterrows():
         try:
-        name, ids = row[0].decode("utf-8"), row[1].decode("utf-8")
+            name, ids = row[0].decode("utf-8"), row[1].decode("utf-8")
         except AttributeError:
             # Catch decoding error
             name, ids = row[0], row[1]
