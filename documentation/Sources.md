@@ -1,4 +1,4 @@
-# Sources Table
+# Sources
 
 The Sources table contains all objects in the database alongside their coordinates. 
 This is considered the 'primary' table in the database, as each source 
