@@ -1,6 +1,6 @@
 # Sources Table
 
-The Sources table contains all objects in the database alongside their coordiantes. 
+The Sources table contains all objects in the database alongside their coordinates. 
 This is considered the 'primary' table in the database, as each source 
 is expected to be unique and is referred to by all other object tables.
 
