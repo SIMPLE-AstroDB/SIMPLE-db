@@ -6,7 +6,7 @@ that is used across individual sources.
 
 Object Tables:
  - [Sources](Sources.md)
- - Names
+ - [Names](Names.md)
  - Photometry
  - Parallaxes
  - ProperMotions
