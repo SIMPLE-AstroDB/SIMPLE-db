@@ -65,8 +65,8 @@ class Sources(Base):
     source = Column(String(100), primary_key=True, nullable=False)
     ra = Column(Float)
     dec = Column(Float)
-    epoch = Column(String(10))  # eg, J2000
-    equinox = Column(Float)  # decimal year
+    epoch = Column(Float)  # decimal year
+    equinox = Column(String(10))  # eg, J2000
     shortname = Column(String(30))  # not needed?
     reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), nullable=False)
     comments = Column(String(1000))
@@ -90,7 +90,7 @@ class Photometry(Base):
     # system = Column(String(30), ForeignKey('Systems.name'))
     telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'))
     instrument = Column(String(30), ForeignKey('Instruments.name', onupdate='cascade'))
-    epoch = Column(String(30))
+    epoch = Column(Float)  # decimal year
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), primary_key=True)
 
