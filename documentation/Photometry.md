@@ -13,7 +13,7 @@ The combination of *source*, *band*, and *reference* is expected to be unique.
 | magnitude_error | Magnitude uncertainty | mag | Float  |   |
 | telescope | Name of telescope |  | String(30)  | foreign: Telescopes.name |
 | instrument | Name of instrument |  | String(30)  | foreign: Instruments.name |
-| epoch     |  |   | String(30) |   |
+| epoch     | Decimal year | year | Float |   |
 | comments  | Free form comments |   | String(1000) |   |
 | reference | Reference to source |   | String(30) | primary and foreign: Publications.name |
 
