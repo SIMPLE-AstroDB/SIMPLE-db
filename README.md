@@ -16,7 +16,12 @@ If you'd like to set up your own copy of the SIMPLE database, here's what we rec
 1. Clone or download a copy of this repo somewhere locally
 
 2. Set up an environment for the python code. 
-A conda environment file exists for convenience.
+A conda environment file exists for convenience. The following commands will create and activate an environment called `simple-db`
+
+```bash
+conda env create -f environment2.yml
+conda activate simple-db
+```
 
 3. Install the AstrodbKit2 package:
 
