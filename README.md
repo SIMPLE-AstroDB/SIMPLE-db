@@ -2,9 +2,9 @@
 
 The vision of the SIMPLE project is to create a *collaborative* database of low-mass stars, brown dwarfs, and directly 
 imaged exoplanets: a simple archive of complex objects. The tables and fields currently included in the 
-database are described in the [Documentation](https://github.com/SIMPLE-AstroDB/SIMPLE-db/blob/main/documentation/README.md) 
+database are described in the [Documentation](documentation/README.md) 
 and currently include names, coordinates, photometry and reference and data provenance information and is visualized 
-in the [schema](https://github.com/SIMPLE-AstroDB/SIMPLE-db#database-schema) below. 
+in the [schema](#database-schema) below. 
 We are currently working on including kinematics, spectra, images, and modeled and retrieved parameters. 
 
 We are developing several different methods to interact with the database, including python, a website and API, and 
@@ -36,23 +36,12 @@ A conda environment file exists for convenience. The following commands will cre
     conda env create -f environment2.yml
     conda activate simple-db
     ```
-    <!--- 
-    # 3. Install the AstrodbKit2 package:
-    #
-    # ```bash
-    # pip install git+https://github.com/dr-rodriguez/AstrodbKit2
-    # ```
     
-    # 5. Create the database from the data. If you already have a database (eg, a binary db file with SQLite), **skip to the next step**. 
-    #
-    # ```python
-    # from astrodbkit2.astrodb import create_database
-    # from simple.schema import * # Sets up the SIMPLE database schema
+3. Install the latest version of the AstrodbKit2 package:
     
-    # connection_string = 'sqlite:///SIMPLE.db'  # Assumes SQLite connection to database in local folder
-    # create_database(connection_string)
-    # ```
-    --->
+    ```bash
+     pip install git+https://github.com/dr-rodriguez/AstrodbKit2
+     ```
 
 3. Connect to the database file `SIMPLE.db` as a Database object called `db`
 
@@ -76,22 +65,6 @@ For example:
         db.inventory('2MASS J01415823-4633574', pretty_print=True)
         ```
 
-
-<!---
-4. Load database contents from source, if needed. 
-This will ensure you are working with the latest version.
-
-    ```python
-    db.load_database('data')
-    ```
-7. Commit any changes back to source, if needed.
-This changes can then be submitted via pull request to the repo.
-
-    ```python
-    db.save_database('data')
-    ```
-    
- --->
     
 ## SIMPLE Database Schema
 
