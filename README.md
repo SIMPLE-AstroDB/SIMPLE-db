@@ -4,7 +4,7 @@ The vision of the SIMPLE project is to create a *collaborative* database of low-
 imaged exoplanets: a simple archive of complex objects. The tables and fields currently included in the 
 database are described in the [Documentation](documentation/README.md) 
 and currently include names, coordinates, photometry and reference and data provenance information and is visualized 
-in the [schema](#database-schema) below. 
+in the [schema](#simple-database-schema) below. 
 We are currently working on including kinematics, spectra, images, and modeled and retrieved parameters. 
 
 We are developing several different methods to interact with the database, including python, a website and API, and 
@@ -27,13 +27,14 @@ https://docs.google.com/document/d/1zDayF4ERMjj22QI3RaUZeTeb6nIVl3c2KDNw5WLLUqE/
 
 If you'd like to set up your own copy of the SIMPLE database, here's what we recommend:
 
-1. Clone or download a copy of this repo somewhere locally
+1. Clone or download a copy of this repo locally onto your computer.
 
 2. Set up an environment for the python code. 
-A conda environment file exists for convenience. The following commands will create and activate an environment called `simple-db`:
+A conda environment file `environment.yml` exists for convenience. The following commands will use that file to create and activate an 
+   environment called `simple-db`:
 
     ```bash
-    conda env create -f environment2.yml
+    conda env create -f environment.yml
     conda activate simple-db
     ```
     
@@ -68,7 +69,8 @@ For example:
     
 ## SIMPLE Database Schema
 
-The schema for the SIMPLE database can be found in `simple/schema.py`.
+The schema for the SIMPLE database is described
+in the [Documentation](documentation) and can be found in `simple/schema.py`.
 
 A graphical representation of the SIMPLE schema:
 ![schema](documentation/figures/schema.png)
