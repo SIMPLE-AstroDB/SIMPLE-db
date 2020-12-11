@@ -15,5 +15,5 @@ The combination of *source*, *band*, and *reference* is expected to be unique.
 | instrument | Name of instrument |  | String(30)  | foreign: Instruments.name |
 | epoch     | Decimal year | year | Float |   |
 | comments  | Free form comments |   | String(1000) |   |
-| reference | Reference to source |   | String(30) | primary and foreign: Publications.name |
+| reference | Reference |   | String(30) | primary and foreign: Publications.name |
 
