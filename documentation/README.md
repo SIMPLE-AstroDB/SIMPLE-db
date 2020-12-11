@@ -15,8 +15,8 @@ Object Tables:
  - [Parallaxes](Parallaxes.md)
  - [ProperMotions](ProperMotions.md)
  - [RadialVelocities](RadialVelocities.md)
- - SpectralTypes
- - Gravities
+ - [SpectralTypes](SpectralTypes.md)
+ - [Gravities](Gravities.md)
  
 Reference Tables:
  - [Publications](Publications.md)
