@@ -9,7 +9,7 @@ Note that *regime* is a string constrained from a list of enumerated values.
 | source    | Unique identifier for the source |   | String(100)  | primary and foreign: Sources.source   |
 | spectral_type | Spectral type string |  | String(10)  |   |
 | spectral_type_error | Uncertainty of spectral type |  | Float  |   |
-| regime | Regime for spectral type value |  | Enumeration  |   |
+| regime | Regime for spectral type value |  | Enumeration  | primary |
 | adopted    | Flag indicating if this is the adopted measurement |  | Boolean  |   |
 | comments  | Free form comments |   | String(1000) |   |
 | reference | Reference |   | String(30) | primary and foreign: Publications.name |

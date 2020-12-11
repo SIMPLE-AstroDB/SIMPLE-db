@@ -8,7 +8,7 @@ Note that *gravity* and *regime* are strings constrained from a list of enumerat
 |---|---|---|---|---|
 | source    | Unique identifier for the source |   | String(100)  | primary and foreign: Sources.source   |
 | gravity | Gravity value |  | Enumeration  |   |
-| regime | Regime for gravity value |  | Enumeration  |   |
+| regime | Regime for gravity value |  | Enumeration  | primary |
 | comments  | Free form comments |   | String(1000) |   |
 | reference | Reference |   | String(30) | primary and foreign: Publications.name |
 
