@@ -74,3 +74,5 @@ in the [Documentation](documentation) and can be found in `simple/schema.py`.
 
 A graphical representation of the SIMPLE schema:
 ![schema](documentation/figures/schema.png)
+
+Ella was here learning how to use github!
