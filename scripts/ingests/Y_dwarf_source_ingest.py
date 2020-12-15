@@ -58,5 +58,4 @@ for es in existing_sources:
 if len(existing_sources)>0:
 	db.Names.insert().execute(other_names_data)
 
-git add Y_dwarf_source_ingest.py
 db.save_db('../../data')
