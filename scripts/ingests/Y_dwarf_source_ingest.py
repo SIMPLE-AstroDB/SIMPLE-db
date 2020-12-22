@@ -1,4 +1,4 @@
-# Script to ingest Y dwarfs from Kirkpartick+2019
+# Script to ingest Y dwarfs from Kirkpartick+2019
 # testing push
 
 from astrodbkit2.astrodb import create_database
@@ -15,7 +15,7 @@ db.load_database('../../data')
 # load table of sources to ingest
 Ydwarfs = Table.read('Y-dwarf_table.csv',data_start=2)
 
-# find sources already in database
+# find sources already in database
 existing_sources = []
 missing_sources = []
 db_names = []
@@ -42,14 +42,14 @@ if len(new_ref)>0:
 if len(missing_sources)>0:
 	db.add_table_data(Ydwarfs[missing_sources], table='Sources', fmt='astropy')
 
-# add new sources in Names table too
+# add new sources in Names table too
 names_data = []
 for ms in missing_sources:
 	names_data.append({'source': Ydwarfs['source'][ms], 'other_name':Ydwarfs['source'][ms]})
 if len(missing_sources)>0:
 	db.Names.insert().execute(names_data)
 
-# add other names for existing sources if alternative names not in database yet
+# add other names for existing sources if alternative names not in database yet
 other_names_data = []
 for es in existing_sources:
 	es_names = db.search_object(db_names[es], output_table='Names')
