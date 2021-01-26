@@ -16,11 +16,11 @@ Note that *regime* is a string constrained from a list of enumerated values.
 | reference | Reference |   | String(30) | primary and foreign: Publications.name |
 
 Spectral Type Codes:
-0 = M0
-9 = M9
-10 = L0
-20 = T0
-30 = Y0
+ - 0 = M0 
+ - 9 = M9
+ - 10 = L0 
+ - 20 = T0
+ - 30 = Y0
 
 Enumerations for regime include:
  - gammaray
