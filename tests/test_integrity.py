@@ -267,12 +267,21 @@ def test_radialvelocities(db):
 def test_spectraltypes(db):
     # Tests against the SpectralTypes table
 
-    # There should be no entries in the SpectralTypes table without a spectral type
+    # There should be no entries in the SpectralTypes table without a spectral type string
     t = db.query(db.SpectralTypes.c.source). \
-        filter(db.SpectralTypes.c.spectral_type.is_(None)). \
+        filter(db.SpectralTypes.c.spectral_type_string.is_(None)). \
         astropy()
     if len(t) > 0:
-        print('\nEntries found without spectral type values')
+        print('\nEntries found without spectral type strings')
+        print(t)
+    assert len(t) == 0
+
+    # There should be no entries in the SpectralTypes table without a spectral type code
+    t = db.query(db.SpectralTypes.c.source). \
+        filter(db.SpectralTypes.c.spectral_type_code.is_(None)). \
+        astropy()
+    if len(t) > 0:
+        print('\nEntries found without spectral type codes')
         print(t)
     assert len(t) == 0
 
