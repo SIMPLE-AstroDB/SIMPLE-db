@@ -7,16 +7,27 @@ from astrodbkit2.astrodb import create_database
 from astrodbkit2.astrodb import Database
 #from simple.schema import *
 from astropy.table import Table
+import numpy as np
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+from astroquery.simbad import Simbad
+
 connection_string = 'sqlite:///../../SIMPLE.db'  # SQLite
 create_database(connection_string)
 db = Database(connection_string)
 db.load_database('../../data')
-import numpy as np
+
+
 # load table of sources to ingest
+
+
 
 input_file = ("ATLAS_table.vot")
 ATLAS=Table.read(input_file)
 
+# Inital attempt, fixing object name flag issue with simbad
+
+'''
 #simbad search fix
 # PSO J318.5338-22.8603 
 Ind = ATLAS['Name'] == 'PSO J318.5-22'
@@ -41,7 +52,6 @@ Ind = ATLAS['Name'] == 'S Ori 70'
 ATLAS['Name'][Ind]='[BZR99] S Ori 70'
 
 
-
 Ind = ATLAS['Name'] == 'S Ori 70'
 ATLAS['Name'][Ind]='[BZR99] S Ori 70'
 
@@ -57,6 +67,38 @@ ATLAS['Name'][Ind]='[BZR99] S Ori 70'
 Ind = ATLAS['Name'] == 'S Ori 70'
 ATLAS['Name'][Ind]='[BZR99] S Ori 70'
 
+'''
+
+#attempt 2, fixing simbad flag issue:
+
+resolved_name = []
+
+
+
+for j in range(len(ATLAS)):
+
+	identifer_result_table = Simbad.query_object(ATLAS['Name'][j])
+	if identifer_result_table is not None and len(identifer_result_table) == 1:
+		# Successfully identified
+		resolved_name.append(identifer_result_table['MAIN_ID'][0])
+	else:
+		coord_result_table = Simbad.query_region(SkyCoord(ATLAS['_RAJ2000'][j],ATLAS['_DEJ2000'][j], unit=(u.deg, u.deg), frame='icrs'), radius='2s')
+
+		if len(coord_result_table) > 1:
+			for i, name in enumerate(coord_result_table['MAIN_ID']):
+				print(f'{i}: {name}')
+			selection = int(input('Choose'))
+			print(selection)
+			print(coord_result_table[selection])
+			resolved_name.append(coord_result_table['MAIN_ID'][selection])
+
+		elif len(coord_result_table) == 1:
+			print(coord_result_table[0])
+			resolved_name.append(coord_result_table['MAIN_ID'][0])
+
+		else:
+			print("coord search failed")
+			resolved_name.append(ATLAS['Name'][j])
 
 
 
