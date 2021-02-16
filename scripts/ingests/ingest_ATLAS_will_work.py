@@ -73,14 +73,12 @@ ATLAS['Name'][Ind]='[BZR99] S Ori 70'
 
 resolved_name = []
 
-
-
 for j in range(len(ATLAS)):
 
 	identifer_result_table = Simbad.query_object(ATLAS['Name'][j])
 	if identifer_result_table is not None and len(identifer_result_table) == 1:
 		# Successfully identified
-		resolved_name.append(identifer_result_table['MAIN_ID'][0])
+		resolved_name.append(identifer_result_table['MAIN_ID'][0].decode())
 	else:
 		coord_result_table = Simbad.query_region(SkyCoord(ATLAS['_RAJ2000'][j],ATLAS['_DEJ2000'][j], unit=(u.deg, u.deg), frame='icrs'), radius='2s')
 
@@ -90,11 +88,11 @@ for j in range(len(ATLAS)):
 			selection = int(input('Choose'))
 			print(selection)
 			print(coord_result_table[selection])
-			resolved_name.append(coord_result_table['MAIN_ID'][selection])
+			resolved_name.append(coord_result_table['MAIN_ID'][selection].decode())
 
 		elif len(coord_result_table) == 1:
 			print(coord_result_table[0])
-			resolved_name.append(coord_result_table['MAIN_ID'][0])
+			resolved_name.append(coord_result_table['MAIN_ID'][0].decode())
 
 		else:
 			print("coord search failed")
@@ -106,12 +104,14 @@ for j in range(len(ATLAS)):
 existing_sources = []
 missing_sources = []
 db_names = []
-for i,name in enumerate(ATLAS['Name']):
-	if len(db.search_object(name,resolve_simbad=False)) != 0:
+for i,name in enumerate(resolved_name):
+	if len(db.search_object(name,resolve_simbad=True)) != 0:
 		existing_sources.append(i)
-		db_names.append(db.search_object(name,resolve_simbad=False)[0].source)
+		db_names.append(db.search_object(name,resolve_simbad=True)[0].source)
+
 	else:
 		missing_sources.append(i)
-		db_names.append(ATLAS['Name'][i])
+		db_names.append(resolved_name[i])
+
 
 
