@@ -20,8 +20,10 @@ If you'd like to participate or just stay in the loop as this project progresses
  list:
 https://groups.google.com/forum/#!forum/simple-archive
 
-To see more details about what we've discussed so far, check out the running notes on the project: 
-https://docs.google.com/document/d/1zDayF4ERMjj22QI3RaUZeTeb6nIVl3c2KDNw5WLLUqE/edit
+For day-to-day discussions, please join us in the #simple-db-dev channel in the [Astropy Slack workspace](https://astropy.slack.com/).
+If you are not already in the Astropy Slack, [request an account](http://joinslack.astropy.org/).
+
+To see more details about how this project got started and our initial discussions, check out the [archived running notes in the Wiki](https://github.com/SIMPLE-AstroDB/SIMPLE-db/wiki/Original-Notes).
 
 ## Getting Started
 
