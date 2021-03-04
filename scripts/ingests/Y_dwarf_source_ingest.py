@@ -1,10 +1,10 @@
 # Script to ingest Y dwarfs from Kirkpartick+2019
-# testing push
 
 from astrodbkit2.astrodb import create_database
 from astrodbkit2.astrodb import Database
 #from simple.schema import *
 from astropy.table import Table
+import numpy as np
 
 connection_string = 'sqlite:///../../SIMPLE.db'  # SQLite
 create_database(connection_string)
