@@ -1,5 +1,6 @@
 # Script to ingest Cloud Atlas Manjavacas+2019
 # Using Clémence Fontanive's previous code as guide
+# Also Ella, Niall, Kelle
 
 #------------------------------------------------------------------------------------------------
 
@@ -76,3 +77,15 @@ for i,name in enumerate(resolved_name):
 	else:
 		missing_sources.append(i)
 		db_names.append(resolved_name[i])
+
+# renaming column heads for ingest
+ATLAS["reference"]=["Missing"]*len(ATLAS["Name"])
+ATLAS["source"]=resolved_name
+#ATLAS.rename_column('Name', 'source')
+ATLAS.rename_column('_RAJ2000', 'ra')
+ATLAS.rename_column('_DEJ2000', 'dec')
+
+
+
+
+
