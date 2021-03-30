@@ -86,6 +86,28 @@ ATLAS.rename_column('_RAJ2000', 'ra')
 ATLAS.rename_column('_DEJ2000', 'dec')
 
 
+# add missing objects to Sources table
+if len(missing_sources)>0:
+	db.add_table_data(ATLAS[missing_sources], table='Sources', fmt='astropy')
 
+# add new sources in Names table too
+names_data = []
+for ms in missing_sources:
+	names_data.append({'source': ATLAS['source'][ms], 'other_name':ATLAS['source'][ms]})
+	if ATLAS['source'][ms] != ATLAS['Name'][ms]:
+		names_data.append({'source': ATLAS['source'][ms], 'other_name':ATLAS['Name'][ms]})
+if len(missing_sources)>0:
+	db.Names.insert().execute(names_data)
+
+# add other names for existing sources if alternative names not in database yet
+other_names_data = []
+for es in existing_sources:
+	es_names = db.search_object(db_names[es], output_table='Names')
+	if ATLAS['source'][es] not in [x[1] for x in es_names]:
+		other_names_data.append({'source': db_names[es], 'other_name':ATLAS['source'][es]})
+if len(existing_sources)>0:
+	db.Names.insert().execute(other_names_data)
+
+db.save_db('../../data')
 
 
