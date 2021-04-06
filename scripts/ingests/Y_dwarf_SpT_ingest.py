@@ -46,5 +46,3 @@ SpT_table = Table([db_names, spectral_types, spectral_type_codes, regime, spt_re
 db.add_table_data(SpT_table, table='SpectralTypes', fmt='astropy')
 
 db.save_db('../../data')
-
-
