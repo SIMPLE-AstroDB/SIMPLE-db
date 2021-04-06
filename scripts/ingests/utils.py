@@ -8,7 +8,7 @@ import re
 
 
 # Make sure all source names are Simbad resolvable:
-def check_names_simbad(ingest_names, ingest_ra, ingest_dec, verbose=False):
+def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', verbose=False):
     verboseprint = print if verbose else lambda *a, **k: None
 
     resolved_names = []
@@ -32,13 +32,20 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, verbose=False):
             verboseprint(resolved_names[i], "Found name match in Simbad")
             n_name_matches = n_name_matches + 1
 
-        # If no identifier match found, search within 2 arcseconds of coords for a Simbad object
+        # If no identifier match found, search within "radius" of coords for a Simbad object
         else:
+            verboseprint("searching around ", ingest_name)
             coord_result_table = Simbad.query_region(
-                SkyCoord(ingest_ra[i], ingest_dec[i], unit=(u.deg, u.deg), frame='icrs'), radius='2s', verbose=verbose)
-
-            # If more than one match found within 2 arcseconds, query user for selection and append to resolved_name
-            if len(coord_result_table) > 1:
+                SkyCoord(ingest_ra[i], ingest_dec[i], unit=(u.deg, u.deg), frame='icrs'), radius=radius, verbose=verbose)
+                
+            # If no match is found in Simbad, use the name in the ingest table
+            if coord_result_table is None:
+                resolved_names.append(ingest_name)
+                verboseprint("coord search failed")
+                n_notfound = n_notfound + 1
+                
+            # If more than one match found within "radius", query user for selection and append to resolved_name
+            elif len(coord_result_table) > 1:
                 for j, name in enumerate(coord_result_table['MAIN_ID']):
                     print(f'{j}: {name}')
                 selection = int(input('Choose \n'))
@@ -57,12 +64,6 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, verbose=False):
                     resolved_names.append(coord_result_table['MAIN_ID'][0].decode())
                 verboseprint(resolved_names[i], "only result nearby in Simbad")
                 n_nearby = n_nearby + 1
-
-            # If no match is found in Simbad, use the name in the ingest table
-            else:
-                resolved_names.append(ingest_name)
-                verboseprint("coord search failed")
-                n_notfound = n_notfound + 1
 
     # Report how many find via which methods
     print("Names Found:", n_name_matches)
