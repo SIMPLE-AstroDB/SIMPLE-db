@@ -110,3 +110,53 @@ def convert_spt_string_to_code(spectral_types, verbose=False):
         spectral_type_codes.append(spt_code)
         verboseprint(spt, spt_code)
     return spectral_type_codes
+
+
+def ingest_parallaxes(db, sources, plx, plx_unc, plx_ref, verbose=False, norun=False):
+    """
+
+    TODO: do stuff about adopted in cases of multiple measurements.
+
+    :param db:
+    :param sources:
+    :param plx:
+    :param plx_unc:
+    :param plx_ref:
+    :param verbose:
+    :param norun:
+    :return:
+    """
+    verboseprint = print if verbose else lambda *a, **k: None
+
+    n_added = 0
+
+    for i, source in enumerate(sources):
+        db_name = db.search_object(source, output_table='Sources')[0].source
+
+        # Search for existing parallax data and determine if this is the best
+        adopted = None
+        source_plx_data = db.query(db.Parallaxes).filter(db.Parallaxes.c.source == db_name).table()
+        if source_plx_data is None or len(source_plx_data) == 0:
+            adopted = True
+        else:
+            print("OTHER PARALLAX EXISTS")
+            print(source_plx_data)
+
+        # TODO: Work out logic for updating/setting adopted. Be it's own function.
+
+        # TODO: Make function which validates refs
+
+        # Construct data to be added
+        parallax_data = [{'source': db_name,
+                          'parallax': plx[i],
+                          'parallax_error': plx_unc[i],
+                          'reference': plx_ref[i],
+                          'adopted': adopted}]
+        verboseprint(parallax_data)
+
+        # Consider making this optional or a key to only view the output but not do the operation.
+        if not norun:
+            db.Parallaxes.insert().execute(parallax_data)
+            n_added += 1
+
+    print("Added to database: ", n_added)
