@@ -139,7 +139,7 @@ class SpectralTypes(Base):
     spectral_type_string = Column(String(10))
     spectral_type_code = Column(Float)
     spectral_type_error = Column(Float)
-    regime = Column(Enum(Regime), primary_key=True)  # restricts to a few values: Optical, Infrared
+    regime = Column(Enum(Regime, create_constraint=True), primary_key=True)  # restricts to a few values: Optical, Infrared
     adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
@@ -150,7 +150,7 @@ class Gravities(Base):
     __tablename__ = 'Gravities'
     source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
                     nullable=False, primary_key=True)
-    gravity = Column(Enum(Gravity))  # restricts to enumerated values
-    regime = Column(Enum(Regime), primary_key=True)  # restricts to a few values: Optical, Infrared
+    gravity = Column(Enum(Gravity, create_constraint=True))  # restricts to enumerated values
+    regime = Column(Enum(Regime, create_constraint=True), primary_key=True)  # restricts to a few values: Optical, Infrared
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
