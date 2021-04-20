@@ -103,8 +103,9 @@ if len(missing_sources)>0:
 other_names_data = []
 for es in existing_sources:
 	es_names = db.search_object(db_names[es], output_table='Names')
-	if ATLAS['source'][es] not in [x[1] for x in es_names]:
-		other_names_data.append({'source': db_names[es], 'other_name':ATLAS['source'][es]})
+	if ATLAS['Name'][es] not in [x[1] for x in es_names]:
+		other_names_data.append({'source': db_names[es], 'other_name':ATLAS['Name'][es]})
+
 if len(existing_sources)>0:
 	db.Names.insert().execute(other_names_data)
 
