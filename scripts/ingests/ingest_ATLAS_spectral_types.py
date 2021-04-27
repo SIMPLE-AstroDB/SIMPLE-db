@@ -15,13 +15,13 @@ db.load_database('../../data')
 
 # load table of sources to ingest
 ingest_table = Table.read("ATLAS_table.vot")
+ingest_table_df = ingest_table.to_pandas()
 names = ingest_table['Name']
 n_sources = len(names)
-#regime = ['infrared'] * n_sources # all source have IR spectral classifications
-spectral_types = ingest_table['SpType'] # pre-existing spectral types
+# regime = ['infrared'] * n_sources
+spectral_types_unknown = ingest_table['SpType'] # pre-existing spectral types
 spectral_types_spex = ingest_table['SpTSpeX'] # new spectral types
-#spt_refs = ingest_table['spt_ref']
-# need to adjust for only adding SpT for sources lacking SpT
+# spt_refs = ingest_table['spt_ref']
 
 # fetch primary name identifier from database
 db_names = []
@@ -30,21 +30,19 @@ for name in names:
 	print(name, db_name)
 	db_names.append(db_name)
 
-# Ingest all new spectral type estimates
-
-# find which sources have new spectral types
-name_has_spex = []
+# Ingest new spectral type estimates from the SpTSpeX column
+db_names_spex = []
 spex_types_string = []
 for i,db_name in enumerate(db_names):
 	if spectral_types_spex[i] != "":
-		name_has_spex.append(db_name)
+		db_names_spex.append(db_name)
 		spex_types_string.append(spectral_types_spex[i])
 
 spex_types_codes = convert_spt_string_to_code(spex_types_string, verbose = True)
-regime = ['nir']*len(name_has_spex)
-spt_ref = ['Manj19']*len(name_has_spex)
-
-SpT_table_spex = Table([name_has_spex, spex_types_string, spex_types_codes, regime, spt_ref], names=('source','spectral_type_string','spectral_type_code','regime','reference'))
+regime = ['nir']*len(db_names_spex)
+spt_ref = ['Manj19']*len(db_names_spex)
+SpT_table_spex = Table([db_names_spex, spex_types_string, spex_types_codes, regime, spt_ref], names=('source','spectral_type_string','spectral_type_code','regime','reference'))
+SpT_table_spex_df = SpT_table_spex.to_pandas() # make a Pandas dataframe to explore  with Pycharm
 
 # Find out which sources don't have spectral types
 # needs_spectral_type = []
