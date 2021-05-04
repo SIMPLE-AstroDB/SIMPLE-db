@@ -39,9 +39,11 @@ class Regime(enum.Enum):
     xray = 'xray'
     ultraviolet = 'ultraviolet'
     optical = 'optical'
+    nir = 'nir'
     infrared = 'infrared'
     millimeter = 'millimeter'
     radio = 'radio'
+    unknown = 'unknown'
 
 
 class Gravity(enum.Enum):

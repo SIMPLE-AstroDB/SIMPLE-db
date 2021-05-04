@@ -1,9 +1,15 @@
-# This workflow will install Python dependencies, run the python script to generate the database, and upload the regenerated database
+# This workflow will install Python dependencies,
+# run the python script to generate the database,
+# and upload the regenerated database to the binary repo
 
 name: Generate Database
 
 on:
+  # More details on trigger events: https://docs.github.com/en/actions/reference/events-that-trigger-workflows
   workflow_dispatch:  # manual execution
+  pull_request:
+    types: [ closed ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -26,9 +32,16 @@ jobs:
     - name: Generate database
       run: |
         python scripts/tutorials/generate_database.py
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        git add SIMPLE.db
-        git commit -m "auto regenerating database"
-        git push
       working-directory: .
+
+    - name: Push database file
+      uses: dmnemec/copy_file_to_another_repo_action@main
+      # Details for this action at https://github.com/marketplace/actions/push-a-file-to-another-repository
+      env:
+          API_TOKEN_GITHUB: ${{ secrets.SIMPLE_TOKEN }}
+      with:
+          source_file: 'SIMPLE.db'
+          destination_repo: 'SIMPLE-AstroDB/SIMPLE-binary'
+          destination_branch: 'main'
+          user_email: 'github-actions@github.com'
+          user_name: 'github-actions'
