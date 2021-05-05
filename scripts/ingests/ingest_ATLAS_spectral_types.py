@@ -6,6 +6,7 @@ from simple.schema import *
 from astropy.table import Table
 import numpy as np
 import re
+import os
 from utils import convert_spt_string_to_code
 
 DRY_RUN = False
@@ -13,6 +14,7 @@ RECREATE_DB = True
 
 connection_string = 'sqlite:///SIMPLE.db'  # SQLite
 if RECREATE_DB:
+	os.remove('SIMPLE.db')
 	create_database(connection_string)
 	db = Database(connection_string)
 	db.load_database('data')
