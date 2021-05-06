@@ -9,17 +9,31 @@ import re
 import os
 from utils import convert_spt_string_to_code
 
-DRY_RUN = False
-RECREATE_DB = True
+DRY_RUN = True
+RECREATE_DB = False
+VERBOSE = False
 
-connection_string = 'sqlite:///SIMPLE.db'  # SQLite
-if RECREATE_DB:
-	os.remove('SIMPLE.db')
-	create_database(connection_string)
-	db = Database(connection_string)
+verboseprint = print if VERBOSE else lambda *a, **k: None
+
+db_file = 'SIMPLE.db'
+db_connection_string = 'sqlite:///SIMPLE.db'  # SQLite
+
+try:
+	db_file_path = db_file.resolve(strict=True)
+except:
+	# SIMPLE.db file does not exist so create it
+	create_database(db_connection_string)
+	db = Database(db_connection_string)
 	db.load_database('data')
 else:
-	db = Database(connection_string)
+	# SIMPLE.db file does exist
+	if RECREATE_DB: # Recreate database anyway
+		os.remove(db_file)
+		create_database(db_connection_string)
+		db = Database(db_connection_string)
+		db.load_database('data')
+	else: # Use pre-existing database
+		db = Database(db_connection_string)
 
 # ===============================================================
 # Ingest new reference if missing
@@ -30,6 +44,7 @@ manj19_search = db.query(db.Publications).filter(db.Publications.c.name == 'Manj
 if len(manj19_search) == 0 and not DRY_RUN:
 	new_ref = [{'name': 'Manj19'}]
 	db.Publications.insert().execute(new_ref)
+# ===============================================================
 
 
 # load table of sources to ingest
@@ -44,12 +59,11 @@ spectral_types_spex = ingest_table['SpTSpeX']  # new spectral types
 db_names = []
 for name in names:
 	db_name = db.search_object(name, output_table='Sources')[0].source
-	# print(name, db_name)
 	db_names.append(db_name)
 
-
 # ===============================================================
-# Ingest new spectral type estimates from the SpTSpeX column
+#   Ingest new spectral type estimates
+#   from the SpTSpeX column
 # ===============================================================
 
 db_names_spex = []
@@ -65,15 +79,19 @@ spt_ref = ['Manj19']*len(db_names_spex)
 SpT_table_spex = Table([db_names_spex, spex_types_string, spex_types_codes, regime, spt_ref],
 					   names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference'))
 SpT_table_spex_df = SpT_table_spex.to_pandas()  # make a Pandas dataframe to explore  with Pycharm
-# print(SpT_table_spex_df)
+
+# Report results
+print("\n",len(db_names_spex),"Spex SpTypes to be added")
+verboseprint(SpT_table_spex_df)
 
 # Add to database
 if not DRY_RUN:
 	db.add_table_data(SpT_table_spex, table='SpectralTypes', fmt='astropy')
 
 # Verify results
-print('Manj19 entries in database:')
-print(db.query(db.SpectralTypes).filter(db.SpectralTypes.c.reference == 'Manj19').table())
+n_Manj19_types = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.reference == 'Manj19').count()
+print("\n",n_Manj19_types, 'spectral types referenced to Manj19 now found database')
+verboseprint(db.query(db.SpectralTypes).filter(db.SpectralTypes.c.reference == 'Manj19').table())
 
 # Deletion example (use with caution!)
 # db.SpectralTypes.delete().where(db.SpectralTypes.c.reference == 'Manj19').execute()
@@ -81,8 +99,8 @@ print(db.query(db.SpectralTypes).filter(db.SpectralTypes.c.reference == 'Manj19'
 
 
 # ===============================================================
-# Ingest spectral types from unknown sources
-# if sources have no other spectral type
+#     Ingest spectral types from unknown sources
+#     if sources have no other spectral type
 # ===============================================================
 
 # Find out which sources don't have spectral types
@@ -102,20 +120,14 @@ comments = ['From ATLAS Table Manjavacas etal. 2019']*len(db_names_needs_spectra
 SpT_table_unknown = Table([db_names_needs_spectral_type, spectral_types_to_add, spectral_type_codes_unknown, regime, spt_ref, comments],
 						names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference', 'comments'))
 
-# Print out the results
-# print(SpT_table_unknown)
+# Report the results
+print("\n",len(db_names_needs_spectral_type),"Spectral types with Missing reference to be added")
 
 # Add to database
 if not DRY_RUN:
 	db.add_table_data(SpT_table_unknown, table='SpectralTypes', fmt='astropy')
 
-# Verify results
-print('Missing entries in database:')
-print(db.query(db.SpectralTypes).filter(db.SpectralTypes.c.reference == 'Missing').table())
-print('unknown regime entries in database:')
-print(db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == 'unknown').table())
-
-# Deletion example (use with caution!)
+# Deletion example. Undos add_table_data. (use with caution!)
 # db.SpectralTypes.delete().where(db.SpectralTypes.c.reference == 'Missing').execute()
 # ===============================================================
 
