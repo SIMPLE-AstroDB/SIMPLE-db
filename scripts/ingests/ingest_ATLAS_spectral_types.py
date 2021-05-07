@@ -142,6 +142,9 @@ print("\n",len(db_names_needs_spectral_type),"Spectral types with Missing refere
 if not DRY_RUN:
 	db.add_table_data(SpT_table_unknown, table='SpectralTypes', fmt='astropy')
 
+update_adopted = db.SpectralTypes.update().where(db.SpectralTypes.c.reference == 'Missing').values(adopted=False)
+db.engine.execute(update_adopted)
+
 # Deletion example. Undos add_table_data. (use with caution!)
 # db.SpectralTypes.delete().where(db.SpectralTypes.c.reference == 'Missing').execute()
 # ===============================================================
