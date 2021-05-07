@@ -10,7 +10,7 @@ import os
 from utils import convert_spt_string_to_code
 
 DRY_RUN = True
-RECREATE_DB = False
+RECREATE_DB = True
 VERBOSE = False
 
 verboseprint = print if VERBOSE else lambda *a, **k: None
@@ -43,7 +43,14 @@ else:
 manj19_search = db.query(db.Publications).filter(db.Publications.c.name == 'Manj19').table()
 if len(manj19_search) == 0 and not DRY_RUN:
 	new_ref = [{'name': 'Manj19'}]
+	# Should have included bibcode and doi
+	# new_ref = [{'name': 'Manj19', 'bibcode': '2019AJ....157..101M', 'doi': '10.3847/1538-3881/aaf88f'}]
 	db.Publications.insert().execute(new_ref)
+
+#add DOI and Bibcode after Manj19 already added
+add_doi_bibcode = db.Publications.update().where(db.Publications.c.name == 'Manj19').\
+	values(bibcode='2019AJ....157..101M', doi='10.3847/1538-3881/aaf88f', description='Cloud Atlas: HST nir spectral library')
+db.engine.execute(add_doi_bibcode)
 # ===============================================================
 
 
@@ -74,8 +81,9 @@ for i, db_name in enumerate(db_names):
 		spex_types_string.append(spectral_types_spex[i])
 
 spex_types_codes = convert_spt_string_to_code(spex_types_string, verbose=False)
-regime = ['nir']*len(db_names_spex)
-spt_ref = ['Manj19']*len(db_names_spex)
+regime = ['nir'] * len(db_names_spex)
+spt_ref = ['Manj19'] * len(db_names_spex)
+# adopted = False * len(db_names_spex) # Should have specified adopted column
 SpT_table_spex = Table([db_names_spex, spex_types_string, spex_types_codes, regime, spt_ref],
 					   names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference'))
 SpT_table_spex_df = SpT_table_spex.to_pandas()  # make a Pandas dataframe to explore  with Pycharm
@@ -87,6 +95,10 @@ verboseprint(SpT_table_spex_df)
 # Add to database
 if not DRY_RUN:
 	db.add_table_data(SpT_table_spex, table='SpectralTypes', fmt='astropy')
+
+# Update adopted field after spectral types were already added
+update_adopted = db.SpectralTypes.update().where(db.SpectralTypes.c.reference == 'Manj19').values(adopted=False)
+db.engine.execute(update_adopted)
 
 # Verify results
 n_Manj19_types = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.reference == 'Manj19').count()
@@ -114,11 +126,14 @@ for i, db_name in enumerate(db_names):
 
 # Convert SpT string to code
 spectral_type_codes_unknown = convert_spt_string_to_code(spectral_types_to_add, verbose=False)
-regime = ['unknown']*len(db_names_needs_spectral_type)
-spt_ref = ['Missing']*len(db_names_needs_spectral_type)
+regime = ['unknown'] * len(db_names_needs_spectral_type)
+spt_ref = ['Missing'] * len(db_names_needs_spectral_type)
 comments = ['From ATLAS Table Manjavacas etal. 2019']*len(db_names_needs_spectral_type)
-SpT_table_unknown = Table([db_names_needs_spectral_type, spectral_types_to_add, spectral_type_codes_unknown, regime, spt_ref, comments],
-						names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference', 'comments'))
+# adopted = False * len(db_names_needs_spectral_type) # Should have specified adopted column
+SpT_table_unknown = Table([db_names_needs_spectral_type, spectral_types_to_add, spectral_type_codes_unknown, regime,
+						   spt_ref, comments],
+						names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference',
+							   'comments'))
 
 # Report the results
 print("\n",len(db_names_needs_spectral_type),"Spectral types with Missing reference to be added")
@@ -131,5 +146,5 @@ if not DRY_RUN:
 # db.SpectralTypes.delete().where(db.SpectralTypes.c.reference == 'Missing').execute()
 # ===============================================================
 
-if not DRY_RUN:
-	db.save_db('data')
+#if not DRY_RUN:
+db.save_db('data')
