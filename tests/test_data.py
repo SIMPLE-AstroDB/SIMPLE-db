@@ -63,13 +63,14 @@ def test_Manj19_data(db):
     n_Manj19_types = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.reference == pub).count()
     assert n_Manj19_types == 40, f'found {n_Manj19_types} sources for {pub}'
 
-@pytest.mark.xfail(reason="Bibcode and DOI needs to be added for Manj19")
+
 def test_Manj19_pub(db):
     pub = 'Manj19'
 
     # Check DOI and Bibcode values are correctly set for new publications added
     manj19_pub = db.query(db.Publications).filter(db.Publications.c.name == pub).astropy()
     reference_verifier(manj19_pub, 'Manj19', '2019AJ....157..101M', '10.3847/1538-3881/aaf88f')
+
 
 def test_Kirk19_ingest(db):
     """
