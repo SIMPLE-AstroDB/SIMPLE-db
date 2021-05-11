@@ -225,11 +225,11 @@ def test_parallaxes(db):
     # Tests against the Parallaxes table
 
     # While there may be many parallax measurements for a single source,
-    # there should be one and only one marked as adopted
+    # there should be only one marked as adopted
     t = db.query(db.Parallaxes.c.source,
                  func.sum(db.Parallaxes.c.adopted).label('adopted_counts')). \
         group_by(db.Parallaxes.c.source). \
-        having(func.sum(db.Parallaxes.c.adopted) != 1). \
+        having(func.sum(db.Parallaxes.c.adopted) > 1). \
         astropy()
     if len(t) > 0:
         print("\nParallax entries with incorrect 'adopted' labels")
@@ -286,11 +286,11 @@ def test_spectraltypes(db):
     assert len(t) == 0
 
     # While there may be many spectral type measurements for a single source,
-    # there should be one and only one marked as adopted
+    # there should be only one marked as adopted
     t = db.query(db.SpectralTypes.c.source,
                  func.sum(db.SpectralTypes.c.adopted).label('adopted_counts')). \
         group_by(db.SpectralTypes.c.source). \
-        having(func.sum(db.SpectralTypes.c.adopted) != 1). \
+        having(func.sum(db.SpectralTypes.c.adopted) > 1). \
         astropy()
     if len(t) > 0:
         print("\nSpectral Type entries with incorrect 'adopted' labels")
