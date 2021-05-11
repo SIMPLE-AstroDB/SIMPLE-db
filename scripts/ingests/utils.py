@@ -3,21 +3,25 @@ import re
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.simbad import Simbad
+from astropy.table import Table, vstack
 import warnings
 warnings.filterwarnings("ignore", module='astroquery.simbad')
 
 
-def search_publication_shortname(db, name):
+def search_publication(db, name=None, doi=None, bibcode=None):
     """
-    Find publications in the database by matching on the publication name
+    Find publications in the database by matching on the publication name,  doi, or bibcode
+    TODO: Figure out how to stack tables with some strings and some objects
 
     :param db: Variable referencing the database to search
     :param name: Name of publication to search
+    :param doi:
+    :param bibcode:
 
     :return: Table containing publications matching name
 
     Example:
-    >>> test = search_publication_shortname(db,'Martin19')
+    >>> test = search_publication_shortname(db, name='Martin19')
     Searching Martin19
     No matching publications for Martin19
     Trying Mart
@@ -32,28 +36,53 @@ def search_publication_shortname(db, name):
      Mart04   2004SPIE.5492.1653M             10.1117/12.551828                                              PANIC: a near-infrared camera for the Magellan telescopes
      Mart18                  None                          None                                                                                                   None
     """
+    pub_search_table = []
+    if name != None:
+        print(f'Searching {name}')
+        fuzzy_query_name = '%' + name + '%'
+        pub_search_table = db.query(db.Publications).filter(db.Publications.c.name.ilike(fuzzy_query_name)).table()
+        n_pubs_found = len(pub_search_table)
+        if n_pubs_found == 0:
+            print(f'No matching publications for {name}')
+            # If no matches found, search using first four characters of input name
+            shorter_name = name[:4]
+            print(f'Trying {shorter_name}')
+            fuzzy_query_shorter_name = '%' + shorter_name + '%'
+            pub_search_table = db.query(db.Publications).filter(db.Publications.c.name.ilike(fuzzy_query_shorter_name)).table()
+            n_pubs_found_short = len(pub_search_table)
+            if n_pubs_found_short == 0:
+                print(f'No matching publications for {shorter_name}')
+                print('Use add_publication() to add it to the database.')
+            if n_pubs_found_short > 0:
+                print(f'Found {n_pubs_found_short} matching publications for {shorter_name}')
+                #pub_search_table.pprint_all()
+        if n_pubs_found > 0:
+            print(f'Found {n_pubs_found} matching publications for {name}')
+            #pub_search_table.pprint_all()
 
-    print(f'Searching {name}')
-    fuzzy_query_name = '%' + name + '%'
-    pub_search_table = db.query(db.Publications).filter(db.Publications.c.name.ilike(fuzzy_query_name)).table()
-    n_pubs_found = len(pub_search_table)
-    if n_pubs_found == 0:
-        print(f'No matching publications for {name}')
-        # If no matches found, search using first four characters of input name
-        shorter_name = name[:4]
-        print(f'Trying {shorter_name}')
-        fuzzy_query_shorter_name = '%' + shorter_name + '%'
-        pub_search_table = db.query(db.Publications).filter(db.Publications.c.name.ilike(fuzzy_query_shorter_name)).table()
-        n_pubs_found_short = len(pub_search_table)
-        if n_pubs_found_short == 0:
-            print(f'No matching publications for {shorter_name}')
-            print('Use add_publication() to add it to the database.')
-        if n_pubs_found_short > 0:
-            print(f'Found {n_pubs_found_short} matching publications for {shorter_name}')
-            pub_search_table.pprint_all()
-    if n_pubs_found > 0:
-        print(f'Found {n_pubs_found} matching publications for {name}')
+    pub_search_table.pprint_all()
+    print(pub_search_table.info)
+
+    if doi != None:
+        pub_search_table_doi = db.query(db.Publications).filter(db.Publications.c.doi.ilike(doi)).table()
+        n_pubs_found_doi = len(pub_search_table_doi)
+        if n_pubs_found_doi > 0:
+            print(f'Found {n_pubs_found_doi} matching publications for {doi}')
+            # pub_search_table = vstack([pub_search_table,pub_search_table_doi])
+            # pub_search_table2.pprint_all()
+            pub_search_table_doi.pprint_all()
+            print(pub_search_table_doi.info)
+
+    if bibcode != None:
+        pub_search_table_bibcode = db.query(db.Publications).filter(db.Publications.c.ilike(bibcode)).table()
+        n_pubs_found = len(pub_search_table_bibcode)
+        if len(pub_search_table_bibcode) > 0:
+            print(f'Found {n_pubs_found} matching publications for {bibcode}')
+            pub_search_table = vstack([pub_search_table,pub_search_table_bibcode])
+
+    if len(pub_search_table) > 0:
         pub_search_table.pprint_all()
+
     return pub_search_table
 
 
@@ -70,9 +99,13 @@ def add_publication(db, name, doi, bibcode, description):
     """
     # check to make sure it doesn't already exist
     pub_search_table = db.query(db.Publications).filter(db.Publications.c.name == name).table()
+
     if len(pub_search_table) == 0:
         new_ref = [{'name': name, 'bibcode': bibcode, 'doi': doi,'description': description}]
         db.Publications.insert().execute(new_ref)
+        print(f'Added {name} to Publications table')
+    else:
+        print(f'Publication with name {name} already exists, nothing added')
     #
     #     add DOI and Bibcode after Manj19 already added
     #     add_doi_bibcode = db.Publications.update().where(db.Publications.c.name == 'Manj19'). \
