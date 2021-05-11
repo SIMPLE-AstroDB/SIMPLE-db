@@ -1,10 +1,73 @@
 import numpy as np
+import re
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.simbad import Simbad
 import warnings
 warnings.filterwarnings("ignore", module='astroquery.simbad')
-import re
+
+
+def search_publication_shortname(db, name):
+    """
+    Find publications in the database by matching on the publication name
+
+    :param db: Variable referencing the database to search
+    :param name: Name of publication to search
+
+    :return: Table containing publications matching name
+
+    Example:
+    >>> test = search_publication_shortname(db,'Martin19')
+    Searching Martin19
+    No matching publications for Martin19
+    Trying Mart
+    Found 7 matching publications for Mart
+      name         bibcode                     doi                                                           description
+    ------- --------------------- ----------------------------- ------------------------------------------------------------------------------------------------------
+    Mart99a   1999Sci...283.1718M 10.1126/science.283.5408.1718                        A Search for Companions to Nearby Brown Dwarfs: The Binary DENIS-P J1228.2-1547
+    Mart99b   1999AJ....118.2466M                10.1086/301107                                              Spectroscopic Classification of Late-M and L Field Dwarfs
+     Mart00   2000ApJ...529L..37M                10.1086/312450 The Discovery of a Companion to the Very Cool Dwarf Gliese 569B with the Keck Adaptive Optics Facility
+     Mart06   2006A&A...456..253M    10.1051/0004-6361:20054186                                         Resolved Hubble space spectroscopy of ultracool binary systems
+     Mart98 1998ApJ...507L..41M                  10.1086/311675                                                           The First L-Type Brown Dwarf in the Pleiades
+     Mart04   2004SPIE.5492.1653M             10.1117/12.551828                                              PANIC: a near-infrared camera for the Magellan telescopes
+     Mart18                  None                          None                                                                                                   None
+    """
+
+    print(f'Searching {name}')
+    fuzzy_query_name = '%' + name + '%'
+    pub_search_table = db.query(db.Publications).filter(db.Publications.c.name.ilike(fuzzy_query_name)).table()
+    n_pubs_found = len(pub_search_table)
+    if n_pubs_found == 0:
+        print(f'No matching publications for {name}')
+        # If no matches found, search using first four characters of input name
+        shorter_name = name[:4]
+        print(f'Trying {shorter_name}')
+        fuzzy_query_shorter_name = '%' + shorter_name + '%'
+        pub_search_table = db.query(db.Publications).filter(db.Publications.c.name.ilike(fuzzy_query_shorter_name)).table()
+        n_pubs_found_short = len(pub_search_table)
+        if n_pubs_found_short == 0:
+            print(f'No matching publications for {shorter_name}')
+            print('Use add_publication() to add it to the database.')
+        if n_pubs_found_short > 0:
+            print(f'Found {n_pubs_found_short} matching publications for {shorter_name}')
+            pub_search_table.pprint_all()
+    if n_pubs_found > 0:
+        print(f'Found {n_pubs_found} matching publications for {name}')
+        pub_search_table.pprint_all()
+    return pub_search_table
+
+
+# def add_publication(db,short_name, doi, bibcode, description):
+#     check to make sure it doesn't already exist
+#     Should have included bibcode and doi
+#     new_ref = [{'name': 'Manj19', 'bibcode': '2019AJ....157..101M', 'doi': '10.3847/1538-3881/aaf88f'}]
+#     db.Publications.insert().execute(new_ref)
+#
+#     add DOI and Bibcode after Manj19 already added
+#     add_doi_bibcode = db.Publications.update().where(db.Publications.c.name == 'Manj19'). \
+#         values(bibcode='2019AJ....157..101M', doi='10.3847/1538-3881/aaf88f',
+#               description='Cloud Atlas: HST nir spectral library')
+#     db.engine.execute(add_doi_bibcode)
 
 
 # Make sure all source names are Simbad resolvable:
@@ -36,7 +99,8 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', verbose
         else:
             verboseprint("searching around ", ingest_name)
             coord_result_table = Simbad.query_region(
-                SkyCoord(ingest_ra[i], ingest_dec[i], unit=(u.deg, u.deg), frame='icrs'), radius=radius, verbose=verbose)
+                SkyCoord(ingest_ra[i], ingest_dec[i], unit=(u.deg, u.deg), frame='icrs'),
+                radius=radius, verbose=verbose)
                 
             # If no match is found in Simbad, use the name in the ingest table
             if coord_result_table is None:
