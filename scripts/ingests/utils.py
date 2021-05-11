@@ -140,7 +140,7 @@ def ingest_parallaxes(db, sources, plx, plx_unc, plx_ref, verbose=False, norun=F
     n_added = 0
 
     for i, source in enumerate(sources):
-        db_name = db.search_object(source, output_table='Sources')[0].source
+        db_name = db.search_object(source, output_table='Sources')[0]['source']
 
         # Search for existing parallax data and determine if this is the best
         adopted = None
