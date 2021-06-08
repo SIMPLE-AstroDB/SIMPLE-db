@@ -15,15 +15,24 @@ def search_publication(db, name=None, doi=None, bibcode=None):
     """
     Find publications in the database by matching on the publication name,  doi, or bibcode
 
-    :param db: Variable referencing the database to search
-    :param name: Name of publication to search
-    :param doi:
-    :param bibcode:
+    Parameters
+    ----------
+    db
+        Variable referencing the database to search
+    name: str
+        Name of publication to search
+    doi: str
+        DOI of publication to search
+    bibcode: str
+        ADS Bibcode of publication to search
 
-    :return: Table containing publications matching name
+    Returns
+    -------
+    Table containing publications matching name
 
-    Example:
-    >>> test = search_publication_shortname(db, name='Martin19')
+    Example
+    -------
+    >>> test = search_publication(db, name='Martin19')
     Searching Martin19
     No matching publications for Martin19
     Trying Mart
@@ -38,6 +47,11 @@ def search_publication(db, name=None, doi=None, bibcode=None):
      Mart04   2004SPIE.5492.1653M             10.1117/12.551828                                              PANIC: a near-infrared camera for the Magellan telescopes
      Mart18                  None                          None                                                                                                   None
     """
+
+    # Make sure a search term is provided
+    if name is None and doi is None and bibcode is None:
+        print("Name, Bibcode, or DOI must be provided")
+        return
 
     not_null_pub_filters = []
     if name:
@@ -76,8 +90,7 @@ def search_publication(db, name=None, doi=None, bibcode=None):
     return pub_search_table
 
 
-def add_publication(db, doi=None, bibcode=None, name=None, description=None):
-    """
+def add_publication(db, doi=None, bibcode=None, name=None, description=None):"""
 
     Parameters
     ----------
