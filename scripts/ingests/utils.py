@@ -90,7 +90,7 @@ def search_publication(db, name=None, doi=None, bibcode=None):
     return pub_search_table
 
 
-def add_publication(db, doi=None, bibcode=None, name=None, description=None):
+def add_publication(db, doi=None, bibcode=None, name=None, description=None, dryrun=True):
     """
 
     Parameters
@@ -100,6 +100,8 @@ def add_publication(db, doi=None, bibcode=None, name=None, description=None):
     bibcode: str
     name: str
     description: str
+    dryrun: bool
+        Default is to list change but not modify the database. Set dryrun=False to actually change the database.
 
     Returns
     -------
@@ -129,7 +131,6 @@ def add_publication(db, doi=None, bibcode=None, name=None, description=None):
         pub_search_table.pprint_all()
         return
 
-
     if doi:
         doi_matches = ads.SearchQuery(doi=doi)
         doi_matches_list = list(doi_matches)
@@ -138,20 +139,40 @@ def add_publication(db, doi=None, bibcode=None, name=None, description=None):
             return
 
         if len(doi_matches_list) == 1:
+            print("Publication found in ADS")
             article = doi_matches_list[0]
             print(article.first_author, article.year, article.bibcode, article.title)
+            name = article.first_author[0:4] + article.year[-2]
+            description = article.title[0]
 
     if bibcode:
         bibcode_matches = ads.SearchQuery(bibcode=bibcode)
 
+    #check again to make sure publication does not already exist in database
+    not_null_pub_filters = []
+    if name:
+        not_null_pub_filters.append(db.Publications.c.name == name)
+    if doi:
+        not_null_pub_filters.append(db.Publications.c.doi == doi)
+    if bibcode:
+        not_null_pub_filters.append(db.Publications.c.bibcode == bibcode)
 
-     #     new_ref = [{'name': name, 'bibcode': bibcode, 'doi': doi,'description': description}]
-    #     db.Publications.insert().execute(new_ref)
-    #     print(f'Added {name} to Publications table')
-    # else:
-    #     print(f'Publication with name {name} already exists, nothing added')
-    # #
-    #     add DOI and Bibcode after Manj19 already added
+    pub_search_table = db.query(db.Publications).filter(or_(*not_null_pub_filters)).table()
+
+    if len(pub_search_table) > 0:
+        print('Similar publication already exists in database')
+        pub_search_table.pprint_all()
+        return
+
+    if dryrun:
+        print("name:", name, "\nbibcode:", article.bibcode, "\ndoi:", doi, "\ndescription:", description)
+        print("re-run with dryrun=False to add to the database")
+
+    if dryrun is False:
+        new_ref = [{'name': name, 'bibcode': article.bibcode, 'doi': doi, 'description': description}]
+        db.Publications.insert().execute(new_ref)
+        print(f'Added {name} to Publications table')
+
     #     add_doi_bibcode = db.Publications.update().where(db.Publications.c.name == 'Manj19'). \
     #         values(bibcode='2019AJ....157..101M', doi='10.3847/1538-3881/aaf88f',
     #               description='Cloud Atlas: HST nir spectral library')
