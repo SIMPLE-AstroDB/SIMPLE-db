@@ -90,18 +90,20 @@ def search_publication(db, name=None, doi=None, bibcode=None):
     return pub_search_table
 
 
-def add_publication(db, doi=None, bibcode=None, name=None, description=None):"""
+def add_publication(db, doi=None, bibcode=None, name=None, description=None):
+    """
 
     Parameters
     ----------
     db
-    doi
-    bibcode
-    name
-    description
+    doi: str
+    bibcode: str
+    name: str
+    description: str
 
     Returns
     -------
+    None
 
     """
 
