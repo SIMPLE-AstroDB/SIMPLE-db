@@ -49,7 +49,7 @@ def ingest_pm(db, sources, muRA, muRA_err, muDEC, muDEC_err, verbose=False, noru
     n_added = 0
 
     for i, source in enumerate(sources):
-        db_name = db.search_object(source, output_table='Sources')[0]
+        db_name = db.search_object(source, output_table='Sources')[0]['source']
 
         # Search for existing proper motion data and determine if this is the best
         adopted = None
