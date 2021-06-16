@@ -28,10 +28,10 @@ verboseprint = print if VERBOSE else lambda *a, **k: None
 
 db_file = 'SIMPLE.db'
 db_file_path = Path(db_file)
-db_connection_string = 'sqlite:///SIMPLE.db'  # SQLite
+db_connection_string = 'sqlite:///SIMPLE.db'  # SQLite browser
 
 if RECREATE_DB and db_file_path.exists():
-    os.remove(db_file)
+    os.remove(db_file) #removes the current .db file if one already exists
 
 if not db_file_path.exists():
     create_database(db_connection_string) #creates empty database based on the simple schema
@@ -43,7 +43,7 @@ else:
 
 # load table
 ingest_table = Table.read('scripts/ingests/Y-dwarf_table.csv', data_start=2)
-#print(ingest_table)
+
 sources = ingest_table['source']
 muRA = ingest_table['muRA_masyr']
 muRA_err = ingest_table['muRA_err']
@@ -51,8 +51,9 @@ muDEC = ingest_table['muDEC_masyr']
 muDEC_err = ingest_table['muDEC_err']
 pm_reference = ['Kirk19',]*len(muRA)
 
+#ingest_pm defintion in utils.py, adapted from ingest_parallaxes definition
 ingest_pm(db, sources, muRA, muRA_err, muDEC, muDEC_err, pm_reference, verbose=True)
 
 
 if not DRY_RUN:
-    db.save_db('data')
+    db.save_db('data') #edits the JSON files if we're not doing a dry run
