@@ -20,7 +20,7 @@ from pathlib import Path
 
 
 #From ingest_ATLAS_spectral_types.py file
-DRY_RUN = True #modifies .db file but not the data files
+DRY_RUN = False #modifies .db file but not the data files
 RECREATE_DB = True #recreates the .db file from the data files
 VERBOSE = False
 
