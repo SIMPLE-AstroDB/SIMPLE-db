@@ -2,9 +2,11 @@
 
 import os
 import pytest
+import sys
+sys.path.append('.')
+from scripts.ingests.utils import *
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database
-from scripts.ingests.utils import *
 from astropy.table import Table
 
 DB_NAME = 'temp.db'

@@ -2,6 +2,8 @@
 
 import os
 import pytest
+import sys
+sys.path.append('.')
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database
 from sqlalchemy import *
@@ -94,6 +96,7 @@ def test_Kirk19_ingest(db):
         Y_dwarf_source_ingest.py
         Y-dwarf_SpT_ingest.py
         Y-dwarf_astrometry-ingest.py
+        Y_dwarf_pm_ingest.py
 
     """
 
@@ -124,7 +127,13 @@ def test_Kirk19_ingest(db):
 
     # Test spectral types added
 
-    # Test parallaxes added
+    # Test parallaxes 
     ref = 'Kirk19'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
     assert len(t) == 22, f'found {len(t)} parallax entries for {ref}'
+    
+    #Test proper motions added
+    ref = 'Kirk19'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 22, f'found {len(t)} proper motion entries for {ref}'
+    
