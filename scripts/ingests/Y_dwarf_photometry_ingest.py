@@ -6,14 +6,8 @@ from simple.schema import *
 #from utils import ingest_photometry
 from astropy.table import Table
 import numpy as np
-from astropy.coordinates import SkyCoord
-import astropy.units as u
-from astroquery.simbad import Simbad
-import warnings
-warnings.filterwarnings("ignore", module='astroquery.simbad')
-import re
-import os
 from pathlib import Path
+import os 
 
 #def ingest_photometry adapted from ingest_pm and ingest_parallaxes from utils 
 #NOTE: Have to eventually add back in epoch, ucd, and instrument below
