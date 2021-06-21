@@ -3,7 +3,7 @@ sys.path.append('.')
 from astrodbkit2.astrodb import create_database
 from astrodbkit2.astrodb import Database
 from simple.schema import *
-from utils import ingest_pm
+#from utils import ingest_photometry
 from astropy.table import Table
 import numpy as np
 from astropy.coordinates import SkyCoord
@@ -16,7 +16,8 @@ import os
 from pathlib import Path
 
 #def ingest_photometry adapted from ingest_pm and ingest_parallaxes from utils 
-def ingest_photometry(db, source, band, ucd, mag, mag_err, telescope, instrument, epoch, comments, reference, verbose=False):
+#NOTE: Have to eventually add back in epoch, ucd, and instrument below
+def ingest_photometry(db, sources, band, ch1mag, ch1mag_err, ch2mag, ch2mag_err, telescope, reference, verbose=False):
     verboseprint = print if verbose else lambda *a, **k: None
 
     n_added = 0
@@ -38,13 +39,14 @@ def ingest_photometry(db, source, band, ucd, mag, mag_err, telescope, instrument
         # Construct data to be added
         photometry_data = [{'source': db_name,
                           'band': band[i],
-                          'ucd' : ucd[i],
-                          'magnitude': mag[i],
-                          'magnitude_error': mag_err[i],
+                          #'ucd' : ucd[i],
+                          'ch1mag' : ch1mag[i],
+                          'ch1mag_err' : ch1mag_err[i],
+                          'ch2mag': ch2mag[i],
+                          'ch2mag_err': ch2mag_err[i],
                           'telescope': telescope[i],
-                          'instrument': instrument[i],
-                          'epoch': epoch[i],
-                          'comments':comments[i],
+                          #'instrument': instrument[i],
+                          #'epoch': epoch[i], 
                           'adopted': adopted,
                           'reference': reference[i]}]
         verboseprint('Photometry data: ',photometry_data)
@@ -84,18 +86,23 @@ else:
 ingest_table = Table.read('scripts/ingests/Y-dwarf_table.csv', data_start=2)
 
 source = ingest_table['source']
-band = ingest_table['band']
-ucd = ingest_table['ucd']
-mag = ingest_table['magnitude']
-mag_err = ingest_table['magnitude_error']
-telescope = ingest_table['telescope']
-instrument = ingest_table['instrument']
-epoch = ingest_table['epoch']
-comments = ingest_table['comments']
-reference = ['Kirk19',]*len(mag)
+band = ingest_table['J_MKO']
+#Don't know what ucd is or if it is needed
+#ucd = ingest_table['ucd']
+ch1mag = ingest_table['ch1_mag']
+ch1mag_err = ingest_table['ch1_err']
+ch2mag = ingest_table['ch2_mag']
+ch2mag_err = ingest_table['ch2_err']
+telescope = ['Spizter',]*len(band)
+#Have to look up what instrument is in table
+#instrument = ingest_table['instrument']
+#Leaving epoch blank for now since we don't know if the epoch table in the csv files corresponds to pm epoch or photometry
+#epoch = ingest_table['epoch']
+reference = ingest_table['Spizter_ref']
 
 #ingest_photometry defintion in utils.py, adapted from ingest_parallaxes definition
-ingest_photometry(db, source, band, ucd, mag, mag_err, telescope, instrument, epoch, comments, reference, verbose=True)
+#NOTE: have to eventually add back in ucd, instrument, and epoch
+ingest_photometry(db, source, band, ch1mag, ch1mag_err, ch2mag, ch2mag_err, telescope, reference, verbose=True)
 
 
 if not DRY_RUN:
