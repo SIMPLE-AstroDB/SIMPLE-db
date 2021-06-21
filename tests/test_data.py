@@ -136,3 +136,4 @@ def test_Kirk19_ingest(db):
     ref = 'Kirk19'
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 22, f'found {len(t)} proper motion entries for {ref}'
+    
