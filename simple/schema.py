@@ -1,6 +1,7 @@
 # Schema for the SIMPLE database
 
-from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, BigInteger, Enum, Date, DateTime
+from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, \
+    BigInteger, Enum, Date, DateTime, ForeignKeyConstraint
 import enum
 from astrodbkit2.astrodb import Base
 
@@ -28,6 +29,15 @@ class Instruments(Base):
     __tablename__ = 'Instruments'
     name = Column(String(30), primary_key=True, nullable=False)
     reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'))
+
+
+class Filters(Base):
+    __tablename__ = 'Filters'
+    band = Column(String(30), primary_key=True, nullable=False)  # of the form instrument.filter (see SVO)
+    instrument = Column(String(30), ForeignKey('Instruments.name', onupdate='cascade'), primary_key=True)
+    telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'), primary_key=True)
+    effective_wavelength = Column(Float)
+    width = Column(Float)
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -89,12 +99,18 @@ class Photometry(Base):
     ucd = Column(String(100))
     magnitude = Column(Float)
     magnitude_error = Column(Float)
-    # system = Column(String(30), ForeignKey('Systems.name'))
-    telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'))
-    instrument = Column(String(30), ForeignKey('Instruments.name', onupdate='cascade'))
+    telescope = Column(String(30))
+    instrument = Column(String(30))
     epoch = Column(Float)  # decimal year
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), primary_key=True)
+
+    # TODO: Uncomment this once the WISE band names are fixed and tested
+    # Foreign key constraints for telescope, instrument, band; all handled via reference to Modes table
+    # __table_args__ = (ForeignKeyConstraint([telescope, instrument, band],
+    #                                        [Filters.telescope, Filters.instrument, Filters.name],
+    #                                        onupdate="cascade"),
+    #                   {})
 
 
 class Parallaxes(Base):
