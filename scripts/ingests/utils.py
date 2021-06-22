@@ -90,27 +90,28 @@ def search_publication(db, name=None, doi=None, bibcode=None):
     return pub_search_table
 
 
-def add_publication(db, doi=None, bibcode=None, name=None, description=None, dryrun=True):
+def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, dryrun: bool = True):
     """
+    Adds publication to the database, including metadata found with ADS.
 
     Parameters
     ----------
     db
-    doi: str
-    bibcode: str
-    name: str
-    description: str
-    dryrun: bool
-        Default is to list change but not modify the database. Set dryrun=False to actually change the database.
-
-    Returns
-    -------
-    None
+    doi: str    The DOI is required to find the reference
+    bibcode
+    name: str   Optional to explictly provide the publication shortname, otherwise it will be generated
+    description
+    dryrun
 
     """
 
-    if not(doi or bibcode):
-        print('DOI or Bibcode is required input')
+    # TODO: make work with DOI or bibcode
+    #if not(doi or bibcode):
+    #    print('DOI or Bibcode is required input')
+    #    return
+
+    if not (doi):
+        print('DOI is required input')
         return
 
     ads.config.token = os.getenv('ADS_TOKEN')
@@ -142,11 +143,13 @@ def add_publication(db, doi=None, bibcode=None, name=None, description=None, dry
             print("Publication found in ADS")
             article = doi_matches_list[0]
             print(article.first_author, article.year, article.bibcode, article.title)
-            name = article.first_author[0:4] + article.year[-2]
+            if not name: # generate the name if it was not provided
+                name = article.first_author[0:4] + article.year[-2:]
             description = article.title[0]
 
-    if bibcode:
-        bibcode_matches = ads.SearchQuery(bibcode=bibcode)
+    #TODO: add bibcode search
+    # if bibcode:
+    #    bibcode_matches = ads.SearchQuery(bibcode=bibcode)
 
     #check again to make sure publication does not already exist in database
     not_null_pub_filters = []
@@ -171,13 +174,16 @@ def add_publication(db, doi=None, bibcode=None, name=None, description=None, dry
     if dryrun is False:
         new_ref = [{'name': name, 'bibcode': article.bibcode, 'doi': doi, 'description': description}]
         db.Publications.insert().execute(new_ref)
+        # TODO: db.save just the publications table and/or add save_db flag.
         print(f'Added {name} to Publications table')
 
+    # TODO: provide an option to add missing information
     #     add_doi_bibcode = db.Publications.update().where(db.Publications.c.name == 'Manj19'). \
     #         values(bibcode='2019AJ....157..101M', doi='10.3847/1538-3881/aaf88f',
     #               description='Cloud Atlas: HST nir spectral library')
     #     db.engine.execute(add_doi_bibcode)
 
+    return
 
 # Make sure all source names are Simbad resolvable:
 def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', verbose=False):
