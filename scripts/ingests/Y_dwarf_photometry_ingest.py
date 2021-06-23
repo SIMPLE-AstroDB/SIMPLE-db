@@ -7,7 +7,7 @@ from simple.schema import *
 from utils import ingest_photometry
 from astropy.table import Table
 from pathlib import Path
-import os 
+import os
 
 
 DRY_RUN = False #modifies .db file but not the data files
@@ -58,7 +58,7 @@ reference = ingest_table['Spizter_ref']
 #ingesting band 1 photometry
 ingest_photometry(db, sources = source, bands = band1, ucds = ucd1, magnitudes = ch1mag, magnitude_errors = ch1mag_err, telescope = telescope, instrument = instrument, reference = reference, verbose=True)
 
-#ingesting band 2 photometry 
+#ingesting band 2 photometry
 ingest_photometry(db, sources = source, bands = band2, ucds = ucd2, magnitudes = ch2mag, magnitude_errors = ch2mag_err, telescope = telescope, instrument = instrument, reference = reference, verbose=True)
 
 if not DRY_RUN:

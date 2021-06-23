@@ -237,4 +237,4 @@ def ingest_photometry(db, sources = None, bands = None, ucds = None, magnitudes 
         n_added += 1
 
     print("Added to database: ", n_added)
-    return 
+    return
