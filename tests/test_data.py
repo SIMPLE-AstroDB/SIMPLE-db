@@ -141,3 +141,11 @@ def test_Kirk19_ingest(db):
     telescope = 'Spitzer'
     t = db.query(db.Photometry).filter(db.Photometry.c.telescope == telescope).astropy()
     assert len(t) == 44, f'found {len(t)} photometry entries for {telescope}'
+
+    ref = 'Kirk19'
+    t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
+    assert len(t) == 16, f'found {len(t)} photometry entries for {ref}'
+
+    ref = 'Schn15'
+    t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
+    assert len(t) == 28, f'found {len(t)} photometry entries for {ref}'
