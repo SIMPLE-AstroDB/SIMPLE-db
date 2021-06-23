@@ -207,7 +207,8 @@ def ingest_pm(db, sources, muRA, muRA_err, muDEC, muDEC_err, pm_reference, verbo
     print("Added to database: ", n_added)
 def ingest_photometry(db, sources = None, bands = None, ucds = None, magnitudes = None, magnitude_errors = None , telescope = None, instrument = None, epoch = None, comments = None, reference = None, verbose=False):
     verboseprint = print if verbose else lambda *a, **k: None
-
+if epoch = None:
+        epoch = None*len(sources)
     n_added = 0
 
     for i, source in enumerate(sources):
