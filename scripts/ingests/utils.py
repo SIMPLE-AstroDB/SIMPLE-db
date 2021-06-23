@@ -138,7 +138,6 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
        print('DOI or Bibcode is required input')
        return
 
-    # TODO: check if variable is set
     ads.config.token = os.getenv('ADS_TOKEN')
 
     # check to make sure publication doesn't already exist in the database
@@ -214,12 +213,40 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         # TODO: db.save just the publications table and/or add save_db flag.
         print(f'Added {name} to Publications table')
 
+    return
+
+
+def update_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, dryrun: bool = True):
+    """
+    Updates publications in the database, including metadata found with ADS.
+
+    In order to auto-populate the fields, An $ADS_TOKEN environment variable must be set.
+    See https://ui.adsabs.harvard.edu/user/settings/token
+
+    Parameters
+    ----------
+    db
+        Database object
+    doi, bibcode: str
+        The DOI or ADS Bibcode of the reference.
+    name: str, optional
+        The publication shortname, otherwise it will be generated [optional]
+    description: str, optional
+        Description of the paper, typically the title of the papre [optional]
+    dryrun: bool
+
+    See Also
+    --------
+    search_publication: Function to find publications in the database
+    add_publication: Function to add publications to the database
+
+    """
+
     # TODO: provide an option to add missing information
     #     add_doi_bibcode = db.Publications.update().where(db.Publications.c.name == 'Manj19'). \
     #         values(bibcode='2019AJ....157..101M', doi='10.3847/1538-3881/aaf88f',
     #               description='Cloud Atlas: HST nir spectral library')
     #     db.engine.execute(add_doi_bibcode)
-
     return
 
 
