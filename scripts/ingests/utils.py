@@ -11,7 +11,7 @@ import ads
 import os
 
 
-def search_publication(db, name=None, doi=None, bibcode=None):
+def search_publication(db, name=None, doi=None, bibcode=None, verbose=False):
     """
     Find publications in the database by matching on the publication name,  doi, or bibcode
 
@@ -28,25 +28,29 @@ def search_publication(db, name=None, doi=None, bibcode=None):
 
     Returns
     -------
-    Table containing publications matching name
+    True: if only one match
+    Table containing publications matching name if more than one match
+    False: if no matches
 
-    Example
+    Examples
     -------
-    >>> test = search_publication(db, name='Martin19')
-    Searching Martin19
-    No matching publications for Martin19
-    Trying Mart
-    Found 7 matching publications for Mart
-      name         bibcode                     doi                                                           description
-    ------- --------------------- ----------------------------- ------------------------------------------------------------------------------------------------------
-    Mart99a   1999Sci...283.1718M 10.1126/science.283.5408.1718                        A Search for Companions to Nearby Brown Dwarfs: The Binary DENIS-P J1228.2-1547
-    Mart99b   1999AJ....118.2466M                10.1086/301107                                              Spectroscopic Classification of Late-M and L Field Dwarfs
-     Mart00   2000ApJ...529L..37M                10.1086/312450 The Discovery of a Companion to the Very Cool Dwarf Gliese 569B with the Keck Adaptive Optics Facility
-     Mart06   2006A&A...456..253M    10.1051/0004-6361:20054186                                         Resolved Hubble space spectroscopy of ultracool binary systems
-     Mart98 1998ApJ...507L..41M                  10.1086/311675                                                           The First L-Type Brown Dwarf in the Pleiades
-     Mart04   2004SPIE.5492.1653M             10.1117/12.551828                                              PANIC: a near-infrared camera for the Magellan telescopes
-     Mart18                  None                          None                                                                                                   None
+    >>> test = search_publication(db, name='Cruz')
+    Found 8 matching publications for Cruz or None or None
+
+    >>> test = search_publication(db, name='Kirk19',verbose=True)
+    Found 1 matching publications for Kirk19 or None or None
+     name        bibcode                 doi                                                                                description
+    ------ ------------------- ------------------------ ----------------------------------------------------------------------------------------------------------------------------------------------------
+    Kirk19 2019ApJS..240...19K 10.3847/1538-4365/aaf6af Preliminary Trigonometric Parallaxes of 184 Late-T and Y Dwarfs and an Analysis of the Field Substellar Mass Function into the Planetary Mass Regime
+
+    >>> test = search_publication(db, name='Smith')
+    No matching publications for Smith, Trying Smit
+    No matching publications for Smit
+    Use add_publication() to add it to the database.
+
     """
+
+    verboseprint = print if verbose else lambda *a, **k: None
 
     # Make sure a search term is provided
     if name is None and doi is None and bibcode is None:
@@ -67,8 +71,15 @@ def search_publication(db, name=None, doi=None, bibcode=None):
 
     n_pubs_found = len(pub_search_table)
 
-    if n_pubs_found > 0:
+    if n_pubs_found == 1:
+        verboseprint(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
+        if verbose: pub_search_table.pprint_all()
+        return True
+
+    if n_pubs_found > 1:
         print(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
+        if verbose: pub_search_table.pprint_all()
+        return pub_search_table
 
     # If no matches found, search using first four characters of input name
     if n_pubs_found == 0 and name:
@@ -80,14 +91,16 @@ def search_publication(db, name=None, doi=None, bibcode=None):
         if n_pubs_found_short == 0:
             print(f'No matching publications for {shorter_name}')
             print('Use add_publication() to add it to the database.')
+            return False
+
         if n_pubs_found_short > 0:
             print(f'Found {n_pubs_found_short} matching publications for {shorter_name}')
             #pub_search_table.pprint_all()
+            if verbose: pub_search_table.pprint_all()
+            return pub_search_table
 
-    if len(pub_search_table) > 0:
-        pub_search_table.pprint_all()
+    return
 
-    return pub_search_table
 
 
 def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, dryrun: bool = True):
