@@ -136,4 +136,16 @@ def test_Kirk19_ingest(db):
     ref = 'Kirk19'
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 22, f'found {len(t)} proper motion entries for {ref}'
-    
+
+    #Test photometry added
+    telescope = 'Spitzer'
+    t = db.query(db.Photometry).filter(db.Photometry.c.telescope == telescope).astropy()
+    assert len(t) == 44, f'found {len(t)} photometry entries for {telescope}'
+
+    ref = 'Kirk19'
+    t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
+    assert len(t) == 16, f'found {len(t)} photometry entries for {ref}'
+
+    ref = 'Schn15'
+    t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
+    assert len(t) == 28, f'found {len(t)} photometry entries for {ref}'
