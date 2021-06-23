@@ -11,7 +11,7 @@ import ads
 import os
 
 
-def search_publication(db, name=None, doi=None, bibcode=None, verbose=False):
+def search_publication(db, name: str = None, doi: str = None, bibcode: str = None, verbose: bool = False):
     """
     Find publications in the database by matching on the publication name,  doi, or bibcode
 
@@ -73,12 +73,14 @@ def search_publication(db, name=None, doi=None, bibcode=None, verbose=False):
 
     if n_pubs_found == 1:
         verboseprint(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
-        if verbose: pub_search_table.pprint_all()
+        if verbose:
+            pub_search_table.pprint_all()
         return True
 
     if n_pubs_found > 1:
         print(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
-        if verbose: pub_search_table.pprint_all()
+        if verbose:
+            pub_search_table.pprint_all()
         return pub_search_table
 
     # If no matches found, search using first four characters of input name
@@ -95,8 +97,8 @@ def search_publication(db, name=None, doi=None, bibcode=None, verbose=False):
 
         if n_pubs_found_short > 0:
             print(f'Found {n_pubs_found_short} matching publications for {shorter_name}')
-            #pub_search_table.pprint_all()
-            if verbose: pub_search_table.pprint_all()
+            if verbose:
+                pub_search_table.pprint_all()
             return pub_search_table
 
     return
