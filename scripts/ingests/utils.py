@@ -294,7 +294,7 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', verbose
                 resolved_names.append(ingest_name)
                 verboseprint("coord search failed")
                 n_notfound = n_notfound + 1
-                
+
             # If more than one match found within "radius", query user for selection and append to resolved_name
             elif len(coord_result_table) > 1:
                 for j, name in enumerate(coord_result_table['MAIN_ID']):
@@ -420,3 +420,72 @@ def ingest_parallaxes(db, sources, plx, plx_unc, plx_ref, verbose=False, norun=F
             n_added += 1
 
     print("Added to database: ", n_added)
+
+
+def ingest_pm(db, sources, muRA, muRA_err, muDEC, muDEC_err, pm_reference, verbose=False):
+    verboseprint = print if verbose else lambda *a, **k: None
+
+    n_added = 0
+
+    for i, source in enumerate(sources):
+        db_name = db.search_object(source, output_table='Sources')[0]['source']
+        # Search for existing proper motion data and determine if this is the best
+        adopted = None
+        source_pm_data = db.query(db.ProperMotions).filter(db.ProperMotions.c.source == db_name).table()
+        if source_pm_data is None or len(source_pm_data) == 0:
+            adopted = True
+        else:
+            print("OTHER PROPER MOTION EXISTS: ",source_pm_data)
+
+        # TODO: Work out logic for updating/setting adopted. Be it's own function.
+
+        # TODO: Make function which validates refs
+
+        # Construct data to be added
+        pm_data = [{'source': db_name,
+                          'mu_ra': muRA[i],
+                          'mu_ra_error' : muRA_err[i],
+                          'mu_dec': muDEC[i],
+                          'mu_dec_error': muDEC_err[i],
+                          'adopted': adopted,
+                          'reference': pm_reference[i]}]
+        verboseprint('Proper motion data: ',pm_data)
+
+        # Consider making this optional or a key to only view the output but not do the operation.
+        db.ProperMotions.insert().execute(pm_data)
+        n_added += 1
+
+    print("Added to database: ", n_added)
+
+
+
+def ingest_photometry(db, sources = None, bands = None, ucds = None, magnitudes = None, magnitude_errors = None , telescope = None, instrument = None, epoch = None, comments = None, reference = None, verbose=False):
+    verboseprint = print if verbose else lambda *a, **k: None
+    n_added = 0
+
+    for i, source in enumerate(sources):
+        db_name = db.search_object(source, output_table='Sources')[0]['source']
+         #TODO: Check for duplicate photometry 
+        #source_photometry_data = db.query(db.Photometry).filter(db.Photometry.c.source == db_name).table()
+
+        # TODO: Make function which validates refs
+
+        # Construct data to be added
+        photometry_data = [{'source': db_name,
+                          'band': bands[i],
+                          'ucd' : ucds[i],
+                          'magnitude' : magnitudes[i],
+                          'magnitude_error' : magnitude_errors[i],
+                          'telescope': telescope[i],
+                          'instrument': instrument[i],
+                          'epoch': epoch,
+                          'comments': comments,
+                          'reference': reference[i]}]
+        verboseprint('Photometry data: ',photometry_data)
+
+        # Consider making this optional or a key to only view the output but not do the operation.
+        db.Photometry.insert().execute(photometry_data)
+        n_added += 1
+
+    print("Added to database: ", n_added)
+    return

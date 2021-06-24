@@ -8,6 +8,7 @@ import numpy as np
 import re
 import os
 from utils import convert_spt_string_to_code
+from pathlib import Path
 
 DRY_RUN = True
 RECREATE_DB = True
@@ -16,24 +17,33 @@ VERBOSE = False
 verboseprint = print if VERBOSE else lambda *a, **k: None
 
 db_file = 'SIMPLE.db'
+db_file_path = Path(db_file)
 db_connection_string = 'sqlite:///SIMPLE.db'  # SQLite
 
-try:
-	db_file_path = db_file.resolve(strict=True)
-except:
-	# SIMPLE.db file does not exist so create it
-	create_database(db_connection_string)
+if RECREATE_DB and db_file_path.exists():
+        os.remove(db_file)
+
+if not db_file_path.exists():
+        create_database(db_connection_string)
 	db = Database(db_connection_string)
 	db.load_database('data')
-else:
-	# SIMPLE.db file does exist
-	if RECREATE_DB: # Recreate database anyway
-		os.remove(db_file)
-		create_database(db_connection_string)
-		db = Database(db_connection_string)
-		db.load_database('data')
-	else: # Use pre-existing database
-		db = Database(db_connection_string)
+
+# try:
+# 	db_file_path = db_file.resolve(strict=True)
+# except:
+# 	# SIMPLE.db file does not exist so create it
+# 	create_database(db_connection_string)
+# 	db = Database(db_connection_string)
+# 	db.load_database('data')
+# else:
+# 	# SIMPLE.db file does exist
+# 	if RECREATE_DB: # Recreate database anyway
+# 		os.remove(db_file)
+# 		create_database(db_connection_string)
+# 		db = Database(db_connection_string)
+# 		db.load_database('data')
+# 	else: # Use pre-existing database
+# 		db = Database(db_connection_string)
 
 # ===============================================================
 # Ingest new reference if missing
