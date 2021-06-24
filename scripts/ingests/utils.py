@@ -90,13 +90,13 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     # If no matches found, search using first four characters of input name
     if n_pubs_found == 0 and name:
         shorter_name = name[:4]
-        print(f'No matching publications for {name}, Trying {shorter_name}')
+        verboseprint(f'No matching publications for {name}, Trying {shorter_name}')
         fuzzy_query_shorter_name = '%' + shorter_name + '%'
         pub_search_table = db.query(db.Publications).filter(db.Publications.c.name.ilike(fuzzy_query_shorter_name)).table()
         n_pubs_found_short = len(pub_search_table)
         if n_pubs_found_short == 0:
-            print(f'No matching publications for {shorter_name}')
-            print('Use add_publication() to add it to the database.')
+            verboseprint(f'No matching publications for {shorter_name}')
+            verboseprint('Use add_publication() to add it to the database.')
             return False
 
         if n_pubs_found_short > 0:
@@ -124,6 +124,8 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         The DOI or ADS Bibcode of the reference. One of these is required input.
     name: str, optional
         The publication shortname, otherwise it will be generated [optional]
+        Convention is the first four letters of first authors last name and two digit year (e.g., Smit21)
+        For last names which are less than four letters, use '_' or first name initial(s). (e.g, Xu__21 or LiYB21)
     description: str, optional
         Description of the paper, typically the title of the papre [optional]
     dryrun: bool
@@ -140,14 +142,13 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
 
     ads.config.token = os.getenv('ADS_TOKEN')
 
-    if not ads.config.token and not name and (not doi or not bibcode):
+    if not ads.config.token and (not name or (not doi or not bibcode)):
         print("An ADS_TOKEN environment variable must be set in order to auto-populate the fields.\n"
               "Without an ADS_TOKEN, name and bibcode or DOI must be set explicity.")
         return
 
-    # check to make sure publication doesn't already exist in the database
+    # Check to make sure publication doesn't already exist in the database
     pub_already_exists = search_publication(db, name=name,doi=doi,bibcode=bibcode)
-
     if pub_already_exists:
         print('Similar publication already exists in database\n'
               'Use search_publication function before adding a new record')
@@ -155,7 +156,7 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
 
     # Search ADS using a provided DOI
     if doi and ads.config.token:
-        doi_matches = ads.SearchQuery(doi=doi)
+        doi_matches = ads.SearchQuery(doi=doi, fl=['id', 'bibcode', 'title', 'first_author','year','doi'])
         doi_matches_list = list(doi_matches)
         if len(doi_matches_list) != 1:
             print('should only be one matching DOI')
@@ -166,15 +167,20 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
             article = doi_matches_list[0]
             print(article.first_author, article.year, article.bibcode, article.title)
             if not name: # generate the name if it was not provided
-                name = article.first_author[0:4] + article.year[-2:]
+                name_stub = article.first_author.replace(',', '').replace(' ','')
+                name_add = name_stub[0:4] + article.year[-2:]
+            else:
+                name_add = name
             description = article.title[0]
             bibcode_add = article.bibcode
-    else
+            doi_add = article.doi[0]
+    elif doi:
+        name_add = name
         bibcode_add = bibcode
         doi_add = doi
 
     if bibcode and ads.config.token:
-        bibcode_matches = ads.SearchQuery(bibcode=bibcode)
+        bibcode_matches = ads.SearchQuery(bibcode=bibcode,fl=['id', 'bibcode', 'title', 'first_author','year','doi'])
         bibcode_matches_list = list(bibcode_matches)
         if len(bibcode_matches_list) != 1:
             print('should only be one matching bibcode')
@@ -185,31 +191,34 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
             article = bibcode_matches_list[0]
             print(article.first_author, article.year, article.bibcode, article.doi, article.title)
             if not name:  # generate the name if it was not provided
-                name = article.first_author[0:4] + article.year[-2:]
+                name_stub = article.first_author.replace(',', '').replace(' ', '')
+                name_add = name_stub[0:4] + article.year[-2:]
+            else:
+                name_add = name
             description = article.title[0]
             bibcode_add = article.bibcode
-            doi_add = article.doi
-    else:
+            doi_add = article.doi[0]
+    elif bibcode:
+        name_add = name
         bibcode_add = bibcode
-        doi_add = article.doi
+        doi_add = doi
 
-    #check again to make sure publication does not already exist in database
-    pub_already_exists = search_publication(db, name=name, doi=doi, bibcode=bibcode)
-
+    # Check again to make sure publication does not already exist in database
+    pub_already_exists = search_publication(db, name=name_add, doi=doi_add, bibcode=bibcode_add)
     if pub_already_exists:
         print('Similar publication already exists in database\n'
               'Use search_publication function before adding a new record')
         return
 
     if dryrun:
-        print("name:", name, "\nbibcode:", bibcode_add, "\ndoi:", doi_add, "\ndescription:", description)
-        print("re-run with dryrun=False to add to the database")
+        print("name:", name_add, "\nbibcode:", bibcode_add, "\ndoi:", doi_add, "\ndescription:", description)
+        print("\nRe-run with dryrun=False to add to the database")
 
     if dryrun is False:
-        new_ref = [{'name': name, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
+        new_ref = [{'name': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
         db.Publications.insert().execute(new_ref)
         # TODO: db.save just the publications table and/or add save_db flag.
-        print(f'Added {name} to Publications table')
+        print(f'Added {name_add} to Publications table')
 
     return
 
