@@ -142,7 +142,7 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
 
     ads.config.token = os.getenv('ADS_TOKEN')
 
-    if not ads.config.token and (not name or (not doi or not bibcode)):
+    if not ads.config.token and (not name and (not doi or not bibcode)):
         print("An ADS_TOKEN environment variable must be set in order to auto-populate the fields.\n"
               "Without an ADS_TOKEN, name and bibcode or DOI must be set explicity.")
         return
