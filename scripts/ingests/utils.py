@@ -146,19 +146,11 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         return
 
     # check to make sure publication doesn't already exist in the database
-    not_null_pub_filters = []
-    if name:
-        not_null_pub_filters.append(db.Publications.c.name == name)
-    if doi:
-        not_null_pub_filters.append(db.Publications.c.doi == doi)
-    if bibcode:
-        not_null_pub_filters.append(db.Publications.c.bibcode == bibcode)
+    pub_already_exists = search_publication(db, name=name,doi=doi,bibcode=bibcode)
 
-    pub_search_table = db.query(db.Publications).filter(or_(*not_null_pub_filters)).table()
-
-    if len(pub_search_table) > 0:
-        print('Similar publication already exists in database')
-        pub_search_table.pprint_all()
+    if pub_already_exists:
+        print('Similar publication already exists in database\n'
+              'Use search_publication function before adding a new record')
         return
 
     # Search ADS using a provided DOI
@@ -202,19 +194,11 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         doi_add = article.doi
 
     #check again to make sure publication does not already exist in database
-    not_null_pub_filters = []
-    if name:
-        not_null_pub_filters.append(db.Publications.c.name == name)
-    if doi:
-        not_null_pub_filters.append(db.Publications.c.doi == doi)
-    if bibcode_add:
-        not_null_pub_filters.append(db.Publications.c.bibcode == bibcode)
+    pub_already_exists = search_publication(db, name=name, doi=doi, bibcode=bibcode)
 
-    pub_search_table = db.query(db.Publications).filter(or_(*not_null_pub_filters)).table()
-
-    if len(pub_search_table) > 0:
-        print('Similar publication already exists in database')
-        pub_search_table.pprint_all()
+    if pub_already_exists:
+        print('Similar publication already exists in database\n'
+              'Use search_publication function before adding a new record')
         return
 
     if dryrun:
