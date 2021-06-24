@@ -29,8 +29,8 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     Returns
     -------
     True: if only one match
-    Table containing publications matching name if more than one match
-    False: if no matches
+    False: No matches
+    False: Mulptiple matches
 
     Examples
     -------
@@ -85,7 +85,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
         print(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
         if verbose:
             pub_search_table.pprint_all()
-        return pub_search_table
+        return False
 
     # If no matches found, search using first four characters of input name
     if n_pubs_found == 0 and name:
@@ -103,7 +103,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
             print(f'Found {n_pubs_found_short} matching publications for {shorter_name}')
             if verbose:
                 pub_search_table.pprint_all()
-            return pub_search_table
+            return False
 
     return
 
@@ -140,6 +140,11 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
 
     ads.config.token = os.getenv('ADS_TOKEN')
 
+    if not ads.config.token and not name and (not doi or not bibcode):
+        print("An ADS_TOKEN environment variable must be set in order to auto-populate the fields.\n"
+              "Without an ADS_TOKEN, name and bibcode or DOI must be set explicity.")
+        return
+
     # check to make sure publication doesn't already exist in the database
     not_null_pub_filters = []
     if name:
@@ -171,6 +176,10 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
             if not name: # generate the name if it was not provided
                 name = article.first_author[0:4] + article.year[-2:]
             description = article.title[0]
+            bibcode_add = article.bibcode
+    else
+        bibcode_add = bibcode
+        doi_add = doi
 
     if bibcode and ads.config.token:
         bibcode_matches = ads.SearchQuery(bibcode=bibcode)
@@ -182,10 +191,15 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         if len(bibcode_matches_list) == 1:
             print("Publication found in ADS using bibcode: ", bibcode)
             article = bibcode_matches_list[0]
-            print(article.first_author, article.year, article.bibcode, article.title)
+            print(article.first_author, article.year, article.bibcode, article.doi, article.title)
             if not name:  # generate the name if it was not provided
                 name = article.first_author[0:4] + article.year[-2:]
             description = article.title[0]
+            bibcode_add = article.bibcode
+            doi_add = article.doi
+    else:
+        bibcode_add = bibcode
+        doi_add = article.doi
 
     #check again to make sure publication does not already exist in database
     not_null_pub_filters = []
@@ -193,7 +207,7 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         not_null_pub_filters.append(db.Publications.c.name == name)
     if doi:
         not_null_pub_filters.append(db.Publications.c.doi == doi)
-    if bibcode:
+    if bibcode_add:
         not_null_pub_filters.append(db.Publications.c.bibcode == bibcode)
 
     pub_search_table = db.query(db.Publications).filter(or_(*not_null_pub_filters)).table()
@@ -204,11 +218,11 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         return
 
     if dryrun:
-        print("name:", name, "\nbibcode:", article.bibcode, "\ndoi:", doi, "\ndescription:", description)
+        print("name:", name, "\nbibcode:", bibcode_add, "\ndoi:", doi_add, "\ndescription:", description)
         print("re-run with dryrun=False to add to the database")
 
     if dryrun is False:
-        new_ref = [{'name': name, 'bibcode': article.bibcode, 'doi': doi, 'description': description}]
+        new_ref = [{'name': name, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
         db.Publications.insert().execute(new_ref)
         # TODO: db.save just the publications table and/or add save_db flag.
         print(f'Added {name} to Publications table')
