@@ -170,6 +170,7 @@ def ingest_parallaxes(db, sources, plx, plx_unc, plx_ref, verbose=False, norun=F
 
     print("Added to database: ", n_added)
 
+
 def ingest_pm(db, sources, muRA, muRA_err, muDEC, muDEC_err, pm_reference, verbose=False):
     verboseprint = print if verbose else lambda *a, **k: None
 
@@ -204,3 +205,36 @@ def ingest_pm(db, sources, muRA, muRA_err, muDEC, muDEC_err, pm_reference, verbo
         n_added += 1
 
     print("Added to database: ", n_added)
+
+
+
+def ingest_photometry(db, sources = None, bands = None, ucds = None, magnitudes = None, magnitude_errors = None , telescope = None, instrument = None, epoch = None, comments = None, reference = None, verbose=False):
+    verboseprint = print if verbose else lambda *a, **k: None
+    n_added = 0
+
+    for i, source in enumerate(sources):
+        db_name = db.search_object(source, output_table='Sources')[0]['source']
+         #TODO: Check for duplicate photometry 
+        #source_photometry_data = db.query(db.Photometry).filter(db.Photometry.c.source == db_name).table()
+
+        # TODO: Make function which validates refs
+
+        # Construct data to be added
+        photometry_data = [{'source': db_name,
+                          'band': bands[i],
+                          'ucd' : ucds[i],
+                          'magnitude' : magnitudes[i],
+                          'magnitude_error' : magnitude_errors[i],
+                          'telescope': telescope[i],
+                          'instrument': instrument[i],
+                          'epoch': epoch,
+                          'comments': comments,
+                          'reference': reference[i]}]
+        verboseprint('Photometry data: ',photometry_data)
+
+        # Consider making this optional or a key to only view the output but not do the operation.
+        db.Photometry.insert().execute(photometry_data)
+        n_added += 1
+
+    print("Added to database: ", n_added)
+    return
