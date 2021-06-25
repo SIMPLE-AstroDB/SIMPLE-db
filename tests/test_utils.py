@@ -79,3 +79,14 @@ def test_ingest_parallaxes(db, t):
     assert results['source'][0] == 'Fake 3'
     assert results['parallax'][0] == 155
     assert results['parallax_error'][0] == 0.6
+
+def test_add_publication(db):
+
+
+def test_search_publication(db):
+    assert search_publication(db, name='Kirk19') == True
+    assert search_publication(db, doi='10.1088/0004-637X/697/1/824') == True
+    assert search_publication(db, bibcode='2010AJ....139..176F') == True
+    assert search_publication(db, name='blah') == False
+    assert search_publication(db, doi='blah') == False
+    assert search_publication(db, bibcode='blah') == False
