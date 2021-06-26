@@ -1,3 +1,5 @@
+import sqlite3
+
 import numpy as np
 import re
 from astropy.coordinates import SkyCoord
@@ -150,9 +152,10 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
     # Check to make sure publication doesn't already exist in the database
     pub_already_exists = search_publication(db, name=name,doi=doi,bibcode=bibcode)
     if pub_already_exists:
-        print('Similar publication already exists in database\n'
-              'Use search_publication function before adding a new record')
-        return
+        raise sqlite3.IntegrityError("Similar publication already exists in database\n"
+                                     "Use search_publication function before adding a new record".format())
+
+
 
     # Search ADS using a provided DOI
     if doi and ads.config.token:
