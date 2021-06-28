@@ -1,10 +1,263 @@
+import sqlite3
+
 import numpy as np
+import re
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.simbad import Simbad
+from astropy.table import Table, vstack
 import warnings
 warnings.filterwarnings("ignore", module='astroquery.simbad')
-import re
+from sqlalchemy import or_
+import ads
+import os
+
+
+def search_publication(db, name: str = None, doi: str = None, bibcode: str = None, verbose: bool = False):
+    """
+    Find publications in the database by matching on the publication name,  doi, or bibcode
+
+    Parameters
+    ----------
+    db
+        Variable referencing the database to search
+    name: str
+        Name of publication to search
+    doi: str
+        DOI of publication to search
+    bibcode: str
+        ADS Bibcode of publication to search
+
+    Returns
+    -------
+    True: if only one match
+    False: No matches
+    False: Mulptiple matches
+
+    Examples
+    -------
+    >>> test = search_publication(db, name='Cruz')
+    Found 8 matching publications for Cruz or None or None
+
+    >>> test = search_publication(db, name='Kirk19',verbose=True)
+    Found 1 matching publications for Kirk19 or None or None
+     name        bibcode                 doi                                                                                description
+    ------ ------------------- ------------------------ ----------------------------------------------------------------------------------------------------------------------------------------------------
+    Kirk19 2019ApJS..240...19K 10.3847/1538-4365/aaf6af Preliminary Trigonometric Parallaxes of 184 Late-T and Y Dwarfs and an Analysis of the Field Substellar Mass Function into the Planetary Mass Regime
+
+    >>> test = search_publication(db, name='Smith')
+    No matching publications for Smith, Trying Smit
+    No matching publications for Smit
+    Use add_publication() to add it to the database.
+
+    See Also
+    --------
+    add_publication: Function to add publications in the database
+
+    """
+
+    verboseprint = print if verbose else lambda *a, **k: None
+
+    # Make sure a search term is provided
+    if name is None and doi is None and bibcode is None:
+        print("Name, Bibcode, or DOI must be provided")
+        return
+
+    not_null_pub_filters = []
+    if name:
+        fuzzy_query_name = '%' + name + '%'
+        not_null_pub_filters.append(db.Publications.c.name.ilike(fuzzy_query_name))
+    if doi:
+        not_null_pub_filters.append(db.Publications.c.doi.ilike(doi))
+    if bibcode:
+        not_null_pub_filters.append(db.Publications.c.bibcode.ilike(bibcode))
+
+    if len(not_null_pub_filters) > 0:
+        pub_search_table = db.query(db.Publications).filter(or_(*not_null_pub_filters)).table()
+
+    n_pubs_found = len(pub_search_table)
+
+    if n_pubs_found == 1:
+        verboseprint(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
+        if verbose:
+            pub_search_table.pprint_all()
+        return True
+
+    if n_pubs_found > 1:
+        print(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
+        if verbose:
+            pub_search_table.pprint_all()
+        return False
+
+    # If no matches found, search using first four characters of input name
+    if n_pubs_found == 0 and name:
+        shorter_name = name[:4]
+        verboseprint(f'No matching publications for {name}, Trying {shorter_name}')
+        fuzzy_query_shorter_name = '%' + shorter_name + '%'
+        pub_search_table = db.query(db.Publications).filter(db.Publications.c.name.ilike(fuzzy_query_shorter_name)).table()
+        n_pubs_found_short = len(pub_search_table)
+        if n_pubs_found_short == 0:
+            verboseprint(f'No matching publications for {shorter_name}')
+            verboseprint('Use add_publication() to add it to the database.')
+            return False
+
+        if n_pubs_found_short > 0:
+            print(f'Found {n_pubs_found_short} matching publications for {shorter_name}')
+            if verbose:
+                pub_search_table.pprint_all()
+            return False
+
+    return
+
+
+
+def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, dryrun: bool = True):
+    """
+    Adds publication to the database using DOI or ADS Bibcode, including metadata found with ADS.
+
+    In order to auto-populate the fields, An $ADS_TOKEN environment variable must be set.
+    See https://ui.adsabs.harvard.edu/user/settings/token
+
+    Parameters
+    ----------
+    db
+        Database object
+    doi, bibcode: str
+        The DOI or ADS Bibcode of the reference. One of these is required input.
+    name: str, optional
+        The publication shortname, otherwise it will be generated [optional]
+        Convention is the first four letters of first authors last name and two digit year (e.g., Smit21)
+        For last names which are less than four letters, use '_' or first name initial(s). (e.g, Xu__21 or LiYB21)
+    description: str, optional
+        Description of the paper, typically the title of the papre [optional]
+    dryrun: bool
+
+    See Also
+    --------
+    search_publication: Function to find publications in the database
+
+    """
+
+    if not(doi or bibcode):
+       print('DOI or Bibcode is required input')
+       return
+
+    ads.config.token = os.getenv('ADS_TOKEN')
+
+    if not ads.config.token and (not name and (not doi or not bibcode)):
+        print("An ADS_TOKEN environment variable must be set in order to auto-populate the fields.\n"
+              "Without an ADS_TOKEN, name and bibcode or DOI must be set explicity.")
+        return
+
+    # Check to make sure publication doesn't already exist in the database
+    pub_already_exists = search_publication(db, name=name,doi=doi,bibcode=bibcode)
+    if pub_already_exists:
+        raise sqlite3.IntegrityError("Similar publication already exists in database\n"
+                                     "Use search_publication function before adding a new record".format())
+
+
+
+    # Search ADS using a provided DOI
+    if doi and ads.config.token:
+        doi_matches = ads.SearchQuery(doi=doi, fl=['id', 'bibcode', 'title', 'first_author','year','doi'])
+        doi_matches_list = list(doi_matches)
+        if len(doi_matches_list) != 1:
+            print('should only be one matching DOI')
+            return
+
+        if len(doi_matches_list) == 1:
+            print("Publication found in ADS using DOI: ",doi)
+            article = doi_matches_list[0]
+            print(article.first_author, article.year, article.bibcode, article.title)
+            if not name: # generate the name if it was not provided
+                name_stub = article.first_author.replace(',', '').replace(' ','')
+                name_add = name_stub[0:4] + article.year[-2:]
+            else:
+                name_add = name
+            description = article.title[0]
+            bibcode_add = article.bibcode
+            doi_add = article.doi[0]
+    elif doi:
+        name_add = name
+        bibcode_add = bibcode
+        doi_add = doi
+
+    if bibcode and ads.config.token:
+        bibcode_matches = ads.SearchQuery(bibcode=bibcode,fl=['id', 'bibcode', 'title', 'first_author','year','doi'])
+        bibcode_matches_list = list(bibcode_matches)
+        if len(bibcode_matches_list) != 1:
+            print('should only be one matching bibcode')
+            return
+
+        if len(bibcode_matches_list) == 1:
+            print("Publication found in ADS using bibcode: ", bibcode)
+            article = bibcode_matches_list[0]
+            print(article.first_author, article.year, article.bibcode, article.doi, article.title)
+            if not name:  # generate the name if it was not provided
+                name_stub = article.first_author.replace(',', '').replace(' ', '')
+                name_add = name_stub[0:4] + article.year[-2:]
+            else:
+                name_add = name
+            description = article.title[0]
+            bibcode_add = article.bibcode
+            doi_add = article.doi[0]
+    elif bibcode:
+        name_add = name
+        bibcode_add = bibcode
+        doi_add = doi
+
+    # Check again to make sure publication does not already exist in database
+    pub_already_exists = search_publication(db, name=name_add, doi=doi_add, bibcode=bibcode_add)
+    if pub_already_exists:
+        print('Similar publication already exists in database\n'
+              'Use search_publication function before adding a new record')
+        return
+
+    if dryrun:
+        print("name:", name_add, "\nbibcode:", bibcode_add, "\ndoi:", doi_add, "\ndescription:", description)
+        print("\nRe-run with dryrun=False to add to the database")
+
+    if dryrun is False:
+        new_ref = [{'name': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
+        db.Publications.insert().execute(new_ref)
+        # TODO: db.save just the publications table and/or add save_db flag.
+        print(f'Added {name_add} to Publications table')
+
+    return
+
+
+def update_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, dryrun: bool = True):
+    """
+    Updates publications in the database, including metadata found with ADS.
+
+    In order to auto-populate the fields, An $ADS_TOKEN environment variable must be set.
+    See https://ui.adsabs.harvard.edu/user/settings/token
+
+    Parameters
+    ----------
+    db
+        Database object
+    doi, bibcode: str
+        The DOI or ADS Bibcode of the reference.
+    name: str, optional
+        The publication shortname, otherwise it will be generated [optional]
+    description: str, optional
+        Description of the paper, typically the title of the papre [optional]
+    dryrun: bool
+
+    See Also
+    --------
+    search_publication: Function to find publications in the database
+    add_publication: Function to add publications to the database
+
+    """
+
+    # TODO: provide an option to add missing information
+    #     add_doi_bibcode = db.Publications.update().where(db.Publications.c.name == 'Manj19'). \
+    #         values(bibcode='2019AJ....157..101M', doi='10.3847/1538-3881/aaf88f',
+    #               description='Cloud Atlas: HST nir spectral library')
+    #     db.engine.execute(add_doi_bibcode)
+    return
 
 
 # Make sure all source names are Simbad resolvable:
@@ -36,8 +289,9 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', verbose
         else:
             verboseprint("searching around ", ingest_name)
             coord_result_table = Simbad.query_region(
-                SkyCoord(ingest_ra[i], ingest_dec[i], unit=(u.deg, u.deg), frame='icrs'), radius=radius, verbose=verbose)
-
+                SkyCoord(ingest_ra[i], ingest_dec[i], unit=(u.deg, u.deg), frame='icrs'),
+                radius=radius, verbose=verbose)
+                
             # If no match is found in Simbad, use the name in the ingest table
             if coord_result_table is None:
                 resolved_names.append(ingest_name)
