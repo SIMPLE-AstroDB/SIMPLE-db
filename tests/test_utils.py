@@ -45,7 +45,7 @@ def t():
 
 def test_setup_db(db):
     # Some setup tasks to ensure some data exists in the database first
-    ref_data = [{'name': 'Ref 1'}, {'name': 'Ref 2'}]
+    ref_data = [{'name': 'Ref 1', 'doi': 'Doi1','bibcode':'bibcode1'}, {'name': 'Ref 2','doi': 'Doi2','bibcode':'bibcode2'}]
     db.Publications.insert().execute(ref_data)
 
     source_data = [{'source': 'Fake 1', 'reference': 'Ref 1'},
@@ -88,4 +88,11 @@ def test_add_publication(db):
 
 def test_search_publication(db):
     # TODO: have to add records first and then test them.
-    assert search_publication(db, name='blah') == True
+    assert search_publication(db) == False
+    assert search_publication(db, name='Ref 1') == True
+    assert search_publication(db, name='Ref 1', doi='doi1') == True
+    assert search_publication(db, doi='doi1') == True
+    assert search_publication(db, bibcode='bibcode1') == True
+    assert search_publication(db, name='Ref') == False # multiple matches
+    assert search_publication(db, name='Ref 2', doi='doi1') == False
+    assert search_publication(db, name='Ref 2', bibcode='bibcode1') == False

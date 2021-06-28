@@ -59,9 +59,9 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     verboseprint = print if verbose else lambda *a, **k: None
 
     # Make sure a search term is provided
-    if name is None and doi is None and bibcode is None:
+    if name is None and (doi is None and bibcode is None):
         print("Name, Bibcode, or DOI must be provided")
-        return
+        return False
 
     not_null_pub_filters = []
     if name:
