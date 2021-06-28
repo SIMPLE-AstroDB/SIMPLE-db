@@ -81,6 +81,9 @@ def test_ingest_parallaxes(db, t):
     assert results['parallax_error'][0] == 0.6
 
 def test_add_publication(db):
+    add_publication(db, name='blah',dry_run=False)
+    results = db.query(db.Publications).filter(db.Publications.c.name) == 'blah'.table()
+    assert len(results) == 0
 
 
 def test_search_publication(db):
