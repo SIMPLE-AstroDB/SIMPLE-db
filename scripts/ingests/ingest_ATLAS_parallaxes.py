@@ -39,55 +39,56 @@ sources = ATLAS['Name']
 plx = ATLAS['Plx']
 plx_unc = ATLAS['e_Plx']
 plx_ref = ATLAS['r_Plx']
-print(plx_ref)
 
 #Mapping the ref numbers to the actual references
 name_ref = []
 for ref in plx_ref:
-    if ref =='13':
+    if ref ==13:
         name_ref.append('Andr11')
-    elif ref =='14':
+    elif ref ==14:
         name_ref.append('Fahe13')
-    elif ref =='15':
+    elif ref ==15:
         name_ref.append('Sahl16')
-    elif ref =='16':
+    elif ref ==16:
         name_ref.append('Vrba04')
-    elif ref=='17':
+    elif ref==17:
         name_ref.append('Gizi15')
-    elif ref=='18':
+    elif ref==18:
         name_ref.append('Liu16')
-    elif ref=='19':
+    elif ref==19:
         name_ref.append('Fahe12')
-    elif ref == '20':
+    elif ref ==20:
         name_ref.append('Wang18') 
-    elif ref == '21':
+    elif ref ==21:
         name_ref.append('Liu_13a')
-    elif ref == '22':
+    elif ref ==22:
         name_ref.append('Dupu12a') 
-    elif ref == '23':
+    elif ref ==23:
         name_ref.append('Bedi17') 
-    elif ref == '24':
+    elif ref ==24:
         name_ref.append('Dahn02')
-    elif ref == '25':
+    elif ref ==25:
         name_ref.append('Maro13')
-    elif ref == '26':
+    elif ref ==26:
         name_ref.append('Wein12')
-    elif ref == '27':
+    elif ref ==27:
         name_ref.append('Tinn14')
-    elif ref == '28':
+    elif ref ==28:
         name_ref.append('Tinn03')
-    elif ref == '29':
+    elif ref ==29:
         name_ref.append('Delo17') 
-    elif ref == '30':
+    elif ref ==30:
         name_ref.append('Mars13')
-    elif ref == '31':
+    elif ref ==31:
         name_ref.append('Luhm16') 
-    elif ref == '32':
+    elif ref ==32:
         name_ref.append('Kirk11')
-    elif ref == '33':
+    elif ref ==33:
         name_ref.append('Legg17')
-    elif ref == '34':
+    elif ref ==34:
         name_ref.append('Mart18')
+    else:
+        name_ref.append('Missing')
 print(name_ref)
 
 
