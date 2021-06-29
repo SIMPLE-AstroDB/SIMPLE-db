@@ -87,6 +87,19 @@ def test_ingest_parallaxes(db, t):
 
 
 
+def test_search_publication(db):
+    # TODO: have to add records first and then test them.
+    assert search_publication(db) == False
+    assert search_publication(db, name='Ref 1') == True
+    assert search_publication(db, name='Ref 1', doi='10.1093/mnras/staa1522') == True
+    assert search_publication(db, doi='10.1093/mnras/staa1522') == True
+    assert search_publication(db, bibcode='2020MNRAS.496.1922B') == True
+    assert search_publication(db, name='Ref') == False # multiple matches
+    assert search_publication(db, name='Ref 2', doi='10.1093/mnras/staa1522') == False
+    assert search_publication(db, name='Ref 2', bibcode='2020MNRAS.496.1922B') == False
+
+
+
 def test_add_publication(db):
 
     # should fail if trying to add a duplicate record
@@ -94,13 +107,3 @@ def test_add_publication(db):
         add_publication(db, name='Ref 1',bibcode='2020MNRAS.496.1922B')
 
 
-def test_search_publication(db):
-    # TODO: have to add records first and then test them.
-    assert search_publication(db) == False
-    assert search_publication(db, name='Ref 1') == True
-    assert search_publication(db, name='Ref 1', doi='doi1') == True
-    assert search_publication(db, doi='doi1') == True
-    assert search_publication(db, bibcode='bibcode1') == True
-    assert search_publication(db, name='Ref') == False # multiple matches
-    assert search_publication(db, name='Ref 2', doi='doi1') == False
-    assert search_publication(db, name='Ref 2', bibcode='bibcode1') == False
