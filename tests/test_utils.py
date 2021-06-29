@@ -79,3 +79,13 @@ def test_ingest_parallaxes(db, t):
     assert results['source'][0] == 'Fake 3'
     assert results['parallax'][0] == 155
     assert results['parallax_error'][0] == 0.6
+
+def test_add_publication(db):
+    add_publication(db, name='blah',doi='blah',bibcode='blah',dryrun=False)
+    results = db.query(db.Publications).filter(db.Publications.c.name == 'blah').table()
+    assert len(results) == 1
+
+
+def test_search_publication(db):
+    # TODO: have to add records first and then test them.
+    assert search_publication(db, name='blah') == True
