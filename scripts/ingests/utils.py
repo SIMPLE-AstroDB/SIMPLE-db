@@ -14,6 +14,19 @@ warnings.filterwarnings("ignore", module='astroquery.simbad')
 from sqlalchemy import or_
 import ads
 import os
+import sys
+from contextlib import contextmanager
+
+
+@contextmanager
+def disable_exception_traceback():
+    """
+    All traceback information is suppressed and only the exception type and value are printed
+    """
+    default_value = getattr(sys, "tracebacklimit", 1000)  # `1000` is a Python's default value
+    sys.tracebacklimit = 0
+    yield
+    sys.tracebacklimit = default_value  # revert changes
 
 
 def search_publication(db, name: str = None, doi: str = None, bibcode: str = None, verbose: bool = False):
@@ -113,7 +126,6 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     return
 
 
-
 def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None):
     """
     Adds publication to the database using DOI or ADS Bibcode, including metadata found with ADS.
@@ -202,16 +214,17 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         doi_add = doi
 
     new_ref = [{'name': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
+
     try:
         db.Publications.insert().execute(new_ref)
         print(f'Added {name_add} to Publications table')
     except sqlalchemy.exc.IntegrityError as err:
-        print("SIMPLE: It's possible that a similar publication already exists in database\n"
-              "SIMPLE: Use search_publication function before adding a new record")
-        sys.tracebacklimit = 0 # do not print the traceback
-        raise
+        print("\nSIMPLE ERROR: It's possible that a similar publication already exists in database\n"
+              "SIMPLE ERROR: Use search_publication function before adding a new record\n")
+        with disable_exception_traceback():
+            raise
 
-    # TODO: figure out dryrun actually does. db.save just the publications table and/or add save_db flag.
+    # TODO: add save_db to save the json files
 
     return
 

@@ -86,7 +86,6 @@ def test_ingest_parallaxes(db, t):
     assert results['parallax_error'][0] == 0.6
 
 
-
 def test_search_publication(db):
     # TODO: have to add records first and then test them.
     assert search_publication(db) == False
@@ -99,11 +98,9 @@ def test_search_publication(db):
     assert search_publication(db, name='Ref 2', bibcode='2020MNRAS.496.1922B') == False
 
 
-
 def test_add_publication(db):
-
     # should fail if trying to add a duplicate record
     with pytest.raises(sqlalchemy.exc.IntegrityError):
         add_publication(db, name='Ref 1',bibcode='2020MNRAS.496.1922B')
 
-
+    # TODO - Mock environment  where ADS_TOKEN is not set. #117
