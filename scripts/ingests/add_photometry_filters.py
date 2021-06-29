@@ -10,8 +10,8 @@ from sqlalchemy.sql.expression import bindparam
 from pathlib import Path
 
 
-DRY_RUN = False
-RECREATE_DB = False
+SAVE_DB = True
+RECREATE_DB = True
 REFERENCE_TABLES = ['Publications', 'Telescopes', 'Instruments', 'Modes', 'PhotometryFilters']
 
 
@@ -122,5 +122,5 @@ if len(update_data) > 0:
     db.engine.execute(stmt, update_data)
 
 # Save output
-if not DRY_RUN:
+if SAVE_DB:
     db.save_database(directory='data/')
