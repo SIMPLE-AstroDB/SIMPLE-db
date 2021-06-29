@@ -2,6 +2,7 @@
 
 import os
 import pytest
+from . import REFERENCE_TABLES
 from sqlalchemy import func
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database, or_
@@ -11,7 +12,6 @@ from astrodbkit2.utils import _name_formatter
 
 DB_NAME = 'temp.db'
 DB_PATH = 'data'
-REFERENCE_TABLES = ['Publications', 'Telescopes', 'Instruments', 'Modes', 'Filters']
 
 
 # Load the database for use in individual tests

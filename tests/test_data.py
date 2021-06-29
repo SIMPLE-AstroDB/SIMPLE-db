@@ -7,10 +7,10 @@ sys.path.append('.')
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database
 from sqlalchemy import *
+from . import REFERENCE_TABLES
 
 DB_NAME = 'temp.db'
 DB_PATH = 'data'
-REFERENCE_TABLES = ['Publications', 'Telescopes', 'Instruments', 'Modes', 'Filters']
 
 
 # Load the database for use in individual tests

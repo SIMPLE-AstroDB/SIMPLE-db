@@ -2,6 +2,7 @@
 # https://github.com/SIMPLE-AstroDB/SIMPLE-db/issues/144
 import requests
 import os
+from simple.schema import *
 from io import BytesIO
 from astropy.io.votable import parse
 from astrodbkit2.astrodb import Database, create_database
@@ -11,6 +12,7 @@ from pathlib import Path
 
 DRY_RUN = False
 RECREATE_DB = False
+REFERENCE_TABLES = ['Publications', 'Telescopes', 'Instruments', 'Modes', 'PhotometryFilters']
 
 
 def fetch_svo(telescope, instrument, filter_name):
@@ -60,12 +62,10 @@ if RECREATE_DB and db_file_path.exists():
 # Note that we need to specify this is a new reference table (until AstrodbKit2 gets updated for it)
 if not db_file_path.exists():
     create_database(db_connection_string)
-    db = Database(db_connection_string, reference_tables=['Publications', 'Telescopes', 'Instruments',
-                                                          'Modes', 'Filters'])
+    db = Database(db_connection_string, reference_tables=REFERENCE_TABLES)
     db.load_database('data/')
 else:
-    db = Database(db_connection_string, reference_tables=['Publications', 'Telescopes', 'Instruments',
-                                                          'Modes', 'Filters'])
+    db = Database(db_connection_string, reference_tables=REFERENCE_TABLES)
 
 # ---------------------------------------------------------------------------------
 # Add telescope/instrument information first
@@ -95,7 +95,7 @@ if len(insert_data) > 0:
 
 # Get entries to be added and/or updated
 full_bands = [s['band'] for s in filters_to_add]
-existing_bands = db.query(db.Filters).filter(db.Filters.c.band.in_(full_bands)).table()
+existing_bands = db.query(db.PhotometryFilters).filter(db.PhotometryFilters.c.band.in_(full_bands)).table()
 if len(existing_bands) > 0:
     existing_bands = existing_bands['band'].tolist()
 new_bands = list(set(full_bands)-set(existing_bands))
@@ -104,7 +104,7 @@ new_bands = list(set(full_bands)-set(existing_bands))
 insert_data = list(filter(lambda d: d['band'] in new_bands, filters_to_add))
 if len(insert_data) > 0:
     print(f'Entries to insert: {insert_data}')
-    db.Filters.insert().execute(insert_data)
+    db.PhotometryFilters.insert().execute(insert_data)
 
 # Data to be updated
 update_data = list(filter(lambda d: d['band'] in existing_bands, filters_to_add))
@@ -113,7 +113,7 @@ if len(update_data) > 0:
     # Use bindparam to handle multiple UPDATE commands
     # had to rename band since bindparam complains about it being the same as the column name
     update_data = [{'_band': s['band'], **s} for s in update_data]
-    stmt = db.Filters.update().where(db.Filters.c.band == bindparam('_band')).\
+    stmt = db.PhotometryFilters.update().where(db.PhotometryFilters.c.band == bindparam('_band')).\
         values(telescope=bindparam('telescope'),
                instrument=bindparam('instrument'),
                effective_wavelength=bindparam('effective_wavelength'),

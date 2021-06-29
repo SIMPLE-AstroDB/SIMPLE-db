@@ -31,8 +31,12 @@ class Instruments(Base):
     reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'))
 
 
-class Filters(Base):
-    __tablename__ = 'Filters'
+class PhotometryFilters(Base):
+    """
+    ORM for filter table.
+    This stores relationships between filters and instruments, telescopes, as well as wavelength and width
+    """
+    __tablename__ = 'PhotometryFilters'
     band = Column(String(30), primary_key=True, nullable=False)  # of the form instrument.filter (see SVO)
     instrument = Column(String(30), ForeignKey('Instruments.name', onupdate='cascade'), primary_key=True)
     telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'), primary_key=True)
