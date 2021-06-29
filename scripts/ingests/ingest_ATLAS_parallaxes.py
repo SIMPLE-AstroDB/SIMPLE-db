@@ -40,12 +40,16 @@ add_publication(db, name='Luhm16', bibcode='2016AJ....152...78L', dryrun=False)
 
 # load table of sources to ingest
 input_file = ("scripts/ingests/ATLAS_table.vot")
-ATLAS=Table.read(input_file)
+ATLAS=Table.read(input_file, format='votable')
 
-sources = ATLAS['Name']
-plx = ATLAS['Plx']
-plx_unc = ATLAS['e_Plx']
-plx_ref = ATLAS['r_Plx']
+#filtering out objects w/out parallax data
+ind=ATLAS['Plx'].nonzero()
+
+
+sources = ATLAS['Name'][ind]
+plx = ATLAS['Plx'][ind]
+plx_unc = ATLAS['e_Plx'][ind]
+plx_ref = ATLAS['r_Plx'][ind]
 
 #Mapping the ref numbers to the actual references
 name_ref = []
@@ -55,23 +59,23 @@ for ref in plx_ref:
     elif ref ==14:
         name_ref.append('Fahe13')
     elif ref ==15:
-        name_ref.append('Sahl16') #added
+        name_ref.append('Sahl16') 
     elif ref ==16:
         name_ref.append('Vrba04')
     elif ref==17:
         name_ref.append('Gizi15') 
     elif ref==18:
-        name_ref.append('Liu16') #added
+        name_ref.append('Liu16') 
     elif ref==19:
         name_ref.append('Fahe12')
     elif ref ==20:
-        name_ref.append('Wang18') #added
+        name_ref.append('Wang18') 
     elif ref ==21:
         name_ref.append('Liu_13a')
     elif ref ==22:
         name_ref.append('Dupu12a') 
     elif ref ==23:
-        name_ref.append('Bedi17') #added
+        name_ref.append('Bedi17') 
     elif ref ==24:
         name_ref.append('Dahn02')
     elif ref ==25:
@@ -83,11 +87,11 @@ for ref in plx_ref:
     elif ref ==28:
         name_ref.append('Tinn03')
     elif ref ==29:
-        name_ref.append('Delo17') #added
+        name_ref.append('Delo17') 
     elif ref ==30:
         name_ref.append('Mars13')
     elif ref ==31:
-        name_ref.append('Luhm16') #added
+        name_ref.append('Luhm16') 
     elif ref ==32:
         name_ref.append('Kirk11')
     elif ref ==33:
@@ -96,7 +100,7 @@ for ref in plx_ref:
         name_ref.append('Mart18')
     else:
         name_ref.append('Missing')
-print(name_ref)
+
 
 
 ingest_parallaxes(db, sources, plx, plx_unc, name_ref, verbose=True)

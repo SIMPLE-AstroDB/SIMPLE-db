@@ -411,12 +411,12 @@ def ingest_parallaxes(db, sources, plx, plx_unc, plx_ref, verbose=False, norun=F
 
         # Construct data to be added
         parallax_data = [{'source': db_name,
-                          'parallax': plx[i],
-                          'parallax_error': plx_unc[i],
+                          'parallax': str(plx[i]),
+                          'parallax_error': str(plx_unc[i]),
                           'reference': plx_ref[i],
                           'adopted': adopted}]
         verboseprint(parallax_data)
-
+    
         # Consider making this optional or a key to only view the output but not do the operation.
         if not norun:
             db.Parallaxes.insert().execute(parallax_data)
