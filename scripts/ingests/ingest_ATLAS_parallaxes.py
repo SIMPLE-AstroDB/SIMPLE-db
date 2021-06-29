@@ -10,7 +10,7 @@ from pathlib import Path
 import os
 
 DRY_RUN = True #modifies .db file but not the data files
-RECREATE_DB = False #recreates the .db file from the data files
+RECREATE_DB = True #recreates the .db file from the data files
 VERBOSE = False
 
 verboseprint = print if VERBOSE else lambda *a, **k: None
@@ -29,7 +29,14 @@ if not db_file_path.exists():
 else:
     db = Database(db_connection_string) #if database already exists, connects to .db file
 
-#columns that correspond to parallax: source, Plx = parallax, e_Plx = parallax error, r_Plx = paralla reference, adopted, comments
+#Adding missing publications to publication table
+add_publication(db, name='Sahl16', bibcode='J/MNRAS/455/357', dryrun=False)
+add_publication(db, name='Liu16', bibcode='J/ApJ/833/96', dryrun=False)
+add_publication(db, name='Wang18', bibcode='2018PASP..130f4402W', dryrun=False)
+add_publication(db, name='Bedi17', bibcode='2017MNRAS.470.1140B', dryrun=False)
+add_publication(db, name='Delo17', bibcode='2017A&A...608A..79D', dryrun=False)
+add_publication(db, name='Luhm16', bibcode='2016AJ....152...78L', dryrun=False)
+
 
 # load table of sources to ingest
 input_file = ("scripts/ingests/ATLAS_table.vot")
@@ -48,23 +55,23 @@ for ref in plx_ref:
     elif ref ==14:
         name_ref.append('Fahe13')
     elif ref ==15:
-        name_ref.append('Sahl16')
+        name_ref.append('Sahl16') #added
     elif ref ==16:
         name_ref.append('Vrba04')
     elif ref==17:
-        name_ref.append('Gizi15')
+        name_ref.append('Gizi15') 
     elif ref==18:
-        name_ref.append('Liu16')
+        name_ref.append('Liu16') #added
     elif ref==19:
         name_ref.append('Fahe12')
     elif ref ==20:
-        name_ref.append('Wang18') 
+        name_ref.append('Wang18') #added
     elif ref ==21:
         name_ref.append('Liu_13a')
     elif ref ==22:
         name_ref.append('Dupu12a') 
     elif ref ==23:
-        name_ref.append('Bedi17') 
+        name_ref.append('Bedi17') #added
     elif ref ==24:
         name_ref.append('Dahn02')
     elif ref ==25:
@@ -76,11 +83,11 @@ for ref in plx_ref:
     elif ref ==28:
         name_ref.append('Tinn03')
     elif ref ==29:
-        name_ref.append('Delo17') 
+        name_ref.append('Delo17') #added
     elif ref ==30:
         name_ref.append('Mars13')
     elif ref ==31:
-        name_ref.append('Luhm16') 
+        name_ref.append('Luhm16') #added
     elif ref ==32:
         name_ref.append('Kirk11')
     elif ref ==33:
@@ -90,7 +97,6 @@ for ref in plx_ref:
     else:
         name_ref.append('Missing')
 print(name_ref)
-
 
 
 ingest_parallaxes(db, sources, plx, plx_unc, name_ref, verbose=True)
