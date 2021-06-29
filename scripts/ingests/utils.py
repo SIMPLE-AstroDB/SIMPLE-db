@@ -1,7 +1,10 @@
 import sqlite3
+import sys
 
 import numpy as np
 import re
+
+import sqlalchemy.exc
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.simbad import Simbad
@@ -111,7 +114,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
 
 
 
-def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, dryrun: bool = True):
+def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None):
     """
     Adds publication to the database using DOI or ADS Bibcode, including metadata found with ADS.
 
@@ -148,14 +151,6 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         print("An ADS_TOKEN environment variable must be set in order to auto-populate the fields.\n"
               "Without an ADS_TOKEN, name and bibcode or DOI must be set explicity.")
         return
-
-    # Check to make sure publication doesn't already exist in the database
-    pub_already_exists = search_publication(db, name=name,doi=doi,bibcode=bibcode)
-    if pub_already_exists:
-        raise sqlite3.IntegrityError("Similar publication already exists in database\n"
-                                     "Use search_publication function before adding a new record".format())
-
-
 
     # Search ADS using a provided DOI
     if doi and ads.config.token:
@@ -206,22 +201,17 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         bibcode_add = bibcode
         doi_add = doi
 
-    # Check again to make sure publication does not already exist in database
-    pub_already_exists = search_publication(db, name=name_add, doi=doi_add, bibcode=bibcode_add)
-    if pub_already_exists:
-        print('Similar publication already exists in database\n'
-              'Use search_publication function before adding a new record')
-        return
-
-    if dryrun:
-        print("name:", name_add, "\nbibcode:", bibcode_add, "\ndoi:", doi_add, "\ndescription:", description)
-        print("\nRe-run with dryrun=False to add to the database")
-
-    if dryrun is False:
-        new_ref = [{'name': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
+    new_ref = [{'name': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
+    try:
         db.Publications.insert().execute(new_ref)
-        # TODO: db.save just the publications table and/or add save_db flag.
         print(f'Added {name_add} to Publications table')
+    except sqlalchemy.exc.IntegrityError as err:
+        print("SIMPLE: It's possible that a similar publication already exists in database\n"
+              "SIMPLE: Use search_publication function before adding a new record")
+        sys.tracebacklimit = 0 # do not print the traceback
+        raise
+
+    # TODO: figure out dryrun actually does. db.save just the publications table and/or add save_db flag.
 
     return
 

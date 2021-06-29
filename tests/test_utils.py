@@ -1,8 +1,13 @@
 # Test to verify funtions in utils
 
 import os
+import sqlite3
+
 import pytest
 import sys
+
+import sqlalchemy.exc
+
 sys.path.append('.')
 from scripts.ingests.utils import *
 from simple.schema import *
@@ -45,12 +50,12 @@ def t():
 
 def test_setup_db(db):
     # Some setup tasks to ensure some data exists in the database first
-    ref_data = [{'name': 'Ref 1', 'doi': 'Doi1','bibcode':'bibcode1'}, {'name': 'Ref 2','doi': 'Doi2','bibcode':'bibcode2'}]
+    ref_data = [{'name': 'Ref 1', 'doi': '10.1093/mnras/staa1522','bibcode':'2020MNRAS.496.1922B'}, {'name': 'Ref 2','doi': 'Doi2','bibcode':'2012yCat.2311....0C'}]
     db.Publications.insert().execute(ref_data)
 
     source_data = [{'source': 'Fake 1', 'reference': 'Ref 1'},
                    {'source': 'Fake 2', 'reference': 'Ref 1'},
-                   {'source': 'Fake 3', 'reference': 'Ref 1'},
+                   {'source': 'Fake 3', 'reference': 'Ref 2'},
                    ]
     db.Sources.insert().execute(source_data)
 
@@ -80,10 +85,13 @@ def test_ingest_parallaxes(db, t):
     assert results['parallax'][0] == 155
     assert results['parallax_error'][0] == 0.6
 
+
+
 def test_add_publication(db):
-    add_publication(db, name='blah',doi='blah',bibcode='blah',dryrun=False)
-    results = db.query(db.Publications).filter(db.Publications.c.name == 'blah').table()
-    assert len(results) == 1
+
+    # should fail if trying to add a duplicate record
+    with pytest.raises(sqlalchemy.exc.IntegrityError):
+        add_publication(db, name='Ref 1',bibcode='2020MNRAS.496.1922B')
 
 
 def test_search_publication(db):
