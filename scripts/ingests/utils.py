@@ -2,6 +2,8 @@ import sqlite3
 
 import numpy as np
 import re
+
+import sqlalchemy.exc
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.simbad import Simbad
@@ -11,6 +13,18 @@ warnings.filterwarnings("ignore", module='astroquery.simbad')
 from sqlalchemy import or_
 import ads
 import os
+from contextlib import contextmanager
+
+
+@contextmanager
+def disable_exception_traceback():
+    """
+    All traceback information is suppressed and only the exception type and value are printed
+    """
+    default_value = getattr(sys, "tracebacklimit", 1000)  # `1000` is a Python's default value
+    sys.tracebacklimit = 0
+    yield
+    sys.tracebacklimit = default_value  # revert changes
 
 
 def search_publication(db, name: str = None, doi: str = None, bibcode: str = None, verbose: bool = False):
@@ -375,20 +389,36 @@ def convert_spt_string_to_code(spectral_types, verbose=False):
     return spectral_type_codes
 
 
-def ingest_parallaxes(db, sources, plx, plx_unc, plx_ref, verbose=False, norun=False):
+def ingest_parallaxes(db, sources, plxs, plx_uncs, plx_refs, save_db=False, verbose=False):
     """
 
-    TODO: do stuff about adopted in cases of multiple measurements.
+    Parameters
+    ----------
+    db
+        Database object
+    sources
+        list of source names
+    plx
+        list of parallaxes corresponding to the sources
+    plx_unc
+        list of parallaxes uncertainties
+    plx_ref
+        list of references for the parallax data
+    save_db: bool, optional
+        If set to False (default), will modify the .db file, but not the JSON files
+        If set to True, will save the JSON files
+    verbose: bool, optional
+        If true, outputs information to the screen
 
-    :param db:
-    :param sources:
-    :param plx:
-    :param plx_unc:
-    :param plx_ref:
-    :param verbose:
-    :param norun:
-    :return:
+    Examples
+    ----------
+
+    > ingest_parallaxes(db, my_sources, my_plx, my_plx_unc, my_plx_refs, verbose = True)
+
     """
+
+    # TODO: figure out adopted in cases of multiple measurements.
+
     verboseprint = print if verbose else lambda *a, **k: None
 
     n_added = 0
@@ -396,33 +426,43 @@ def ingest_parallaxes(db, sources, plx, plx_unc, plx_ref, verbose=False, norun=F
     for i, source in enumerate(sources):
         db_name = db.search_object(source, output_table='Sources')[0]['source']
 
-        # Search for existing parallax data and determine if this is the best
+        # Search for existing parallax data.
+        # If no previous measurement exists, set the new one to the Adopted measurement
         adopted = None
         source_plx_data = db.query(db.Parallaxes).filter(db.Parallaxes.c.source == db_name).table()
         if source_plx_data is None or len(source_plx_data) == 0:
             adopted = True
         else:
-            print("OTHER PARALLAX EXISTS")
+            print("\nOTHER PARALLAX EXISTS, adopted = None")
             print(source_plx_data)
 
         # TODO: Work out logic for updating/setting adopted. Be it's own function.
 
-        # TODO: Make function which validates refs
-
         # Construct data to be added
         parallax_data = [{'source': db_name,
-                          'parallax': plx[i],
-                          'parallax_error': plx_unc[i],
-                          'reference': plx_ref[i],
+                          'parallax': plxs[i],
+                          'parallax_error': plx_uncs[i],
+                          'reference': plx_refs[i],
                           'adopted': adopted}]
         verboseprint(parallax_data)
 
-        # Consider making this optional or a key to only view the output but not do the operation.
-        if not norun:
+        try:
             db.Parallaxes.insert().execute(parallax_data)
             n_added += 1
+        except sqlalchemy.exc.IntegrityError as err:
+            print("SIMPLE ERROR: The source may not exist in Sources table.")
+            print("SIMPLE ERROR: The parallax reference may not exist in Publications table. Add it with add_publication function. ")
+            print("SIMPLE ERROR: The parallax measurement may be a duplicate.")
+            with disable_exception_traceback():
+                raise
 
-    print("Added to database: ", n_added)
+    if save_db:
+        db.save_database(directory='data/')
+        print("Parallaxes added to database and saved: ", n_added)
+    else:
+        print("Parallaxes added to database: ", n_added)
+
+    return
 
 
 def ingest_pm(db, sources, muRA, muRA_err, muDEC, muDEC_err, pm_reference, verbose=False):
