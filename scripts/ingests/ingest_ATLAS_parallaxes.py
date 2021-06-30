@@ -9,7 +9,7 @@ from astropy.table import Table
 from pathlib import Path
 import os
 
-DRY_RUN = True #modifies .db file but not the data files
+DRY_RUN = False #modifies .db file but not the data files
 RECREATE_DB = True #recreates the .db file from the data files
 VERBOSE = False
 
