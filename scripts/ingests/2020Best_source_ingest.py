@@ -1,15 +1,15 @@
 import sys
 from sqlalchemy.sql.elements import Null
 sys.path.append('.')
+from scripts.ingests.utils import *
 from astrodbkit2.astrodb import create_database
 from astrodbkit2.astrodb import Database
 from simple.schema import *
-from utils import *
 from astropy.table import Table
 from pathlib import Path
 import os
 
-DRY_RUN = False #modifies .db file but not the data files
+save_db = False #modifies .db file but not the data files
 RECREATE_DB = True #recreates the .db file from the data files
 VERBOSE = False
 
@@ -30,49 +30,59 @@ else:
     db = Database(db_connection_string) #if database already exists, connects to .db file
 
 # load table of sources to ingest
-Best = Table.read('UltracoolSheet-Main.csv')
+Best = Table.read('scripts/ingests/UltracoolSheet-Main.csv', data_start=0, data_end=2)
 
 # find sources already in database
 existing_sources = []
 missing_sources = []
 db_names = []
-for i,name in enumerate(Ydwarfs['source']):
+for i,name in enumerate(Best['name']):
 	if len(db.search_object(name,resolve_simbad=True)) != 0:
 		existing_sources.append(i)
-		db_names.append(db.search_object(name,resolve_simbad=True)[0].source)
+		db_names.append(db.search_object(name,resolve_simbad=True)[0]) #.source was at the end 
 	else:
 		missing_sources.append(i)
-		db_names.append(Ydwarfs['source'][i])
+		db_names.append(Best['name'][i])
+print(len(existing_sources))
+print(len(missing_sources))
 
 # add missing references
-ref_list = Ydwarfs['reference'].tolist()
-included_ref = db.query(db.Publications.c.name).filter(db.Publications.c.name.in_(ref_list)).all()
-included_ref = [s[0] for s in included_ref]
-new_ref = list(set(ref_list)-set(included_ref))
-new_ref = [{'name': s} for s in new_ref]
-
-if len(new_ref)>0:
-	db.Publications.insert().execute(new_ref)
-
+for r in Best['ref_discovery'][missing_sources]:
+	if search_publication(db, name=r)==False:
+   		print(r)
+		
+		#add_publication(r)
 
 # add missing objects to Sources table
 if len(missing_sources)>0:
-	db.add_table_data(Ydwarfs[missing_sources], table='Sources', fmt='astropy')
+	for b in Best[missing_sources]:
+		if search_publication(db, name=Best['ref_discovery'][b])==True:
+			ref=Best['ref_discovery'][b]
+		else:
+			ref='Missing'
+		
+	#'source': name[b],
+	#use columns O and P for RA and Dec 
+		
+	#db.add_table_data(Best[missing_sources], table='Sources', fmt='astropy')
 
 # add new sources in Names table too
-names_data = []
-for ms in missing_sources:
-	names_data.append({'source': Ydwarfs['source'][ms], 'other_name':Ydwarfs['source'][ms]})
-if len(missing_sources)>0:
-	db.Names.insert().execute(names_data)
+'''def add_names(): 
+	names_data = []
+	for ms in missing_sources:
+		names_data.append({'source': Best['name'][ms], 'other_name':Best['name'][ms]})
+	if len(missing_sources)>0:
+		db.Names.insert().execute(names_data)
+add_names()
 
 # add other names for existing sources if alternative names not in database yet
 other_names_data = []
 for es in existing_sources:
 	es_names = db.search_object(db_names[es], output_table='Names')
-	if Ydwarfs['source'][es] not in [x[1] for x in es_names]:
-		other_names_data.append({'source': db_names[es], 'other_name':Ydwarfs['source'][es]})
+	if Best['name'][es] not in [x[1] for x in es_names]:
+		other_names_data.append({'source': db_names[es], 'other_name':Best['name'][es]})
 if len(existing_sources)>0:
-	db.Names.insert().execute(other_names_data)
+	db.Names.insert().execute(other_names_data)'''
 
-db.save_db('../../data')
+if save_db == True:
+    db.save_db('data') #edits the JSON files if we're not doing a dry run
