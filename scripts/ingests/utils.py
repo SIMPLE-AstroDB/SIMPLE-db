@@ -538,7 +538,9 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
 
     return
 
-def ingest_photometry(db, sources, band, magnitudes, magnitude_errors, reference, ucds = None, telescope = None, instrument = None, epoch = None, comments = None, save_db=False, verbose=False):
+def ingest_photometry(db, sources, band, magnitudes, magnitude_errors, reference, ucds = None,
+                      telescope = None, instrument = None, epoch = None, comments = None, save_db=False, verbose=False):
+
     verboseprint = print if verbose else lambda *a, **k: None
     n_added = 0
 
