@@ -389,7 +389,7 @@ def convert_spt_string_to_code(spectral_types, verbose=False):
     return spectral_type_codes
 
 
-def ingest_parallaxes(db, sources, plxs, plx_uncs, plx_refs, save_db=False, verbose=False):
+def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verbose=False):
     """
 
     Parameters
@@ -400,7 +400,7 @@ def ingest_parallaxes(db, sources, plxs, plx_uncs, plx_refs, save_db=False, verb
         list of source names
     plx
         list of parallaxes corresponding to the sources
-    plx_unc
+    plx_errs
         list of parallaxes uncertainties
     plx_ref
         list of references for the parallax data
@@ -412,12 +412,9 @@ def ingest_parallaxes(db, sources, plxs, plx_uncs, plx_refs, save_db=False, verb
 
     Examples
     ----------
-
     > ingest_parallaxes(db, my_sources, my_plx, my_plx_unc, my_plx_refs, verbose = True)
 
     """
-
-    # TODO: figure out adopted in cases of multiple measurements.
 
     verboseprint = print if verbose else lambda *a, **k: None
 
@@ -428,6 +425,7 @@ def ingest_parallaxes(db, sources, plxs, plx_uncs, plx_refs, save_db=False, verb
 
         # Search for existing parallax data.
         # If no previous measurement exists, set the new one to the Adopted measurement
+        # TODO: figure out adopted in cases of multiple measurements.
         adopted = None
         source_plx_data = db.query(db.Parallaxes).filter(db.Parallaxes.c.source == db_name).table()
         if source_plx_data is None or len(source_plx_data) == 0:
@@ -436,12 +434,10 @@ def ingest_parallaxes(db, sources, plxs, plx_uncs, plx_refs, save_db=False, verb
             print("\nOTHER PARALLAX EXISTS, adopted = None")
             print(source_plx_data)
 
-        # TODO: Work out logic for updating/setting adopted. Be it's own function.
-
         # Construct data to be added
         parallax_data = [{'source': db_name,
                           'parallax': plxs[i],
-                          'parallax_error': plx_uncs[i],
+                          'parallax_error': plx_errs[i],
                           'reference': plx_refs[i],
                           'adopted': adopted}]
         verboseprint(parallax_data)
@@ -465,57 +461,93 @@ def ingest_parallaxes(db, sources, plxs, plx_uncs, plx_refs, save_db=False, verb
     return
 
 
-def ingest_pm(db, sources, muRA, muRA_err, muDEC, muDEC_err, pm_reference, verbose=False):
+def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs, pm_references, save_db=False,verbose=False):
+    """
+
+    Parameters
+    ----------
+    db
+        Database object
+    sources
+        list of source names
+    pm_ras
+        list of proper motions in right ascension (RA)
+    pm_ra_errs
+        list of uncertanties in proper motion RA
+    pm_decs
+        list of proper motions in declination (dec)
+    pm_dec_errs
+        list of uncertanties in proper motion dec
+    pm_reference
+        list of references for the proper motion measurements
+    save_db: bool, optional
+        If set to False (default), will modify the .db file, but not the JSON files
+        If set to True, will save the JSON files
+    verbose: bool, optional
+        If true, outputs information to the screen
+
+    Examples
+    ----------
+    > ingest_proper_motions(db, my_sources, my_pm_ra, my_pm_ra_unc, my_pm_dec, my_pm_dec_unc, my_pm_refs, verbose = True)
+
+    """
+
     verboseprint = print if verbose else lambda *a, **k: None
 
     n_added = 0
 
     for i, source in enumerate(sources):
         db_name = db.search_object(source, output_table='Sources')[0]['source']
+
         # Search for existing proper motion data and determine if this is the best
+        # If no previous measurement exists, set the new one to the Adopted measurement
+        # TODO: figure out adopted in cases of multiple measurements.
         adopted = None
         source_pm_data = db.query(db.ProperMotions).filter(db.ProperMotions.c.source == db_name).table()
         if source_pm_data is None or len(source_pm_data) == 0:
             adopted = True
         else:
-            print("OTHER PROPER MOTION EXISTS: ",source_pm_data)
-
-        # TODO: Work out logic for updating/setting adopted. Be it's own function.
-
-        # TODO: Make function which validates refs
+            print("\nOTHER PROPER MOTION EXISTS, adopted = None")
+            print(source_pm_data)
 
         # Construct data to be added
         pm_data = [{'source': db_name,
-                          'mu_ra': muRA[i],
-                          'mu_ra_error' : muRA_err[i],
-                          'mu_dec': muDEC[i],
-                          'mu_dec_error': muDEC_err[i],
+                          'mu_ra': pm_ras[i],
+                          'mu_ra_error' : pm_ra_errs[i],
+                          'mu_dec': pm_decs[i],
+                          'mu_dec_error': pm_dec_errs[i],
                           'adopted': adopted,
-                          'reference': pm_reference[i]}]
+                          'reference': pm_references[i]}]
         verboseprint('Proper motion data: ',pm_data)
 
-        # Consider making this optional or a key to only view the output but not do the operation.
-        db.ProperMotions.insert().execute(pm_data)
-        n_added += 1
+        try:
+            db.ProperMotions.insert().execute(pm_data)
+            n_added += 1
+        except sqlalchemy.exc.IntegrityError as err:
+            print("SIMPLE ERROR: The source may not exist in Sources table.")
+            print("SIMPLE ERROR: The proper motion reference may not exist in Publications table. Add it with add_publication function. ")
+            print("SIMPLE ERROR: The proper motion measurement may be a duplicate.")
+            with disable_exception_traceback():
+                raise
 
-    print("Added to database: ", n_added)
+    if save_db:
+        db.save_database(directory='data/')
+        print("Proper motions added to database and saved: ", n_added)
+    else:
+        print("Proper motions added to database: ", n_added)
 
+    return
 
-
-def ingest_photometry(db, sources = None, bands = None, ucds = None, magnitudes = None, magnitude_errors = None , telescope = None, instrument = None, epoch = None, comments = None, reference = None, verbose=False):
+def ingest_photometry(db, sources, band, magnitudes, magnitude_errors, reference, ucds = None, telescope = None, instrument = None, epoch = None, comments = None, save_db=False, verbose=False):
     verboseprint = print if verbose else lambda *a, **k: None
     n_added = 0
 
     for i, source in enumerate(sources):
         db_name = db.search_object(source, output_table='Sources')[0]['source']
-         #TODO: Check for duplicate photometry 
-        #source_photometry_data = db.query(db.Photometry).filter(db.Photometry.c.source == db_name).table()
-
-        # TODO: Make function which validates refs
 
         # Construct data to be added
         photometry_data = [{'source': db_name,
-                          'band': bands[i],
+                          'band': band[i],
                           'ucd' : ucds[i],
                           'magnitude' : magnitudes[i],
                           'magnitude_error' : magnitude_errors[i],
@@ -526,9 +558,20 @@ def ingest_photometry(db, sources = None, bands = None, ucds = None, magnitudes 
                           'reference': reference[i]}]
         verboseprint('Photometry data: ',photometry_data)
 
-        # Consider making this optional or a key to only view the output but not do the operation.
-        db.Photometry.insert().execute(photometry_data)
-        n_added += 1
+        try:
+            db.Photometry.insert().execute(photometry_data)
+            n_added += 1
+        except sqlalchemy.exc.IntegrityError as err:
+            print("SIMPLE ERROR: The source may not exist in Sources table.")
+            print("SIMPLE ERROR: The reference may not exist in the Publications table. Add it with add_publication function. ")
+            print("SIMPLE ERROR: The measurement may be a duplicate.")
+            with disable_exception_traceback():
+                raise
 
-    print("Added to database: ", n_added)
+        if save_db:
+            db.save_database(directory='data/')
+            print("Photometry measurements added to database and saved: ", n_added)
+        else:
+            print("Photometry measurements added to database: ", n_added)
+
     return
