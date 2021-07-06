@@ -10,7 +10,7 @@ from pathlib import Path
 import os
 
 save_db = False #modifies .db file but not the data files
-RECREATE_DB = True #recreates the .db file from the data files
+RECREATE_DB = False #recreates the .db file from the data files
 VERBOSE = False
 
 verboseprint = print if VERBOSE else lambda *a, **k: None
@@ -30,28 +30,34 @@ else:
     db = Database(db_connection_string) #if database already exists, connects to .db file
 
 # load table of sources to ingest
-Best = Table.read('scripts/ingests/UltracoolSheet-Main.csv', data_start=0, data_end=2)
+Best = Table.read('scripts/ingests/UltracoolSheet-Main.csv', data_start=1, data_end=5)
 
 # find sources already in database
-existing_sources = []
-missing_sources = []
+existing_sources_index = []
+missing_sources_index = []
 db_names = []
 for i,name in enumerate(Best['name']):
-	if len(db.search_object(name,resolve_simbad=True)) != 0:
-		existing_sources.append(i)
-		db_names.append(db.search_object(name,resolve_simbad=True)[0]) #.source was at the end 
+	namematches = db.search_object(name,resolve_simbad=True)
+	print(namematches)
+	if len(namematches) == 1:
+		existing_sources_index.append(i)
+		db_names.append(namematches[0]['source'])  
+	elif len(namematches) > 1:
+		print("More than one match")
+		break
 	else:
-		missing_sources.append(i)
+		missing_sources_index.append(i)
 		db_names.append(Best['name'][i])
-print(len(existing_sources))
-print(len(missing_sources))
+print("Existing Sources: ", Best['name'][existing_sources_index])
+print("Missing Sources: ", Best['name'][missing_sources_index])
+print("Db names: ", db_names)
 
 # add missing references
-for r in Best['ref_discovery'][missing_sources]:
+for r in Best['ref_discovery'][missing_sources_index]:
 	if search_publication(db, name=r)==False:
-   		print(r)
-		
-		#add_publication(r)
+		print(r)
+		add_publication(db, bibcode='2015MNRAS.450.2486C')
+		add_publication(db, name='Luhm14c', bibcode='2014ApJ...787..126L')
 
 # add missing objects to Sources table
 if len(missing_sources)>0:
