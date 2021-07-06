@@ -1,9 +1,7 @@
 import sqlite3
 import sys
-
 import numpy as np
 import re
-
 import sqlalchemy.exc
 from astropy.coordinates import SkyCoord
 import astropy.units as u
@@ -14,10 +12,6 @@ warnings.filterwarnings("ignore", module='astroquery.simbad')
 from sqlalchemy import or_
 import ads
 import os
-<<<<<<< implement_save_db
-=======
-import sys
->>>>>>> main
 from contextlib import contextmanager
 
 
