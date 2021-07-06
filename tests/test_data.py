@@ -149,3 +149,8 @@ def test_Kirk19_ingest(db):
     ref = 'Schn15'
     t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
     assert len(t) == 28, f'found {len(t)} photometry entries for {ref}'
+
+    #Test parallaxes added for ATLAS
+    ref = 'Mart18'
+    t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
+    assert len(t) == 15, f'found {len(t)} parallax entries for {ref}'

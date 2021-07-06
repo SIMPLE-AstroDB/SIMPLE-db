@@ -1,4 +1,5 @@
 import sqlite3
+import sys
 
 import numpy as np
 import re
@@ -13,6 +14,10 @@ warnings.filterwarnings("ignore", module='astroquery.simbad')
 from sqlalchemy import or_
 import ads
 import os
+<<<<<<< implement_save_db
+=======
+import sys
+>>>>>>> main
 from contextlib import contextmanager
 
 
@@ -75,7 +80,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     # Make sure a search term is provided
     if name is None and doi is None and bibcode is None:
         print("Name, Bibcode, or DOI must be provided")
-        return
+        return False
 
     not_null_pub_filters = []
     if name:
@@ -124,8 +129,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     return
 
 
-
-def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, dryrun: bool = True):
+def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None):
     """
     Adds publication to the database using DOI or ADS Bibcode, including metadata found with ADS.
 
@@ -162,14 +166,6 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         print("An ADS_TOKEN environment variable must be set in order to auto-populate the fields.\n"
               "Without an ADS_TOKEN, name and bibcode or DOI must be set explicity.")
         return
-
-    # Check to make sure publication doesn't already exist in the database
-    pub_already_exists = search_publication(db, name=name,doi=doi,bibcode=bibcode)
-    if pub_already_exists:
-        raise sqlite3.IntegrityError("Similar publication already exists in database\n"
-                                     "Use search_publication function before adding a new record".format())
-
-
 
     # Search ADS using a provided DOI
     if doi and ads.config.token:
@@ -220,22 +216,18 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         bibcode_add = bibcode
         doi_add = doi
 
-    # Check again to make sure publication does not already exist in database
-    pub_already_exists = search_publication(db, name=name_add, doi=doi_add, bibcode=bibcode_add)
-    if pub_already_exists:
-        print('Similar publication already exists in database\n'
-              'Use search_publication function before adding a new record')
-        return
+    new_ref = [{'name': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
 
-    if dryrun:
-        print("name:", name_add, "\nbibcode:", bibcode_add, "\ndoi:", doi_add, "\ndescription:", description)
-        print("\nRe-run with dryrun=False to add to the database")
-
-    if dryrun is False:
-        new_ref = [{'name': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
+    try:
         db.Publications.insert().execute(new_ref)
-        # TODO: db.save just the publications table and/or add save_db flag.
         print(f'Added {name_add} to Publications table')
+    except sqlalchemy.exc.IntegrityError as err:
+        print("\nSIMPLE ERROR: It's possible that a similar publication already exists in database\n"
+              "SIMPLE ERROR: Use search_publication function before adding a new record\n")
+        with disable_exception_traceback():
+            raise
+
+    # TODO: add save_db to save the json files
 
     return
 
@@ -436,6 +428,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verb
 
         # Construct data to be added
         parallax_data = [{'source': db_name,
+<<<<<<< implement_save_db
                           'parallax': plxs[i],
                           'parallax_error': plx_errs[i],
                           'reference': plx_refs[i],
@@ -443,6 +436,16 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verb
         verboseprint(parallax_data)
 
         try:
+=======
+                          'parallax': str(plx[i]),
+                          'parallax_error': str(plx_unc[i]),
+                          'reference': plx_ref[i],
+                          'adopted': adopted}]
+        verboseprint(parallax_data)
+    
+        # Consider making this optional or a key to only view the output but not do the operation.
+        if not norun:
+>>>>>>> main
             db.Parallaxes.insert().execute(parallax_data)
             n_added += 1
         except sqlalchemy.exc.IntegrityError as err:

@@ -1,8 +1,13 @@
 # Test to verify funtions in utils
 
 import os
+import sqlite3
+
 import pytest
 import sys
+
+import sqlalchemy.exc
+
 sys.path.append('.')
 from scripts.ingests.utils import *
 from simple.schema import *
@@ -54,12 +59,12 @@ def t_pm():
 
 def test_setup_db(db):
     # Some setup tasks to ensure some data exists in the database first
-    ref_data = [{'name': 'Ref 1'}, {'name': 'Ref 2'}]
+    ref_data = [{'name': 'Ref 1', 'doi': '10.1093/mnras/staa1522','bibcode':'2020MNRAS.496.1922B'}, {'name': 'Ref 2','doi': 'Doi2','bibcode':'2012yCat.2311....0C'}]
     db.Publications.insert().execute(ref_data)
 
     source_data = [{'source': 'Fake 1', 'reference': 'Ref 1'},
                    {'source': 'Fake 2', 'reference': 'Ref 1'},
-                   {'source': 'Fake 3', 'reference': 'Ref 1'},
+                   {'source': 'Fake 3', 'reference': 'Ref 2'},
                    ]
     db.Sources.insert().execute(source_data)
 
@@ -89,6 +94,7 @@ def test_ingest_parallaxes(db, t_plx):
     assert results['parallax'][0] == 155
     assert results['parallax_error'][0] == 0.6
 
+
 def test_ingest_proper_motions(db, t_pm):
     ingest_proper_motions(db, t_pm['source'], t_pm['mu_ra'], t_pm['mu_ra_err'], t_pm['mu_dec'], t_pm['mu_dec_err'], t_pm['reference'], verbose=False, save_db=False)
 
@@ -108,4 +114,18 @@ def test_ingest_proper_motions(db, t_pm):
 
 #def test_search_publication(db):
     # TODO: have to add records first and then test them.
-    # assert search_publication(db, name='blah') == True
+    assert search_publication(db) == False
+    assert search_publication(db, name='Ref 1') == True
+    assert search_publication(db, name='Ref 1', doi='10.1093/mnras/staa1522') == True
+    assert search_publication(db, doi='10.1093/mnras/staa1522') == True
+    assert search_publication(db, bibcode='2020MNRAS.496.1922B') == True
+    assert search_publication(db, name='Ref') == False # multiple matches
+    assert search_publication(db, name='Ref 2', doi='10.1093/mnras/staa1522') == False
+    assert search_publication(db, name='Ref 2', bibcode='2020MNRAS.496.1922B') == False
+
+
+def test_add_publication(db):
+    # should fail if trying to add a duplicate record
+    with pytest.raises(sqlalchemy.exc.IntegrityError):
+        add_publication(db, name='Ref 1',bibcode='2020MNRAS.496.1922B')
+    # TODO - Mock environment  where ADS_TOKEN is not set. #117
