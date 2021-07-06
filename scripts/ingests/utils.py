@@ -422,24 +422,13 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verb
 
         # Construct data to be added
         parallax_data = [{'source': db_name,
-<<<<<<< implement_save_db
-                          'parallax': plxs[i],
-                          'parallax_error': plx_errs[i],
+                          'parallax': str(plxs[i]),
+                          'parallax_error': str(plx_errs[i]),
                           'reference': plx_refs[i],
                           'adopted': adopted}]
         verboseprint(parallax_data)
 
         try:
-=======
-                          'parallax': str(plx[i]),
-                          'parallax_error': str(plx_unc[i]),
-                          'reference': plx_ref[i],
-                          'adopted': adopted}]
-        verboseprint(parallax_data)
-    
-        # Consider making this optional or a key to only view the output but not do the operation.
-        if not norun:
->>>>>>> main
             db.Parallaxes.insert().execute(parallax_data)
             n_added += 1
         except sqlalchemy.exc.IntegrityError as err:
