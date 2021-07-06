@@ -535,7 +535,7 @@ def ingest_photometry(db, sources, band, magnitudes, magnitude_errors, reference
 
         # Construct data to be added
         photometry_data = [{'source': db_name,
-                          'band': band[i],
+                          'band': bands[i],
                           'ucd' : ucds[i],
                           'magnitude' : magnitudes[i],
                           'magnitude_error' : magnitude_errors[i],
