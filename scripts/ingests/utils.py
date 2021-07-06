@@ -123,7 +123,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     return
 
 
-def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None):
+def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, save_db=False):
     """
     Adds publication to the database using DOI or ADS Bibcode, including metadata found with ADS.
 
@@ -142,7 +142,7 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         For last names which are less than four letters, use '_' or first name initial(s). (e.g, Xu__21 or LiYB21)
     description: str, optional
         Description of the paper, typically the title of the papre [optional]
-    dryrun: bool
+    save_db: bool
 
     See Also
     --------
@@ -221,12 +221,16 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         with disable_exception_traceback():
             raise
 
-    # TODO: add save_db to save the json files
+    if save_db:
+        db.save_database(directory='data/')
+        print("Publication added to database and saved: ", name_add)
+    else:
+        print("Publication added to database: ", name_add)
 
     return
 
 
-def update_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, dryrun: bool = True):
+def update_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, save_db: bool = True):
     """
     Updates publications in the database, including metadata found with ADS.
 
@@ -243,7 +247,7 @@ def update_publication(db, doi: str = None, bibcode: str = None, name: str = Non
         The publication shortname, otherwise it will be generated [optional]
     description: str, optional
         Description of the paper, typically the title of the papre [optional]
-    dryrun: bool
+    save_db: bool
 
     See Also
     --------
@@ -524,7 +528,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
 
     return
 
-def ingest_photometry(db, sources, band, magnitudes, magnitude_errors, reference, ucds = None,
+def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, reference, ucds = None,
                       telescope = None, instrument = None, epoch = None, comments = None, save_db=False, verbose=False):
 
     verboseprint = print if verbose else lambda *a, **k: None
