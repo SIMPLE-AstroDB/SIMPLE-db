@@ -204,7 +204,10 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
                 name_add = name
             description = article.title[0]
             bibcode_add = article.bibcode
-            doi_add = article.doi[0]
+            if article.doi == None:
+                doi_add = None
+            else:
+                doi_add = article.doi[0]
     elif bibcode:
         name_add = name
         bibcode_add = bibcode
