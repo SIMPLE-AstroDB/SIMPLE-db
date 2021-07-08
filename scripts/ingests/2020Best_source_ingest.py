@@ -1,3 +1,5 @@
+from operator import add
+from re import search
 import sys
 from sqlalchemy.sql.elements import Null
 sys.path.append('.')
@@ -30,7 +32,7 @@ else:
     db = Database(db_connection_string) #if database already exists, connects to .db file
 
 # load table of sources to ingest
-Best = Table.read('scripts/ingests/UltracoolSheet-Main.csv', data_start=1, data_end=5)
+Best = Table.read('scripts/ingests/UltracoolSheet-Main.csv', data_start=1, data_end=20)
 
 # find sources already in database
 existing_sources_index = []
@@ -52,16 +54,32 @@ print("Existing Sources: ", Best['name'][existing_sources_index])
 print("Missing Sources: ", Best['name'][missing_sources_index])
 print("Db names: ", db_names)
 
-# add missing references
-for r in Best['ref_discovery'][missing_sources_index]:
-	if search_publication(db, name=r)==False:
-		print(r)
-		add_publication(db, bibcode='2015MNRAS.450.2486C')
-		add_publication(db, name='Luhm14c', bibcode='2014ApJ...787..126L')
+for i,ref in enumerate(Best['ref_discovery'][missing_sources_index]):
+	if search_publication(db, name=ref)==False:
+		print("Missing Publication: ", ref)
+		if ref=="Kend07a":
+			Best['ref_discovery'][missing_sources_index[i]] = "Kend07"
+		if ref=="Mace13a":
+			Best['ref_discovery'][missing_sources_index[i]] = "Mace13"
+		if ref=='Kend03a':
+			Best['ref_discovery'][missing_sources_index[i]] = "Kend03"
+		if ref=='West08a':
+			Best['ref_discovery'][missing_sources_index[i]] = "West08"
+		if ref=='Lepi02b':
+			Best['ref_discovery'][missing_sources_index[i]] = "Lepi02"
+		if ref=='Reid05b':
+			Best['ref_discovery'][missing_sources_index[i]] = "Reid05"
+			#print(Best['ref_discovery'][missing_sources_index[i]])
+
+	elif search_publication(db, name=ref)==True:
+	#TO DO: Make sure found publication is correct publication 
+		pass 
+print(Best['ref_discovery'][missing_sources_index])
+
 
 # add missing objects to Sources table
-if len(missing_sources)>0:
-	for b in Best[missing_sources]:
+if len(missing_sources_index)>0:
+	for b in Best[missing_sources_index]:
 		if search_publication(db, name=Best['ref_discovery'][b])==True:
 			ref=Best['ref_discovery'][b]
 		else:
