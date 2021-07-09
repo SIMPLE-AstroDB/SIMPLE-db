@@ -12,7 +12,7 @@ from pathlib import Path
 import os
 
 save_db = False #modifies .db file but not the data files
-RECREATE_DB = False #recreates the .db file from the data files
+RECREATE_DB = True #recreates the .db file from the data files
 VERBOSE = False
 
 verboseprint = print if VERBOSE else lambda *a, **k: None
@@ -34,13 +34,13 @@ else:
 
 # add missing references
 #Searching for all publications in table and adding missing ones to pub table in .db file
-Pubs = Table.read('scripts/ingests/UltracoolSheet-References.csv', data_start=1, data_end=20)
+Pubs = Table.read('scripts/ingests/UltracoolSheet-References.csv', data_start=1, data_end=50)
 bibcodes = Pubs['ADSkey_ref']
 for i,ref in enumerate(Pubs['code_ref']):
-	if search_publication(db, name=ref) == False:
-		if search_publication(db, bibcode=bibcodes[i]) == False:
-			add_publication(db, name=ref, bibcode=bibcodes[i], save_db=save_db)
-		elif search_publication(db, bibcode=bibcodes[i], verbose=True) == True:
+	if search_publication(db, bibcode=bibcodes[i]) == False:
+		add_publication(db, name=ref, bibcode=bibcodes[i], save_db=save_db)
+	elif search_publication(db, bibcode=bibcodes[i], verbose=True) == True:
+		if search_publication(db, name=ref) == False:
 			print('Mismatched Source:',ref)
 	elif search_publication(db, name=ref) == True:
 		pass
