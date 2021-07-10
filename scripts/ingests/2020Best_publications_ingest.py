@@ -56,13 +56,64 @@ db.engine.execute(add_Irwi91_bibcode)
 update_Kirk97 = db.Publications.update().where(db.Publications.c.name == 'Kirk97b').\
 	values(name='Kirk97a')
 db.engine.execute(update_Kirk97)
+update_Law06 = db.Publications.update().where(db.Publications.c.name == 'Law_06').\
+	values(name='Law_06b')
+db.engine.execute(update_Law06)
+db.Publications.delete().where(db.Publications.c.name == 'Legg17').execute()
+add_publication(db,bibcode='2017ApJ...842..118L', verbose=False)
+update_Liu05 = db.Publications.update().where(db.Publications.c.name == 'Liu_05').\
+	values(bibcode='2005ApJ...634..616L')
+db.engine.execute(update_Liu05)
+update_Liu13 = db.Publications.update().where(db.Publications.c.name == 'Liu_13a').\
+	values(name='Liu_13b')
+db.engine.execute(update_Liu13)
+update_NLTT = db.Publications.update().where(db.Publications.c.name == 'Luyt79b').\
+	values(bibcode='1979nlcs.book.....L')
+db.engine.execute(update_NLTT)
+update_Mars08 = db.Publications.update().where(db.Publications.c.name == 'Mars08').\
+	values(name='Mars08b')
+db.engine.execute(update_Mars08)
+update_Mart18 = db.Publications.update().where(db.Publications.c.name == 'Mart18').\
+	values(bibcode='2018ApJ...867..109M')
+db.engine.execute(update_Mart18)
+update_Niel12 = db.Publications.update().where(db.Publications.c.name == 'Niel12').\
+	values(bibcode='2012ApJ...750...53N')
+db.engine.execute(update_Niel12)
+update_Pinf12 = db.Publications.update().where(db.Publications.c.name == 'Pinf12').\
+	values(bibcode='2012MNRAS.422.1922P')
+db.engine.execute(update_Pinf12)
+update_Radi08 = db.Publications.update().where(db.Publications.c.name == 'Radi08').\
+	values(bibcode='2008ApJ...689..471R')
+db.engine.execute(update_Radi08)
+update_Reid03a = db.Publications.update().where(db.Publications.c.name == 'Reid03a').\
+	values(name='Reid03c')
+db.engine.execute(update_Reid03a)
+update_Reid03b = db.Publications.update().where(db.Publications.c.name == 'Reid03b').\
+	values(name='Reid03a')
+db.engine.execute(update_Reid03b)
+update_Sahl16 = db.Publications.update().where(db.Publications.c.name == 'Sahl16').\
+	values(bibcode='2016MNRAS.455..357S')
+db.engine.execute(update_Sahl16)
+update_Schn15 = db.Publications.update().where(db.Publications.c.name == 'Schn15').\
+	values(bibcode='2015ApJ...804...92S')
+db.engine.execute(update_Schn15)
+update_Ston16 = db.Publications.update().where(db.Publications.c.name == 'Ston16').\
+	values(bibcode='2016ApJ...818L..12S')
+db.engine.execute(update_Ston16)
+update_Zhan17 = db.Publications.update().where(db.Publications.c.name == 'Zhan17a').\
+	values(bibcode='2017MNRAS.464.3040Z')
+db.engine.execute(update_Zhan17
+				  )
+
 
 # add missing references
 #Searching for all publications in table and adding missing ones to pub table in .db file
-Pubs = Table.read('scripts/ingests/UltracoolSheet-References.csv', data_start=351, data_end=450)
+data_start=1
+Pubs = Table.read('scripts/ingests/UltracoolSheet-References.csv', data_start=data_start)
 best_bibcodes = Pubs['ADSkey_ref']
 best_names = Pubs['code_ref']
 for i, best_name in enumerate(best_names):
+	# print(i+data_start)
 	# print("searching:",i,best_names[i],best_bibcodes[i])
 	bibcode_search = search_publication(db, bibcode=best_bibcodes[i])
 	if bibcode_search[0] == False and bibcode_search[1] == 0: # no matches
