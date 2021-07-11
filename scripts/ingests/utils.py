@@ -167,6 +167,41 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
               "Without an ADS_TOKEN, name and bibcode or DOI must be set explicity.")
         return
 
+    if 'arXiv' in bibcode:
+        arxiv_id = bibcode
+        bibcode = None
+        print("arxiv_id", arxiv_id)
+        print("bibcode",bibcode)
+    else:
+        arxiv_id = None
+        print("arxiv_id", arxiv_id)
+        print("bibcode", bibcode)
+
+    # Search ADS uing a provided arxiv id
+    if arxiv_id and ads.config.token:
+        arxiv_matches = ads.SearchQuery(q=arxiv_id, fl=['id', 'bibcode', 'title', 'first_author', 'year', 'doi'])
+        arxiv_matches_list = list(arxiv_matches)
+        if len(arxiv_matches_list) != 1:
+            print('should only be one matching arxiv id')
+            return
+
+        if len(arxiv_matches_list) == 1:
+                verboseprint("Publication found in ADS using arxiv id: ", arxiv_id)
+                article = arxiv_matches_list[0]
+                verboseprint(article.first_author, article.year, article.bibcode, article.title)
+                if not name:  # generate the name if it was not provided
+                    name_stub = article.first_author.replace(',', '').replace(' ', '')
+                    name_add = name_stub[0:4] + article.year[-2:]
+                else:
+                    name_add = name
+                description = article.title[0]
+                bibcode_add = article.bibcode
+                doi_add = article.doi[0]
+        elif arxiv_id:
+            name_add = name
+            bibcode_add = bibcode
+            doi_add = doi
+
     # Search ADS using a provided DOI
     if doi and ads.config.token:
         doi_matches = ads.SearchQuery(doi=doi, fl=['id', 'bibcode', 'title', 'first_author','year','doi'])
@@ -195,11 +230,17 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
     if bibcode and ads.config.token:
         bibcode_matches = ads.SearchQuery(bibcode=bibcode,fl=['id', 'bibcode', 'title', 'first_author','year','doi'])
         bibcode_matches_list = list(bibcode_matches)
-        if len(bibcode_matches_list) != 1:
-            print('should only be one matching bibcode')
-            return
+        if len(bibcode_matches_list) == 0:
+            print('not a valid bibcode:', bibcode)
+            print('nothing added')
+            raise
 
-        if len(bibcode_matches_list) == 1:
+        elif len(bibcode_matches_list) > 1:
+            print('should only be one matching bibcode for:', bibcode)
+            print('nothing added')
+            raise
+
+        elif len(bibcode_matches_list) == 1:
             verboseprint("Publication found in ADS using bibcode: ", bibcode)
             article = bibcode_matches_list[0]
             verboseprint(article.first_author, article.year, article.bibcode, article.doi, article.title)
