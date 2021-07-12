@@ -125,7 +125,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     return
 
 
-def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, save_db=False,
+def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, ignore_ads: bool = False, save_db=False,
                     verbose: bool = True):
     """
     Adds publication to the database using DOI or ADS Bibcode, including metadata found with ADS.
@@ -145,6 +145,7 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         For last names which are less than four letters, use '_' or first name initial(s). (e.g, Xu__21 or LiYB21)
     description: str, optional
         Description of the paper, typically the title of the papre [optional]
+    ignore_ads: bool
     save_db: bool
     verbose: bool
 
@@ -166,19 +167,20 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         print("An ADS_TOKEN environment variable must be set in order to auto-populate the fields.\n"
               "Without an ADS_TOKEN, name and bibcode or DOI must be set explicity.")
         return
+    
+    if ads.config.token and not ignore_ads:
+        use_ads = True 
+    else:
+        use_ads = False
 
     if 'arXiv' in bibcode:
         arxiv_id = bibcode
         bibcode = None
-        print("arxiv_id", arxiv_id)
-        print("bibcode",bibcode)
     else:
         arxiv_id = None
-        print("arxiv_id", arxiv_id)
-        print("bibcode", bibcode)
 
     # Search ADS uing a provided arxiv id
-    if arxiv_id and ads.config.token:
+    if arxiv_id and use_ads:
         arxiv_matches = ads.SearchQuery(q=arxiv_id, fl=['id', 'bibcode', 'title', 'first_author', 'year', 'doi'])
         arxiv_matches_list = list(arxiv_matches)
         if len(arxiv_matches_list) != 1:
@@ -197,13 +199,14 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
                 description = article.title[0]
                 bibcode_add = article.bibcode
                 doi_add = article.doi[0]
-        elif arxiv_id:
-            name_add = name
-            bibcode_add = bibcode
-            doi_add = doi
+
+    elif arxiv_id:
+        name_add = name
+        bibcode_add = arxiv_id
+        doi_add = doi
 
     # Search ADS using a provided DOI
-    if doi and ads.config.token:
+    if doi and use_ads:
         doi_matches = ads.SearchQuery(doi=doi, fl=['id', 'bibcode', 'title', 'first_author','year','doi'])
         doi_matches_list = list(doi_matches)
         if len(doi_matches_list) != 1:
@@ -227,7 +230,7 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         bibcode_add = bibcode
         doi_add = doi
 
-    if bibcode and ads.config.token:
+    if bibcode and use_ads:
         bibcode_matches = ads.SearchQuery(bibcode=bibcode,fl=['id', 'bibcode', 'title', 'first_author','year','doi'])
         bibcode_matches_list = list(bibcode_matches)
         if len(bibcode_matches_list) == 0:

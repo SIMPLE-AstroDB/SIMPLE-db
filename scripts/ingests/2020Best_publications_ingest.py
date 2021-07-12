@@ -1,4 +1,6 @@
-from scripts.ingests.utils import *
+import sys
+sys.path.append('.')
+from utils import *
 from astrodbkit2.astrodb import create_database
 from astrodbkit2.astrodb import Database
 from astropy.table import Table
@@ -102,41 +104,72 @@ update_Ston16 = db.Publications.update().where(db.Publications.c.name == 'Ston16
 db.engine.execute(update_Ston16)
 update_Zhan17 = db.Publications.update().where(db.Publications.c.name == 'Zhan17a').\
 	values(bibcode='2017MNRAS.464.3040Z')
-db.engine.execute(update_Zhan17
-				  )
+db.engine.execute(update_Zhan17)
+add_publication(db,name='Card12', bibcode='2012PhDT.........?C',ignore_ads=True,\
+	description='Observational properties of brown dwarfs: The low-mass end of the mass function')
+add_publication(db, name='Tria20', bibcode='2020NatAs...4..650T', verbose=False)			  
 
 
 # add missing references
 #Searching for all publications in table and adding missing ones to pub table in .db file
-data_start=1
-Pubs = Table.read('scripts/ingests/UltracoolSheet-References.csv', data_start=data_start)
+data_start=850
+data_end = data_start + 50
+Pubs = Table.read('scripts/ingests/UltracoolSheet-References.csv', data_start=data_start, data_end=data_end)
 best_bibcodes = Pubs['ADSkey_ref']
 best_names = Pubs['code_ref']
 for i, best_name in enumerate(best_names):
-	# print(i+data_start)
-	# print("searching:",i,best_names[i],best_bibcodes[i])
-	bibcode_search = search_publication(db, bibcode=best_bibcodes[i])
-	if bibcode_search[0] == False and bibcode_search[1] == 0: # no matches
-		# print(i," Adding:", best_name, best_bibcodes[i])
-		add_publication(db, name=best_name, bibcode=best_bibcodes[i], save_db=save_db,verbose=False)
+	#print(i+data_start)
+	#print("searching:",i,best_names[i],best_bibcodes[i])
+	bibcode_search = search_publication(db, bibcode=best_bibcodes[i], verbose = False)
+	name_search = search_publication(db, name=best_name, verbose= False)
+	if bibcode_search[0] == False and bibcode_search[1] == 0: # no bibcode matches
+		if name_search[0] == False: #no name matches either
+			print(i," Adding:", best_name, best_bibcodes[i])
+			add_publication(db, name=best_name, bibcode=best_bibcodes[i], save_db=save_db,verbose=False)
+		elif name_search[0] == True:
+			print(i, " Name match: ", best_name)
+		else:
+			raise 
 	elif bibcode_search[0] == False and bibcode_search[1] > 0: # multiple matches]
 		print("!! multiple matches: ", i, best_name, best_bibcodes[i])
 	elif bibcode_search[0] == True: #bibcode found
-		# print(i," Bibcode Match found for:", best_name, best_bibcodes[i])
-		if search_publication(db, bibcode=best_bibcodes[i], name=best_name)[0] == False:
+		print(i," Bibcode Match found for:", best_name, best_bibcodes[i])
+		if search_publication(db, bibcode=best_bibcodes[i], name=best_name, verbose=False)[0] == False:
 			print(i,'!! Bibcode match but mismatched ref name: !! ', i, best_name)
-			if search_publication(db, bibcode=best_bibcodes[i],name=best_name[:-1])[0] == True:
+			if search_publication(db, bibcode=best_bibcodes[i],name=best_name[:-1], verbose=False)[0] == True:
 				print(i,'!! Match found for ',best_name[:-1])
-	elif search_publication(db, name=best_name) == True: #bibcode didn't match, but name did
-		print("Name match: ", i, best_name)
+	else:
+		raise
 
-#Alle07a = Alle07
-#Alle13a = Alle13
-# Bill06a = Bill06
-# Bocc03b = Bocc03
-#  Bouv08a =  Bouv08
-#Bouy04a = Bouy04
-#Bouy08b = Bouy08
+#Alle07a = Alle07 in database
+# Bill06a = Bill06 in database
+# Bocc03b = Bocc03 in database
+#  Bouv08a =  Bouv08 in database
+#Bouy04a = Bouy04 in database
+#Bouy08b = Bouy08 in database
+#Burg08b = Burg08c in database
+#Burg08c = Burg08d in database
+#Burg08d = Burg08b in database
+#Cruz04 is in database as Cruz04
+#Gagn15b = Gagn15c in database
+#Gagn15c = Gagn15b in database
+#Geli11 is in database as Geli11
+#Kirk94 = Kirk94b in database
+#Lodi07a = Lodi07b in database
+#Lodi07b = Lodi7a in database
+#Luhm09b is in as Luh09b
+#Reid02c = Reid02b in database
+#Reid06a = Reid06b in database
+#Reid06b = Reid06a in database
+#Riaz08 = Riaz08b in database
+#Schm10b is in database as Schm10b
+#Scho4b = Scho04a in database
+#Scho10a = Scho10b in database
+#Tinn93b = Tinn93c in database
+#Wils03 = Wils03b in database
+
+
+
 
 #add_publication(db, bibcode='2015MNRAS.450.2486C')
 #add_publication(db, name='Luhm14c', bibcode='2014ApJ...787..126L')
