@@ -108,11 +108,46 @@ db.engine.execute(update_Zhan17)
 add_publication(db,name='Card12', bibcode='2012PhDT.........?C',ignore_ads=True,\
 	description='Observational properties of brown dwarfs: The low-mass end of the mass function')
 add_publication(db, name='Tria20', bibcode='2020NatAs...4..650T', verbose=False)			  
+#New database modifications that may or may not work
+update_Alle07 = db.Publications.update().where(db.Publications.c.name == 'Alle07').\
+	values(name='Alle07a')
+db.engine.execute(update_Alle07)
+update_Bill06 = db.Publications.update().where(db.Publications.c.name == 'Bill06').\
+	values(name='Bill06a')
+db.engine.execute(update_Bill06)
+update_Bocc03 = db.Publications.update().where(db.Publications.c.name == 'Bocc03').\
+	values(name='Bocc03b')
+db.engine.execute(update_Bocc03)
+update_Bouv08 = db.Publications.update().where(db.Publications.c.name == 'Bouv08').\
+	values(name='Bouv08a')
+db.engine.execute(update_Bouv08)
+update_Bouy04 = db.Publications.update().where(db.Publications.c.name == 'Bouy04').\
+	values(name='Bouy04a')
+db.engine.execute(update_Bouy04)
+update_Bouy08 = db.Publications.update().where(db.Publications.c.name == 'Bouy08').\
+	values(name='Bouy08b')
+db.engine.execute(update_Bouy08)
+
+#update_Burg08c = db. Publications.update().where(db.Publications.c.name == 'Burg08c').\
+	#values(name='Burg08b')
+#db.engine.execute(update_Burg08c)
+#update_Burg08d = db.Publications.update().where(db.Publications.c.name == 'Burg08d').\
+	#values(name='Burg08c')
+#db.engine.execute(update_Burg08d)
+#update_Burg08b = db.Publications.update().where(db.Publications.c.name == 'Burg08b').\
+	#values(name='Burg08d')
+#db.engine.execute(update_Burg08b)
+
+
+
+
+#print('confirmed')
+
 
 
 # add missing references
 #Searching for all publications in table and adding missing ones to pub table in .db file
-data_start=850
+data_start=190
 data_end = data_start + 50
 Pubs = Table.read('scripts/ingests/UltracoolSheet-References.csv', data_start=data_start, data_end=data_end)
 best_bibcodes = Pubs['ADSkey_ref']
@@ -122,6 +157,8 @@ for i, best_name in enumerate(best_names):
 	#print("searching:",i,best_names[i],best_bibcodes[i])
 	bibcode_search = search_publication(db, bibcode=best_bibcodes[i], verbose = False)
 	name_search = search_publication(db, name=best_name, verbose= False)
+	print(bibcode_search)
+	print(name_search)
 	if bibcode_search[0] == False and bibcode_search[1] == 0: # no bibcode matches
 		if name_search[0] == False: #no name matches either
 			print(i," Adding:", best_name, best_bibcodes[i])
@@ -130,7 +167,7 @@ for i, best_name in enumerate(best_names):
 			print(i, " Name match: ", best_name)
 		else:
 			raise 
-	elif bibcode_search[0] == False and bibcode_search[1] > 0: # multiple matches]
+	elif bibcode_search[0] == False and bibcode_search[1] > 0: # multiple matches
 		print("!! multiple matches: ", i, best_name, best_bibcodes[i])
 	elif bibcode_search[0] == True: #bibcode found
 		print(i," Bibcode Match found for:", best_name, best_bibcodes[i])

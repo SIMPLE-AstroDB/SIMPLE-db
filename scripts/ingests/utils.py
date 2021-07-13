@@ -78,8 +78,8 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
 
     not_null_pub_filters = []
     if name:
-        fuzzy_query_name = '%' + name + '%'
-        not_null_pub_filters.append(db.Publications.c.name.ilike(fuzzy_query_name))
+        #fuzzy_query_name = '%' + name + '%'
+        not_null_pub_filters.append(db.Publications.c.name.ilike(name))
     if doi:
         not_null_pub_filters.append(db.Publications.c.doi.ilike(doi))
     if bibcode:
@@ -97,7 +97,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
         return True, 1
 
     if n_pubs_found > 1:
-        print(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
+        verboseprint(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
         if verbose:
             pub_search_table.pprint_all()
         return False, n_pubs_found
