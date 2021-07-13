@@ -1,13 +1,9 @@
-# Test to verify funtions in utils
-
+# Test to verify functions in utils
 import os
 import sqlite3
-
 import pytest
 import sys
-
 import sqlalchemy.exc
-
 sys.path.append('.')
 from scripts.ingests.utils import *
 from simple.schema import *
@@ -47,6 +43,7 @@ def t_plx():
                ])
     return t_plx
 
+
 # Create fake astropy Table of data to load
 @pytest.fixture(scope="module")
 def t_pm():
@@ -67,6 +64,8 @@ def test_setup_db(db):
                    {'source': 'Fake 3', 'reference': 'Ref 2'},
                    ]
     db.Sources.insert().execute(source_data)
+
+    return db
 
 
 @pytest.mark.xfail()
@@ -106,22 +105,22 @@ def test_ingest_proper_motions(db, t_pm):
     assert results['mu_ra'][0] == 55
     assert results['mu_ra_error'][0] == 0.23
 
-#def test_add_publication(db):
-#    add_publication(db, name='blah',doi='blah',bibcode='blah',dryrun=False)
-#    results = db.query(db.Publications).filter(db.Publications.c.name == 'blah').table()
-#    assert len(results) == 1
 
-
-#def test_search_publication(db):
-    # TODO: have to add records first and then test them.
-    assert search_publication(db) == False
-    assert search_publication(db, name='Ref 1') == True
-    assert search_publication(db, name='Ref 1', doi='10.1093/mnras/staa1522') == True
-    assert search_publication(db, doi='10.1093/mnras/staa1522') == True
-    assert search_publication(db, bibcode='2020MNRAS.496.1922B') == True
-    assert search_publication(db, name='Ref') == False # multiple matches
-    assert search_publication(db, name='Ref 2', doi='10.1093/mnras/staa1522') == False
-    assert search_publication(db, name='Ref 2', bibcode='2020MNRAS.496.1922B') == False
+def test_search_publication(db):
+    assert search_publication(db)[0] == False
+    assert search_publication(db, name='Ref 1')[0] == True
+    assert search_publication(db, name='Ref 1', doi='10.1093/mnras/staa1522')[0] == True
+    doi_search = search_publication(db, doi='10.1093/mnras/staa1522')
+    assert doi_search[0] == True
+    assert doi_search[1] == 1
+    bibcode_search = search_publication(db, bibcode='2020MNRAS.496.1922B')
+    assert bibcode_search[0] == True
+    assert bibcode_search[1] == 1
+    multiple_matches = search_publication(db, name='Ref')
+    assert multiple_matches[0] == False # multiple matches
+    assert multiple_matches[1] == 2  # multiple matches
+    assert search_publication(db, name='Ref 2', doi='10.1093/mnras/staa1522')[0] == False
+    assert search_publication(db, name='Ref 2', bibcode='2020MNRAS.496.1922B')[0] == False
 
 
 def test_add_publication(db):
