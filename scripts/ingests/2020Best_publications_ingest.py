@@ -127,28 +127,26 @@ db.engine.execute(update_Bouy04)
 update_Bouy08 = db.Publications.update().where(db.Publications.c.name == 'Bouy08').\
 	values(name='Bouy08b')
 db.engine.execute(update_Bouy08)
-
-#update_Burg08c = db. Publications.update().where(db.Publications.c.name == 'Burg08c').\
-	#values(name='Burg08b')
-#db.engine.execute(update_Burg08c)
-#update_Burg08d = db.Publications.update().where(db.Publications.c.name == 'Burg08d').\
-	#values(name='Burg08c')
-#db.engine.execute(update_Burg08d)
-#update_Burg08b = db.Publications.update().where(db.Publications.c.name == 'Burg08b').\
-	#values(name='Burg08d')
-#db.engine.execute(update_Burg08b)
-
-
+update_Kirk94b = db.Publications.update().where(db.Publications.c.name == 'Kirk94b').\
+	values(name='Kirk94')
+db.engine.execute(update_Kirk94b)
+db.Publications.delete().where(db.Publications.c.name == 'Luhm09').execute()
+update_Riaz08b = db.Publications.update().where(db.Publications.c.name == 'Riaz08b').\
+	values(name='Riaz08')
+db.engine.execute(update_Riaz08b)
+update_Wils03b = db.Publications.update().where(db.Publications.c.name == 'Wils03b').\
+	values(name='Wils03')
+db.engine.execute(update_Wils03b)
 
 
-#print('confirmed')
+print('confirmed')
 
 
 
 # add missing references
 #Searching for all publications in table and adding missing ones to pub table in .db file
-data_start=190
-data_end = data_start + 50
+data_start=860
+data_end = data_start + 10
 Pubs = Table.read('scripts/ingests/UltracoolSheet-References.csv', data_start=data_start, data_end=data_end)
 best_bibcodes = Pubs['ADSkey_ref']
 best_names = Pubs['code_ref']
@@ -157,8 +155,6 @@ for i, best_name in enumerate(best_names):
 	#print("searching:",i,best_names[i],best_bibcodes[i])
 	bibcode_search = search_publication(db, bibcode=best_bibcodes[i], verbose = False)
 	name_search = search_publication(db, name=best_name, verbose= False)
-	print(bibcode_search)
-	print(name_search)
 	if bibcode_search[0] == False and bibcode_search[1] == 0: # no bibcode matches
 		if name_search[0] == False: #no name matches either
 			print(i," Adding:", best_name, best_bibcodes[i])
@@ -178,32 +174,9 @@ for i, best_name in enumerate(best_names):
 	else:
 		raise
 
-#Alle07a = Alle07 in database
-# Bill06a = Bill06 in database
-# Bocc03b = Bocc03 in database
-#  Bouv08a =  Bouv08 in database
-#Bouy04a = Bouy04 in database
-#Bouy08b = Bouy08 in database
-#Burg08b = Burg08c in database
-#Burg08c = Burg08d in database
-#Burg08d = Burg08b in database
-#Cruz04 is in database as Cruz04
-#Gagn15b = Gagn15c in database
-#Gagn15c = Gagn15b in database
+
 #Geli11 is in database as Geli11
-#Kirk94 = Kirk94b in database
-#Lodi07a = Lodi07b in database
-#Lodi07b = Lodi7a in database
-#Luhm09b is in as Luh09b
-#Reid02c = Reid02b in database
-#Reid06a = Reid06b in database
-#Reid06b = Reid06a in database
-#Riaz08 = Riaz08b in database
-#Schm10b is in database as Schm10b
-#Scho4b = Scho04a in database
-#Scho10a = Scho10b in database
-#Tinn93b = Tinn93c in database
-#Wils03 = Wils03b in database
+#Schm10b is in database as Schm10b and Schm10
 
 
 
