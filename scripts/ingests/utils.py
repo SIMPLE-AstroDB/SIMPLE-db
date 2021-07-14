@@ -33,6 +33,7 @@ def sort_sources(db, ingest_names, verbose = False):
     existing_sources_index = []
     missing_sources_index = []
     db_names = []
+
     for i, name in enumerate(ingest_names):
         verboseprint(i, "searching:,", name)
 
@@ -41,7 +42,7 @@ def sort_sources(db, ingest_names, verbose = False):
         # if no matches, try resolving with Simbad
         if len(namematches) == 0:
             try:
-                namematches = db.search_object(name, resolve_simbad=True)
+                namematches = db.search_object(name, resolve_simbad=True,verbose=False)
             except TypeError: #no Simbad match
                 namematches = []
 
@@ -65,16 +66,30 @@ def sort_sources(db, ingest_names, verbose = False):
     verboseprint("Db names: ", db_names)
     verboseprint("Missing Sources: ", ingest_names[missing_sources_index])
 
+    n_ingest = len(ingest_names)
+    n_existing = len(existing_sources_index)
+    n_missing = len(missing_sources_index)
+
+    if n_ingest != n_existing + n_missing:
+        raise Exception("Unexpected number of sources")
+
+    print(n_existing, "sources already in database." )
+    print(n_missing, "sources not found in the database")
+
     return(missing_sources_index, existing_sources_index, db_names)
 
 
-def add_names(db,new_sources):
+def add_names(db,new_sources,verbose=True):
+
+    verboseprint = print if verbose else lambda *a, **k: None
     names_data = []
     for source in new_sources:
         names_data.append({'source': source, 'other_name': source})
-    if len(new_sources) > 0:
-        db.Names.insert().execute(names_data)
 
+    db.Names.insert().execute(names_data)
+
+    n_added = len(names_data)
+    verboseprint(n_added, "names added to Names table")
 
 def search_publication(db, name: str = None, doi: str = None, bibcode: str = None, verbose: bool = False):
     """
