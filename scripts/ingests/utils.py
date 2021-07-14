@@ -51,6 +51,14 @@ def find_missing_sources_index(db, ingest_names, verbose = False):
     return(missing_sources_index)
 
 
+def add_names(db,new_sources):
+    names_data = []
+    for i in new_sources:
+        names_data.append({'source': new_sources[i], 'other_name': new_sources[i]})
+    if len(new_sources) > 0:
+        db.Names.insert().execute(names_data)
+
+
 def search_publication(db, name: str = None, doi: str = None, bibcode: str = None, verbose: bool = False):
     """
     Find publications in the database by matching on the publication name,  doi, or bibcode
