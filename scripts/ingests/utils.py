@@ -3,6 +3,7 @@ import sys
 import numpy as np
 import re
 import sqlalchemy.exc
+import astrodbkit2
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.simbad import Simbad
@@ -26,7 +27,7 @@ def disable_exception_traceback():
     sys.tracebacklimit = default_value  # revert changes
 
 
-def sort_sources(db, ingest_names, verbose = False):
+def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose = False):
 
     verboseprint = print if verbose else lambda *a, **k: None
 
@@ -41,10 +42,23 @@ def sort_sources(db, ingest_names, verbose = False):
 
         # if no matches, try resolving with Simbad
         if len(namematches) == 0:
+            verboseprint(i,"trying simbad search")
             try:
                 namematches = db.search_object(name, resolve_simbad=True,verbose=False)
             except TypeError: #no Simbad match
                 namematches = []
+
+        # if still no matches, try spatial search using coordinates
+        if len(namematches) == 0:
+            verboseprint(i,"Trying coord search")
+            location = SkyCoord(ingest_ras[i],ingest_decs[i],frame='icrs',unit='deg')
+            radius = u.Quantity(60., unit='arcsec')
+            nearby_matches = db.query_region(location, radius=radius)
+            if len(nearby_matches) == 0:
+                namematches = nearby_matches
+            if len(nearby_matches) > 0:
+                print(nearby_matches)
+                break
 
         verboseprint(i," name matches: ",namematches)
 
@@ -90,6 +104,7 @@ def add_names(db,new_sources,verbose=True):
 
     n_added = len(names_data)
     verboseprint(n_added, "names added to Names table")
+
 
 def search_publication(db, name: str = None, doi: str = None, bibcode: str = None, verbose: bool = False):
     """
@@ -526,11 +541,11 @@ def ingest_sources(db, sources, ras, decs, references, epochs = None, equinoxes 
             with disable_exception_traceback():
                 raise
 
-        if save_db:
-            db.save_database(directory='data/')
-            verboseprint("Sources added to database and saved: ", n_added)
-        else:
-            verboseprint("Sources added to database: ", n_added)
+    if save_db:
+        db.save_database(directory='data/')
+        print(n_added, "sources added to database and saved")
+    else:
+        print(n_added, "sources added to database")
 
     return
 
