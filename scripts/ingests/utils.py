@@ -26,6 +26,31 @@ def disable_exception_traceback():
     sys.tracebacklimit = default_value  # revert changes
 
 
+def find_missing_sources_index(db, ingest_names, verbose = False):
+
+    verboseprint = print if verbose else lambda *a, **k: None
+
+    existing_sources_index = []
+    missing_sources_index = []
+    db_names = []
+    for i, name in enumerate(ingest_names):
+        namematches = db.search_object(name, resolve_simbad=True)
+        verboseprint(namematches)
+        if len(namematches) == 1:
+            existing_sources_index.append(i)
+            db_names.append(namematches[0]['source'])
+        elif len(namematches) > 1:
+            raise Exception("More than one match for ", name,"/n,",namematches)
+        else:
+            missing_sources_index.append(i)
+            db_names.append(ingest_names[i])
+    verboseprint("Existing Sources: ", ingest_names[existing_sources_index])
+    verboseprint("Db names: ", db_names)
+    verboseprint("Missing Sources: ", ingest_names[missing_sources_index])
+
+    return(missing_sources_index)
+
+
 def search_publication(db, name: str = None, doi: str = None, bibcode: str = None, verbose: bool = False):
     """
     Find publications in the database by matching on the publication name,  doi, or bibcode
@@ -72,7 +97,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     verboseprint = print if verbose else lambda *a, **k: None
 
     # Make sure a search term is provided
-    if name is None and doi is None and bibcode is None:
+    if name == None and doi == None and bibcode == None:
         print("Name, Bibcode, or DOI must be provided")
         return False, 0
 
@@ -348,7 +373,7 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', verbose
             coord_result_table = Simbad.query_region(
                 SkyCoord(ingest_ra[i], ingest_dec[i], unit=(u.deg, u.deg), frame='icrs'),
                 radius=radius, verbose=verbose)
-                
+
             # If no match is found in Simbad, use the name in the ingest table
             if coord_result_table is None:
                 resolved_names.append(ingest_name)
