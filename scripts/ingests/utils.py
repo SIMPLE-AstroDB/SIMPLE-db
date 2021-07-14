@@ -70,8 +70,8 @@ def sort_sources(db, ingest_names, verbose = False):
 
 def add_names(db,new_sources):
     names_data = []
-    for i in new_sources:
-        names_data.append({'source': new_sources[i], 'other_name': new_sources[i]})
+    for source in new_sources:
+        names_data.append({'source': source, 'other_name': source})
     if len(new_sources) > 0:
         db.Names.insert().execute(names_data)
 
@@ -482,9 +482,15 @@ def convert_spt_string_to_code(spectral_types, verbose=False):
     return spectral_type_codes
 
 
-def ingest_sources(db, sources, ras, decs, references, epochs = None, equinoxs = None, verbose = False, save_db = False):
+def ingest_sources(db, sources, ras, decs, references, epochs = None, equinoxes = None, verbose = False, save_db = False):
     verboseprint = print if verbose else lambda *a, **k: None
     n_added = 0
+    n_sources = len(sources)
+
+    if epochs == None:
+        epochs = [None] * n_sources
+    if equinoxes == None:
+        equinoxes = [None] * n_sources
 
     for i, source in enumerate(sources):
 
@@ -494,17 +500,14 @@ def ingest_sources(db, sources, ras, decs, references, epochs = None, equinoxs =
                         'dec':decs[i],
                         'reference':references[i],
                         'epoch':epochs[i],
-                        'equinox':equinoxs[i]}]
+                        'equinox':equinoxes[i]}]
         verboseprint(source_data)
 
         try:
             db.Sources.insert().execute(source_data)
             n_added += 1
         except sqlalchemy.exc.IntegrityError as err:
-            #print("SIMPLE ERROR: The source may not exist in Sources table.")
-            #print(
-                #"SIMPLE ERROR: The reference may not exist in the Publications table. Add it with add_publication function. ")
-            #print("SIMPLE ERROR: The measurement may be a duplicate.")
+            print("SIMPLE ERROR: Discovery reference may not exist in the Publications table. Add it with add_publication function. ")
             with disable_exception_traceback():
                 raise
 
