@@ -26,7 +26,7 @@ def disable_exception_traceback():
     sys.tracebacklimit = default_value  # revert changes
 
 
-def find_missing_sources_index(db, ingest_names, verbose = False):
+def sort_sources(db, ingest_names, verbose = False):
 
     verboseprint = print if verbose else lambda *a, **k: None
 
@@ -34,21 +34,38 @@ def find_missing_sources_index(db, ingest_names, verbose = False):
     missing_sources_index = []
     db_names = []
     for i, name in enumerate(ingest_names):
-        namematches = db.search_object(name, resolve_simbad=True)
-        verboseprint(namematches)
+        verboseprint(i, "searching:,", name)
+
+        namematches = db.search_object(name)
+
+        # if no matches, try resolving with Simbad
+        if len(namematches) == 0:
+            try:
+                namematches = db.search_object(name, resolve_simbad=True)
+            except TypeError: #no Simbad match
+                namematches = []
+
+        verboseprint(i," name matches: ",namematches)
+
         if len(namematches) == 1:
             existing_sources_index.append(i)
-            db_names.append(namematches[0]['source'])
+            source_match = namematches[0]['source']
+            db_names.append(source_match)
+            verboseprint(i, "match found: ",source_match)
         elif len(namematches) > 1:
-            raise Exception("More than one match for ", name,"/n,",namematches)
-        else:
+            raise Exception(i,"More than one match for ", name,"/n,",namematches)
+        elif len(namematches) == 0:
+
             missing_sources_index.append(i)
             db_names.append(ingest_names[i])
+        else:
+            raise Exception(i,"unexpected condition")
+
     verboseprint("Existing Sources: ", ingest_names[existing_sources_index])
     verboseprint("Db names: ", db_names)
     verboseprint("Missing Sources: ", ingest_names[missing_sources_index])
 
-    return(missing_sources_index)
+    return(missing_sources_index, existing_sources_index, db_names)
 
 
 def add_names(db,new_sources):
@@ -465,6 +482,41 @@ def convert_spt_string_to_code(spectral_types, verbose=False):
     return spectral_type_codes
 
 
+def ingest_sources(db, sources, ras, decs, references, epochs = None, equinoxs = None, verbose = False, save_db = False):
+    verboseprint = print if verbose else lambda *a, **k: None
+    n_added = 0
+
+    for i, source in enumerate(sources):
+
+        # Construct data to be added
+        source_data = [{'source': sources[i],
+                        'ra': ras[i],
+                        'dec':decs[i],
+                        'reference':references[i],
+                        'epoch':epochs[i],
+                        'equinox':equinoxs[i]}]
+        verboseprint(source_data)
+
+        try:
+            db.Sources.insert().execute(source_data)
+            n_added += 1
+        except sqlalchemy.exc.IntegrityError as err:
+            #print("SIMPLE ERROR: The source may not exist in Sources table.")
+            #print(
+                #"SIMPLE ERROR: The reference may not exist in the Publications table. Add it with add_publication function. ")
+            #print("SIMPLE ERROR: The measurement may be a duplicate.")
+            with disable_exception_traceback():
+                raise
+
+        if save_db:
+            db.save_database(directory='data/')
+            verboseprint("Sources added to database and saved: ", n_added)
+        else:
+            verboseprint("Sources added to database: ", n_added)
+
+    return
+
+
 def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verbose=False):
     """
 
@@ -613,6 +665,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
         print("Proper motions added to database: ", n_added)
 
     return
+
 
 def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, reference, ucds = None,
                       telescope = None, instrument = None, epoch = None, comments = None, save_db=False, verbose=False):
