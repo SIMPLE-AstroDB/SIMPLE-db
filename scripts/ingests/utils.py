@@ -43,9 +43,9 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
 
     Returns
     -------
-    True: if only one match
-    False: No matches
-    False: Mulptiple matches
+    True, 1: if only one match
+    False, 0: No matches
+    False, N_matches: Mulptiple matches
 
     Examples
     -------
@@ -74,12 +74,12 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     # Make sure a search term is provided
     if name is None and doi is None and bibcode is None:
         print("Name, Bibcode, or DOI must be provided")
-        return False
+        return False, 0
 
     not_null_pub_filters = []
     if name:
-        fuzzy_query_name = '%' + name + '%'
-        not_null_pub_filters.append(db.Publications.c.name.ilike(fuzzy_query_name))
+        #fuzzy_query_name = '%' + name + '%'
+        not_null_pub_filters.append(db.Publications.c.name.ilike(name))
     if doi:
         not_null_pub_filters.append(db.Publications.c.doi.ilike(doi))
     if bibcode:
@@ -94,13 +94,13 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
         verboseprint(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
         if verbose:
             pub_search_table.pprint_all()
-        return True
+        return True, 1
 
     if n_pubs_found > 1:
-        print(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
+        verboseprint(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
         if verbose:
             pub_search_table.pprint_all()
-        return False
+        return False, n_pubs_found
 
     # If no matches found, search using first four characters of input name
     if n_pubs_found == 0 and name:
@@ -112,18 +112,21 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
         if n_pubs_found_short == 0:
             verboseprint(f'No matching publications for {shorter_name}')
             verboseprint('Use add_publication() to add it to the database.')
-            return False
+            return False, 0
 
         if n_pubs_found_short > 0:
             print(f'Found {n_pubs_found_short} matching publications for {shorter_name}')
             if verbose:
                 pub_search_table.pprint_all()
-            return False
+            return False, n_pubs_found_short
+    else:
+        return False, n_pubs_found
 
     return
 
 
-def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, save_db=False):
+def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, ignore_ads: bool = False, save_db=False,
+                    verbose: bool = True):
     """
     Adds publication to the database using DOI or ADS Bibcode, including metadata found with ADS.
 
@@ -142,13 +145,17 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         For last names which are less than four letters, use '_' or first name initial(s). (e.g, Xu__21 or LiYB21)
     description: str, optional
         Description of the paper, typically the title of the papre [optional]
+    ignore_ads: bool
     save_db: bool
+    verbose: bool
 
     See Also
     --------
     search_publication: Function to find publications in the database
 
     """
+
+    verboseprint = print if verbose else lambda *a, **k: None
 
     if not(doi or bibcode):
        print('DOI or Bibcode is required input')
@@ -160,9 +167,46 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         print("An ADS_TOKEN environment variable must be set in order to auto-populate the fields.\n"
               "Without an ADS_TOKEN, name and bibcode or DOI must be set explicity.")
         return
+    
+    if ads.config.token and not ignore_ads:
+        use_ads = True 
+    else:
+        use_ads = False
+
+    if 'arXiv' in bibcode:
+        arxiv_id = bibcode
+        bibcode = None
+    else:
+        arxiv_id = None
+
+    # Search ADS uing a provided arxiv id
+    if arxiv_id and use_ads:
+        arxiv_matches = ads.SearchQuery(q=arxiv_id, fl=['id', 'bibcode', 'title', 'first_author', 'year', 'doi'])
+        arxiv_matches_list = list(arxiv_matches)
+        if len(arxiv_matches_list) != 1:
+            print('should only be one matching arxiv id')
+            return
+
+        if len(arxiv_matches_list) == 1:
+                verboseprint("Publication found in ADS using arxiv id: ", arxiv_id)
+                article = arxiv_matches_list[0]
+                verboseprint(article.first_author, article.year, article.bibcode, article.title)
+                if not name:  # generate the name if it was not provided
+                    name_stub = article.first_author.replace(',', '').replace(' ', '')
+                    name_add = name_stub[0:4] + article.year[-2:]
+                else:
+                    name_add = name
+                description = article.title[0]
+                bibcode_add = article.bibcode
+                doi_add = article.doi[0]
+
+    elif arxiv_id:
+        name_add = name
+        bibcode_add = arxiv_id
+        doi_add = doi
 
     # Search ADS using a provided DOI
-    if doi and ads.config.token:
+    if doi and use_ads:
         doi_matches = ads.SearchQuery(doi=doi, fl=['id', 'bibcode', 'title', 'first_author','year','doi'])
         doi_matches_list = list(doi_matches)
         if len(doi_matches_list) != 1:
@@ -170,9 +214,9 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
             return
 
         if len(doi_matches_list) == 1:
-            print("Publication found in ADS using DOI: ",doi)
+            verboseprint("Publication found in ADS using DOI: ",doi)
             article = doi_matches_list[0]
-            print(article.first_author, article.year, article.bibcode, article.title)
+            verboseprint(article.first_author, article.year, article.bibcode, article.title)
             if not name: # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ','')
                 name_add = name_stub[0:4] + article.year[-2:]
@@ -186,17 +230,23 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         bibcode_add = bibcode
         doi_add = doi
 
-    if bibcode and ads.config.token:
+    if bibcode and use_ads:
         bibcode_matches = ads.SearchQuery(bibcode=bibcode,fl=['id', 'bibcode', 'title', 'first_author','year','doi'])
         bibcode_matches_list = list(bibcode_matches)
-        if len(bibcode_matches_list) != 1:
-            print('should only be one matching bibcode')
-            return
+        if len(bibcode_matches_list) == 0:
+            print('not a valid bibcode:', bibcode)
+            print('nothing added')
+            raise
 
-        if len(bibcode_matches_list) == 1:
-            print("Publication found in ADS using bibcode: ", bibcode)
+        elif len(bibcode_matches_list) > 1:
+            print('should only be one matching bibcode for:', bibcode)
+            print('nothing added')
+            raise
+
+        elif len(bibcode_matches_list) == 1:
+            verboseprint("Publication found in ADS using bibcode: ", bibcode)
             article = bibcode_matches_list[0]
-            print(article.first_author, article.year, article.bibcode, article.doi, article.title)
+            verboseprint(article.first_author, article.year, article.bibcode, article.doi, article.title)
             if not name:  # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
@@ -204,7 +254,10 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
                 name_add = name
             description = article.title[0]
             bibcode_add = article.bibcode
-            doi_add = article.doi[0]
+            if article.doi == None:
+                doi_add = None
+            else:
+                doi_add = article.doi[0]
     elif bibcode:
         name_add = name
         bibcode_add = bibcode
@@ -214,7 +267,7 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
 
     try:
         db.Publications.insert().execute(new_ref)
-        print(f'Added {name_add} to Publications table')
+        verboseprint(f'Added {name_add} to Publications table')
     except sqlalchemy.exc.IntegrityError as err:
         print("\nSIMPLE ERROR: It's possible that a similar publication already exists in database\n"
               "SIMPLE ERROR: Use search_publication function before adding a new record\n")
@@ -223,9 +276,9 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
 
     if save_db:
         db.save_database(directory='data/')
-        print("Publication added to database and saved: ", name_add)
+        verboseprint("Publication added to database and saved: ", name_add)
     else:
-        print("Publication added to database: ", name_add)
+        verboseprint("Publication added to database: ", name_add)
 
     return
 
