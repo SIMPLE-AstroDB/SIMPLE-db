@@ -3,6 +3,7 @@ import sys
 import numpy as np
 import re
 import sqlalchemy.exc
+import astrodbkit2
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.simbad import Simbad
@@ -24,6 +25,84 @@ def disable_exception_traceback():
     sys.tracebacklimit = 0
     yield
     sys.tracebacklimit = default_value  # revert changes
+
+
+def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose = False):
+
+    verboseprint = print if verbose else lambda *a, **k: None
+
+    existing_sources_index = []
+    missing_sources_index = []
+    db_names = []
+
+    for i, name in enumerate(ingest_names):
+        verboseprint("\n", i, ": searching:,", name)
+
+        namematches = db.search_object(name)
+
+        # if no matches, try resolving with Simbad
+        if len(namematches) == 0:
+            verboseprint(i,": no name matches, trying simbad search")
+            try:
+                namematches = db.search_object(name, resolve_simbad=True,verbose=verbose)
+            except TypeError: #no Simbad match
+                namematches = []
+
+        # if still no matches, try spatial search using coordinates
+        if len(namematches) == 0:
+            location = SkyCoord(ingest_ras[i],ingest_decs[i],frame='icrs',unit='deg')
+            radius = u.Quantity(60., unit='arcsec')
+            verboseprint(i, ": no Simbad match, trying coord search around ",location.ra.hour,location.dec)
+            nearby_matches = db.query_region(location, radius=radius)
+            if len(nearby_matches) == 1:
+                namematches = nearby_matches
+            if len(nearby_matches) > 1:
+                print(nearby_matches)
+                raise Exception("too many nearby sources!")
+
+        if len(namematches) == 1:
+            existing_sources_index.append(i)
+            source_match = namematches[0]['source']
+            db_names.append(source_match)
+            verboseprint(i, "match found: ",source_match)
+        elif len(namematches) > 1:
+            raise Exception(i,"More than one match for ", name,"/n,",namematches)
+        elif len(namematches) == 0:
+            verboseprint(i,": Not in database")
+            missing_sources_index.append(i)
+            db_names.append(ingest_names[i])
+        else:
+            raise Exception(i,"unexpected condition")
+
+    verboseprint("\n ALL SOURCES SORTED")
+    verboseprint("\n Existing Sources: ", ingest_names[existing_sources_index])
+    verboseprint("\n Missing Sources: ", ingest_names[missing_sources_index])
+    verboseprint("\n Db names: ", db_names,"\n")
+
+    n_ingest = len(ingest_names)
+    n_existing = len(existing_sources_index)
+    n_missing = len(missing_sources_index)
+
+    if n_ingest != n_existing + n_missing:
+        raise Exception("Unexpected number of sources")
+
+    print(n_existing, "sources already in database." )
+    print(n_missing, "sources not found in the database")
+
+    return(missing_sources_index, existing_sources_index, db_names)
+
+
+def add_names(db,new_sources,verbose=True):
+
+    verboseprint = print if verbose else lambda *a, **k: None
+    names_data = []
+    for source in new_sources:
+        names_data.append({'source': source, 'other_name': source})
+
+    db.Names.insert().execute(names_data)
+
+    n_added = len(names_data)
+    verboseprint(n_added, "names added to Names table")
 
 
 def search_publication(db, name: str = None, doi: str = None, bibcode: str = None, verbose: bool = False):
@@ -72,7 +151,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     verboseprint = print if verbose else lambda *a, **k: None
 
     # Make sure a search term is provided
-    if name is None and doi is None and bibcode is None:
+    if name == None and doi == None and bibcode == None:
         print("Name, Bibcode, or DOI must be provided")
         return False, 0
 
@@ -348,7 +427,7 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', verbose
             coord_result_table = Simbad.query_region(
                 SkyCoord(ingest_ra[i], ingest_dec[i], unit=(u.deg, u.deg), frame='icrs'),
                 radius=radius, verbose=verbose)
-                
+
             # If no match is found in Simbad, use the name in the ingest table
             if coord_result_table is None:
                 resolved_names.append(ingest_name)
@@ -430,6 +509,44 @@ def convert_spt_string_to_code(spectral_types, verbose=False):
         spectral_type_codes.append(spt_code)
         verboseprint(spt, spt_code)
     return spectral_type_codes
+
+
+def ingest_sources(db, sources, ras, decs, references, epochs = None, equinoxes = None, verbose = False, save_db = False):
+    verboseprint = print if verbose else lambda *a, **k: None
+    n_added = 0
+    n_sources = len(sources)
+
+    if epochs == None:
+        epochs = [None] * n_sources
+    if equinoxes == None:
+        equinoxes = [None] * n_sources
+
+    for i, source in enumerate(sources):
+
+        # Construct data to be added
+        source_data = [{'source': sources[i],
+                        'ra': ras[i],
+                        'dec':decs[i],
+                        'reference':references[i],
+                        'epoch':epochs[i],
+                        'equinox':equinoxes[i]}]
+        verboseprint(source_data)
+
+        try:
+            db.Sources.insert().execute(source_data)
+            n_added += 1
+        except sqlalchemy.exc.IntegrityError as err:
+            print("SIMPLE ERROR: Discovery reference may not exist in the Publications table. Add it with add_publication function. ")
+            with disable_exception_traceback():
+                raise
+
+    if save_db:
+        db.save_database(directory='data/')
+        print(n_added, "sources added to database and saved")
+    else:
+        print(n_added, "sources added to database")
+
+    return
 
 
 def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verbose=False):
@@ -580,6 +697,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
         print("Proper motions added to database: ", n_added)
 
     return
+
 
 def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, reference, ucds = None,
                       telescope = None, instrument = None, epoch = None, comments = None, save_db=False, verbose=False):
