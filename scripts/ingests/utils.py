@@ -543,8 +543,8 @@ def ingest_sources(db, sources, ras, decs, references, epochs = None, equinoxes 
             n_added += 1
         except sqlalchemy.exc.IntegrityError as err:
             # try reference without last letter e.g.Smit04 instead of Smit04a
-            if source_data['reference'][-1] == 'a':
-                source_data['reference'] = references[i][:-1]
+            if source_data[0]['reference'][:-1] == 'a' or 'b':
+                source_data[0]['reference'] = references[i][:-1]
                 try:
                     db.Sources.insert().execute(source_data)
                     n_added += 1
