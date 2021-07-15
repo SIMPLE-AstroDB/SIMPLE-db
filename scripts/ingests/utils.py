@@ -542,9 +542,21 @@ def ingest_sources(db, sources, ras, decs, references, epochs = None, equinoxes 
             db.Sources.insert().execute(source_data)
             n_added += 1
         except sqlalchemy.exc.IntegrityError as err:
-            print("SIMPLE ERROR: Discovery reference may not exist in the Publications table. Add it with add_publication function. ")
-            with disable_exception_traceback():
-                raise
+            # try reference without last letter e.g.Smit04 instead of Smit04a
+            if source_data['reference'][-1] == 'a':
+                source_data['reference'] = references[i][:-1]
+                try:
+                    db.Sources.insert().execute(source_data)
+                    n_added += 1
+                except sqlalchemy.exc.IntegrityError as err:
+                    print("SIMPLE ERROR: Discovery reference may not exist in the Publications table. Add it with add_publication function. ")
+                    with disable_exception_traceback():
+                        raise
+            else:
+                print(
+                    "SIMPLE ERROR: Discovery reference may not exist in the Publications table. Add it with add_publication function. ")
+                with disable_exception_traceback():
+                    raise
 
     if save_db:
         db.save_database(directory='data/')
