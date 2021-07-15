@@ -92,7 +92,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose = False):
     return(missing_sources_index, existing_sources_index, db_names)
 
 
-def add_names(db,new_sources,verbose=True):
+def add_names(db,new_sources,verbose=True, save_db = False):
 
     verboseprint = print if verbose else lambda *a, **k: None
     names_data = []
@@ -102,8 +102,14 @@ def add_names(db,new_sources,verbose=True):
     db.Names.insert().execute(names_data)
 
     n_added = len(names_data)
-    verboseprint(n_added, "names added to Names table")
 
+    if save_db:
+        db.save_database(directory='data/')
+        verboseprint("Names added to database and saved: ", n_added)
+    else:
+        verboseprint("Names added to database: ", n_added)
+
+    return
 
 def search_publication(db, name: str = None, doi: str = None, bibcode: str = None, verbose: bool = False):
     """
