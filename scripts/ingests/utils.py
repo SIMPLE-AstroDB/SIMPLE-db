@@ -36,31 +36,29 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose = False):
     db_names = []
 
     for i, name in enumerate(ingest_names):
-        verboseprint(i, "searching:,", name)
+        verboseprint("\n", i, ": searching:,", name)
 
         namematches = db.search_object(name)
 
         # if no matches, try resolving with Simbad
         if len(namematches) == 0:
-            verboseprint(i,"trying simbad search")
+            verboseprint(i,": no name matches, trying simbad search")
             try:
-                namematches = db.search_object(name, resolve_simbad=True,verbose=False)
+                namematches = db.search_object(name, resolve_simbad=True,verbose=verbose)
             except TypeError: #no Simbad match
                 namematches = []
 
         # if still no matches, try spatial search using coordinates
         if len(namematches) == 0:
-            verboseprint(i,"Trying coord search")
             location = SkyCoord(ingest_ras[i],ingest_decs[i],frame='icrs',unit='deg')
             radius = u.Quantity(60., unit='arcsec')
+            verboseprint(i, ": no Simbad match, trying coord search around ",location.ra.hour,location.dec)
             nearby_matches = db.query_region(location, radius=radius)
-            if len(nearby_matches) == 0:
+            if len(nearby_matches) == 1:
                 namematches = nearby_matches
-            if len(nearby_matches) > 0:
+            if len(nearby_matches) > 1:
                 print(nearby_matches)
-                break
-
-        verboseprint(i," name matches: ",namematches)
+                raise Exception("too many nearby sources!")
 
         if len(namematches) == 1:
             existing_sources_index.append(i)
@@ -70,15 +68,16 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose = False):
         elif len(namematches) > 1:
             raise Exception(i,"More than one match for ", name,"/n,",namematches)
         elif len(namematches) == 0:
-
+            verboseprint(i,": Not in database")
             missing_sources_index.append(i)
             db_names.append(ingest_names[i])
         else:
             raise Exception(i,"unexpected condition")
 
-    verboseprint("Existing Sources: ", ingest_names[existing_sources_index])
-    verboseprint("Db names: ", db_names)
-    verboseprint("Missing Sources: ", ingest_names[missing_sources_index])
+    verboseprint("\n ALL SOURCES SORTED")
+    verboseprint("\n Existing Sources: ", ingest_names[existing_sources_index])
+    verboseprint("\n Missing Sources: ", ingest_names[missing_sources_index])
+    verboseprint("\n Db names: ", db_names,"\n")
 
     n_ingest = len(ingest_names)
     n_existing = len(existing_sources_index)
