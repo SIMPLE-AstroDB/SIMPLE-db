@@ -10,7 +10,7 @@ from simple.schema import *
 from astropy.table import Table
 from pathlib import Path
 import os
-
+#New branch
 save_db = False #modifies .db file but not the data files
 RECREATE_DB = False #recreates the .db file from the data files
 VERBOSE = False
