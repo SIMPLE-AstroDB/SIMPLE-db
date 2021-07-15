@@ -69,7 +69,36 @@ for i,ref in enumerate(Best['ref_discovery'][missing_sources_index]):
 			Best['ref_discovery'][missing_sources_index[i]] = "Lepi02"
 		if ref=='Reid05b':
 			Best['ref_discovery'][missing_sources_index[i]] = "Reid05"
+		if ref=='Burg08b':
+			Best['ref_discovery'][missing_sources_index[i]] = "Burg08c"
+		if ref=='Burg08c':
+			Best['ref_discovery'][missing_sources_index[i]] = "Burg08d"
+		if ref=='Burg08d':
+			Best['ref_discovery'][missing_sources_index[i]] = "Burg08b"
+		if ref=='Gagn15b':
+			Best['ref_discovery'][missing_sources_index[i]] = "Gagn15c"
+		if ref=='Gagn15c':
+			Best['ref_discovery'][missing_sources_index[i]] = "Gagn15b"
+		if ref=='Lodi07a':
+			Best['ref_discovery'][missing_sources_index[i]] = "Lodi07b"
+		if ref=='Lodi07b':
+			Best['ref_discovery'][missing_sources_index[i]] = "Lodi07a"
+		if ref=='Reid02c':
+			Best['ref_discovery'][missing_sources_index[i]] = "Reid02b"
+		if ref=='Reid06a':
+			Best['ref_discovery'][missing_sources_index[i]] = "Reid06b"
+		if ref=='Reid06b':
+			Best['ref_discovery'][missing_sources_index[i]] = "Reid06a"
+		if ref=='Scho04b':
+			Best['ref_discovery'][missing_sources_index[i]] = "Scho04a"
+		if ref=='Scho10a':
+			Best['ref_discovery'][missing_sources_index[i]] = "Scho10b"
+		if ref=='Tinn93b':
+			Best['ref_discovery'][missing_sources_index[i]] = "Tinn93c"
+		
 			#print(Best['ref_discovery'][missing_sources_index[i]])
+
+#Schm10b = Schm10 and Schm10b in database (reference in there twice)
 
 	elif search_publication(db, name=ref)==True:
 	#TO DO: Make sure found publication is correct publication 

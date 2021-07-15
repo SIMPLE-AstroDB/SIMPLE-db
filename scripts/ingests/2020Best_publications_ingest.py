@@ -8,7 +8,7 @@ from pathlib import Path
 from simple.schema import *
 import os
 
-save_db = False #modifies .db file but not the data files
+save_db = True #modifies .db file but not the data files
 RECREATE_DB = True #recreates the .db file from the data files
 VERBOSE = False
 
@@ -142,12 +142,11 @@ db.engine.execute(update_Wils03b)
 print('confirmed')
 
 
-
 # add missing references
 #Searching for all publications in table and adding missing ones to pub table in .db file
-data_start=860
-data_end = data_start + 10
-Pubs = Table.read('scripts/ingests/UltracoolSheet-References.csv', data_start=data_start, data_end=data_end)
+data_start=1
+#data_end=data_start+500
+Pubs = Table.read('scripts/ingests/UltracoolSheet-References.csv', data_start=data_start)
 best_bibcodes = Pubs['ADSkey_ref']
 best_names = Pubs['code_ref']
 for i, best_name in enumerate(best_names):
@@ -178,28 +177,4 @@ for i, best_name in enumerate(best_names):
 #Geli11 is in database as Geli11
 #Schm10b is in database as Schm10b and Schm10
 
-
-
-
-#add_publication(db, bibcode='2015MNRAS.450.2486C')
-#add_publication(db, name='Luhm14c', bibcode='2014ApJ...787..126L')
-#add_publication(db, bibcode='2019AJ....158..182G')
-#add_publication(db, name='Schn16a', bibcode='2016ApJ...817..112S')
-#add_publication(db, bibcode='2010A&A...517A..53M')
-#add_publication(db, bibcode='2017AJ....154..112K')
-#add_publication(db, name='Pinf14a', bibcode='2014MNRAS.437.1009P')
-#add_publication(db, bibcode='2015ApJ...802...37B')
-#add_publication(db, name='Mesh15b', bibcode='2015MNRAS.453.2378M')
-#add_publication(db, name='Best20a', bibcode='2020AJ....159..257B')
-#add_publication(db, bibcode='2016ApJ...821..120A')
-#add_publication(db, name='Deac14b', bibcode='2014ApJ...792..119D')
-#add_publication(db, name='Tinn98b', bibcode='1998A&A...338.1066T')
-#add_publication(db, name='Caba07a', bibcode='2007A&A...462L..61C')
-#add_publication(db, name='DayJ08', bibcode='2008MNRAS.388..838D')
-#add_publication(db, bibcode='2016A&A...587A..51S')
-#add_publication(db, bibcode='2017AJ....153..196S')
-#add_publication(db, name='Lodi12b', bibcode='2012A&A...542A.105L')
-#add_publication(db, bibcode='1981MNRAS.196p..15R')
-#add_publication(db, bibcode='2013A&A...553L...5D')
-#add_publication(db, bibcode='1997MNRAS.284..507T')
 
