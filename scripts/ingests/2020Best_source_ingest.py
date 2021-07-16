@@ -40,7 +40,7 @@ def load_db():
 db = load_db()
 
 # load table of sources to ingest
-ingest_table = Table.read('scripts/ingests/UltracoolSheet-Main.csv', data_start=1)
+ingest_table = Table.read('scripts/ingests/UltracoolSheet-Main.csv', data_start=575)
 
 # use column names of ingest table to populate necessary lists
 ingest_names = ingest_table['name']
@@ -114,6 +114,67 @@ for i,ref in enumerate(missing_refs):
 		missing_refs[i] = "Skrz16"
 	if ref=='Chau03a; Neuh04a':
 		missing_refs[i] = "Chau03a"
+	if ref=='Schm10b; Kirk10':
+		missing_refs[i] = "Kirk10"
+	if ref=='Alle12; Deac14b':
+		missing_refs[i] = 'Alle12'
+	if ref=='Sarr14; Best17a':
+		missing_refs[i] = "Sarr14"
+	if ref=='Bryj92; Bryj94':
+		missing_refs[i] = "Bryj92"
+	if ref=='Todo10; Todo14':
+		missing_refs[i] = "Todo10"
+	if ref=='Pena12; Pena15':
+		missing_refs[i] = "Pena12"
+	if ref=='Biha09; Pena15':
+		missing_refs[i] = "Biha09"
+	if ref=='Cruz07; Shko09':
+		missing_refs[i] = "Cruz07"
+	if ref=='Scho12; Burn13':
+		missing_refs[i] = "Scho12"
+	if ref== 'Tinn18; Mart18':
+		missing_refs[i]= 'Tinn18'
+	if ref=='Lowr99; Webb99':
+		missing_refs[i] = 'Lowr99'
+	if ref=='Shep09a; Kirk10':
+		missing_refs[i] = 'Kirk10'
+	if ref=='Ruiz01a; Gizi02b':
+		missing_refs[i] = 'Gizi02b'
+	if ref=='Scho10a; Burn10a':
+		missing_refs[i] = 'Scho10a'
+	if ref=='Bowl10a; Schm10a':
+		missing_refs[i] = 'Bowl10a'
+	if ref=='Litt08; Litt13':
+		missing_refs[i] = 'Litt08'
+	if ref=='Goli04b; Forv04':
+		missing_refs[i] = 'Goli04b'
+	if ref=='Burn10b; Albe11':
+		missing_refs[i] = 'Burn10b'
+	if ref=='Scho10b; Murr11':
+		missing_refs[i] = 'Murr11'
+	if ref=='Gagn15c; Alle16':
+		missing_refs[i] = 'Alle16'
+	if ref=='Lodi13c; Best17a':
+		missing_refs[i] = 'Lodi13c'
+	if ref=='Kouw05; Lafr11':
+		missing_refs[i] = 'Kouw05'
+	if ref=='Krau09a; Alle13b':
+		missing_refs[i] = 'Krau09a'
+	if ref=='Curr14a; Krau14a':
+		missing_refs[i] = 'Curr14a'
+	if ref=='Kirk11; Scho11':
+		missing_refs[i] = 'Kirk11'
+	if ref=='Fahe12; Burg08c':
+		missing_refs[i] = 'Fahe12'
+	if ref=='Gicl67a; Rodo80':
+		missing_refs[i] = 'Gicl67a'
+	if ref=='Hawk88a; Kirk11':
+		missing_refs[i] = 'Kirk11'
+	if ref=='Reid08b; Burg06a':
+		missing_refs[i] = 'Reid08b'
+	if ref=='Phan01; Lodi05b':
+		missing_refs[i] = 'Phan01'
+	 
 		
 #Schm10b = Schm10 and Schm10b in database (reference in there twice), but Best ref name should map to one of them without error
 
