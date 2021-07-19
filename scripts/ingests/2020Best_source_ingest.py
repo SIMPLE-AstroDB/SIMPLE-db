@@ -17,7 +17,7 @@ VERBOSE = False
 
 verboseprint = print if VERBOSE else lambda *a, **k: None
 
-save_db = False #modifies .db file but not the data files
+save_db = True #modifies .db file but not the data files
 RECREATE_DB = True #recreates the .db file from the data files
 VERBOSE = False
 
@@ -40,7 +40,7 @@ def load_db():
 db = load_db()
 
 # load table of sources to ingest
-ingest_table = Table.read('scripts/ingests/UltracoolSheet-Main.csv', data_start=575)
+ingest_table = Table.read('scripts/ingests/UltracoolSheet-Main.csv', data_start=1)
 
 # use column names of ingest table to populate necessary lists
 ingest_names = ingest_table['name']
@@ -53,8 +53,11 @@ print(n_sources,"Total Sources")
 #names_data = ({'source': 'TWA 27', 'other_name': '2MASSW J1207334-393254'})
 #db.Names.insert().execute(names_data)
 #add_publication(db, name='Mart99e', bibcode='1999AJ....118.2466M', save_db=True)
-db.Names.delete().where(db.Names.c.other_name == 'SDSS J141624.08+134826.7B').execute()
+#db.Names.delete().where(db.Names.c.other_name == 'SDSS J141624.08+134826.7B').execute()
 #add_publication(db, name='Gizi00c', bibcode='2000AJ....120.1085G', save_db=True )
+#add_publication(db, name='Luhm09', bibcode='2009ApJ...691.1265L', save_db=True)
+#add_publication(db, name='Metc04', bibcode='2004ApJ...617.1330M', save_db=True)
+#add_publication(db, name='Metc06', bibcode='2006ApJ...651.1166M', save_db=True)
 
 
 # find sources not already in the database
@@ -174,6 +177,8 @@ for i,ref in enumerate(missing_refs):
 		missing_refs[i] = 'Reid08b'
 	if ref=='Phan01; Lodi05b':
 		missing_refs[i] = 'Phan01'
+	if ref=='Metc0':
+		missing_refs[i] = 'Metc06'
 	 
 		
 #Schm10b = Schm10 and Schm10b in database (reference in there twice), but Best ref name should map to one of them without error
