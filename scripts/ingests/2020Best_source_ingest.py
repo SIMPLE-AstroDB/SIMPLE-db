@@ -66,8 +66,6 @@ db.Names.delete().where(db.Names.c.other_name == 'SDSS J141624.08+134826.7B').ex
 # add_publication(db, name='Metc04', bibcode='2004ApJ...617.1330M', save_db=True)
 # add_publication(db, name='Metc06', bibcode='2006ApJ...651.1166M', save_db=True)
 # add_publication(db, name='Metc06', bibcode='2006ApJ...651.1166M', save_db=True)
-# add_publication(db, name='Lieb79f', bibcode='', save_db=True)  # TODO: fill out this entry
-
 
 # find sources not already in the database
 missing_sources_indexes, existing_sources_indexes, all_sources = \
@@ -124,6 +122,10 @@ for i, ref in enumerate(missing_refs):
         missing_refs[i] = "Scho10b"
     if ref == 'Tinn93b':
         missing_refs[i] = "Tinn93c"
+    if ref == 'Lieb79f':
+        missing_refs[i] = "Lieb79"
+    if ref == 'Prob83c':
+        missing_refs[i] = "Prob83"
     if ref == 'Skrz16; Best20a':
         missing_refs[i] = "Skrz16"
         comment_flag = True
@@ -228,7 +230,11 @@ for i, ref in enumerate(missing_refs):
 # but Best ref name should map to one of them without error
 
 ingest_sources(db, missing_sources, missing_ras, missing_decs, missing_refs,
-               comments=comments, equinoxes=missing_eqxs, verbose=False, save_db=SAVE_DB)
+               comments=comments, equinoxes=missing_eqxs, verbose=False, save_db=False)
 
 # Add names of new sources to the Names table
-add_names(db, missing_sources, verbose=True, save_db=SAVE_DB)
+add_names(db, missing_sources, verbose=True, save_db=False)
+
+# Save the database changes rather than having ingest_sources and add_names do so twice
+if SAVE_DB:
+    db.save_database(directory='data/')

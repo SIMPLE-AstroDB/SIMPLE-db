@@ -111,6 +111,7 @@ def add_names(db, new_sources, verbose=True, save_db=False):
 
     return
 
+
 def search_publication(db, name: str = None, doi: str = None, bibcode: str = None, verbose: bool = False):
     """
     Find publications in the database by matching on the publication name,  doi, or bibcode
@@ -125,6 +126,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
         DOI of publication to search
     bibcode: str
         ADS Bibcode of publication to search
+    verbose : bool
 
     Returns
     -------
