@@ -7,5 +7,5 @@ source should have an entry in the Names table.
 
 | Column Name | Description  | Unit  | Data Type | Key Type  |
 |---|---|---|---|---|
-| source        | Unique identifier for the source |   | String(100)  | primary and foreign: Sources.source  |
-| other_name    | Alternative identifier for the source |   | String(100)  | primary  |
+| *source        | Unique identifier for the source |   | String(100)  | primary and foreign: Sources.source  |
+| *other_name    | Alternative identifier for the source |   | String(100)  | primary  |
