@@ -38,6 +38,13 @@ filters_to_add = [{'telescope': 'WISE', 'instrument': 'WISE', 'filter': 'W1'},
                   {'telescope': 'WISE', 'instrument': 'WISE', 'filter': 'W2'},
                   {'telescope': 'WISE', 'instrument': 'WISE', 'filter': 'W3'},
                   {'telescope': 'WISE', 'instrument': 'WISE', 'filter': 'W4'},
+                  {'telescope': 'Spitzer', 'instrument': 'IRAC', 'filter': 'I1'},
+                  {'telescope': 'Spitzer', 'instrument': 'IRAC', 'filter': 'I2'},
+                  {'telescope': 'Spitzer', 'instrument': 'IRAC', 'filter': 'I3'},
+                  {'telescope': 'Spitzer', 'instrument': 'IRAC', 'filter': 'I4'},
+                  {'telescope': '2MASS', 'instrument': '2MASS', 'filter': 'J'},
+                  {'telescope': '2MASS', 'instrument': '2MASS', 'filter': 'H'},
+                  {'telescope': '2MASS', 'instrument': '2MASS', 'filter': 'Ks'},
                   ]
 
 # Fill out information for the specified filters
@@ -78,7 +85,7 @@ if len(existing) > 0:
 new_telescopes = list(set(telescopes)-set(existing))
 insert_data = [{'name': s} for s in new_telescopes]
 if len(insert_data) > 0:
-    db.Telescope.insert().execute(insert_data)
+    db.Telescopes.insert().execute(insert_data)
 
 # Fetch existing instruments, add if missing
 instruments = list(set([s['instrument'] for s in filters_to_add]))

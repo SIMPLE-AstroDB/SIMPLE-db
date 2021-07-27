@@ -109,12 +109,12 @@ class Photometry(Base):
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), primary_key=True)
 
-    # TODO: Uncomment this once the WISE band names are fixed and tested
     # Foreign key constraints for telescope, instrument, band; all handled via reference to Modes table
-    # __table_args__ = (ForeignKeyConstraint([telescope, instrument, band],
-    #                                        [Filters.telescope, Filters.instrument, Filters.name],
-    #                                        onupdate="cascade"),
-    #                   {})
+    __table_args__ = (ForeignKeyConstraint([telescope, instrument, band],
+                                           [PhotometryFilters.telescope, PhotometryFilters.instrument,
+                                            PhotometryFilters.band],
+                                           onupdate="cascade"),
+                      {})
 
 
 class Parallaxes(Base):
