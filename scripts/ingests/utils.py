@@ -1,7 +1,9 @@
 import sqlite3
-
+import sys
 import numpy as np
 import re
+import sqlalchemy.exc
+import astrodbkit2
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.simbad import Simbad
@@ -11,6 +13,103 @@ warnings.filterwarnings("ignore", module='astroquery.simbad')
 from sqlalchemy import or_
 import ads
 import os
+from contextlib import contextmanager
+
+
+@contextmanager
+def disable_exception_traceback():
+    """
+    All traceback information is suppressed and only the exception type and value are printed
+    """
+    default_value = getattr(sys, "tracebacklimit", 1000)  # `1000` is a Python's default value
+    sys.tracebacklimit = 0
+    yield
+    sys.tracebacklimit = default_value  # revert changes
+
+
+def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, search_radius=60.):
+
+    verboseprint = print if verbose else lambda *a, **k: None
+
+    existing_sources_index = []
+    missing_sources_index = []
+    db_names = []
+
+    for i, name in enumerate(ingest_names):
+        verboseprint("\n", i, ": searching:,", name)
+
+        namematches = db.search_object(name)
+
+        # if no matches, try resolving with Simbad
+        if len(namematches) == 0:
+            verboseprint(i, ": no name matches, trying simbad search")
+            try:
+                namematches = db.search_object(name, resolve_simbad=True, verbose=verbose)
+            except TypeError:  # no Simbad match
+                namematches = []
+
+        # if still no matches, try spatial search using coordinates
+        if len(namematches) == 0:
+            location = SkyCoord(ingest_ras[i], ingest_decs[i], frame='icrs', unit='deg')
+            radius = u.Quantity(search_radius, unit='arcsec')
+            verboseprint(i, ": no Simbad match, trying coord search around ", location.ra.hour, location.dec)
+            nearby_matches = db.query_region(location, radius=radius)
+            if len(nearby_matches) == 1:
+                namematches = nearby_matches
+            if len(nearby_matches) > 1:
+                print(nearby_matches)
+                raise Exception("too many nearby sources!")
+
+        if len(namematches) == 1:
+            existing_sources_index.append(i)
+            source_match = namematches[0]['source']
+            db_names.append(source_match)
+            verboseprint(i, "match found: ", source_match)
+        elif len(namematches) > 1:
+            raise Exception(i, "More than one match for ", name, "/n,", namematches)
+        elif len(namematches) == 0:
+            verboseprint(i, ": Not in database")
+            missing_sources_index.append(i)
+            db_names.append(ingest_names[i])
+        else:
+            raise Exception(i, "unexpected condition")
+
+    verboseprint("\n ALL SOURCES SORTED")
+    verboseprint("\n Existing Sources: ", ingest_names[existing_sources_index])
+    verboseprint("\n Missing Sources: ", ingest_names[missing_sources_index])
+    verboseprint("\n Db names: ", db_names, "\n")
+
+    n_ingest = len(ingest_names)
+    n_existing = len(existing_sources_index)
+    n_missing = len(missing_sources_index)
+
+    if n_ingest != n_existing + n_missing:
+        raise Exception("Unexpected number of sources")
+
+    print(n_existing, "sources already in database.")
+    print(n_missing, "sources not found in the database")
+
+    return missing_sources_index, existing_sources_index, db_names
+
+
+def add_names(db, new_sources, verbose=True, save_db=False):
+
+    verboseprint = print if verbose else lambda *a, **k: None
+    names_data = []
+    for source in new_sources:
+        names_data.append({'source': source, 'other_name': source})
+
+    db.Names.insert().execute(names_data)
+
+    n_added = len(names_data)
+
+    if save_db:
+        db.save_database(directory='data/')
+        verboseprint("Names added to database and saved: ", n_added)
+    else:
+        verboseprint("Names added to database: ", n_added)
+
+    return
 
 
 def search_publication(db, name: str = None, doi: str = None, bibcode: str = None, verbose: bool = False):
@@ -27,12 +126,13 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
         DOI of publication to search
     bibcode: str
         ADS Bibcode of publication to search
+    verbose : bool
 
     Returns
     -------
-    True: if only one match
-    False: No matches
-    False: Mulptiple matches
+    True, 1: if only one match
+    False, 0: No matches
+    False, N_matches: Mulptiple matches
 
     Examples
     -------
@@ -59,14 +159,14 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     verboseprint = print if verbose else lambda *a, **k: None
 
     # Make sure a search term is provided
-    if name is None and doi is None and bibcode is None:
+    if name == None and doi == None and bibcode == None:
         print("Name, Bibcode, or DOI must be provided")
-        return
+        return False, 0
 
     not_null_pub_filters = []
     if name:
-        fuzzy_query_name = '%' + name + '%'
-        not_null_pub_filters.append(db.Publications.c.name.ilike(fuzzy_query_name))
+        #fuzzy_query_name = '%' + name + '%'
+        not_null_pub_filters.append(db.Publications.c.name.ilike(name))
     if doi:
         not_null_pub_filters.append(db.Publications.c.doi.ilike(doi))
     if bibcode:
@@ -81,13 +181,13 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
         verboseprint(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
         if verbose:
             pub_search_table.pprint_all()
-        return True
+        return True, 1
 
     if n_pubs_found > 1:
-        print(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
+        verboseprint(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
         if verbose:
             pub_search_table.pprint_all()
-        return False
+        return False, n_pubs_found
 
     # If no matches found, search using first four characters of input name
     if n_pubs_found == 0 and name:
@@ -99,19 +199,21 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
         if n_pubs_found_short == 0:
             verboseprint(f'No matching publications for {shorter_name}')
             verboseprint('Use add_publication() to add it to the database.')
-            return False
+            return False, 0
 
         if n_pubs_found_short > 0:
             print(f'Found {n_pubs_found_short} matching publications for {shorter_name}')
             if verbose:
                 pub_search_table.pprint_all()
-            return False
+            return False, n_pubs_found_short
+    else:
+        return False, n_pubs_found
 
     return
 
 
-
-def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, dryrun: bool = True):
+def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, ignore_ads: bool = False, save_db=False,
+                    verbose: bool = True):
     """
     Adds publication to the database using DOI or ADS Bibcode, including metadata found with ADS.
 
@@ -130,13 +232,17 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         For last names which are less than four letters, use '_' or first name initial(s). (e.g, Xu__21 or LiYB21)
     description: str, optional
         Description of the paper, typically the title of the papre [optional]
-    dryrun: bool
+    ignore_ads: bool
+    save_db: bool
+    verbose: bool
 
     See Also
     --------
     search_publication: Function to find publications in the database
 
     """
+
+    verboseprint = print if verbose else lambda *a, **k: None
 
     if not(doi or bibcode):
        print('DOI or Bibcode is required input')
@@ -148,17 +254,46 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         print("An ADS_TOKEN environment variable must be set in order to auto-populate the fields.\n"
               "Without an ADS_TOKEN, name and bibcode or DOI must be set explicity.")
         return
+    
+    if ads.config.token and not ignore_ads:
+        use_ads = True 
+    else:
+        use_ads = False
 
-    # Check to make sure publication doesn't already exist in the database
-    pub_already_exists = search_publication(db, name=name,doi=doi,bibcode=bibcode)
-    if pub_already_exists:
-        raise sqlite3.IntegrityError("Similar publication already exists in database\n"
-                                     "Use search_publication function before adding a new record".format())
+    if 'arXiv' in bibcode:
+        arxiv_id = bibcode
+        bibcode = None
+    else:
+        arxiv_id = None
 
+    # Search ADS uing a provided arxiv id
+    if arxiv_id and use_ads:
+        arxiv_matches = ads.SearchQuery(q=arxiv_id, fl=['id', 'bibcode', 'title', 'first_author', 'year', 'doi'])
+        arxiv_matches_list = list(arxiv_matches)
+        if len(arxiv_matches_list) != 1:
+            print('should only be one matching arxiv id')
+            return
 
+        if len(arxiv_matches_list) == 1:
+                verboseprint("Publication found in ADS using arxiv id: ", arxiv_id)
+                article = arxiv_matches_list[0]
+                verboseprint(article.first_author, article.year, article.bibcode, article.title)
+                if not name:  # generate the name if it was not provided
+                    name_stub = article.first_author.replace(',', '').replace(' ', '')
+                    name_add = name_stub[0:4] + article.year[-2:]
+                else:
+                    name_add = name
+                description = article.title[0]
+                bibcode_add = article.bibcode
+                doi_add = article.doi[0]
+
+    elif arxiv_id:
+        name_add = name
+        bibcode_add = arxiv_id
+        doi_add = doi
 
     # Search ADS using a provided DOI
-    if doi and ads.config.token:
+    if doi and use_ads:
         doi_matches = ads.SearchQuery(doi=doi, fl=['id', 'bibcode', 'title', 'first_author','year','doi'])
         doi_matches_list = list(doi_matches)
         if len(doi_matches_list) != 1:
@@ -166,11 +301,11 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
             return
 
         if len(doi_matches_list) == 1:
-            print("Publication found in ADS using DOI: ",doi)
+            verboseprint("Publication found in ADS using DOI: ",doi)
             article = doi_matches_list[0]
-            print(article.first_author, article.year, article.bibcode, article.title)
-            if not name: # generate the name if it was not provided
-                name_stub = article.first_author.replace(',', '').replace(' ','')
+            verboseprint(article.first_author, article.year, article.bibcode, article.title)
+            if not name:  # generate the name if it was not provided
+                name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
             else:
                 name_add = name
@@ -182,17 +317,23 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         bibcode_add = bibcode
         doi_add = doi
 
-    if bibcode and ads.config.token:
+    if bibcode and use_ads:
         bibcode_matches = ads.SearchQuery(bibcode=bibcode,fl=['id', 'bibcode', 'title', 'first_author','year','doi'])
         bibcode_matches_list = list(bibcode_matches)
-        if len(bibcode_matches_list) != 1:
-            print('should only be one matching bibcode')
-            return
+        if len(bibcode_matches_list) == 0:
+            print('not a valid bibcode:', bibcode)
+            print('nothing added')
+            raise
 
-        if len(bibcode_matches_list) == 1:
-            print("Publication found in ADS using bibcode: ", bibcode)
+        elif len(bibcode_matches_list) > 1:
+            print('should only be one matching bibcode for:', bibcode)
+            print('nothing added')
+            raise
+
+        elif len(bibcode_matches_list) == 1:
+            verboseprint("Publication found in ADS using bibcode: ", bibcode)
             article = bibcode_matches_list[0]
-            print(article.first_author, article.year, article.bibcode, article.doi, article.title)
+            verboseprint(article.first_author, article.year, article.bibcode, article.doi, article.title)
             if not name:  # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
@@ -200,33 +341,36 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
                 name_add = name
             description = article.title[0]
             bibcode_add = article.bibcode
-            doi_add = article.doi[0]
+            if article.doi is None:
+                doi_add = None
+            else:
+                doi_add = article.doi[0]
     elif bibcode:
         name_add = name
         bibcode_add = bibcode
         doi_add = doi
 
-    # Check again to make sure publication does not already exist in database
-    pub_already_exists = search_publication(db, name=name_add, doi=doi_add, bibcode=bibcode_add)
-    if pub_already_exists:
-        print('Similar publication already exists in database\n'
-              'Use search_publication function before adding a new record')
-        return
+    new_ref = [{'name': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
 
-    if dryrun:
-        print("name:", name_add, "\nbibcode:", bibcode_add, "\ndoi:", doi_add, "\ndescription:", description)
-        print("\nRe-run with dryrun=False to add to the database")
-
-    if dryrun is False:
-        new_ref = [{'name': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
+    try:
         db.Publications.insert().execute(new_ref)
-        # TODO: db.save just the publications table and/or add save_db flag.
-        print(f'Added {name_add} to Publications table')
+        verboseprint(f'Added {name_add} to Publications table')
+    except sqlalchemy.exc.IntegrityError as err:
+        print("\nSIMPLE ERROR: It's possible that a similar publication already exists in database\n"
+              "SIMPLE ERROR: Use search_publication function before adding a new record\n")
+        with disable_exception_traceback():
+            raise
+
+    if save_db:
+        db.save_reference_table(table='Publications', directory='data/')
+        verboseprint("Publication added to database and saved: ", name_add)
+    else:
+        verboseprint("Publication added to database: ", name_add)
 
     return
 
 
-def update_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, dryrun: bool = True):
+def update_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None, save_db: bool = True):
     """
     Updates publications in the database, including metadata found with ADS.
 
@@ -243,7 +387,7 @@ def update_publication(db, doi: str = None, bibcode: str = None, name: str = Non
         The publication shortname, otherwise it will be generated [optional]
     description: str, optional
         Description of the paper, typically the title of the papre [optional]
-    dryrun: bool
+    save_db: bool
 
     See Also
     --------
@@ -291,7 +435,7 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', verbose
             coord_result_table = Simbad.query_region(
                 SkyCoord(ingest_ra[i], ingest_dec[i], unit=(u.deg, u.deg), frame='icrs'),
                 radius=radius, verbose=verbose)
-                
+
             # If no match is found in Simbad, use the name in the ingest table
             if coord_result_table is None:
                 resolved_names.append(ingest_name)
@@ -375,20 +519,109 @@ def convert_spt_string_to_code(spectral_types, verbose=False):
     return spectral_type_codes
 
 
-def ingest_parallaxes(db, sources, plx, plx_unc, plx_ref, verbose=False, norun=False):
+def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=None,
+                   equinoxes=None, verbose=False, save_db=False):
+    """
+    Script to ingest sources
+
+    Parameters
+    ----------
+    db
+    sources
+    ras
+    decs
+    references
+    comments
+    epochs
+    equinoxes
+    verbose
+    save_db
+
+    Returns
+    -------
+
     """
 
-    TODO: do stuff about adopted in cases of multiple measurements.
+    verboseprint = print if verbose else lambda *a, **k: None
+    n_added = 0
+    n_sources = len(sources)
 
-    :param db:
-    :param sources:
-    :param plx:
-    :param plx_unc:
-    :param plx_ref:
-    :param verbose:
-    :param norun:
-    :return:
+    if epochs is None:
+        epochs = [None] * n_sources
+    if equinoxes is None:
+        equinoxes = [None] * n_sources
+    if comments is None:
+        comments = [None] * n_sources
+
+    for i, source in enumerate(sources):
+
+        # Construct data to be added
+        source_data = [{'source': sources[i],
+                        'ra': ras[i],
+                        'dec':decs[i],
+                        'reference':references[i],
+                        'epoch':epochs[i],
+                        'equinox':equinoxes[i],
+                        'comments':comments[i]}]
+        verboseprint(source_data)
+
+        try:
+            db.Sources.insert().execute(source_data)
+            n_added += 1
+        except sqlalchemy.exc.IntegrityError as err:
+            # try reference without last letter e.g.Smit04 instead of Smit04a
+            if source_data[0]['reference'][-1] in ('a', 'b'):
+                source_data[0]['reference'] = references[i][:-1]
+                try:
+                    db.Sources.insert().execute(source_data)
+                    n_added += 1
+                except sqlalchemy.exc.IntegrityError as err:
+                    print("SIMPLE ERROR: Discovery reference may not exist in the Publications table. "
+                          "Add it with add_publication function. ")
+                    with disable_exception_traceback():
+                        raise
+            else:
+                print("SIMPLE ERROR: Discovery reference may not exist in the Publications table. "
+                      "Add it with add_publication function. ")
+                with disable_exception_traceback():
+                    raise
+
+    if save_db:
+        db.save_database(directory='data/')
+        print(n_added, "sources added to database and saved")
+    else:
+        print(n_added, "sources added to database")
+
+    return
+
+
+def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verbose=False):
     """
+
+    Parameters
+    ----------
+    db
+        Database object
+    sources
+        list of source names
+    plx
+        list of parallaxes corresponding to the sources
+    plx_errs
+        list of parallaxes uncertainties
+    plx_ref
+        list of references for the parallax data
+    save_db: bool, optional
+        If set to False (default), will modify the .db file, but not the JSON files
+        If set to True, will save the JSON files
+    verbose: bool, optional
+        If true, outputs information to the screen
+
+    Examples
+    ----------
+    > ingest_parallaxes(db, my_sources, my_plx, my_plx_unc, my_plx_refs, verbose = True)
+
+    """
+
     verboseprint = print if verbose else lambda *a, **k: None
 
     n_added = 0
@@ -396,82 +629,130 @@ def ingest_parallaxes(db, sources, plx, plx_unc, plx_ref, verbose=False, norun=F
     for i, source in enumerate(sources):
         db_name = db.search_object(source, output_table='Sources')[0]['source']
 
-        # Search for existing parallax data and determine if this is the best
+        # Search for existing parallax data.
+        # If no previous measurement exists, set the new one to the Adopted measurement
+        # TODO: figure out adopted in cases of multiple measurements.
         adopted = None
         source_plx_data = db.query(db.Parallaxes).filter(db.Parallaxes.c.source == db_name).table()
         if source_plx_data is None or len(source_plx_data) == 0:
             adopted = True
         else:
-            print("OTHER PARALLAX EXISTS")
+            print("\nOTHER PARALLAX EXISTS, adopted = None")
             print(source_plx_data)
-
-        # TODO: Work out logic for updating/setting adopted. Be it's own function.
-
-        # TODO: Make function which validates refs
 
         # Construct data to be added
         parallax_data = [{'source': db_name,
-                          'parallax': plx[i],
-                          'parallax_error': plx_unc[i],
-                          'reference': plx_ref[i],
+                          'parallax': str(plxs[i]),
+                          'parallax_error': str(plx_errs[i]),
+                          'reference': plx_refs[i],
                           'adopted': adopted}]
         verboseprint(parallax_data)
 
-        # Consider making this optional or a key to only view the output but not do the operation.
-        if not norun:
+        try:
             db.Parallaxes.insert().execute(parallax_data)
             n_added += 1
+        except sqlalchemy.exc.IntegrityError as err:
+            print("SIMPLE ERROR: The source may not exist in Sources table.")
+            print("SIMPLE ERROR: The parallax reference may not exist in Publications table. Add it with add_publication function. ")
+            print("SIMPLE ERROR: The parallax measurement may be a duplicate.")
+            with disable_exception_traceback():
+                raise
 
-    print("Added to database: ", n_added)
+    if save_db:
+        db.save_database(directory='data/')
+        print("Parallaxes added to database and saved: ", n_added)
+    else:
+        print("Parallaxes added to database: ", n_added)
+
+    return
 
 
-def ingest_pm(db, sources, muRA, muRA_err, muDEC, muDEC_err, pm_reference, verbose=False):
+def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs, pm_references, save_db=False,verbose=False):
+    """
+
+    Parameters
+    ----------
+    db
+        Database object
+    sources
+        list of source names
+    pm_ras
+        list of proper motions in right ascension (RA)
+    pm_ra_errs
+        list of uncertanties in proper motion RA
+    pm_decs
+        list of proper motions in declination (dec)
+    pm_dec_errs
+        list of uncertanties in proper motion dec
+    pm_reference
+        list of references for the proper motion measurements
+    save_db: bool, optional
+        If set to False (default), will modify the .db file, but not the JSON files
+        If set to True, will save the JSON files
+    verbose: bool, optional
+        If true, outputs information to the screen
+
+    Examples
+    ----------
+    > ingest_proper_motions(db, my_sources, my_pm_ra, my_pm_ra_unc, my_pm_dec, my_pm_dec_unc, my_pm_refs, verbose = True)
+
+    """
+
     verboseprint = print if verbose else lambda *a, **k: None
 
     n_added = 0
 
     for i, source in enumerate(sources):
         db_name = db.search_object(source, output_table='Sources')[0]['source']
+
         # Search for existing proper motion data and determine if this is the best
+        # If no previous measurement exists, set the new one to the Adopted measurement
+        # TODO: figure out adopted in cases of multiple measurements.
         adopted = None
         source_pm_data = db.query(db.ProperMotions).filter(db.ProperMotions.c.source == db_name).table()
         if source_pm_data is None or len(source_pm_data) == 0:
             adopted = True
         else:
-            print("OTHER PROPER MOTION EXISTS: ",source_pm_data)
-
-        # TODO: Work out logic for updating/setting adopted. Be it's own function.
-
-        # TODO: Make function which validates refs
+            print("\nOTHER PROPER MOTION EXISTS, adopted = None")
+            print(source_pm_data)
 
         # Construct data to be added
         pm_data = [{'source': db_name,
-                          'mu_ra': muRA[i],
-                          'mu_ra_error' : muRA_err[i],
-                          'mu_dec': muDEC[i],
-                          'mu_dec_error': muDEC_err[i],
+                          'mu_ra': pm_ras[i],
+                          'mu_ra_error' : pm_ra_errs[i],
+                          'mu_dec': pm_decs[i],
+                          'mu_dec_error': pm_dec_errs[i],
                           'adopted': adopted,
-                          'reference': pm_reference[i]}]
+                          'reference': pm_references[i]}]
         verboseprint('Proper motion data: ',pm_data)
 
-        # Consider making this optional or a key to only view the output but not do the operation.
-        db.ProperMotions.insert().execute(pm_data)
-        n_added += 1
+        try:
+            db.ProperMotions.insert().execute(pm_data)
+            n_added += 1
+        except sqlalchemy.exc.IntegrityError as err:
+            print("SIMPLE ERROR: The source may not exist in Sources table.")
+            print("SIMPLE ERROR: The proper motion reference may not exist in Publications table. Add it with add_publication function. ")
+            print("SIMPLE ERROR: The proper motion measurement may be a duplicate.")
+            with disable_exception_traceback():
+                raise
 
-    print("Added to database: ", n_added)
+    if save_db:
+        db.save_database(directory='data/')
+        print("Proper motions added to database and saved: ", n_added)
+    else:
+        print("Proper motions added to database: ", n_added)
+
+    return
 
 
+def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, reference, ucds = None,
+                      telescope = None, instrument = None, epoch = None, comments = None, save_db=False, verbose=False):
 
-def ingest_photometry(db, sources = None, bands = None, ucds = None, magnitudes = None, magnitude_errors = None , telescope = None, instrument = None, epoch = None, comments = None, reference = None, verbose=False):
     verboseprint = print if verbose else lambda *a, **k: None
     n_added = 0
 
     for i, source in enumerate(sources):
         db_name = db.search_object(source, output_table='Sources')[0]['source']
-         #TODO: Check for duplicate photometry 
-        #source_photometry_data = db.query(db.Photometry).filter(db.Photometry.c.source == db_name).table()
-
-        # TODO: Make function which validates refs
 
         # Construct data to be added
         photometry_data = [{'source': db_name,
@@ -486,9 +767,20 @@ def ingest_photometry(db, sources = None, bands = None, ucds = None, magnitudes 
                           'reference': reference[i]}]
         verboseprint('Photometry data: ',photometry_data)
 
-        # Consider making this optional or a key to only view the output but not do the operation.
-        db.Photometry.insert().execute(photometry_data)
-        n_added += 1
+        try:
+            db.Photometry.insert().execute(photometry_data)
+            n_added += 1
+        except sqlalchemy.exc.IntegrityError as err:
+            print("SIMPLE ERROR: The source may not exist in Sources table.")
+            print("SIMPLE ERROR: The reference may not exist in the Publications table. Add it with add_publication function. ")
+            print("SIMPLE ERROR: The measurement may be a duplicate.")
+            with disable_exception_traceback():
+                raise
 
-    print("Added to database: ", n_added)
+        if save_db:
+            db.save_database(directory='data/')
+            print("Photometry measurements added to database and saved: ", n_added)
+        else:
+            print("Photometry measurements added to database: ", n_added)
+
     return

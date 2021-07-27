@@ -1,8 +1,9 @@
-# Test to verify funtions in utils
-
+# Test to verify functions in utils
 import os
+import sqlite3
 import pytest
 import sys
+import sqlalchemy.exc
 sys.path.append('.')
 from scripts.ingests.utils import *
 from simple.schema import *
@@ -35,24 +36,36 @@ def db():
 
 # Create fake astropy Table of data to load
 @pytest.fixture(scope="module")
-def t():
-    t = Table([{'source': 'Fake 1', 'plx': 113, 'plx_err': 0.3, 'plx_ref': 'Ref 1'},
+def t_plx():
+    t_plx = Table([{'source': 'Fake 1', 'plx': 113, 'plx_err': 0.3, 'plx_ref': 'Ref 1'},
                {'source': 'Fake 2', 'plx': 145, 'plx_err': 0.5, 'plx_ref': 'Ref 1'},
                {'source': 'Fake 3', 'plx': 155, 'plx_err': 0.6, 'plx_ref': 'Ref 2'},
                ])
-    return t
+    return t_plx
+
+
+# Create fake astropy Table of data to load
+@pytest.fixture(scope="module")
+def t_pm():
+    t_pm = Table([{'source': 'Fake 1', 'mu_ra': 113, 'mu_ra_err': 0.3,'mu_dec': 113, 'mu_dec_err': 0.3, 'reference': 'Ref 1'},
+               {'source': 'Fake 2', 'mu_ra': 145, 'mu_ra_err': 0.5, 'mu_dec': 113, 'mu_dec_err': 0.3,'reference': 'Ref 1'},
+               {'source': 'Fake 3', 'mu_ra': 55, 'mu_ra_err': 0.23, 'mu_dec': 113, 'mu_dec_err': 0.3,'reference': 'Ref 2'},
+               ])
+    return t_pm
 
 
 def test_setup_db(db):
     # Some setup tasks to ensure some data exists in the database first
-    ref_data = [{'name': 'Ref 1'}, {'name': 'Ref 2'}]
+    ref_data = [{'name': 'Ref 1', 'doi': '10.1093/mnras/staa1522','bibcode':'2020MNRAS.496.1922B'}, {'name': 'Ref 2','doi': 'Doi2','bibcode':'2012yCat.2311....0C'}]
     db.Publications.insert().execute(ref_data)
 
     source_data = [{'source': 'Fake 1', 'reference': 'Ref 1'},
                    {'source': 'Fake 2', 'reference': 'Ref 1'},
-                   {'source': 'Fake 3', 'reference': 'Ref 1'},
+                   {'source': 'Fake 3', 'reference': 'Ref 2'},
                    ]
     db.Sources.insert().execute(source_data)
+
+    return db
 
 
 @pytest.mark.xfail()
@@ -68,9 +81,9 @@ def test_convert_spt_string_to_code():
     assert convert_spt_string_to_code(['Y2pec']) == [92]
 
 
-def test_ingest_parallaxes(db, t):
+def test_ingest_parallaxes(db, t_plx):
     # Test ingest of parallax data
-    ingest_parallaxes(db, t['source'], t['plx'], t['plx_err'], t['plx_ref'], verbose=False, norun=False)
+    ingest_parallaxes(db, t_plx['source'], t_plx['plx'], t_plx['plx_err'], t_plx['plx_ref'], verbose=False, save_db=False)
 
     results = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == 'Ref 1').table()
     assert len(results) == 2
@@ -81,12 +94,37 @@ def test_ingest_parallaxes(db, t):
     assert results['parallax_error'][0] == 0.6
 
 
-def test_add_publication(db):
-    add_publication(db, name='blah', doi='blah', bibcode='blah', dryrun=False)
-    results = db.query(db.Publications).filter(db.Publications.c.name == 'blah').table()
+def test_ingest_proper_motions(db, t_pm):
+    ingest_proper_motions(db, t_pm['source'], t_pm['mu_ra'], t_pm['mu_ra_err'], t_pm['mu_dec'], t_pm['mu_dec_err'], t_pm['reference'], verbose=False, save_db=False)
+
+    results = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == 'Ref 1').table()
+    assert len(results) == 2
+    results = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == 'Ref 2').table()
     assert len(results) == 1
+    assert results['source'][0] == 'Fake 3'
+    assert results['mu_ra'][0] == 55
+    assert results['mu_ra_error'][0] == 0.23
 
 
 def test_search_publication(db):
-    # TODO: have to add records first and then test them.
-    assert search_publication(db, name='blah')
+    assert search_publication(db)[0] == False
+    assert search_publication(db, name='Ref 1')[0] == True
+    assert search_publication(db, name='Ref 1', doi='10.1093/mnras/staa1522')[0] == True
+    doi_search = search_publication(db, doi='10.1093/mnras/staa1522')
+    assert doi_search[0] == True
+    assert doi_search[1] == 1
+    bibcode_search = search_publication(db, bibcode='2020MNRAS.496.1922B')
+    assert bibcode_search[0] == True
+    assert bibcode_search[1] == 1
+    multiple_matches = search_publication(db, name='Ref')
+    assert multiple_matches[0] == False # multiple matches
+    assert multiple_matches[1] == 2  # multiple matches
+    assert search_publication(db, name='Ref 2', doi='10.1093/mnras/staa1522')[0] == False
+    assert search_publication(db, name='Ref 2', bibcode='2020MNRAS.496.1922B')[0] == False
+
+
+def test_add_publication(db):
+    # should fail if trying to add a duplicate record
+    with pytest.raises(sqlalchemy.exc.IntegrityError):
+        add_publication(db, name='Ref 1',bibcode='2020MNRAS.496.1922B')
+    # TODO - Mock environment  where ADS_TOKEN is not set. #117

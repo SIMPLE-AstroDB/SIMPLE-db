@@ -46,6 +46,73 @@ def reference_verifier(t, name, bibcode, doi):
     assert t[ind]['doi'][0] == doi, f'{name} did not match doi'
 
 
+def test_discovery_references(db):
+    '''
+    Values found with this SQL query:
+        SELECT reference, count(*)
+        FROM Sources
+        GROUP BY reference
+        ORDER By 2 DESC
+
+    '''
+
+    ref = 'Schm10b'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 207, f'found {len(t)} discovery reference entries for {ref}'
+
+    ref = 'West08'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 192, f'found {len(t)} discovery reference entries for {ref}'
+
+    ref = 'Reid08b'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 143, f'found {len(t)} discovery reference entries for {ref}'
+
+    ref = 'Cruz03'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 110, f'found {len(t)} discovery reference entries for {ref}'
+
+    ref = 'Maro15'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 113, f'found {len(t)} discovery reference entries for {ref}'
+
+    ref = 'Best15'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 101, f'found {len(t)} discovery reference entries for {ref}'
+
+    ref = 'Kirk11'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 98, f'found {len(t)} discovery reference entries for {ref}'
+
+    ref = 'Mace13'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 93, f'found {len(t)} discovery reference entries for {ref}'
+
+    ref = 'Burn13'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 69, f'found {len(t)} discovery reference entries for {ref}'
+
+    ref = 'Gagn15b'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 68, f'found {len(t)} discovery reference entries for {ref}'
+
+    ref = 'Chiu06'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 62, f'found {len(t)} discovery reference entries for {ref}'
+
+    ref = 'DayJ13'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 61, f'found {len(t)} discovery reference entries for {ref}'
+
+    ref = 'Kirk10'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 55, f'found {len(t)} discovery reference entries for {ref}'
+
+    ref = 'Cruz07'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 50, f'found {len(t)} discovery reference entries for {ref}'
+
+
 # Individual ingest tests
 # -----------------------------------------------------------------------------------------
 def test_Manj19_data(db):
@@ -77,6 +144,7 @@ def test_Manj19_data(db):
                                                              db.SpectralTypes.c.spectral_type_code < 90,
                                                              db.SpectralTypes.c.reference == pub)).count()
     assert n_Manj19_Ttypes == 21, f'found {n_Manj19_Ttypes} T type dwarfs for {pub}'
+
 
 def test_Manj19_pub(db):
     pub = 'Manj19'
@@ -150,3 +218,8 @@ def test_Kirk19_ingest(db):
     ref = 'Schn15'
     t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
     assert len(t) == 28, f'found {len(t)} photometry entries for {ref}'
+
+    #Test parallaxes added for ATLAS
+    ref = 'Mart18'
+    t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
+    assert len(t) == 15, f'found {len(t)} parallax entries for {ref}'
