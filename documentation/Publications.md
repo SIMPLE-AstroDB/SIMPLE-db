@@ -18,8 +18,7 @@ The *name* of a publication is required to be unique.
     For example, `WuXi21` or `Wu__21`
   - In the case of multiple publications in the same year, a two letter string is appended which corresponds to the 
     last two digits of the DOI. Avoid using `abc` suffixes.
-  
-  
+    
 - Relevant ingest functions:
   - `add_publication`
   - `search_publication`

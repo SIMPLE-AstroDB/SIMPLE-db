@@ -28,3 +28,4 @@ The combination of *source*, *band*, and *reference* is expected to be unique.
   - `em.IR.K`	Infrared between 2 and 3 micron 
   - `em.IR.3-4um`	Infrared between 3 and 4 micron
   - `em.IR.4-8um`	Infrared between 4 and 8 micron
+  
