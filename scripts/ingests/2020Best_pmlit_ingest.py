@@ -17,7 +17,7 @@ from pathlib import Path
 import pandas as pd
 
 
-SAVE_DB = True  # save the data files in addition to modifying the .db file
+SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = False
 
@@ -49,21 +49,21 @@ ingest_table = Table.read('scripts/ingests/UltracoolSheet-Main.csv', data_start=
 
 #Defining variables 
 sources = ingest_table['name']
-#ra_lit = ingest_table['pmra_lit']
-#ra_lit_err = ingest_table['pmraerr_lit']
-#dec_lit = ingest_table['pmdec_lit']
-#dec_lit_err = ingest_table['pmdecerr_lit']
-#ref_pm_lit = ingest_table['ref_pm_lit']
-ra_UKIRT = ingest_table['pmra_UKIRT']
-ra_UKIRT_err = ingest_table['pmraerr_UKIRT']
-dec_UKIRT = ingest_table['pmdec_UKIRT']
-dec_UKIRT_err = ingest_table['pmdecerr_UKIRT']
-ref_pm_UKIRT = ingest_table['ref_plx_UKIRT']
+ra_lit = ingest_table['pmra_lit']
+ra_lit_err = ingest_table['pmraerr_lit']
+dec_lit = ingest_table['pmdec_lit']
+dec_lit_err = ingest_table['pmdecerr_lit']
+ref_pm_lit = ingest_table['ref_pm_lit']
+#ra_UKIRT = ingest_table['pmra_UKIRT']
+#ra_UKIRT_err = ingest_table['pmraerr_UKIRT']
+#dec_UKIRT = ingest_table['pmdec_UKIRT']
+#dec_UKIRT_err = ingest_table['pmdecerr_UKIRT']
+#ref_pm_UKIRT = ingest_table['ref_plx_UKIRT']
 
 #ingest_table_df = pd.DataFrame({'sources': sources, 'pm_ra' : ra_UKIRT, 'pm_ra_err' : ra_UKIRT_err, 'pm_dec' : dec_UKIRT, 'pm_dec_err' : dec_UKIRT_err, 'pm_ref' : ref_pm_UKIRT})
 
 
-df = pd.read_csv('scripts/ingests/UltracoolSheet-Main.csv', usecols=['name' ,'pmra_UKIRT', 'pmraerr_UKIRT', 'pmdec_UKIRT', 'pmdecerr_UKIRT', 'ref_plx_UKIRT']) .dropna()
+df = pd.read_csv('scripts/ingests/UltracoolSheet-Main.csv', usecols=['name' ,'pmra_lit', 'pmraerr_lit', 'pmdec_lit', 'pmdecerr_lit', 'ref_pm_lit']) .dropna()
 df.reset_index(inplace=True, drop=True)
 print(df)
 
@@ -74,5 +74,5 @@ print(df)
 #ingest_proper_motions(db, sources, ra_lit, ra_lit_err, dec_lit, dec_lit_err, ref_pm_lit, save_db=False, verbose=False)
 
 #Ingesting UKIRT pm into db
-ingest_proper_motions(db, df.name, df.pmra_UKIRT, df.pmraerr_UKIRT, df.pmdec_UKIRT, df.pmdecerr_UKIRT, df.ref_plx_UKIRT, save_db=True, verbose=False )
+ingest_proper_motions(db, df.name, df.pmra_lit, df.pmraerr_lit, df.pmdec_lit, df.pmdecerr_lit, df.ref_pm_lit, save_db=False, verbose=False )
 
