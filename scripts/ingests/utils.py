@@ -703,8 +703,10 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
     n_added = 0
 
     for i, source in enumerate(sources):
-        db_name = db.search_object(source, output_table='Sources')[0]['source']
-
+        db_name_match = db.search_object(source, output_table='Sources')
+        if len(db_name_match) == 0:
+            db_name_match = db.search_object(source, output_table='Sources', resolve_simbad = True)
+        db_name = db_name_match[0]['source']
         # Search for existing proper motion data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
         # TODO: figure out adopted in cases of multiple measurements.
