@@ -5,7 +5,7 @@ from astrodbkit2.astrodb import Database
 from simple.schema import *
 from astropy.table import Table
 import numpy as np
-from scripts.ingests.utils import ingest_proper_motions
+from scripts.ingests.utils import * 
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.simbad import Simbad
@@ -116,7 +116,17 @@ for i, ref in enumerate(df.ref_pm_lit):
         df.ref_pm_lit[i] = "Prob83"
     if ref == 'Jame08a':
         df.ref_pm_lit[i] = 'Jame08'
+    if ref == 'Lepi05a':
+        df.ref_pm_lit[i] = 'Lepi05'
+    if ref== 'Lodi05b':
+        df.ref_pm_lit[i] = 'Lodi05'
+names_data = [{'source': 'LP  649-93', 'other_name': '2MASS J02185792-0617499'}]
+names_data.append({'source': 'WISE J014807.25-720258.7', 'other_name': 'WISEPC J014807.25-720258.7'}) 
+
+db.Names.insert().execute(names_data)
+
 print(df)
+
 
 
 

@@ -97,7 +97,9 @@ def add_names(db, new_sources, verbose=True, save_db=False):
     verboseprint = print if verbose else lambda *a, **k: None
     names_data = []
     for source in new_sources:
+        print(source)
         names_data.append({'source': source, 'other_name': source})
+        print(names_data)
 
     db.Names.insert().execute(names_data)
 
@@ -706,6 +708,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
         db_name_match = db.search_object(source, output_table='Sources')
         if len(db_name_match) == 0:
             db_name_match = db.search_object(source, output_table='Sources', resolve_simbad = True)
+            print(db_name_match)
         db_name = db_name_match[0]['source']
         # Search for existing proper motion data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
