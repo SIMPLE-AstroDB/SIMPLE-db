@@ -33,6 +33,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
 
     existing_sources_index = []
     missing_sources_index = []
+    alt_names_index = []
     db_names = []
 
     for i, name in enumerate(ingest_names):
@@ -56,9 +57,10 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
             nearby_matches = db.query_region(location, radius=radius)
             if len(nearby_matches) == 1:
                 namematches = nearby_matches
+                alt_names_index.append(i)
             if len(nearby_matches) > 1:
                 print(nearby_matches)
-                raise Exception("too many nearby sources!")
+                #raise Exception("too many nearby sources!")
 
         if len(namematches) == 1:
             existing_sources_index.append(i)
@@ -66,7 +68,8 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
             db_names.append(source_match)
             verboseprint(i, "match found: ", source_match)
         elif len(namematches) > 1:
-            raise Exception(i, "More than one match for ", name, "/n,", namematches)
+            pass
+            # raise Exception(i, "More than one match for ", name, "/n,", namematches)
         elif len(namematches) == 0:
             verboseprint(i, ": Not in database")
             missing_sources_index.append(i)
@@ -75,21 +78,27 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
             raise Exception(i, "unexpected condition")
 
     verboseprint("\n ALL SOURCES SORTED")
-    verboseprint("\n Existing Sources: ", ingest_names[existing_sources_index])
-    verboseprint("\n Missing Sources: ", ingest_names[missing_sources_index])
-    verboseprint("\n Db names: ", db_names, "\n")
+    verboseprint("\n Existing Sources:\n", ingest_names[existing_sources_index])
+    verboseprint("\n Missing Sources:\n", ingest_names[missing_sources_index])
+    verboseprint("\n Existing Sources with different name:\n")
+    #verboseprint("\n Database names:")
+    for alt_name in alt_names_index:
+        verboseprint(db_names[alt_name],ingest_names[alt_name])
+    #verboseprint("\n Db names: ", db_names, "\n")
 
     n_ingest = len(ingest_names)
     n_existing = len(existing_sources_index)
+    n_alt = len(alt_names_index)
     n_missing = len(missing_sources_index)
 
     if n_ingest != n_existing + n_missing:
         raise Exception("Unexpected number of sources")
 
     print(n_existing, "sources already in database.")
+    print(n_alt, "sources found with alternate names")
     print(n_missing, "sources not found in the database")
 
-    return missing_sources_index, existing_sources_index, db_names
+    return missing_sources_index, existing_sources_index, alt_names_index, db_names
 
 
 def add_names(db, new_sources, verbose=True, save_db=False):
