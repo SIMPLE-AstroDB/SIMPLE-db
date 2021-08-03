@@ -27,13 +27,38 @@ def disable_exception_traceback():
     sys.tracebacklimit = default_value  # revert changes
 
 
-def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, search_radius=60.):
+def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., verbose=False):
+    '''
+
+    Parameters
+    ----------
+    db
+    ingest_names
+        Names of sources
+    ingest_ras
+        Right ascensions of sources. Decimal degrees.
+    ingest_decs
+        Declinations of sources. Decimal degrees.
+    search_radius
+        radius in arcseconds to use for source matching
+    verbose
+
+    Returns
+    -------
+    missing_sources_index
+        Indices of sources which are not in the database
+    existing_sources_index
+        Indices of sources which are already in the database
+    alt_names_table
+        Astropy table with Other Names to add to database
+
+    '''
 
     verboseprint = print if verbose else lambda *a, **k: None
 
     existing_sources_index = []
     missing_sources_index = []
-    alt_names_table = Table(names=('ingest_name','db_name'),dtype=('U30','U30'))
+    alt_names_table = Table(names=('db_name','other_name'),dtype=('U30','U30'))
     db_names = []
 
     for i, name in enumerate(ingest_names):
@@ -49,7 +74,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
                 if len(namematches) == 1:
                     simbad_match = namematches[0]['source']
                     # Populate astropy table with ingest name and database name match
-                    alt_names_table.add_row([name, simbad_match])
+                    alt_names_table.add_row([simbad_match, name])
             except TypeError:  # no Simbad match
                 namematches = []
 
@@ -63,10 +88,10 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
                 namematches = nearby_matches
                 coord_match = namematches[0]['source']
                 # Populate astropy table with ingest name and database name match
-                alt_names_table.add_row([name, coord_match])
+                alt_names_table.add_row([coord_match, name])
             if len(nearby_matches) > 1:
                 print(nearby_matches)
-                # raise Exception("too many nearby sources!")
+                raise Exception("too many nearby sources!")
 
         if len(namematches) == 1:
             existing_sources_index.append(i)
@@ -74,8 +99,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
             db_names.append(source_match)
             verboseprint(i, "match found: ", source_match)
         elif len(namematches) > 1:
-            pass
-            # raise Exception(i, "More than one match for ", name, "/n,", namematches)
+            raise Exception(i, "More than one match for ", name, "/n,", namematches)
         elif len(namematches) == 0:
             verboseprint(i, ": Not in database")
             missing_sources_index.append(i)
@@ -89,7 +113,6 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
     verboseprint("\n Existing Sources with different name:\n", )
     if verbose:
         alt_names_table.pprint_all()
-    #verboseprint("\n Db names: ", db_names, "\n")
 
     n_ingest = len(ingest_names)
     n_existing = len(existing_sources_index)
@@ -97,22 +120,37 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
     n_missing = len(missing_sources_index)
 
     if n_ingest != n_existing + n_missing:
-        pass
-        # raise Exception("Unexpected number of sources")
+        raise Exception("Unexpected number of sources")
 
     print(n_existing, "sources already in database.")
     print(n_alt, "sources found with alternate names")
     print(n_missing, "sources not found in the database")
 
-    return missing_sources_index, existing_sources_index, alt_names_table, db_names
+    return missing_sources_index, existing_sources_index, alt_names_table
 
 
-def add_names(db, new_sources, verbose=True, save_db=False):
+def add_names(db, alt_names_table, verbose=True, save_db=False):
+    '''
+
+    Parameters
+    ----------
+    db
+    alt_names_table
+        two columns, first one is the name already in the database, 'db_name'
+        2nd column is the new Other Name to add, 'other_name'
+        expected output from `sort_sources`
+    verbose
+    save_db
+
+    Returns
+    -------
+
+    '''
 
     verboseprint = print if verbose else lambda *a, **k: None
     names_data = []
-    for source in new_sources:
-        names_data.append({'source': source, 'other_name': source})
+    for row in alt_names_table:
+        names_data.append({'source': row['db_name'], 'other_name': row['other_name']})
 
     db.Names.insert().execute(names_data)
 
