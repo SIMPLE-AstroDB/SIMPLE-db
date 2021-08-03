@@ -33,7 +33,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
 
     existing_sources_index = []
     missing_sources_index = []
-    alt_names_index = []
+    alt_names_table = Table(names=('ingest_name','db_name'),dtype=('U30','U30'))
     db_names = []
 
     for i, name in enumerate(ingest_names):
@@ -46,6 +46,10 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
             verboseprint(i, ": no name matches, trying simbad search")
             try:
                 namematches = db.search_object(name, resolve_simbad=True, verbose=verbose)
+                if len(namematches) == 1:
+                    simbad_match = namematches[0]['source']
+                    # Populate astropy table with ingest name and database name match
+                    alt_names_table.add_row([name, simbad_match])
             except TypeError:  # no Simbad match
                 namematches = []
 
@@ -57,10 +61,12 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
             nearby_matches = db.query_region(location, radius=radius)
             if len(nearby_matches) == 1:
                 namematches = nearby_matches
-                alt_names_index.append(i)
+                coord_match = namematches[0]['source']
+                # Populate astropy table with ingest name and database name match
+                alt_names_table.add_row([name, coord_match])
             if len(nearby_matches) > 1:
                 print(nearby_matches)
-                #raise Exception("too many nearby sources!")
+                # raise Exception("too many nearby sources!")
 
         if len(namematches) == 1:
             existing_sources_index.append(i)
@@ -80,25 +86,25 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
     verboseprint("\n ALL SOURCES SORTED")
     verboseprint("\n Existing Sources:\n", ingest_names[existing_sources_index])
     verboseprint("\n Missing Sources:\n", ingest_names[missing_sources_index])
-    verboseprint("\n Existing Sources with different name:\n")
-    #verboseprint("\n Database names:")
-    for alt_name in alt_names_index:
-        verboseprint(db_names[alt_name],ingest_names[alt_name])
+    verboseprint("\n Existing Sources with different name:\n", )
+    if verbose:
+        alt_names_table.pprint_all()
     #verboseprint("\n Db names: ", db_names, "\n")
 
     n_ingest = len(ingest_names)
     n_existing = len(existing_sources_index)
-    n_alt = len(alt_names_index)
+    n_alt = len(alt_names_table)
     n_missing = len(missing_sources_index)
 
     if n_ingest != n_existing + n_missing:
-        raise Exception("Unexpected number of sources")
+        pass
+        # raise Exception("Unexpected number of sources")
 
     print(n_existing, "sources already in database.")
     print(n_alt, "sources found with alternate names")
     print(n_missing, "sources not found in the database")
 
-    return missing_sources_index, existing_sources_index, alt_names_index, db_names
+    return missing_sources_index, existing_sources_index, alt_names_table, db_names
 
 
 def add_names(db, new_sources, verbose=True, save_db=False):
