@@ -76,7 +76,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
                 if len(namematches) == 1:
                     simbad_match = namematches[0]['source']
                     # Populate astropy table with ingest name and database name match
-                    alt_names_table.add_row([simbad_match, name])
+                    alt_names_table.append(Alt_names(simbad_match, name))
             except TypeError:  # no Simbad match
                 namematches = []
 
