@@ -169,6 +169,7 @@ def test_source_uniqueness2(db):
     assert len(duplicate_names) == 0
 
 
+@pytest.mark.skip(reason="SIMBAD unreliable")
 def test_source_simbad(db):
     # Query Simbad and confirm that there are no duplicates with different names
 
@@ -179,8 +180,8 @@ def test_source_simbad(db):
     # Add all IDS to the Simbad output as well as the user-provided id
     Simbad.add_votable_fields('ids')
     Simbad.add_votable_fields('typed_id')
-    simbad_results = Simbad.query_objects(name_list)
 
+    simbad_results = Simbad.query_objects(name_list)
     # Get a nicely formatted list of Simbad names for each input row
     duplicate_count = 0
     for row in simbad_results[['TYPED_ID', 'IDS']].iterrows():
