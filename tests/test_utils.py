@@ -128,3 +128,42 @@ def test_add_publication(db):
     with pytest.raises(sqlalchemy.exc.IntegrityError):
         add_publication(db, name='Ref 1',bibcode='2020MNRAS.496.1922B')
     # TODO - Mock environment  where ADS_TOKEN is not set. #117
+
+
+def test_add_names(db):
+    sources_2 = ['Fake 1', 'Fake 2']
+    other_names_2 = ['Fake 1 alt', 'Fake 2 alt']
+    other_names_3= ['Fake 1 alt', 'Fake 2 alt', 'Fake 3 alt']
+    Alt_names = namedtuple("Alt_names", "source other_name")
+    alt_names_table = []
+    alt_names_table.append(Alt_names('Fake 1','Fake 1 alternate'))
+    alt_names_table.append(Alt_names('Fake 2', 'Fake 2 alternate'))
+
+    alt_names_table3 = []
+    alt_names_table3.append(('Fake 1','Fake 1 alternate','3rd column'))
+
+    # Add names using two lists
+    add_names(db, sources=sources_2, other_names=other_names_2)
+    results = db.query(db.Names).filter(db.Names.c.source == 'Fake 1').table()
+    assert results['other_name'][0] == 'Fake 1 alt'
+    results = db.query(db.Names).filter(db.Names.c.source == 'Fake 2').table()
+    assert results['other_name'][0] == 'Fake 2 alt'
+
+    # Add names using a table
+    add_names(db, names_table=alt_names_table)
+    results = db.query(db.Names).filter(db.Names.c.source == 'Fake 1').table()
+    assert results['other_name'][1] == 'Fake 1 alternate'
+    results = db.query(db.Names).filter(db.Names.c.source == 'Fake 2').table()
+    assert results['other_name'][1] == 'Fake 2 alternate'
+
+    # should fail if lists are different length
+    with pytest.raises(Exception):
+        add_names(db, sources=sources_2, other_names=other_names_3)
+
+    # should fail if both table and sources list are given
+    with pytest.raises(Exception):
+        add_names(db, sources=sources_2, other_names=other_names_2, names_table=alt_names_table)
+
+    # should fail if table has three columns
+        with pytest.raises(Exception):
+            add_names(db, names_table=alt_names_table3)

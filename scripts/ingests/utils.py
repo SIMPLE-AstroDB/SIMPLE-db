@@ -14,6 +14,7 @@ from sqlalchemy import or_
 import ads
 import os
 from contextlib import contextmanager
+from collections import namedtuple
 
 
 @contextmanager
@@ -58,7 +59,8 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
 
     existing_sources_index = []
     missing_sources_index = []
-    alt_names_table = Table(names=('db_name','other_name'),dtype=('U30','U30'))
+    Alt_names = namedtuple("Alt_names", "source other_name")
+    alt_names_table = []
     db_names = []
 
     for i, name in enumerate(ingest_names):
@@ -88,7 +90,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
                 namematches = nearby_matches
                 coord_match = namematches[0]['source']
                 # Populate astropy table with ingest name and database name match
-                alt_names_table.add_row([coord_match, name])
+                alt_names_table.append(Alt_names(coord_match, name))
             if len(nearby_matches) > 1:
                 print(nearby_matches)
                 raise Exception("too many nearby sources!")
@@ -129,28 +131,45 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
     return missing_sources_index, existing_sources_index, alt_names_table
 
 
-def add_names(db, alt_names_table, verbose=True, save_db=False):
+def add_names(db, sources=None, other_names=None, names_table=None, verbose=True, save_db=False):
     '''
+    Provide either two lists of sources and other_names or a 2D name_table.
 
     Parameters
     ----------
     db
-    alt_names_table
-        two columns, first one is the name already in the database, 'db_name'
-        2nd column is the new Other Name to add, 'other_name'
-        expected output from `sort_sources`
+    sources
+        list of source names which already exist in the database
+    other_names
+        list of alternate names for sources
+    names_table
+        table with source and other_names.
+        Expecting source name to be first column and other_names in the 2nd.
     verbose
     save_db
 
-    Returns
-    -------
-
     '''
-
     verboseprint = print if verbose else lambda *a, **k: None
+
+    if names_table and sources:
+        raise Exception("Both names table and sources list provided. Provide one or the other")
+
     names_data = []
-    for row in alt_names_table:
-        names_data.append({'source': row['db_name'], 'other_name': row['other_name']})
+
+    if sources != None:
+        # Length of sources and other_names list should be equal
+        if len(sources) != len(other_names):
+            raise Exception("Length of sources and other_names should be equal")
+
+        for source,other_name in zip(sources,other_names):
+            names_data.append({'source': source, 'other_name': other_name})
+
+    if names_table != None:
+        if len(names_table[0]) != 2:
+            raise Exception("Each row should have two elements")
+
+        for name_row in names_table:
+            names_data.append({'source': name_row[0], 'other_name': name_row[1]})
 
     db.Names.insert().execute(names_data)
 
