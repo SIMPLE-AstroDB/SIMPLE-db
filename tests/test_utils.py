@@ -68,12 +68,6 @@ def test_setup_db(db):
     return db
 
 
-@pytest.mark.xfail()
-def test_check_names_simbad():
-    # TODO: set up Simbad mocking to avoid real calls; ideally also avoid user input
-    assert False
-
-
 def test_convert_spt_string_to_code():
     # Test conversion of spectral types into numeric values
     assert convert_spt_string_to_code(['M5.6']) == [65.6]
