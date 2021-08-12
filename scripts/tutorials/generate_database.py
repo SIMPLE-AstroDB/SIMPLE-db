@@ -16,6 +16,9 @@ DB_PATH = 'data'
 DB_TYPE = 'sqlite'
 DB_NAME = 'SIMPLE.db'
 
+# Used to overwrite AstrodbKit2 reference tables defaults
+REFERENCE_TABLES = ['Publications', 'Telescopes', 'Instruments', 'Modes', 'PhotometryFilters']
+
 # Set correct connection string
 if DB_TYPE == 'sqlite':
     # First, remove the existing database in order to recreate it from the schema
@@ -38,7 +41,7 @@ elif DB_TYPE == 'postgres':
 create_database(connection_string)
 
 # Now that the database is created, connect to it and load up the JSON data
-db = Database(connection_string)
+db = Database(connection_string, reference_tables=REFERENCE_TABLES)
 db.load_database(DB_PATH, verbose=False)
 
 print('New database generated.')
