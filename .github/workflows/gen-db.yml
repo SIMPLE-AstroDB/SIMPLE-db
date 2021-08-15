@@ -38,6 +38,7 @@ jobs:
       env:
         SIMPLE_DATABASE_URL: ${{secrets.SIMPLE_DATABASE_URL}}
       run: |
+        pip install psycopg2
         python scripts/tutorials/generate_database.py postgres
       working-directory: .
 
@@ -45,7 +46,7 @@ jobs:
       uses: dmnemec/copy_file_to_another_repo_action@main
       # Details for this action at https://github.com/marketplace/actions/push-a-file-to-another-repository
       env:
-          API_TOKEN_GITHUB: ${{ env.SIMPLE_TOKEN }}
+          API_TOKEN_GITHUB: ${{ secrets.SIMPLE_TOKEN }}
       with:
           source_file: 'SIMPLE.db'
           destination_repo: 'SIMPLE-AstroDB/SIMPLE-binary'
