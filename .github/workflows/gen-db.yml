@@ -14,9 +14,6 @@ on:
 jobs:
   build:
 
-    # Specify the environment to use (access to env variables)
-    env: gh-actions
-
     runs-on: ubuntu-latest
 
     steps:
@@ -38,9 +35,11 @@ jobs:
       working-directory: .
 
     - name: Generate postgres (Heroku) database
+      env:
+        SIMPLE_DATABASE_URL: ${{secrets.SIMPLE_DATABASE_URL}}
       run: |
-          python scripts/tutorials/generate_database.py postgres
-        working-directory: .
+        python scripts/tutorials/generate_database.py postgres
+      working-directory: .
 
     - name: Push database file
       uses: dmnemec/copy_file_to_another_repo_action@main
