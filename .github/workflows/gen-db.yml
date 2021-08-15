@@ -14,6 +14,9 @@ on:
 jobs:
   build:
 
+    # Specify the environment to use (access to env variables)
+    env: gh-actions
+
     runs-on: ubuntu-latest
 
     steps:
@@ -28,17 +31,22 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install git+https://github.com/dr-rodriguez/AstrodbKit2
-        
-    - name: Generate database
+
+    - name: Generate sqlite (file) database
       run: |
-        python scripts/tutorials/generate_database.py
+        python scripts/tutorials/generate_database.py sqlite
       working-directory: .
+
+    - name: Generate postgres (Heroku) database
+      run: |
+          python scripts/tutorials/generate_database.py postgres
+        working-directory: .
 
     - name: Push database file
       uses: dmnemec/copy_file_to_another_repo_action@main
       # Details for this action at https://github.com/marketplace/actions/push-a-file-to-another-repository
       env:
-          API_TOKEN_GITHUB: ${{ secrets.SIMPLE_TOKEN }}
+          API_TOKEN_GITHUB: ${{ env.SIMPLE_TOKEN }}
       with:
           source_file: 'SIMPLE.db'
           destination_repo: 'SIMPLE-AstroDB/SIMPLE-binary'
