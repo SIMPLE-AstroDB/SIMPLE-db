@@ -1,6 +1,7 @@
 # Script to generate database from JSON contents
 # This gets run automatically with Github Actions
 
+import argparse
 import sys
 import os
 from astrodbkit2.astrodb import create_database, Database
@@ -62,17 +63,23 @@ def load_database(connection_string):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        architecture = sys.argv[1].lower()
-        if architecture == 'postgres':
-            if len(sys.argv) > 2:
-                connection_string = sys.argv[2]
-            else:
-                connection_string = os.getenv('SIMPLE_DATABASE_URL')
-            load_postgres(connection_string)
-        elif architecture == 'sqlite':
-            load_sqlite()
-        else:
-            print(f'Unrecognized architecture: {architecture}')
+
+    parser = argparse.ArgumentParser(description='Generate the SIMPLE database')
+    parser.add_argument('architecture', choices=['sqlite', 'postgres'],
+                        help='Database architecture to use.')
+    parser.add_argument('connection_string', nargs='?',
+                        help='Connection string to use for non-sqlite databases.')
+
+    args = parser.parse_args()
+
+    # Get the connection string for any non-sqlite database
+    if args.connection_string is not None:
+        connection_string = args.connection_string
     else:
-        print('Specify database architecture (eg, postgres, sqlite)')
+        connection_string = os.getenv('SIMPLE_DATABASE_URL', default='')
+
+    # Run the loader for the specified DB architecture
+    if args.architecture == 'postgres':
+        load_postgres(connection_string)
+    elif args.architecture == 'sqlite':
+        load_sqlite()
