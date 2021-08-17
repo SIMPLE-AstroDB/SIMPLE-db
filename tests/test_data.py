@@ -7,6 +7,7 @@ sys.path.append('.')
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database
 from sqlalchemy import *
+from . import REFERENCE_TABLES
 
 DB_NAME = 'temp.db'
 DB_PATH = 'data'
@@ -25,7 +26,7 @@ def db():
     assert os.path.exists(DB_NAME)
 
     # Connect to the new database and confirm it has the Sources table
-    db = Database(connection_string)
+    db = Database(connection_string, reference_tables=REFERENCE_TABLES)
     assert db
     assert 'source' in [c.name for c in db.Sources.columns]
 
