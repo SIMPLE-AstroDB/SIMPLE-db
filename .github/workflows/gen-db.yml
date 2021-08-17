@@ -7,9 +7,8 @@ name: Generate Database
 on:
   # More details on trigger events: https://docs.github.com/en/actions/reference/events-that-trigger-workflows
   workflow_dispatch:  # manual execution
-  pull_request:
-    types: [ closed ]
-    branches: [ main ]
+  push:
+    branches: [main]
 
 jobs:
   build:
@@ -34,6 +33,7 @@ jobs:
         python scripts/tutorials/generate_database.py sqlite
       working-directory: .
 
+    # The postgres database creation can take a while on the hobby-dev tier in Heroku
     - name: Generate postgres (Heroku) database
       env:
         SIMPLE_DATABASE_URL: ${{secrets.SIMPLE_DATABASE_URL}}
