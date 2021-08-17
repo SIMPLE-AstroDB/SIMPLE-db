@@ -706,40 +706,60 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
 
     for i, source in enumerate(sources):
         db_name_match = db.search_object(source, output_table='Sources')
-        if len(db_name_match) == 0:
+        if len(db_name_match) != 1:
             db_name_match = db.search_object(source, output_table='Sources', resolve_simbad = True)
-            print(db_name_match)
-        db_name = db_name_match[0]['source']
+            # print(db_name_match)
+            if len(db_name_match) !=1:
+                if len(db_name_match) > 1:
+                    raise RuntimeError(source, "more than one match source found in the database")
+                elif len(db_name_match) == 0:
+                    raise RuntimeError(source, "No source found in the database")
+        if len(db_name_match) == 1:
+            db_name = db_name_match[0]['source']
+            verboseprint("\n",db_name,"One source match found")
+        else:
+            raise RuntimeError(source, "unexpected condition")
+
         # Search for existing proper motion data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
         # TODO: figure out adopted in cases of multiple measurements.
         adopted = None
+        duplicate = False
         source_pm_data = db.query(db.ProperMotions).filter(db.ProperMotions.c.source == db_name).table()
         if source_pm_data is None or len(source_pm_data) == 0:
             adopted = True
+            duplicate = False
+        elif len(source_pm_data) > 0:
+            for pm_data in source_pm_data:
+                if pm_data['reference'] == pm_references[i]:
+                    duplicate = True
+                    verboseprint("Duplicate measurement\n", pm_data)
+            if not duplicate:
+                #TODO compare errors to choose an adopted.
+                verboseprint("Another Proper motion exists, Adopted:",adopted,"\n", source_pm_data)
         else:
-            print("\nOTHER PROPER MOTION EXISTS, adopted = None")
-            print(source_pm_data)
+            raise RuntimeError("Unexpected state")
 
         # Construct data to be added
-        pm_data = [{'source': db_name,
+        if not duplicate:
+            pm_data = [{'source': db_name,
                           'mu_ra': pm_ras[i],
                           'mu_ra_error' : pm_ra_errs[i],
                           'mu_dec': pm_decs[i],
                           'mu_dec_error': pm_dec_errs[i],
                           'adopted': adopted,
                           'reference': pm_references[i]}]
-        verboseprint('Proper motion data: ',pm_data)
+            verboseprint('Proper motion data: ',pm_data)
 
-        try:
-            db.ProperMotions.insert().execute(pm_data)
-            n_added += 1
-        except sqlalchemy.exc.IntegrityError as err:
-            print("SIMPLE ERROR: The source may not exist in Sources table.")
-            print("SIMPLE ERROR: The proper motion reference may not exist in Publications table. Add it with add_publication function. ")
-            print("SIMPLE ERROR: The proper motion measurement may be a duplicate.")
-            with disable_exception_traceback():
-                raise
+            try:
+                db.ProperMotions.insert().execute(pm_data)
+                n_added += 1
+            except sqlalchemy.exc.IntegrityError as err:
+                print("SIMPLE ERROR: The source may not exist in Sources table.")
+                print("SIMPLE ERROR: The proper motion reference may not exist in Publications table. Add it with add_publication function. ")
+                print("SIMPLE ERROR: The proper motion measurement may be a duplicate.")
+                with disable_exception_traceback():
+                    raise
 
     if save_db:
         db.save_database(directory='data/')
