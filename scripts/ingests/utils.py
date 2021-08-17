@@ -30,6 +30,11 @@ def disable_exception_traceback():
 
 def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., verbose=False):
     '''
+    Classifying sources to be ingested into the database into three categories:
+    1) in the database with the same name,
+    2) in the database with a different name, or
+    3) not in the database and need to be added.
+
 
     Parameters
     ----------
@@ -51,7 +56,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
     existing_sources_index
         Indices of sources which are already in the database
     alt_names_table
-        Astropy table with Other Names to add to database
+        List of tuples with Other Names to add to database
 
     '''
 
@@ -75,7 +80,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
                 namematches = db.search_object(name, resolve_simbad=True, verbose=verbose)
                 if len(namematches) == 1:
                     simbad_match = namematches[0]['source']
-                    # Populate astropy table with ingest name and database name match
+                    # Populate list with ingest name and database name match
                     alt_names_table.append(Alt_names(simbad_match, name))
             except TypeError:  # no Simbad match
                 namematches = []
@@ -89,11 +94,11 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
             if len(nearby_matches) == 1:
                 namematches = nearby_matches
                 coord_match = namematches[0]['source']
-                # Populate astropy table with ingest name and database name match
+                # Populate list with ingest name and database name match
                 alt_names_table.append(Alt_names(coord_match, name))
             if len(nearby_matches) > 1:
                 print(nearby_matches)
-                raise Exception("too many nearby sources!")
+                raise RuntimeError("too many nearby sources!")
 
         if len(namematches) == 1:
             existing_sources_index.append(i)
@@ -101,13 +106,13 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
             db_names.append(source_match)
             verboseprint(i, "match found: ", source_match)
         elif len(namematches) > 1:
-            raise Exception(i, "More than one match for ", name, "/n,", namematches)
+            raise RuntimeError(i, "More than one match for ", name, "/n,", namematches)
         elif len(namematches) == 0:
             verboseprint(i, ": Not in database")
             missing_sources_index.append(i)
             db_names.append(ingest_names[i])
         else:
-            raise Exception(i, "unexpected condition")
+            raise RuntimeError(i, "unexpected condition")
 
     verboseprint("\n ALL SOURCES SORTED")
     verboseprint("\n Existing Sources:\n", ingest_names[existing_sources_index])
@@ -122,7 +127,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
     n_missing = len(missing_sources_index)
 
     if n_ingest != n_existing + n_missing:
-        raise Exception("Unexpected number of sources")
+        raise RuntimeError("Unexpected number of sources")
 
     print(n_existing, "sources already in database.")
     print(n_alt, "sources found with alternate names")
@@ -133,7 +138,8 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
 
 def add_names(db, sources=None, other_names=None, names_table=None, verbose=True, save_db=False):
     '''
-    Provide either two lists of sources and other_names or a 2D name_table.
+    Add source names to the Names table in the database.
+    Provide either two lists of sources and other_names or a 2D names_table.
 
     Parameters
     ----------
@@ -152,21 +158,21 @@ def add_names(db, sources=None, other_names=None, names_table=None, verbose=True
     verboseprint = print if verbose else lambda *a, **k: None
 
     if names_table and sources:
-        raise Exception("Both names table and sources list provided. Provide one or the other")
+        raise RuntimeError("Both names table and sources list provided. Provide one or the other")
 
     names_data = []
 
     if sources != None:
         # Length of sources and other_names list should be equal
         if len(sources) != len(other_names):
-            raise Exception("Length of sources and other_names should be equal")
+            raise RuntimeError("Length of sources and other_names should be equal")
 
         for source,other_name in zip(sources,other_names):
             names_data.append({'source': source, 'other_name': other_name})
 
     if names_table != None:
         if len(names_table[0]) != 2:
-            raise Exception("Each row should have two elements")
+            raise RuntimeError("Each row should have two elements")
 
         for name_row in names_table:
             names_data.append({'source': name_row[0], 'other_name': name_row[1]})

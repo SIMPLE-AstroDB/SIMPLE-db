@@ -151,13 +151,13 @@ def test_add_names(db):
     assert results['other_name'][1] == 'Fake 2 alternate'
 
     # should fail if lists are different length
-    with pytest.raises(Exception):
+    with pytest.raises(RuntimeError):
         add_names(db, sources=sources_2, other_names=other_names_3)
 
     # should fail if both table and sources list are given
-    with pytest.raises(Exception):
+    with pytest.raises(RuntimeError):
         add_names(db, sources=sources_2, other_names=other_names_2, names_table=alt_names_table)
 
     # should fail if table has three columns
-        with pytest.raises(Exception):
+        with pytest.raises(RuntimeError):
             add_names(db, names_table=alt_names_table3)
