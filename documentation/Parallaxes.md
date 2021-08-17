@@ -1,12 +1,13 @@
 # Parallaxes
 
 The Parallaxes table contains parallax measurements in mas for sources listed in the Sources table. 
-The combination of *source* and *reference* is expected to be unique.
+The combination of *source* and *reference* is expected to be unique. Columns marked with an 
+asterisk (*) may not be empty.
 
 | Column Name | Description  | Unit  | Data Type | Key Type  |
 |---|---|---|---|---|
 | *source            | Unique identifier for the source |   | String(100)  | primary and foreign: Sources.source   |
-| *parallax          | Parallax value | mas | Float  |   |
+| parallax          | Parallax value | mas | Float  |   |
 | parallax_error    | Parallax uncertainty | mas | Float  |   |
 | adopted    | Flag indicating if this is the adopted measurement |  | Boolean  |   |
 | comments  | Free form comments |   | String(1000) |   |

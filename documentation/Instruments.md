@@ -2,7 +2,8 @@
 
 The Instruments table contains names and references for instruments referred to in other tables.
 Entries must exist in the Instruments table prior to inserting data that refer to it.
-The *name* of an instrument is required to be unique.
+The *name* of an instrument is required to be unique. 
+Columns marked with an asterisk (*) may not be empty.
 
 | Column Name | Description  | Unit  | Data Type | Key Type  |
 |---|---|---|---|---|

@@ -3,6 +3,7 @@
 The Publications table contains metadata for each publication referred to in the database. 
 Entries must exist in the Publications table prior to inserting data that refer to it.
 The *name* of a publication is required to be unique.
+Columns marked with an asterisk (*) may not be empty.
 
 | Column Name | Description  | Unit  | Data Type | Key Type  |
 |---|---|---|---|---|

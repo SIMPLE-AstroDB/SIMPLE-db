@@ -2,6 +2,7 @@
 
 The ProperMotions table contains proper motion measurements in mas/yr for sources listed in the Sources table. 
 The combination of *source* and *reference* is expected to be unique.
+Columns marked with an asterisk (*) may not be empty.
 
 | Column Name | Description  | Unit  | Data Type | Key Type  |
 |---|---|---|---|---|

@@ -3,6 +3,7 @@
 The SpectralTypes table contains spectral type measurements for sources listed in the Sources table. 
 The combination of *source*, *regime*, and *reference* is expected to be unique.
 Note that *regime* is a string constrained from a list of enumerated values.
+Columns marked with an asterisk (*) may not be empty.
 
 | Column Name | Description  | Unit  | Data Type | Key Type  |
 |---|---|---|---|---|

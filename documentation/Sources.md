@@ -2,7 +2,8 @@
 
 The Sources table contains all objects in the database alongside their coordinates. 
 This is considered the 'primary' table in the database, as each source 
-is expected to be unique and is referred to by all other object tables.
+is expected to be unique and is referred to by all other object tables. 
+Columns marked with an asterisk (*) may not be empty.
 
 | Column Name | Description  | Unit  | Data Type | Key Type  |
 |---|---|---|---|---|
