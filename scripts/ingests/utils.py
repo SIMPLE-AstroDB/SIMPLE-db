@@ -14,6 +14,7 @@ from sqlalchemy import or_
 import ads
 import os
 from contextlib import contextmanager
+from collections import namedtuple
 
 
 @contextmanager
@@ -27,12 +28,44 @@ def disable_exception_traceback():
     sys.tracebacklimit = default_value  # revert changes
 
 
-def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, search_radius=60.):
+def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., verbose=False):
+    '''
+    Classifying sources to be ingested into the database into three categories:
+    1) in the database with the same name,
+    2) in the database with a different name, or
+    3) not in the database and need to be added.
+
+
+    Parameters
+    ----------
+    db
+    ingest_names
+        Names of sources
+    ingest_ras
+        Right ascensions of sources. Decimal degrees.
+    ingest_decs
+        Declinations of sources. Decimal degrees.
+    search_radius
+        radius in arcseconds to use for source matching
+    verbose
+
+    Returns
+    -------
+    missing_sources_index
+        Indices of sources which are not in the database
+    existing_sources_index
+        Indices of sources which are already in the database
+    alt_names_table
+        List of tuples with Other Names to add to database
+
+    '''
 
     verboseprint = print if verbose else lambda *a, **k: None
 
     existing_sources_index = []
     missing_sources_index = []
+    Alt_names = namedtuple("Alt_names", "source other_name")
+    alt_names_table = []
     db_names = []
 
     for i, name in enumerate(ingest_names):
@@ -45,6 +78,10 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
             verboseprint(i, ": no name matches, trying simbad search")
             try:
                 namematches = db.search_object(name, resolve_simbad=True, verbose=verbose)
+                if len(namematches) == 1:
+                    simbad_match = namematches[0]['source']
+                    # Populate list with ingest name and database name match
+                    alt_names_table.append(Alt_names(simbad_match, name))
             except TypeError:  # no Simbad match
                 namematches = []
 
@@ -56,9 +93,12 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
             nearby_matches = db.query_region(location, radius=radius)
             if len(nearby_matches) == 1:
                 namematches = nearby_matches
+                coord_match = namematches[0]['source']
+                # Populate list with ingest name and database name match
+                alt_names_table.append(Alt_names(coord_match, name))
             if len(nearby_matches) > 1:
                 print(nearby_matches)
-                raise Exception("too many nearby sources!")
+                raise RuntimeError("too many nearby sources!")
 
         if len(namematches) == 1:
             existing_sources_index.append(i)
@@ -66,40 +106,76 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, verbose=False, searc
             db_names.append(source_match)
             verboseprint(i, "match found: ", source_match)
         elif len(namematches) > 1:
-            raise Exception(i, "More than one match for ", name, "/n,", namematches)
+            raise RuntimeError(i, "More than one match for ", name, "/n,", namematches)
         elif len(namematches) == 0:
             verboseprint(i, ": Not in database")
             missing_sources_index.append(i)
             db_names.append(ingest_names[i])
         else:
-            raise Exception(i, "unexpected condition")
+            raise RuntimeError(i, "unexpected condition")
 
     verboseprint("\n ALL SOURCES SORTED")
-    verboseprint("\n Existing Sources: ", ingest_names[existing_sources_index])
-    verboseprint("\n Missing Sources: ", ingest_names[missing_sources_index])
-    verboseprint("\n Db names: ", db_names, "\n")
+    verboseprint("\n Existing Sources:\n", ingest_names[existing_sources_index])
+    verboseprint("\n Missing Sources:\n", ingest_names[missing_sources_index])
+    verboseprint("\n Existing Sources with different name:\n", )
+    if verbose:
+        alt_names_table.pprint_all()
 
     n_ingest = len(ingest_names)
     n_existing = len(existing_sources_index)
+    n_alt = len(alt_names_table)
     n_missing = len(missing_sources_index)
 
     if n_ingest != n_existing + n_missing:
-        raise Exception("Unexpected number of sources")
+        raise RuntimeError("Unexpected number of sources")
 
     print(n_existing, "sources already in database.")
+    print(n_alt, "sources found with alternate names")
     print(n_missing, "sources not found in the database")
 
-    return missing_sources_index, existing_sources_index, db_names
+    return missing_sources_index, existing_sources_index, alt_names_table
 
 
-def add_names(db, new_sources, verbose=True, save_db=False):
+def add_names(db, sources=None, other_names=None, names_table=None, verbose=True, save_db=False):
+    '''
+    Add source names to the Names table in the database.
+    Provide either two lists of sources and other_names or a 2D names_table.
 
+    Parameters
+    ----------
+    db
+    sources
+        list of source names which already exist in the database
+    other_names
+        list of alternate names for sources
+    names_table
+        table with source and other_names.
+        Expecting source name to be first column and other_names in the 2nd.
+    verbose
+    save_db
+
+    '''
     verboseprint = print if verbose else lambda *a, **k: None
+
+    if names_table and sources:
+        raise RuntimeError("Both names table and sources list provided. Provide one or the other")
+
     names_data = []
-    for source in new_sources:
-        print(source)
-        names_data.append({'source': source, 'other_name': source})
-        print(names_data)
+
+    if sources != None:
+        # Length of sources and other_names list should be equal
+        if len(sources) != len(other_names):
+            raise RuntimeError("Length of sources and other_names should be equal")
+
+        for source,other_name in zip(sources,other_names):
+            names_data.append({'source': source, 'other_name': other_name})
+
+    if names_table != None:
+        if len(names_table[0]) != 2:
+            raise RuntimeError("Each row should have two elements")
+
+        for name_row in names_table:
+            names_data.append({'source': name_row[0], 'other_name': name_row[1]})
 
     db.Names.insert().execute(names_data)
 
