@@ -765,7 +765,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                     #db.engine.execute(adopted_pm)
                     verboseprint("Will eventually make measurement with min ra and dec errors Adopted.")
 
-                verboseprint("!!! Another Proper motion exists, Adopted:", adopted, "\n")
+                verboseprint("!!! Another Proper motion exists, Adopted:", adopted)
                 if verbose:
                     source_pm_data.pprint_all()
 
