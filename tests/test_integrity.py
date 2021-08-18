@@ -2,6 +2,7 @@
 
 import os
 import pytest
+from . import REFERENCE_TABLES
 from sqlalchemy import func
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database, or_
@@ -26,7 +27,7 @@ def db():
     assert os.path.exists(DB_NAME)
 
     # Connect to the new database and confirm it has the Sources table
-    db = Database(connection_string)
+    db = Database(connection_string, reference_tables=REFERENCE_TABLES)
     assert db
     assert 'source' in [c.name for c in db.Sources.columns]
 
@@ -251,6 +252,17 @@ def test_propermotions(db):
         print(t)
     assert len(t) == 0
 
+    # While there may be many proper motion measurements for a single source,
+    # there should be only one marked as adopted
+    t = db.query(db.ProperMotions.c.source,
+                 func.sum(db.ProperMotions.c.adopted).label('adopted_counts')). \
+        group_by(db.ProperMotions.c.source). \
+        having(func.sum(db.ProperMotions.c.adopted) > 1). \
+        astropy()
+    if len(t) > 0:
+        print("\nProper Motion measurements with incorrect 'adopted' labels")
+        print(t)
+    assert len(t) == 0
 
 def test_radialvelocities(db):
     # Tests against the RadialVelocities table
@@ -264,6 +276,17 @@ def test_radialvelocities(db):
         print(t)
     assert len(t) == 0
 
+    # While there may be many radial velocity measurements for a single source,
+    # there should be only one marked as adopted
+    t = db.query(db.RadialVelocities.c.source,
+                 func.sum(db.RadialVelocities.c.adopted).label('adopted_counts')). \
+        group_by(db.RadialVelocities.c.source). \
+        having(func.sum(db.RadialVelocities.c.adopted) > 1). \
+        astropy()
+    if len(t) > 0:
+        print("\nRadial velocity measurements with incorrect 'adopted' labels")
+        print(t)
+    assert len(t) == 0
 
 def test_spectraltypes(db):
     # Tests against the SpectralTypes table
