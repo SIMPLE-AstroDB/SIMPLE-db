@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 SAVE_DB = True  # save the data files in addition to modifying the .db file
-RECREATE_DB = True  # recreates the .db file from the data files
+RECREATE_DB = False  # recreates the .db file from the data files
 VERBOSE = False
 
 verboseprint = print if VERBOSE else lambda *a, **k: None
@@ -190,6 +190,7 @@ if RECREATE_DB:
     # add a source
     ingest_sources(db, ['2MASS J12560215-1257217'], [194.0077], [-12.9569], ['Gauz15'])
     names_data = ({'source': '2MASS J12560215-1257217', 'other_name': 'VHS J125601.92-125723.9 AB'})
+    names_data.append = ({'source': '2MASS J12560215-1257217', 'other_name': '2MASS J12560215-1257217'})
     db.Names.insert().execute(names_data)
 
 # Ingest literature proper motions into database
