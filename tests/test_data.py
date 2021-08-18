@@ -113,6 +113,60 @@ def test_discovery_references(db):
     assert len(t) == 50, f'found {len(t)} discovery reference entries for {ref}'
 
 
+def test_proper_motion_refs(db):
+    """
+    Values found with this SQL query:
+        SELECT reference, count(*)
+        FROM ProperMotions
+        GROUP BY reference
+        ORDER By 2 DESC
+
+    from sqlalchemy import func
+    proper_motion_mearsurements = db.query(ProperMotions.reference, func.count(ProperMotions.reference)).\
+        group_by(ProperMotions.reference).order_by(func.count(ProperMotions.reference).desc()).limit(20).all()
+    """
+
+    ref = 'Best20a'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 348, f'found {len(t)} proper motion reference entries for {ref}'
+
+    ref = 'Gagn15a'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 325, f'found {len(t)} proper motion reference entries for {ref}'
+
+    ref = 'Fahe09'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 216, f'found {len(t)} proper motion reference entries for {ref}'
+
+    ref = 'Kirk19'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 182, f'found {len(t)} proper motion reference entries for {ref}'
+
+    ref = 'Best15'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 120, f'found {len(t)} proper motion reference entries for {ref}'
+
+    ref = 'Burn13'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 97, f'found {len(t)} proper motion reference entries for {ref}'
+
+    ref = 'Dahn17'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 79, f'found {len(t)} proper motion reference entries for {ref}'
+
+    ref = 'Jame08'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 73, f'found {len(t)} proper motion reference entries for {ref}'
+
+    ref = 'vanL07'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 68, f'found {len(t)} proper motion reference entries for {ref}'
+
+    ref = 'Smar18'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 68, f'found {len(t)} proper motion reference entries for {ref}'
+
+
 # Individual ingest tests
 # -----------------------------------------------------------------------------------------
 def test_Manj19_data(db):
@@ -224,8 +278,10 @@ def test_Kirk19_ingest(db):
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
     assert len(t) == 15, f'found {len(t)} parallax entries for {ref}'
 
+
 def test_Best2020_ingest(db):
     #Test for Best20a proper motions added
     ref = 'Best20a' 
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 348, f'found {len(t)} proper motion entries for {ref}'
+

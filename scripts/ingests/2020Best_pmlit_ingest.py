@@ -195,3 +195,9 @@ if RECREATE_DB:
 # Ingest literature proper motions into database
 ingest_proper_motions(db, df.name, df.pmra_lit, df.pmraerr_lit, df.pmdec_lit, df.pmdecerr_lit, df.ref_pm_lit,
                       save_db=SAVE_DB, verbose=VERBOSE)
+
+# query the database for proper motions and sort by reference.
+# this data will be added to the data tests
+from sqlalchemy import func
+db.query(ProperMotions.reference, func.count(ProperMotions.reference)).\
+    group_by(ProperMotions.reference).order_by(func.count(ProperMotions.reference).desc()).limit(20).all()
