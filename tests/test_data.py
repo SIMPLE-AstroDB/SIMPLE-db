@@ -138,9 +138,7 @@ def test_proper_motion_refs(db):
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 216, f'found {len(t)} proper motion reference entries for {ref}'
 
-    ref = 'Kirk19'
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 182, f'found {len(t)} proper motion reference entries for {ref}'
+    # Kirk19 tested below.
 
     ref = 'Best15'
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
@@ -258,7 +256,7 @@ def test_Kirk19_ingest(db):
     #Test proper motions added
     ref = 'Kirk19'
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 22, f'found {len(t)} proper motion entries for {ref}'
+    assert len(t) == 182, f'found {len(t)} proper motion entries for {ref}'
 
     #Test photometry added
     telescope = 'Spitzer'
