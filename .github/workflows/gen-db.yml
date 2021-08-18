@@ -12,6 +12,8 @@ on:
 
 jobs:
   build:
+    # Only run for the SIMPLE-AstroDB/SIMPLE-db repo, not on any forks
+    if: github.repository == 'SIMPLE-AstroDB/SIMPLE-db'
 
     runs-on: ubuntu-latest
 
@@ -34,13 +36,14 @@ jobs:
       working-directory: .
 
     # The postgres database creation can take a while on the hobby-dev tier in Heroku
-    - name: Generate postgres (Heroku) database
-      env:
-        SIMPLE_DATABASE_URL: ${{secrets.SIMPLE_DATABASE_URL}}
-      run: |
-        pip install psycopg2
-        python scripts/tutorials/generate_database.py postgres
-      working-directory: .
+    # Disabling until we have a better idea on how to use this
+#    - name: Generate postgres (Heroku) database
+#      env:
+#        SIMPLE_DATABASE_URL: ${{secrets.SIMPLE_DATABASE_URL}}
+#      run: |
+#        pip install psycopg2
+#        python scripts/tutorials/generate_database.py postgres
+#      working-directory: .
 
     - name: Push database file
       uses: dmnemec/copy_file_to_another_repo_action@main
