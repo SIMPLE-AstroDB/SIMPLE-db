@@ -403,6 +403,11 @@ def update_publication(db, doi: str = None, bibcode: str = None, name: str = Non
     #         values(bibcode='2019AJ....157..101M', doi='10.3847/1538-3881/aaf88f',
     #               description='Cloud Atlas: HST nir spectral library')
     #     db.engine.execute(add_doi_bibcode)
+
+    #change_name = db.Publications.update().where(db.Publications.c.name == 'Wein12'). \
+        #         values(name='Wein13')
+    #     db.engine.execute(change_name)
+
     return
 
 
@@ -705,38 +710,65 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
     n_added = 0
 
     for i, source in enumerate(sources):
-        db_name_match = db.search_object(source, output_table='Sources')
-        if len(db_name_match) != 1:
+        db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=False)
+
+        # If no matches, try fuzzy search
+        if len(db_name_match) == 0:
+            db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=True)
+
+        # If still no matches, try to resolve the name with Simbad
+        if len(db_name_match) == 0:
             db_name_match = db.search_object(source, output_table='Sources', resolve_simbad = True)
-            # print(db_name_match)
-            if len(db_name_match) !=1:
-                if len(db_name_match) > 1:
-                    raise RuntimeError(source, "more than one match source found in the database")
-                elif len(db_name_match) == 0:
-                    raise RuntimeError(source, "No source found in the database")
+
         if len(db_name_match) == 1:
-            db_name = db_name_match[0]['source']
+            db_name = db_name_match['source'][0]
             verboseprint("\n",db_name,"One source match found")
+        elif len(db_name_match) > 1:
+            print("\n",source)
+            print(db_name_match)
+            raise RuntimeError(source, "More than one match source found in the database")
+        elif len(db_name_match) == 0:
+            print("\n", source)
+            raise RuntimeError(source, "No source found in the database")
         else:
+            print("\n", source)
+            print(db_name_match)
             raise RuntimeError(source, "unexpected condition")
 
         # Search for existing proper motion data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
-        # TODO: figure out adopted in cases of multiple measurements.
         adopted = None
         duplicate = False
         source_pm_data = db.query(db.ProperMotions).filter(db.ProperMotions.c.source == db_name).table()
         if source_pm_data is None or len(source_pm_data) == 0:
+            # if there's no other measurements in the database, set new data Adopted = True
             adopted = True
             duplicate = False
         elif len(source_pm_data) > 0:
+            # check to see if other measurement is a duplicate of the new data
             for pm_data in source_pm_data:
                 if pm_data['reference'] == pm_references[i]:
                     duplicate = True
                     verboseprint("Duplicate measurement\n", pm_data)
             if not duplicate:
-                #TODO compare errors to choose an adopted.
-                verboseprint("Another Proper motion exists, Adopted:",adopted,"\n", source_pm_data)
+                # if errors of new data are less than other measurements, set Adopted = True.
+                if pm_ra_errs[i] < min(source_pm_data['mu_ra_error']) and pm_dec_errs[i] < min(source_pm_data['mu_dec_error']):
+                    adopted = True
+                elif min(source_pm_data['mu_ra_error']) < pm_ra_errs[i] and min(source_pm_data['mu_dec_error']) < pm_dec_errs[i]:
+                    #TODO: implement once Proper Motion table actually has an adopted column.
+                    # Issue #180
+                    # check if something is alraedy  marked as Adopted.
+                    #adopted_pm = db.ProperMotions.update().where(and_(db.ProperMotions.c.source == db_name,
+                    #                        db.ProperMotions.c.mu_ra_error == min(source_pm_data['mu_ra_error']),
+                     #                       db.ProperMotions.c.mu_dec_error == min(source_pm_data['mu_dec_error']))).\
+                    #    values(adopted = True)
+                    #db.engine.execute(adopted_pm)
+                    verboseprint("Will eventually make measurement with min ra and dec errors Adopted.")
+
+                verboseprint("!!! Another Proper motion exists, Adopted:", adopted, "\n")
+                if verbose:
+                    source_pm_data.pprint_all()
+
         else:
             raise RuntimeError("Unexpected state")
 
@@ -749,7 +781,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                           'mu_dec_error': pm_dec_errs[i],
                           'adopted': adopted,
                           'reference': pm_references[i]}]
-            verboseprint('Proper motion data: ',pm_data)
+            verboseprint('Proper motion data to add: ',pm_data)
 
             try:
                 db.ProperMotions.insert().execute(pm_data)
