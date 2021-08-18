@@ -11,6 +11,7 @@ from astropy.table import Table, vstack
 import warnings
 warnings.filterwarnings("ignore", module='astroquery.simbad')
 from sqlalchemy import or_
+from sqlalchemy import and_
 import ads
 import os
 from contextlib import contextmanager
@@ -834,11 +835,11 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                     #TODO: implement once Proper Motion table actually has an adopted column.
                     # Issue #180
                     # check if something is alraedy  marked as Adopted.
-                    #adopted_pm = db.ProperMotions.update().where(and_(db.ProperMotions.c.source == db_name,
-                    #                        db.ProperMotions.c.mu_ra_error == min(source_pm_data['mu_ra_error']),
-                     #                       db.ProperMotions.c.mu_dec_error == min(source_pm_data['mu_dec_error']))).\
-                    #    values(adopted = True)
-                    #db.engine.execute(adopted_pm)
+                    adopted_pm = db.ProperMotions.update().where(and_(db.ProperMotions.c.source == db_name,
+                                            db.ProperMotions.c.mu_ra_error == min(source_pm_data['mu_ra_error']),
+                                           db.ProperMotions.c.mu_dec_error == min(source_pm_data['mu_dec_error']))).\
+                        values(adopted = True)
+                    db.engine.execute(adopted_pm)
                     verboseprint("Will eventually make measurement with min ra and dec errors Adopted.")
 
                 verboseprint("!!! Another Proper motion exists, Adopted:", adopted)

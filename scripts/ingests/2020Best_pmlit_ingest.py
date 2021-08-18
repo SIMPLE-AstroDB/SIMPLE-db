@@ -1,19 +1,18 @@
-import sys
-sys.path.append('.')
+import pandas as pd
 from astrodbkit2.astrodb import create_database
 from astrodbkit2.astrodb import Database
 from scripts.ingests.utils import *
 from simple.schema import *
-import os
 from pathlib import Path
-import pandas as pd
+# sys.path.append('.')
 
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
-VERBOSE = True
+VERBOSE = False
 
 verboseprint = print if VERBOSE else lambda *a, **k: None
+
 
 def load_db():
     # Utility function to load the database
@@ -34,11 +33,13 @@ def load_db():
 
     return db
 
+
 db = load_db()
 
 # load table into a dataframe and only keep rows with literature proper motion data
-df = pd.read_csv('scripts/ingests/UltracoolSheet-Main.csv', usecols=['name' ,'pmra_lit', 'pmraerr_lit', 'pmdec_lit', 'pmdecerr_lit', 'ref_pm_lit']) .dropna()
-df.reset_index(inplace=True, drop=True) #reset table indices
+df = pd.read_csv('scripts/ingests/UltracoolSheet-Main.csv',
+                 usecols=['name', 'pmra_lit', 'pmraerr_lit', 'pmdec_lit', 'pmdecerr_lit', 'ref_pm_lit']) .dropna()
+df.reset_index(inplace=True, drop=True)  # reset table indices
 
 # Fix some references
 for i, ref in enumerate(df.ref_pm_lit):
@@ -92,9 +93,9 @@ for i, ref in enumerate(df.ref_pm_lit):
         df.ref_pm_lit[i] = 'Jame08'
     if ref == 'Lepi05a':
         df.ref_pm_lit[i] = 'Lepi05'
-    if ref== 'Lodi05b':
+    if ref == 'Lodi05b':
         df.ref_pm_lit[i] = 'Lodi05'
-    if ref=='Tinn95c':
+    if ref == 'Tinn95c':
         df.ref_pm_lit[i] = 'Tinn95'
     if ref == 'Roes10b':
         df.ref_pm_lit[i] = 'Roes10'
@@ -110,6 +111,7 @@ for i, ref in enumerate(df.ref_pm_lit):
         df.ref_pm_lit[i] = 'Phan08'
     if ref == 'Gizi15a':
         df.ref_pm_lit[i] = 'Gizi15'
+
 
 # Add alt names which should have been added when the sources were added
 def alt_names():
@@ -176,8 +178,9 @@ def alt_names():
     names_data.append({'source': 'APMPM J2354-3316C', 'other_name': 'LHS 4039C'})
     db.Names.insert().execute(names_data)
 
+
 if RECREATE_DB:
-    #add alt names for sources
+    # add alt names for sources
     alt_names()
 
     # fix a reference name
@@ -185,10 +188,10 @@ if RECREATE_DB:
     db.engine.execute(change_name)
 
     # add a source
-    ingest_sources(db,['2MASS J12560215-1257217'],[194.0077],[-12.9569],['Gauz15'])
-    names_data=({'source': '2MASS J12560215-1257217', 'other_name':'VHS J125601.92-125723.9 AB' })
+    ingest_sources(db, ['2MASS J12560215-1257217'], [194.0077], [-12.9569], ['Gauz15'])
+    names_data = ({'source': '2MASS J12560215-1257217', 'other_name': 'VHS J125601.92-125723.9 AB'})
     db.Names.insert().execute(names_data)
 
-#Ingest literature proper motions into database
-ingest_proper_motions(db, df.name, df.pmra_lit, df.pmraerr_lit, df.pmdec_lit, df.pmdecerr_lit, df.ref_pm_lit, save_db=SAVE_DB, verbose=VERBOSE)
-
+# Ingest literature proper motions into database
+ingest_proper_motions(db, df.name, df.pmra_lit, df.pmraerr_lit, df.pmdec_lit, df.pmdecerr_lit, df.ref_pm_lit,
+                      save_db=SAVE_DB, verbose=VERBOSE)
