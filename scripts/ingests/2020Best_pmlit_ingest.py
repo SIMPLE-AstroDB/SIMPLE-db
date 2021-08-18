@@ -2,16 +2,8 @@ import sys
 sys.path.append('.')
 from astrodbkit2.astrodb import create_database
 from astrodbkit2.astrodb import Database
+from scripts.ingests.utils import *
 from simple.schema import *
-from astropy.table import Table
-import numpy as np
-from scripts.ingests.utils import * 
-from astropy.coordinates import SkyCoord
-import astropy.units as u
-from astroquery.simbad import Simbad
-import warnings
-warnings.filterwarnings("ignore", module='astroquery.simbad')
-import re
 import os
 from pathlib import Path
 import pandas as pd
@@ -19,7 +11,7 @@ import pandas as pd
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
-VERBOSE = False
+VERBOSE = True
 
 verboseprint = print if VERBOSE else lambda *a, **k: None
 
@@ -104,6 +96,20 @@ for i, ref in enumerate(df.ref_pm_lit):
         df.ref_pm_lit[i] = 'Lodi05'
     if ref=='Tinn95c':
         df.ref_pm_lit[i] = 'Tinn95'
+    if ref == 'Roes10b':
+        df.ref_pm_lit[i] = 'Roes10'
+    if ref == 'Hog_00a':
+        df.ref_pm_lit[i] = 'Hog_00'
+    if ref == 'Ditt14a':
+        df.ref_pm_lit[i] = 'Ditt14'
+    if ref == 'Schn16b':
+        df.ref_pm_lit[i] = 'Schn16'
+    if ref == 'Tinn03b':
+        df.ref_pm_lit[i] = 'Tinn03'
+    if ref == 'Phan08a':
+        df.ref_pm_lit[i] = 'Phan08'
+    if ref == 'Gizi15a':
+        df.ref_pm_lit[i] = 'Gizi15'
 
 # Add alt names which should have been added when the sources were added
 def alt_names():
@@ -171,10 +177,18 @@ def alt_names():
     db.Names.insert().execute(names_data)
 
 if RECREATE_DB:
+    #add alt names for sources
     alt_names()
 
-# print(df)
+    # fix a reference name
+    change_name = db.Publications.update().where(db.Publications.c.name == 'Wein12').values(name='Wein13')
+    db.engine.execute(change_name)
+
+    # add a source
+    ingest_sources(db,['2MASS J12560215-1257217'],[194.0077],[-12.9569],['Gauz15'])
+    names_data=({'source': '2MASS J12560215-1257217', 'other_name':'VHS J125601.92-125723.9 AB' })
+    db.Names.insert().execute(names_data)
 
 #Ingest literature proper motions into database
-ingest_proper_motions(db, df.name, df.pmra_lit, df.pmraerr_lit, df.pmdec_lit, df.pmdecerr_lit, df.ref_pm_lit, save_db=SAVE_DB, verbose=True)
+ingest_proper_motions(db, df.name, df.pmra_lit, df.pmraerr_lit, df.pmdec_lit, df.pmdecerr_lit, df.ref_pm_lit, save_db=SAVE_DB, verbose=VERBOSE)
 
