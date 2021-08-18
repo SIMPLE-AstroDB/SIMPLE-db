@@ -2,8 +2,8 @@
 
 The Gravities table contains gravity measurements for sources listed in the Sources table. 
 The combination of *source*, *regime*, and *reference* is expected to be unique.
-Note that *gravity* and *regime* are strings constrained from a list of enumerated values. Columns marked with an 
-asterisk (*) may not be empty.
+Note that *gravity* and *regime* are strings constrained from a list of enumerated values. 
+Columns marked with an asterisk (*) may not be empty.
 
 | Column Name | Description  | Unit  | Data Type | Key Type  |
 |---|---|---|---|---|
