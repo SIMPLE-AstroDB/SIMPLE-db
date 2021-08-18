@@ -11,5 +11,6 @@ Columns marked with an asterisk (*) may not be empty.
 | mu_ra_error   | Uncertainty of proper motion in RA | mas/yr | Float  |   |
 | mu_dec        | Proper motion in Dec | mas/yr | Float  |   |
 | mu_dec_error  | Uncertainty of proper motion in Dec | mas/yr | Float  |   |
+| adopted    | Flag indicating if this is the adopted measurement |  | Boolean  |   |
 | comments      | Free form comments |   | String(1000) |   |
 | *reference     | Reference |   | String(30) | primary and foreign: Publications.name |
