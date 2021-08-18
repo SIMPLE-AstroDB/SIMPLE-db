@@ -7,7 +7,7 @@ from pathlib import Path
 # sys.path.append('.')
 
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = False
 
@@ -201,3 +201,6 @@ ingest_proper_motions(db, df.name, df.pmra_lit, df.pmraerr_lit, df.pmdec_lit, df
 from sqlalchemy import func
 db.query(ProperMotions.reference, func.count(ProperMotions.reference)).\
     group_by(ProperMotions.reference).order_by(func.count(ProperMotions.reference).desc()).limit(20).all()
+
+if SAVE_DB:
+    db.save_database(directory='data/')
