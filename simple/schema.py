@@ -138,6 +138,7 @@ class ProperMotions(Base):
     mu_ra_error = Column(Float)
     mu_dec = Column(Float)
     mu_dec_error = Column(Float)
+    adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
 
@@ -149,6 +150,7 @@ class RadialVelocities(Base):
                     nullable=False, primary_key=True)
     radial_velocity = Column(Float)
     radial_velocity_error = Column(Float)
+    adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
 
