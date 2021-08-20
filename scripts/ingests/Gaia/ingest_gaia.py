@@ -5,13 +5,13 @@ from scripts.ingests.utils import *
 from simple.schema import *
 from pathlib import Path
 from astroquery.gaia import Gaia
-from astropy.table import Table, Column
+from astropy.table import Table, Column, unique
 from astropy.io.votable import from_table, writeto
-from astropy.utils.console import ProgressBar
+#from astropy.utils.console import ProgressBar
 
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = False  # recreates the .db file from the data files
+RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = True
 
 verboseprint = print if VERBOSE else lambda *a, **k: None
@@ -47,6 +47,9 @@ def find_tmass_gaia_matches():
 
     # only do a small subset
     tmass_sources = tmass_sources[0:100]
+
+    # should only do unique 2MASS names
+    # tmass_sources = unique(tmass_sources,keys='source')
 
     # make table of sources in database with 2MASS designations
     db_names = []
@@ -90,12 +93,14 @@ def find_tmass_gaia_matches():
 
 # read results from saved table
 tmass_matches = Table.read('scripts/ingests/Gaia/tmass_gaia_results.xml',format='votable')
+print(len(tmass_matches))
 
-
+#only ingest unique sources
+tmass_matches_unique = unique(tmass_matches[501:600],keys=['SIMPLE_source','designation'],keep='none')
 
 #print(tmass_matches['SIMPLE_source','designation','pmra','parallax','phot_rp_mean_mag'])
 
-add_names(db, sources=tmass_matches['SIMPLE_source'], other_names=tmass_matches['designation'], verbose=True)
+add_names(db, sources=tmass_matches_unique['SIMPLE_source'], other_names=tmass_matches_unique['designation'], verbose=True)
 
 
 
