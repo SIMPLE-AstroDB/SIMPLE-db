@@ -14,7 +14,7 @@ from astropy.table import Table
 from pathlib import Path
 import os
 
-SAVE_DB = True  # save the data files in addition to modifying the .db file
+SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = False
 
@@ -55,9 +55,9 @@ n_sources = len(ingest_names)
 print(n_sources, "Total Sources")
 
 # Manual modification to names
-names_data = ({'source': 'TWA 27', 'other_name': '2MASSW J1207334-393254'})
-db.Names.insert().execute(names_data)
-db.Names.delete().where(db.Names.c.other_name == 'SDSS J141624.08+134826.7B').execute()
+#names_data = ({'source': 'TWA 27', 'other_name': '2MASSW J1207334-393254'})
+#db.Names.insert().execute(names_data)
+#db.Names.delete().where(db.Names.c.other_name == 'SDSS J141624.08+134826.7B').execute()
 
 # # Manual publication modifications
 # add_publication(db, name='Mart99e', bibcode='1999AJ....118.2466M', save_db=True)
@@ -230,10 +230,10 @@ for i, ref in enumerate(missing_refs):
 # but Best ref name should map to one of them without error
 
 ingest_sources(db, missing_sources, missing_ras, missing_decs, missing_refs,
-               comments=comments, equinoxes=missing_eqxs, verbose=False, save_db=False)
+               comments=comments, equinoxes=missing_eqxs, verbose=False, save_db=SAVE_DB)
 
 # Add names of new sources to the Names table
-add_names(db, missing_sources, verbose=True, save_db=False)
+add_names(db, missing_sources, verbose=True, save_db=SAVE_DB)
 
 # Save the database changes rather than having ingest_sources and add_names do so twice
 if SAVE_DB:
