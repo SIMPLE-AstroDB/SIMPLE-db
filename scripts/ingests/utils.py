@@ -792,6 +792,32 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
         source_pm_data = db.query(db.ProperMotions).filter(db.ProperMotions.c.source == db_name).table()
         if source_pm_data is None or len(source_pm_data) == 0:
             adopted = True
+            duplicate = False
+        elif len(source_pm_data) > 0:
+            # check to see if other measurement is a duplicate of the new data
+            for pm_data in source_pm_data:
+                if pm_data['reference'] == pm_references[i]:
+                    duplicate = True
+                    verboseprint("Duplicate measurement\n", pm_data)
+            if not duplicate:
+                # if errors of new data are less than other measurements, set Adopted = True.
+                if pm_ra_errs[i] < min(source_pm_data['mu_ra_error']) and pm_dec_errs[i] < min(source_pm_data['mu_dec_error']):
+                    adopted = True
+                elif min(source_pm_data['mu_ra_error']) < pm_ra_errs[i] and min(source_pm_data['mu_dec_error']) < pm_dec_errs[i]:
+                    #TODO: implement once Proper Motion table actually has an adopted column.
+                    # Issue #180
+                    # check if something is alraedy  marked as Adopted.
+                    adopted_pm = db.ProperMotions.update().where(and_(db.ProperMotions.c.source == db_name,
+                                            db.ProperMotions.c.mu_ra_error == min(source_pm_data['mu_ra_error']),
+                                           db.ProperMotions.c.mu_dec_error == min(source_pm_data['mu_dec_error']))).\
+                        values(adopted = True)
+                    db.engine.execute(adopted_pm)
+                    verboseprint("Will eventually make measurement with min ra and dec errors Adopted.")
+
+                verboseprint("!!! Another Proper motion exists, Adopted:", adopted)
+                if verbose:
+                    source_pm_data.pprint_all()
+
         else:
             print("\nOTHER PROPER MOTION EXISTS, adopted = None")
             print(source_pm_data)
