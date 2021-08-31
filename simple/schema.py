@@ -1,6 +1,7 @@
 # Schema for the SIMPLE database
 
-from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, Enum, DateTime, ForeignKeyConstraint
+from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, \
+    BigInteger, Enum, Date, DateTime, ForeignKeyConstraint
 import enum
 from astrodbkit2.astrodb import Base
 
@@ -37,6 +38,19 @@ class Modes(Base):
     telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'), primary_key=True)
 
 
+class PhotometryFilters(Base):
+    """
+    ORM for filter table.
+    This stores relationships between filters and instruments, telescopes, as well as wavelength and width
+    """
+    __tablename__ = 'PhotometryFilters'
+    band = Column(String(30), primary_key=True, nullable=False)  # of the form instrument.filter (see SVO)
+    instrument = Column(String(30), ForeignKey('Instruments.name', onupdate='cascade'), primary_key=True)
+    telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'), primary_key=True)
+    effective_wavelength = Column(Float, nullable=False)
+    width = Column(Float)
+
+
 # -------------------------------------------------------------------------------------------------------------------
 # Hard-coded enumerations
 
@@ -46,9 +60,11 @@ class Regime(enum.Enum):
     xray = 'xray'
     ultraviolet = 'ultraviolet'
     optical = 'optical'
+    nir = 'nir'
     infrared = 'infrared'
     millimeter = 'millimeter'
     radio = 'radio'
+    unknown = 'unknown'
 
 
 class Gravity(enum.Enum):
@@ -72,8 +88,8 @@ class Sources(Base):
     source = Column(String(100), primary_key=True, nullable=False)
     ra = Column(Float)
     dec = Column(Float)
-    epoch = Column(String(10))  # eg, J2000
-    equinox = Column(Float)  # decimal year
+    epoch = Column(Float)  # decimal year
+    equinox = Column(String(10))  # eg, J2000
     shortname = Column(String(30))  # not needed?
     reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), nullable=False)
     comments = Column(String(1000))
@@ -94,12 +110,18 @@ class Photometry(Base):
     ucd = Column(String(100))
     magnitude = Column(Float, nullable=False)
     magnitude_error = Column(Float)
-    # system = Column(String(30), ForeignKey('Systems.name'))
-    telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'))
-    instrument = Column(String(30), ForeignKey('Instruments.name', onupdate='cascade'))
-    epoch = Column(String(30))
+    telescope = Column(String(30))
+    instrument = Column(String(30))
+    epoch = Column(Float)  # decimal year
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), primary_key=True)
+
+    # Foreign key constraints for telescope, instrument, band; all handled via reference to Modes table
+    __table_args__ = (ForeignKeyConstraint([telescope, instrument, band],
+                                           [PhotometryFilters.telescope, PhotometryFilters.instrument,
+                                            PhotometryFilters.band],
+                                           onupdate="cascade"),
+                      {})
 
 
 class Parallaxes(Base):
@@ -123,6 +145,7 @@ class ProperMotions(Base):
     mu_ra_error = Column(Float)
     mu_dec = Column(Float, nullable=False)
     mu_dec_error = Column(Float)
+    adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
 
@@ -134,6 +157,7 @@ class RadialVelocities(Base):
                     nullable=False, primary_key=True)
     radial_velocity = Column(Float, nullable=False)
     radial_velocity_error = Column(Float)
+    adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
 
@@ -143,9 +167,10 @@ class SpectralTypes(Base):
     __tablename__ = 'SpectralTypes'
     source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
                     nullable=False, primary_key=True)
-    spectral_type = Column(String(10), nullable=False)
+    spectral_type_string = Column(String(10), nullable=False)
+    spectral_type_code = Column(Float, nullable=False)
     spectral_type_error = Column(Float)
-    regime = Column(Enum(Regime), primary_key=True)  # restricts to a few values: Optical, Infrared
+    regime = Column(Enum(Regime, create_constraint=True), primary_key=True)  # restricts to a few values: Optical, Infrared
     adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
@@ -156,8 +181,8 @@ class Gravities(Base):
     __tablename__ = 'Gravities'
     source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
                     nullable=False, primary_key=True)
-    gravity = Column(Enum(Gravity), nullable=False)  # restricts to enumerated values
-    regime = Column(Enum(Regime), primary_key=True)  # restricts to a few values: Optical, Infrared
+    gravity = Column(Enum(Gravity, create_constraint=True), nullable=False)  # restricts to enumerated values
+    regime = Column(Enum(Regime, create_constraint=True), primary_key=True)  # restricts to a few values: Optical, Infrared
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
 

@@ -81,4 +81,4 @@ _ = db.inventory('2MASS J13571237+1428398', pretty_print=True)
 db.save_json('2MASS J13571237+1428398', 'data')
 
 # Save entire database to directory 'data'
-db.save_db('data')
+db.save_database('data')

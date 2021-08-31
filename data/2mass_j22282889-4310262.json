@@ -13,15 +13,27 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J2228288-4310262"
+        },
+        {
             "other_name": "2MASS J22282889-4310262"
         },
         {
             "other_name": "WISEP J222829.00-431029.4"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 92.1,
+            "parallax_error": 2.6,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro13"
+        }
+    ],
     "Photometry": [
         {
-            "band": "WISE_W1",
+            "band": "WISE.W1",
             "ucd": null,
             "magnitude": 15.274,
             "magnitude_error": 0.05,
@@ -32,7 +44,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W2",
+            "band": "WISE.W2",
             "ucd": null,
             "magnitude": 13.328,
             "magnitude_error": 0.035,
@@ -43,7 +55,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W3",
+            "band": "WISE.W3",
             "ucd": null,
             "magnitude": 11.964,
             "magnitude_error": 0.244,
@@ -54,7 +66,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W4",
+            "band": "WISE.W4",
             "ucd": null,
             "magnitude": 8.927,
             "magnitude_error": null,
@@ -63,6 +75,28 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        }
+    ],
+    "ProperMotions": [
+        {
+            "mu_ra": 51.7,
+            "mu_ra_error": 3.2,
+            "mu_dec": -301.3,
+            "mu_dec_error": 1.6,
+            "adopted": true,
+            "comments": null,
+            "reference": "Smar13"
+        }
+    ],
+    "SpectralTypes": [
+        {
+            "spectral_type_string": "T6",
+            "spectral_type_code": 86.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": false,
+            "comments": null,
+            "reference": "Manj19"
         }
     ]
 }

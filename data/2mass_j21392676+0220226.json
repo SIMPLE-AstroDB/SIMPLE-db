@@ -22,9 +22,18 @@
             "other_name": "WISEP J213927.09+022023.7"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 101.5,
+            "parallax_error": 2.0,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro13"
+        }
+    ],
     "Photometry": [
         {
-            "band": "WISE_W1",
+            "band": "WISE.W1",
             "ucd": null,
             "magnitude": 12.718,
             "magnitude_error": 0.023,
@@ -35,7 +44,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W2",
+            "band": "WISE.W2",
             "ucd": null,
             "magnitude": 11.928,
             "magnitude_error": 0.024,
@@ -46,7 +55,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W3",
+            "band": "WISE.W3",
             "ucd": null,
             "magnitude": 10.665,
             "magnitude_error": 0.105,
@@ -57,7 +66,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W4",
+            "band": "WISE.W4",
             "ucd": null,
             "magnitude": 8.686,
             "magnitude_error": null,
@@ -66,6 +75,28 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        }
+    ],
+    "ProperMotions": [
+        {
+            "mu_ra": 485.9,
+            "mu_ra_error": 2.0,
+            "mu_dec": 124.8,
+            "mu_dec_error": 2.7,
+            "adopted": true,
+            "comments": null,
+            "reference": "Smar13"
+        }
+    ],
+    "SpectralTypes": [
+        {
+            "spectral_type_string": "T1.5",
+            "spectral_type_code": 81.5,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": false,
+            "comments": null,
+            "reference": "Manj19"
         }
     ]
 }

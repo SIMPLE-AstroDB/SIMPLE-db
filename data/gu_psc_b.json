@@ -13,6 +13,9 @@
     ],
     "Names": [
         {
+            "other_name": "GU PSC B"
+        },
+        {
             "other_name": "GU Piscium b"
         },
         {
@@ -20,11 +23,23 @@
         },
         {
             "other_name": "NAME GU Psc b"
+        },
+        {
+            "other_name": "V* GU Psc B"
+        }
+    ],
+    "Parallaxes": [
+        {
+            "parallax": 21.0,
+            "parallax_error": 0.07,
+            "adopted": true,
+            "comments": null,
+            "reference": "Missing"
         }
     ],
     "Photometry": [
         {
-            "band": "WISE_W1",
+            "band": "WISE.W1",
             "ucd": null,
             "magnitude": 17.17,
             "magnitude_error": 0.33,
@@ -35,7 +50,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W2",
+            "band": "WISE.W2",
             "ucd": null,
             "magnitude": 15.41,
             "magnitude_error": 0.22,
@@ -46,7 +61,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W3",
+            "band": "WISE.W3",
             "ucd": null,
             "magnitude": 12.396,
             "magnitude_error": null,
@@ -57,7 +72,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W4",
+            "band": "WISE.W4",
             "ucd": null,
             "magnitude": 8.505,
             "magnitude_error": null,
@@ -66,6 +81,28 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        }
+    ],
+    "ProperMotions": [
+        {
+            "mu_ra": 98.0,
+            "mu_ra_error": 15.0,
+            "mu_dec": -92.0,
+            "mu_dec_error": 15.0,
+            "adopted": true,
+            "comments": null,
+            "reference": "Naud14"
+        }
+    ],
+    "SpectralTypes": [
+        {
+            "spectral_type_string": "T1.5",
+            "spectral_type_code": 81.5,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": false,
+            "comments": null,
+            "reference": "Manj19"
         }
     ]
 }

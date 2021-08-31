@@ -2,6 +2,7 @@
 
 import os
 import pytest
+from . import REFERENCE_TABLES
 from sqlalchemy import func
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database, or_
@@ -26,7 +27,7 @@ def db():
     assert os.path.exists(DB_NAME)
 
     # Connect to the new database and confirm it has the Sources table
-    db = Database(connection_string)
+    db = Database(connection_string, reference_tables=REFERENCE_TABLES)
     assert db
     assert 'source' in [c.name for c in db.Sources.columns]
 
@@ -168,6 +169,7 @@ def test_source_uniqueness2(db):
     assert len(duplicate_names) == 0
 
 
+@pytest.mark.skip(reason="SIMBAD unreliable")
 def test_source_simbad(db):
     # Query Simbad and confirm that there are no duplicates with different names
 
@@ -178,8 +180,8 @@ def test_source_simbad(db):
     # Add all IDS to the Simbad output as well as the user-provided id
     Simbad.add_votable_fields('ids')
     Simbad.add_votable_fields('typed_id')
-    simbad_results = Simbad.query_objects(name_list)
 
+    simbad_results = Simbad.query_objects(name_list)
     # Get a nicely formatted list of Simbad names for each input row
     duplicate_count = 0
     for row in simbad_results[['TYPED_ID', 'IDS']].iterrows():
@@ -225,11 +227,11 @@ def test_parallaxes(db):
     # Tests against the Parallaxes table
 
     # While there may be many parallax measurements for a single source,
-    # there should be one and only one marked as adopted
+    # there should be only one marked as adopted
     t = db.query(db.Parallaxes.c.source,
                  func.sum(db.Parallaxes.c.adopted).label('adopted_counts')). \
         group_by(db.Parallaxes.c.source). \
-        having(func.sum(db.Parallaxes.c.adopted) != 1). \
+        having(func.sum(db.Parallaxes.c.adopted) > 1). \
         astropy()
     if len(t) > 0:
         print("\nParallax entries with incorrect 'adopted' labels")
@@ -250,6 +252,17 @@ def test_propermotions(db):
         print(t)
     assert len(t) == 0
 
+    # While there may be many proper motion measurements for a single source,
+    # there should be only one marked as adopted
+    t = db.query(db.ProperMotions.c.source,
+                 func.sum(db.ProperMotions.c.adopted).label('adopted_counts')). \
+        group_by(db.ProperMotions.c.source). \
+        having(func.sum(db.ProperMotions.c.adopted) > 1). \
+        astropy()
+    if len(t) > 0:
+        print("\nProper Motion measurements with incorrect 'adopted' labels")
+        print(t)
+    assert len(t) == 0
 
 def test_radialvelocities(db):
     # Tests against the RadialVelocities table
@@ -263,25 +276,45 @@ def test_radialvelocities(db):
         print(t)
     assert len(t) == 0
 
+    # While there may be many radial velocity measurements for a single source,
+    # there should be only one marked as adopted
+    t = db.query(db.RadialVelocities.c.source,
+                 func.sum(db.RadialVelocities.c.adopted).label('adopted_counts')). \
+        group_by(db.RadialVelocities.c.source). \
+        having(func.sum(db.RadialVelocities.c.adopted) > 1). \
+        astropy()
+    if len(t) > 0:
+        print("\nRadial velocity measurements with incorrect 'adopted' labels")
+        print(t)
+    assert len(t) == 0
 
 def test_spectraltypes(db):
     # Tests against the SpectralTypes table
 
-    # There should be no entries in the SpectralTypes table without a spectral type
+    # There should be no entries in the SpectralTypes table without a spectral type string
     t = db.query(db.SpectralTypes.c.source). \
-        filter(db.SpectralTypes.c.spectral_type.is_(None)). \
+        filter(db.SpectralTypes.c.spectral_type_string.is_(None)). \
         astropy()
     if len(t) > 0:
-        print('\nEntries found without spectral type values')
+        print('\nEntries found without spectral type strings')
+        print(t)
+    assert len(t) == 0
+
+    # There should be no entries in the SpectralTypes table without a spectral type code
+    t = db.query(db.SpectralTypes.c.source). \
+        filter(db.SpectralTypes.c.spectral_type_code.is_(None)). \
+        astropy()
+    if len(t) > 0:
+        print('\nEntries found without spectral type codes')
         print(t)
     assert len(t) == 0
 
     # While there may be many spectral type measurements for a single source,
-    # there should be one and only one marked as adopted
+    # there should be only one marked as adopted
     t = db.query(db.SpectralTypes.c.source,
                  func.sum(db.SpectralTypes.c.adopted).label('adopted_counts')). \
         group_by(db.SpectralTypes.c.source). \
-        having(func.sum(db.SpectralTypes.c.adopted) != 1). \
+        having(func.sum(db.SpectralTypes.c.adopted) > 1). \
         astropy()
     if len(t) > 0:
         print("\nSpectral Type entries with incorrect 'adopted' labels")

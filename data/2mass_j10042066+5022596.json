@@ -24,7 +24,7 @@
     ],
     "Photometry": [
         {
-            "band": "WISE_W1",
+            "band": "WISE.W1",
             "ucd": null,
             "magnitude": 11.7,
             "magnitude_error": 0.023,
@@ -35,7 +35,7 @@
             "reference": "Cutr13"
         },
         {
-            "band": "WISE_W2",
+            "band": "WISE.W2",
             "ucd": null,
             "magnitude": 11.134,
             "magnitude_error": 0.024,
@@ -46,7 +46,7 @@
             "reference": "Cutr13"
         },
         {
-            "band": "WISE_W3",
+            "band": "WISE.W3",
             "ucd": null,
             "magnitude": 10.273,
             "magnitude_error": 0.068,
@@ -57,7 +57,7 @@
             "reference": "Cutr13"
         },
         {
-            "band": "WISE_W4",
+            "band": "WISE.W4",
             "ucd": null,
             "magnitude": 8.54,
             "magnitude_error": 0.38,
@@ -66,6 +66,17 @@
             "epoch": null,
             "comments": "ALLWISE",
             "reference": "Cutr13"
+        }
+    ],
+    "ProperMotions": [
+        {
+            "mu_ra": -131.4,
+            "mu_ra_error": 1.9,
+            "mu_dec": -200.5,
+            "mu_dec_error": 2.9,
+            "adopted": true,
+            "comments": null,
+            "reference": "Liu_16"
         }
     ]
 }

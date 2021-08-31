@@ -28,9 +28,18 @@
             "other_name": "WISEP J175033.07+175905.5"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 36.23,
+            "parallax_error": 4.46,
+            "adopted": true,
+            "comments": null,
+            "reference": "Vrba04"
+        }
+    ],
     "Photometry": [
         {
-            "band": "WISE_W1",
+            "band": "WISE.W1",
             "ucd": null,
             "magnitude": 15.801,
             "magnitude_error": 0.058,
@@ -41,7 +50,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W2",
+            "band": "WISE.W2",
             "ucd": null,
             "magnitude": 14.48,
             "magnitude_error": 0.06,
@@ -52,7 +61,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W3",
+            "band": "WISE.W3",
             "ucd": null,
             "magnitude": 12.669,
             "magnitude_error": null,
@@ -63,7 +72,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W4",
+            "band": "WISE.W4",
             "ucd": null,
             "magnitude": 9.143,
             "magnitude_error": null,
@@ -72,6 +81,37 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        }
+    ],
+    "ProperMotions": [
+        {
+            "mu_ra": 183.0,
+            "mu_ra_error": 2.3,
+            "mu_dec": 92.0,
+            "mu_dec_error": 3.3,
+            "adopted": true,
+            "comments": null,
+            "reference": "Best20a"
+        },
+        {
+            "mu_ra": 178.34,
+            "mu_ra_error": 7.06,
+            "mu_dec": 99.67,
+            "mu_dec_error": 5.09,
+            "adopted": null,
+            "comments": null,
+            "reference": "Vrba04"
+        }
+    ],
+    "SpectralTypes": [
+        {
+            "spectral_type_string": "T3.5",
+            "spectral_type_code": 83.5,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": false,
+            "comments": null,
+            "reference": "Manj19"
         }
     ]
 }

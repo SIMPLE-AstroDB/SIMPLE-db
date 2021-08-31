@@ -13,6 +13,9 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J1624143+0029158"
+        },
+        {
             "other_name": "2MASS J16241436+0029158"
         },
         {
@@ -25,9 +28,18 @@
             "other_name": "WISEP J162414.09+002916.0"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 90.91,
+            "parallax_error": 1.65,
+            "adopted": true,
+            "comments": null,
+            "reference": "Tinn03"
+        }
+    ],
     "Photometry": [
         {
-            "band": "WISE_W1",
+            "band": "WISE.W1",
             "ucd": null,
             "magnitude": 15.121,
             "magnitude_error": 0.044,
@@ -38,7 +50,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W2",
+            "band": "WISE.W2",
             "ucd": null,
             "magnitude": 13.085,
             "magnitude_error": 0.032,
@@ -49,7 +61,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W3",
+            "band": "WISE.W3",
             "ucd": null,
             "magnitude": 12.496,
             "magnitude_error": 0.446,
@@ -60,7 +72,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W4",
+            "band": "WISE.W4",
             "ucd": null,
             "magnitude": 9.064,
             "magnitude_error": null,
@@ -69,6 +81,28 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        }
+    ],
+    "ProperMotions": [
+        {
+            "mu_ra": -372.89,
+            "mu_ra_error": 1.6,
+            "mu_dec": -9.11,
+            "mu_dec_error": 1.95,
+            "adopted": true,
+            "comments": null,
+            "reference": "Tinn03"
+        }
+    ],
+    "SpectralTypes": [
+        {
+            "spectral_type_string": "T6",
+            "spectral_type_code": 86.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": false,
+            "comments": null,
+            "reference": "Manj19"
         }
     ]
 }

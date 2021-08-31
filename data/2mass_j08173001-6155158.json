@@ -13,6 +13,9 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J0817300-6155158"
+        },
+        {
             "other_name": "2MASS J08173001-6155158"
         },
         {
@@ -25,9 +28,18 @@
             "other_name": "WISEP J081729.74-615504.1"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 204.08,
+            "parallax_error": 12.49,
+            "adopted": true,
+            "comments": null,
+            "reference": "Fahe12"
+        }
+    ],
     "Photometry": [
         {
-            "band": "WISE_W1",
+            "band": "WISE.W1",
             "ucd": null,
             "magnitude": 12.96,
             "magnitude_error": 0.02,
@@ -38,7 +50,7 @@
             "reference": "Cutr12"
         },
         {
-            "band": "WISE_W2",
+            "band": "WISE.W2",
             "ucd": null,
             "magnitude": 11.24,
             "magnitude_error": 0.02,
@@ -47,6 +59,28 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        }
+    ],
+    "ProperMotions": [
+        {
+            "mu_ra": -336.0,
+            "mu_ra_error": 54.0,
+            "mu_dec": 1095.0,
+            "mu_dec_error": 41.0,
+            "adopted": true,
+            "comments": null,
+            "reference": "Arti10"
+        }
+    ],
+    "SpectralTypes": [
+        {
+            "spectral_type_string": "T6",
+            "spectral_type_code": 86.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": false,
+            "comments": null,
+            "reference": "Manj19"
         }
     ]
 }
