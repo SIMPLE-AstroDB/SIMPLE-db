@@ -11,7 +11,6 @@ from astropy.io.votable import from_table, writeto
 from astroquery.simbad import Simbad
 
 
-
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = False  # recreates the .db file from the data files
 VERBOSE = True
@@ -42,8 +41,6 @@ def load_db():
 
 db = load_db()
 
-
-# TODO: Query database for Sources with no Gaia designation
 # get all sources that have Gaia DR2 designations
 # 2nd query which is all sources that are not in that list
 gaia_sources = db.query(db.Names.c.source).filter(db.Names.c.other_name.ilike("Gaia DR2%")).table()
@@ -53,20 +50,20 @@ if gaia_sources:
 else:
     no_gaia_source_id = db.query(db.Sources.c.source).table()['source'].tolist()
 
-# Of those without Gaia designation, find 2MASS and WISE designations.
-# tmass_sources = db.query(db.Names.c.other_name).filter(and_(db.Names.c.other_name.ilike("2MASS J%"),
-#                                                        db.Names.c.source.in_(no_gaia_source_id))).table()
 
+# Use SIMBAD to find Gaia designations for sources without a Gaia designation
+def find_gaia_in_simbad(no_gaia_source_id, verbose = False):
+    verboseprint = print if VERBOSE else lambda *a, **k: None
 
-# Use SIMBAD to find Gaia designations
-def find_gaia_in_simbad(no_gaia_source_id):
     sources=no_gaia_source_id
     n_sources = len(sources)
 
     Simbad.reset_votable_fields()
     Simbad.add_votable_fields('typed_id') # keep search term in result table
     Simbad.add_votable_fields('ids') # add all SIMBAD identifiers as an output column
+    print("simbad query started")
     result_table = Simbad.query_objects(sources)
+    print("simbad query ended")
 
     ind = result_table['SCRIPT_NUMBER_ID'] > 0 # find indexes which contain results
 
@@ -81,6 +78,7 @@ def find_gaia_in_simbad(no_gaia_source_id):
         gaia_designation = [i for i in ids if "Gaia DR2" in i]
 
         if gaia_designation:
+            verboseprint(db_name,gaia_designation[0])
             db_names.append(db_name)
             simbad_gaia_designation.append(gaia_designation[0])
 
@@ -88,14 +86,37 @@ def find_gaia_in_simbad(no_gaia_source_id):
     print('Found', n_matches, 'Gaia sources for', n_sources, ' sources')
 
     # TODO: make table of db_names and simbad_gaia_designation and return it. ZIP?
-    print(simbad_gaia_designation)
+    # print(simbad_gaia_designation)
+    print(n_matches, len(simbad_gaia_designation))
 
-find_gaia_in_simbad(no_gaia_source_id)
+    table = Table([db_names, simbad_gaia_designation], names=('db_names', 'gaia_designation'))
+
+    table.write('scripts/ingests/Gaia/gaia_designations.xml', format='votable', overwrite=True)
+
+    return(table)
+
+
+# gaia_designations = find_gaia_in_simbad(no_gaia_source_id)
+# Don't need to re-run since designations are in scripts/ingests/Gaia/gaia_designations.xml
+
+def query_gaia():
+    gaia_query_string = "SELECT *,upload_table.db_names FROM gaiadr2.gaia_source " \
+                             "INNER JOIN tap_upload.upload_table ON gaiadr2.gaia_source.designation = tap_upload.upload_table.gaia_designation  "
+    job_gaia_query = Gaia.launch_job(gaia_query_string, upload_resource='scripts/ingests/Gaia/gaia_designations.xml',
+                                     upload_table_name="upload_table", verbose=True)
+
+    gaia_data = job_gaia_query.get_results()
+
+    return gaia_data
+
+# Re-run Gaia query
+# gaia_data = query_gaia()
+
+# read results from saved table
+gaia_data = Table.read('scripts/ingests/Gaia/gaia_data.xml',format='votable')
 
 # TODO: add Gaia designations to Names table
 #add_names(db, sources=tmass_matches_unique['SIMPLE_source'], other_names=tmass_matches_unique['designation'], verbose=True)
-
-# TODO: use Gaia designations to get Gaia data
 
 # TODO: ingest Gaia proper motions
 # TODO: ingest Gaia parallaxes
@@ -154,6 +175,13 @@ def find_tmass_gaia_matches():
         print('Found', n_matches, 'Gaia sources for', n_tmass, ' 2MASS sources')
         print('Wrote table to ',out_file)
         return all_results
+
+
+# Of those without Gaia designation, find 2MASS and WISE designations.
+# tmass_sources = db.query(db.Names.c.other_name).filter(and_(db.Names.c.other_name.ilike("2MASS J%"),
+#                                                        db.Names.c.source.in_(no_gaia_source_id))).table()
+
+
 # read results from saved table
 # tmass_matches = Table.read('scripts/ingests/Gaia/tmass_gaia_results.xml',format='votable')
 # print("tmass matches ", len(tmass_matches))
