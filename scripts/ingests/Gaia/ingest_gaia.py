@@ -115,6 +115,42 @@ def query_gaia():
 # read results from saved table
 gaia_data = Table.read('scripts/ingests/Gaia/gaia_data.xml',format='votable')
 
+
+# add Gaia telescope, instrument, and Gaia filters
+def update_ref_tables(db):
+    add_publication(db, doi='10.1051/0004-6361/201629272', name='Gaia')
+    db.Publications.delete().where(db.Publications.c.name == 'GaiaDR2').execute()
+    db.Publications.update().where(db.Publications.c.name == 'Gaia18').values(name='GaiaDR2').execute()
+
+    gaia_instrument = [{'name': 'Gaia', 'reference': 'Gaia'}]
+    gaia_telescope = gaia_instrument
+    db.Instruments.insert().execute(gaia_instrument)
+    db.Telescopes.insert().execute(gaia_telescope)
+
+    gaia_filters = [{'band': 'GAIA2.Gbp',
+                     'instrument': 'Gaia',
+                     'telescope': 'Gaia',
+                     'effective_wavelength': 5050.,
+                     'width': 2347.},
+                    {'band': 'GAIA2.G',
+                     'instrument': 'Gaia',
+                     'telescope': 'Gaia',
+                     'effective_wavelength': 6230.,
+                     'width': 4183.},
+                    {'band': 'GAIA2.Grp',
+                     'instrument': 'Gaia',
+                     'telescope': 'Gaia',
+                     'effective_wavelength': 7730.,
+                     'width': 2757.}
+                    ]
+
+    db.PhotometryFilters.insert().execute(gaia_filters)
+    db.save_reference_table('Publications', 'data')
+    db.save_reference_table('Instruments', 'data')
+    db.save_reference_table('Telescopes', 'data')
+    db.save_reference_table('PhotometryFilters', 'data')
+
+
 # TODO: add Gaia designations to Names table
 #add_names(db, sources=tmass_matches_unique['SIMPLE_source'], other_names=tmass_matches_unique['designation'], verbose=True)
 
@@ -122,38 +158,8 @@ gaia_data = Table.read('scripts/ingests/Gaia/gaia_data.xml',format='votable')
 # TODO: ingest Gaia parallaxes
 # TODO: ingest Gaia photometry
 
-#add Gaia telescope, instrument, and Gaia filters
-add_publication(db,doi='10.1051/0004-6361/201629272', name='Gaia')
-db.Publications.delete().where(db.Publications.c.name == 'GaiaDR2').execute()
-db.Publications.update().where(db.Publications.c.name == 'Gaia18').values(name='GaiaDR2').execute()
 
-gaia_instrument = [{'name': 'Gaia','reference': 'Gaia'}]
-gaia_telescope = gaia_instrument
-db.Instruments.insert().execute(gaia_instrument)
-db.Telescopes.insert().execute(gaia_telescope)
 
-gaia_filters =[{'band': 'GAIA2.Gbp',
-                'instrument': 'Gaia',
-                'telescope': 'Gaia',
-                'effective_wavelength': 5050.,
-                'width': 2347.},
-               {'band': 'GAIA2.G',
-                'instrument': 'Gaia',
-                'telescope': 'Gaia',
-                'effective_wavelength': 6230.,
-                'width': 4183.},
-               {'band': 'GAIA2.Grp',
-                'instrument': 'Gaia',
-                'telescope': 'Gaia',
-                'effective_wavelength': 7730.,
-                'width': 2757.}
-               ]
-
-db.PhotometryFilters.insert().execute(gaia_filters)
-db.save_reference_table('Publications', 'data')
-db.save_reference_table('Instruments', 'data')
-db.save_reference_table('Telescopes', 'data')
-db.save_reference_table('PhotometryFilters', 'data')
 
 
 # MAY NOT USE THIS
