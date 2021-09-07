@@ -162,7 +162,7 @@ def add_names(db, sources=None, other_names=None, names_table=None, verbose=True
 
     names_data = []
 
-    if sources[0]:
+    if sources or other_names:
         # Length of sources and other_names list should be equal
         if len(sources) != len(other_names):
             raise RuntimeError("Length of sources and other_names should be equal")
