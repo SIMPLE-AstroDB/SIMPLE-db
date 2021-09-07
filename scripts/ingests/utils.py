@@ -338,9 +338,12 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
     else:
         use_ads = False
 
-    if 'arXiv' in bibcode:
-        arxiv_id = bibcode
-        bibcode = None
+    if bibcode:
+        if 'arXiv' in bibcode:
+            arxiv_id = bibcode
+            bibcode = None
+        else:
+            arxiv_id = None
     else:
         arxiv_id = None
 
