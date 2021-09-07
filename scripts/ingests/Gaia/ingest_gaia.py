@@ -135,21 +135,25 @@ db.Telescopes.insert().execute(gaia_telescope)
 gaia_filters =[{'band': 'GAIA2.Gbp',
                 'instrument': 'Gaia',
                 'telescope': 'Gaia',
-                'effective_wavelength': 5044.37,
-                'width': 2333.06},
+                'effective_wavelength': 5050.,
+                'width': 2347.},
                {'band': 'GAIA2.G',
                 'instrument': 'Gaia',
                 'telescope': 'Gaia',
-                'effective_wavelength': 5857.56,
-                'width': 4203.60},
+                'effective_wavelength': 6230.,
+                'width': 4183.},
                {'band': 'GAIA2.Grp',
                 'instrument': 'Gaia',
                 'telescope': 'Gaia',
-                'effective_wavelength': 7692.17,
-                'width': 2842.11}
+                'effective_wavelength': 7730.,
+                'width': 2757.}
                ]
 
 db.PhotometryFilters.insert().execute(gaia_filters)
+db.save_reference_table('Publications', 'data')
+db.save_reference_table('Instruments', 'data')
+db.save_reference_table('Telescopes', 'data')
+db.save_reference_table('PhotometryFilters', 'data')
 
 
 # MAY NOT USE THIS
