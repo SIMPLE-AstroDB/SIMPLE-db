@@ -122,6 +122,35 @@ gaia_data = Table.read('scripts/ingests/Gaia/gaia_data.xml',format='votable')
 # TODO: ingest Gaia parallaxes
 # TODO: ingest Gaia photometry
 
+#add Gaia telescope, instrument, and Gaia filters
+add_publication(db,doi='10.1051/0004-6361/201629272', name='Gaia')
+db.Publications.delete().where(db.Publications.c.name == 'GaiaDR2').execute()
+db.Publications.update().where(db.Publications.c.name == 'Gaia18').values(name='GaiaDR2').execute()
+
+gaia_instrument = [{'name': 'Gaia','reference': 'Gaia'}]
+gaia_telescope = gaia_instrument
+db.Instruments.insert().execute(gaia_instrument)
+db.Telescopes.insert().execute(gaia_telescope)
+
+gaia_filters =[{'band': 'GAIA2.Gbp',
+                'instrument': 'Gaia',
+                'telescope': 'Gaia',
+                'effective_wavelength': 5044.37,
+                'width': 2333.06},
+               {'band': 'GAIA2.G',
+                'instrument': 'Gaia',
+                'telescope': 'Gaia',
+                'effective_wavelength': 5857.56,
+                'width': 4203.60},
+               {'band': 'GAIA2.Grp',
+                'instrument': 'Gaia',
+                'telescope': 'Gaia',
+                'effective_wavelength': 7692.17,
+                'width': 2842.11}
+               ]
+
+db.PhotometryFilters.insert().execute(gaia_filters)
+
 
 # MAY NOT USE THIS
 def find_tmass_gaia_matches():
