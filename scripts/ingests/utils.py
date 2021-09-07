@@ -11,6 +11,7 @@ from astropy.table import Table, vstack
 import warnings
 warnings.filterwarnings("ignore", module='astroquery.simbad')
 from sqlalchemy import or_
+from sqlalchemy import and_
 import ads
 import os
 from contextlib import contextmanager
@@ -482,6 +483,11 @@ def update_publication(db, doi: str = None, bibcode: str = None, name: str = Non
     #         values(bibcode='2019AJ....157..101M', doi='10.3847/1538-3881/aaf88f',
     #               description='Cloud Atlas: HST nir spectral library')
     #     db.engine.execute(add_doi_bibcode)
+
+    #change_name = db.Publications.update().where(db.Publications.c.name == 'Wein12'). \
+        #         values(name='Wein13')
+    #     db.engine.execute(change_name)
+
     return
 
 
@@ -784,16 +790,38 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
     n_added = 0
 
     for i, source in enumerate(sources):
-        db_name_match = db.search_object(source, output_table='Sources')
+        db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=False)
+
+        # If no matches, try fuzzy search
+        if len(db_name_match) == 0:
+            db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=True)
+
+        # If still no matches, try to resolve the name with Simbad
         if len(db_name_match) == 0:
             db_name_match = db.search_object(source, output_table='Sources', resolve_simbad = True)
-        db_name = db_name_match[0]['source']
+
+        if len(db_name_match) == 1:
+            db_name = db_name_match['source'][0]
+            verboseprint("\n",db_name,"One source match found")
+        elif len(db_name_match) > 1:
+            print("\n",source)
+            print(db_name_match)
+            raise RuntimeError(source, "More than one match source found in the database")
+        elif len(db_name_match) == 0:
+            print("\n", source)
+            raise RuntimeError(source, "No source found in the database")
+        else:
+            print("\n", source)
+            print(db_name_match)
+            raise RuntimeError(source, "unexpected condition")
+
         # Search for existing proper motion data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
-        # TODO: figure out adopted in cases of multiple measurements.
         adopted = None
+        duplicate = False
         source_pm_data = db.query(db.ProperMotions).filter(db.ProperMotions.c.source == db_name).table()
         if source_pm_data is None or len(source_pm_data) == 0:
+            # if there's no other measurements in the database, set new data Adopted = True
             adopted = True
             duplicate = False
         elif len(source_pm_data) > 0:
@@ -822,28 +850,28 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                     source_pm_data.pprint_all()
 
         else:
-            print("\nOTHER PROPER MOTION EXISTS, adopted = None")
-            print(source_pm_data)
+            raise RuntimeError("Unexpected state")
 
         # Construct data to be added
-        pm_data = [{'source': db_name,
+        if not duplicate:
+            pm_data = [{'source': db_name,
                           'mu_ra': pm_ras[i],
                           'mu_ra_error' : pm_ra_errs[i],
                           'mu_dec': pm_decs[i],
                           'mu_dec_error': pm_dec_errs[i],
                           'adopted': adopted,
                           'reference': pm_references[i]}]
-        verboseprint('Proper motion data: ',pm_data)
+            verboseprint('Proper motion data to add: ',pm_data)
 
-        try:
-            db.ProperMotions.insert().execute(pm_data)
-            n_added += 1
-        except sqlalchemy.exc.IntegrityError as err:
-            print("SIMPLE ERROR: The source may not exist in Sources table.")
-            print("SIMPLE ERROR: The proper motion reference may not exist in Publications table. Add it with add_publication function. ")
-            print("SIMPLE ERROR: The proper motion measurement may be a duplicate.")
-            with disable_exception_traceback():
-                raise
+            try:
+                db.ProperMotions.insert().execute(pm_data)
+                n_added += 1
+            except sqlalchemy.exc.IntegrityError as err:
+                print("SIMPLE ERROR: The source may not exist in Sources table.")
+                print("SIMPLE ERROR: The proper motion reference may not exist in Publications table. Add it with add_publication function. ")
+                print("SIMPLE ERROR: The proper motion measurement may be a duplicate.")
+                with disable_exception_traceback():
+                    raise
 
     if save_db:
         db.save_database(directory='data/')
