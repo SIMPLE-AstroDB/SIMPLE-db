@@ -153,7 +153,6 @@ def add_names(db, sources=None, other_names=None, names_table=None, verbose=True
         table with source and other_names.
         Expecting source name to be first column and other_names in the 2nd.
     verbose
-    save_db
 
     '''
     verboseprint = print if verbose else lambda *a, **k: None
@@ -163,7 +162,7 @@ def add_names(db, sources=None, other_names=None, names_table=None, verbose=True
 
     names_data = []
 
-    if sources or other_names:
+    if sources is not None or other_names is not None:
         # Length of sources and other_names list should be equal
         if len(sources) != len(other_names):
             raise RuntimeError("Length of sources and other_names should be equal")
@@ -182,11 +181,7 @@ def add_names(db, sources=None, other_names=None, names_table=None, verbose=True
 
     n_added = len(names_data)
 
-    if save_db:
-        db.save_database(directory='data/')
-        verboseprint("Names added to database and saved: ", n_added)
-    else:
-        verboseprint("Names added to database: ", n_added)
+    verboseprint("Names added to database: ", n_added)
 
     return
 
