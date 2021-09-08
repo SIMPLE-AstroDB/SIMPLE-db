@@ -156,16 +156,26 @@ add_names(db, sources=gaia_data['db_names'], other_names=gaia_data['gaia_designa
 
 # TODO: ingest Gaia proper motions
 
-gaia_pms_df = gaia_data['db_names','pmra', 'pmra_error', 'pmdec', 'pmdec_error'].to_pandas()
-gaia_pms_df = gaia_pms_df[gaia_pms_df['pmra'].notna()]
-gaia_pms_df.reset_index(inplace=True, drop=True)
-refs = ['GaiaDR2']*len(gaia_pms_df)
-ingest_proper_motions(db, gaia_pms_df['db_names'],
-                      gaia_pms_df['pmra'], gaia_pms_df['pmra_error'],
-                      gaia_pms_df['pmdec'], gaia_pms_df['pmdec_error'],
-                      refs)
+def add_gaia_pms(db):
+    gaia_pms_df = gaia_data['db_names','pmra', 'pmra_error', 'pmdec', 'pmdec_error'].to_pandas()
+    gaia_pms_df = gaia_pms_df[gaia_pms_df['pmra'].notna()]
+    gaia_pms_df.reset_index(inplace=True, drop=True)
+    refs = ['GaiaDR2'] * len(gaia_pms_df)
+    ingest_proper_motions(db, gaia_pms_df['db_names'],
+                          gaia_pms_df['pmra'], gaia_pms_df['pmra_error'],
+                          gaia_pms_df['pmdec'], gaia_pms_df['pmdec_error'],
+                          refs)
 
-# TODO: ingest Gaia parallaxes
+add_gaia_pms(db)
+
+def add_gaia_parallaxes(db):
+    unmasked = np.logical_not(gaia_data['parallax'].mask).nonzero()
+    gaia_parallaxes = gaia_data[unmasked]['db_names', 'parallax', 'parallax_error']
+    refs = ['GaiaDR2'] * len(gaia_parallaxes)
+    ingest_parallaxes(db, gaia_parallaxes['db_names'], gaia_parallaxes['parallax'],
+                      gaia_parallaxes['parallax_error'], refs, verbose=True)
+
+
 # TODO: ingest Gaia photometry
 
 
