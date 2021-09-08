@@ -157,7 +157,7 @@ def add_names(db, sources=None, other_names=None, names_table=None, verbose=True
     '''
     verboseprint = print if verbose else lambda *a, **k: None
 
-    if names_table and sources:
+    if names_table is not None and sources is not None:
         raise RuntimeError("Both names table and sources list provided. Provide one or the other")
 
     names_data = []
@@ -170,7 +170,7 @@ def add_names(db, sources=None, other_names=None, names_table=None, verbose=True
         for source,other_name in zip(sources,other_names):
             names_data.append({'source': source, 'other_name': other_name})
 
-    if names_table:
+    if names_table is not None:
         if len(names_table[0]) != 2:
             raise RuntimeError("Each row should have two elements")
 
