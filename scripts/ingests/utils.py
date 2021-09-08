@@ -725,7 +725,6 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
                     verboseprint("Duplicate measurement\n", plx_data)
                 if plx_data['adopted'] == 1:  # check if another measurement is adopted
                     old_adopted = plx_data
-                    verboseprint("Adopted measurement already exists\n", old_adopted)
             if not duplicate:
                 verboseprint("!!! Another Proper motion measurement exists,")
                 if verbose:
@@ -736,7 +735,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
                     adopted = True
                     # unset old adopted
                     if old_adopted:
-                        db.ProperMotions.update().where(and_(db.Parallaxes.c.source == old_adopted['source'],
+                        db.Parallaxes.update().where(and_(db.Parallaxes.c.source == old_adopted['source'],
                                                              db.Parallaxes.c.reference == old_adopted['reference'])).\
                             values(adopted=False).execute()
                         old_adopted_data = db.query(db.Parallaxes).filter(and_(db.Parallaxes.c.source == old_adopted['source'],
@@ -748,24 +747,25 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
         else:
             raise RuntimeError("Unexpected state")
 
-        # Construct data to be added
-        parallax_data = [{'source': db_name,
+        if not duplicate:
+            # Construct data to be added
+            parallax_data = [{'source': db_name,
                           'parallax': str(plxs[i]),
                           'parallax_error': str(plx_errs[i]),
                           'reference': plx_refs[i],
                           'adopted': adopted}]
-        verboseprint(parallax_data)
+            verboseprint(parallax_data)
 
-        try:
-            db.Parallaxes.insert().execute(parallax_data)
-            n_added += 1
-        except sqlalchemy.exc.IntegrityError as err:
-            print("SIMPLE ERROR: The source may not exist in Sources table.")
-            print("SIMPLE ERROR: The parallax reference may not exist in Publications table. "
-                  "Add it with add_publication function. ")
-            print("SIMPLE ERROR: The parallax measurement may be a duplicate.")
-            with disable_exception_traceback():
-                raise
+            try:
+                db.Parallaxes.insert().execute(parallax_data)
+                n_added += 1
+            except sqlalchemy.exc.IntegrityError as err:
+                print("SIMPLE ERROR: The source may not exist in Sources table.")
+                print("SIMPLE ERROR: The parallax reference may not exist in Publications table. "
+                      "Add it with add_publication function. ")
+                print("SIMPLE ERROR: The parallax measurement may be a duplicate.")
+                with disable_exception_traceback():
+                    raise
 
     print("Parallaxes added to database: ", n_added)
 
@@ -853,9 +853,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                 if pm_ra_errs[i] < min(source_pm_data['mu_ra_error']) and pm_dec_errs[i] < min(source_pm_data['mu_dec_error']):
                     adopted = True
                 elif min(source_pm_data['mu_ra_error']) < pm_ra_errs[i] and min(source_pm_data['mu_dec_error']) < pm_dec_errs[i]:
-                    #TODO: implement once Proper Motion table actually has an adopted column.
-                    # Issue #180
-                    # check if something is alraedy  marked as Adopted.
+                    # TODO: implement approach from ingest_parallaxes to set/unset adopted flag
                     adopted_pm = db.ProperMotions.update().where(and_(db.ProperMotions.c.source == db_name,
                                             db.ProperMotions.c.mu_ra_error == min(source_pm_data['mu_ra_error']),
                                            db.ProperMotions.c.mu_dec_error == min(source_pm_data['mu_dec_error']))).\
