@@ -77,7 +77,7 @@ def test_convert_spt_string_to_code():
 
 def test_ingest_parallaxes(db, t_plx):
     # Test ingest of parallax data
-    ingest_parallaxes(db, t_plx['source'], t_plx['plx'], t_plx['plx_err'], t_plx['plx_ref'], verbose=False, save_db=False)
+    ingest_parallaxes(db, t_plx['source'], t_plx['plx'], t_plx['plx_err'], t_plx['plx_ref'], verbose=False)
 
     results = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == 'Ref 1').table()
     assert len(results) == 2
@@ -89,7 +89,7 @@ def test_ingest_parallaxes(db, t_plx):
 
 
 def test_ingest_proper_motions(db, t_pm):
-    ingest_proper_motions(db, t_pm['source'], t_pm['mu_ra'], t_pm['mu_ra_err'], t_pm['mu_dec'], t_pm['mu_dec_err'], t_pm['reference'], verbose=False, save_db=False)
+    ingest_proper_motions(db, t_pm['source'], t_pm['mu_ra'], t_pm['mu_ra_err'], t_pm['mu_dec'], t_pm['mu_dec_err'], t_pm['reference'], verbose=False)
 
     results = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == 'Ref 1').table()
     assert len(results) == 2
