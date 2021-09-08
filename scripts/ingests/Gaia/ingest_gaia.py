@@ -152,9 +152,19 @@ def update_ref_tables(db):
 
 
 # TODO: add Gaia designations to Names table
-#add_names(db, sources=tmass_matches_unique['SIMPLE_source'], other_names=tmass_matches_unique['designation'], verbose=True)
+add_names(db, sources=gaia_data['db_names'], other_names=gaia_data['gaia_designation'], verbose=True)
 
 # TODO: ingest Gaia proper motions
+
+gaia_pms_df = gaia_data['db_names','pmra', 'pmra_error', 'pmdec', 'pmdec_error'].to_pandas()
+gaia_pms_df = gaia_pms_df[gaia_pms_df['pmra'].notna()]
+gaia_pms_df.reset_index(inplace=True, drop=True)
+refs = ['GaiaDR2']*len(gaia_pms_df)
+ingest_proper_motions(db, gaia_pms_df['db_names'],
+                      gaia_pms_df['pmra'], gaia_pms_df['pmra_error'],
+                      gaia_pms_df['pmdec'], gaia_pms_df['pmdec_error'],
+                      refs)
+
 # TODO: ingest Gaia parallaxes
 # TODO: ingest Gaia photometry
 
