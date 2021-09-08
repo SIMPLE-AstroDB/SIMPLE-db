@@ -677,7 +677,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     return
 
 
-def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verbose=False):
+def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
     """
 
     Parameters
@@ -692,9 +692,6 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verb
         list of parallaxes uncertainties
     plx_ref
         list of references for the parallax data
-    save_db: bool, optional
-        If set to False (default), will modify the .db file, but not the JSON files
-        If set to True, will save the JSON files
     verbose: bool, optional
         If true, outputs information to the screen
 
@@ -708,19 +705,48 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verb
 
     n_added = 0
 
-    for i, source in enumerate(sources):
+    for i, source in enumerate(sources): # loop through sources with parallax data to ingest
         db_name = db.search_object(source, output_table='Sources')[0]['source']
 
-        # Search for existing parallax data.
+        # Search for existing parallax data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
-        # TODO: figure out adopted in cases of multiple measurements.
         adopted = None
+        duplicate = False
         source_plx_data = db.query(db.Parallaxes).filter(db.Parallaxes.c.source == db_name).table()
         if source_plx_data is None or len(source_plx_data) == 0:
+            # if there's no other measurements in the database, set new data Adopted = True
             adopted = True
+            duplicate = False
+            old_adopted = None
+        elif len(source_plx_data) > 0:  # plx data already exists
+            for plx_data in source_plx_data:
+                if plx_data['reference'] == plx_refs[i]:  # check to see if other measurement is a duplicate of the new data
+                    duplicate = True
+                    verboseprint("Duplicate measurement\n", plx_data)
+                if plx_data['adopted'] == 1:  # check if another measurement is adopted
+                    old_adopted = plx_data
+                    verboseprint("Adopted measurement already exists\n", old_adopted)
+            if not duplicate:
+                verboseprint("!!! Another Proper motion measurement exists,")
+                if verbose:
+                    source_plx_data.pprint_all()
+
+                # if errors of new data are less than other measurements, set Adopted = True.
+                if plx_errs[i] < min(source_plx_data['parallax_error']):
+                    adopted = True
+                    # unset old adopted
+                    if old_adopted:
+                        db.ProperMotions.update().where(and_(db.Parallaxes.c.source == old_adopted['source'],
+                                                             db.Parallaxes.c.reference == old_adopted['reference'])).\
+                            values(adopted=False).execute()
+                        old_adopted_data = db.query(db.Parallaxes).filter(and_(db.Parallaxes.c.source == old_adopted['source'],
+                                                                          db.Parallaxes.c.reference == old_adopted['reference'])).table()
+                        verboseprint("Old adopted measurement unset\n", old_adopted_data)
+
+                verboseprint("The new measurement's adopted flag is:", adopted)
+
         else:
-            print("\nOTHER PARALLAX EXISTS, adopted = None")
-            print(source_plx_data)
+            raise RuntimeError("Unexpected state")
 
         # Construct data to be added
         parallax_data = [{'source': db_name,
@@ -735,16 +761,13 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verb
             n_added += 1
         except sqlalchemy.exc.IntegrityError as err:
             print("SIMPLE ERROR: The source may not exist in Sources table.")
-            print("SIMPLE ERROR: The parallax reference may not exist in Publications table. Add it with add_publication function. ")
+            print("SIMPLE ERROR: The parallax reference may not exist in Publications table. "
+                  "Add it with add_publication function. ")
             print("SIMPLE ERROR: The parallax measurement may be a duplicate.")
             with disable_exception_traceback():
                 raise
 
-    if save_db:
-        db.save_database(directory='data/')
-        print("Parallaxes added to database and saved: ", n_added)
-    else:
-        print("Parallaxes added to database: ", n_added)
+    print("Parallaxes added to database: ", n_added)
 
     return
 
