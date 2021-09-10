@@ -9,6 +9,8 @@ from sqlalchemy import and_, or_
 from astropy.table import Table, Column, unique
 from astropy.io.votable import from_table, writeto
 from astroquery.simbad import Simbad
+from astroquery.vizier import Vizier
+import astropy.units as u
 
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
@@ -154,7 +156,7 @@ def update_ref_tables(db):
 
 
 # add Gaia designations to Names table
-add_names(db, sources=gaia_data['db_names'], other_names=gaia_data['gaia_designation'], verbose=True)
+# add_names(db, sources=gaia_data['db_names'], other_names=gaia_data['gaia_designation'], verbose=True)
 
 
 # add Gaia proper motions
@@ -169,7 +171,7 @@ def add_gaia_pms(db):
                           refs)
 
 
-add_gaia_pms(db)
+# add_gaia_pms(db)
 
 
 # add Gaia parallaxes
@@ -181,7 +183,40 @@ def add_gaia_parallaxes(db):
                       gaia_parallaxes['parallax_error'], refs, verbose=True)
 
 
-add_gaia_parallaxes(db)
+# add_gaia_parallaxes(db)
 
+gaia_g_phot = gaia_data['gaia_designation','db_names', 'phot_g_mean_mag']
+gaia_bp_phot = gaia_data['db_names', 'phot_bp_mean_mag']
+gaia_rp_phot = gaia_data['db_names', 'phot_rp_mean_mag']
+
+def query_vizier(db):
+    v = Vizier(columns=["DR2Name","e_Gmag",'e_BPmag','e_RPmag',"+_r"], catalog="I/345/gaia2")
+    radius = 20*u.arcsec
+    for source in gaia_g_phot[0:10]:
+        print(source['gaia_designation'], source['db_names'])
+        result = v.query_object(source['gaia_designation'], radius=radius)
+        if len(result) == 0:
+            print("no hits within", radius)
+        elif len(result[0]) == 1:
+            print(result[0])
+            # TODO append results to new list
+        elif len(result[0]) > 1:
+            print("too many hits",len(result[0]))
+            # TODO find matching Gaia designation
+
+
+query_vizier(db)
 
 # TODO: ingest Gaia photometry
+def add_gaia_photometry(db):
+
+    ingest_photometry(db, gaia_bp_phot['db_names'], gaia_bp_phot['phot_bp_mean_mag'], gaia_bp_phot['UNKNOWN'],
+                      reference = 'GaiaDR2', ucds = 'em.opt.V', telescope='Gaia', instrument='Gaia', verbose=True)
+
+    ingest_photometry(db, gaia_rp_phot['db_names'], gaia_rp_phot['phot_rp_mean_mag'], gaia_rp_phot['UNKNOWN'],
+                      reference='GaiaDR2', ucds='em.opt.R', telescope='Gaia', instrument='Gaia', verbose=True)
+
+    ingest_photometry(db, gaia_g_phot['db_names'], gaia_g_phot['phot_g_mean_mag'], gaia_g_phot['UNKNOWN'],
+                      reference='GaiaDR2', ucds='em.opt', telescope='Gaia', instrument='Gaia', verbose=True)
+
+    return
