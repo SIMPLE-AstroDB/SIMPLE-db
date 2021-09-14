@@ -23,4 +23,16 @@ Columns marked with an asterisk (*) may not be empty.
 
 The local_spectrum is meant to store the path to a local copy of the spectrum with an 
 environment variable to define part of the path (so it can be shared among other users). 
-For example: `$SPECTRA/infrared/filename.fits`
+For example: `$ASTRODB_SPECTRA/infrared/filename.fits`
+
+Enumerations for regime include:
+ - gammaray
+ - xray
+ - ultraviolet
+ - optical
+ - nir
+ - infrared
+ - millimeter
+ - radio
+ - unknown
+ 

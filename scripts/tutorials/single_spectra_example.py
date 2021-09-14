@@ -27,16 +27,18 @@ spec_data = [{'source': '2MASS J00192626+4614078',
               }]
 db.Spectra.insert().execute(spec_data)
 
+# Verify inventory lists the new spectrum
 _ = db.inventory('2MASS J00192626+4614078', pretty_print=True)
 
-# Getting spectrum object
-db.query(db.Spectra.c.spectrum).filter(db.Spectra.c.source == '2MASS J00192626+4614078').table(spectra=['spectrum'])
+# Getting spectrum object as a specutils Spectrum1D object
+# Refer to https://astrodbkit2.readthedocs.io/en/latest/#general-queries-with-transformations for more information
+t = db.query(db.Spectra.c.spectrum).filter(db.Spectra.c.source == '2MASS J00192626+4614078').table(spectra=['spectrum'])
 t = db.query(db.Spectra.c.spectrum).filter(db.Spectra.c.source == '2MASS J00192626+4614078').limit(1).spectra()
 
 # Confirm that it is a Spectrum1D object
 spec = t[0][0]
 print(type(spec))
 
-# Save into database folder
+# Save database modifications to disk
 db.save_database('data')
 
