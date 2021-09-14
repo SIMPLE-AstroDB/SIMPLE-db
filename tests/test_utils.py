@@ -119,7 +119,7 @@ def test_search_publication(db):
 
 def test_add_publication(db):
     # should fail if trying to add a duplicate record
-    with pytest.raises(sqlalchemy.exc.IntegrityError):
+    with pytest.raises(SimpleError):
         add_publication(db, name='Ref 1',bibcode='2020MNRAS.496.1922B')
     # TODO - Mock environment  where ADS_TOKEN is not set. #117
 
