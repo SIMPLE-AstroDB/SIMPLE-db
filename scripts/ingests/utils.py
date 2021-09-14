@@ -713,6 +713,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
         adopted = None
         duplicate = False
         source_plx_data = db.query(db.Parallaxes).filter(db.Parallaxes.c.source == db_name).table()
+        # TODO: Write a function to deal with setting adopted flag
         if source_plx_data is None or len(source_plx_data) == 0:
             # if there's no other measurements in the database, set new data Adopted = True
             adopted = True
@@ -898,8 +899,8 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
     return
 
 
-def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, reference, ucds = None,
-                      telescope = None, instrument = None, epoch = None, comments = None, verbose=False):
+def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, reference, ucds=None,
+                      telescope=None, instrument=None, epoch=None, comments=None, verbose=False):
 
     verboseprint = print if verbose else lambda *a, **k: None
     n_added = 0
@@ -911,13 +912,13 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
                                           len(magnitude_errors),
                                         "\nSources, magnitudes, and magnitude error lists should all be same length")
 
-    if len(bands) == 1:
+    if isinstance(bands, str):
         bands = [bands] * len(sources)
 
-    if len(reference) == 1:
+    if isinstance(reference, str):
         reference = [reference] * len(sources)
 
-    if len(telescope) == 1:
+    if isinstance(telescope, str):
         telescope = [telescope] * len(sources)
 
     if n_sources != len(reference) or n_sources != len(telescope) or n_sources != len(bands):
