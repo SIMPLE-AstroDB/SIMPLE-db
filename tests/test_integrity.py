@@ -335,6 +335,21 @@ def test_gravities(db):
     assert len(t) == 0
 
 
+def test_spectra(db):
+    # Tests against the Spectra table
+
+    # There should be no entries in the Spectra table without a spectrum
+    t = db.query(db.Spectra.c.source). \
+        filter(db.Spectra.c.spectrum.is_(None)). \
+        astropy()
+    if len(t) > 0:
+        print('\nEntries found without spectrum')
+        print(t)
+    assert len(t) == 0
+
+    # TODO: Consider testing that units are astropy.units resolvable?
+
+
 def test_remove_database(db):
     # Clean up temporary database
     db.session.close()
