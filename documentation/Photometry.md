@@ -10,7 +10,7 @@ Columns marked with an asterisk (*) may not be empty.
 | *source    | Unique identifier for the source |   | String(100)  | primary and foreign: Sources.source   |
 | *band      | Name of the wavelength band |  | String(30)  | primary |
 | ucd       | Unified Content Descriptor for band |  | String(100)  |   |
-| magnitude | Magnitude value | mag | Float  |   |
+| *magnitude | Magnitude value | mag | Float  |   |
 | magnitude_error | Magnitude uncertainty | mag | Float  |   |
 | telescope | Name of telescope |  | String(30)  | foreign: Telescopes.name |
 | instrument | Name of instrument |  | String(30)  | foreign: Instruments.name |

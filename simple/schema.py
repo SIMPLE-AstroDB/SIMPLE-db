@@ -31,6 +31,13 @@ class Instruments(Base):
     reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'))
 
 
+class Modes(Base):
+    __tablename__ = 'Modes'
+    name = Column(String(30), primary_key=True, nullable=False)
+    instrument = Column(String(30), ForeignKey('Instruments.name', onupdate='cascade'), primary_key=True)
+    telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'), primary_key=True)
+
+
 class PhotometryFilters(Base):
     """
     ORM for filter table.
@@ -178,3 +185,34 @@ class Gravities(Base):
     regime = Column(Enum(Regime, create_constraint=True), primary_key=True)  # restricts to a few values: Optical, Infrared
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
+
+
+class Spectra(Base):
+    # Table to store references to spectra
+    __tablename__ = 'Spectra'
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
+                    nullable=False, primary_key=True)
+
+    # Data
+    spectrum = Column(String(1000), nullable=False)  # URL of spectrum location
+    local_spectrum = Column(String(1000))  # local directory (via environment variable) of spectrum location
+
+    # Metadata
+    regime = Column(Enum(Regime), primary_key=True)  # eg, Optical, Infrared, etc
+    telescope = Column(String(30))
+    instrument = Column(String(30))
+    mode = Column(String(30))  # eg, Prism, Echelle, etc
+    observation_date = Column(DateTime, primary_key=True)
+    wavelength_units = Column(String(20))
+    flux_units = Column(String(20))
+    wavelength_order = Column(Integer)
+
+    # Common metadata
+    comments = Column(String(1000))
+    reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
+
+    # Foreign key constraints for telescope, instrument, mode; all handled via reference to Modes table
+    __table_args__ = (ForeignKeyConstraint([telescope, instrument, mode],
+                                           [Modes.telescope, Modes.instrument, Modes.name],
+                                           onupdate="cascade"),
+                      {})
