@@ -72,8 +72,34 @@ def find_gaia_in_simbad(no_gaia_source_id):
 
 # gaia_designations = find_gaia_in_simbad(no_gaia_source_id)
 # Don't need to re-run since designations are in scripts/ingests/Gaia/gaia_designations.xml
+gaiadr2_designations = Table.read('scripts/ingests/Gaia/gaia_designations.xml', format='votable')
+dr2_ids = []
+for row in gaiadr2_designations:
+    dr2_id = row['gaia_designation'].split()[2]
+    dr2_ids.append(dr2_id)
+gaiadr2_designations['dr2_ids'] = dr2_ids
 
-def query_gaia():
+gaiadr2_designations.write('scripts/ingests/Gaia/gaia_designations_wids.xml', format='votable', overwrite=True)
+
+def query_gaiadr3_names():
+    gaiadr3_query_string = "SELECT * FROM gaiaedr3.dr2_neighbourhood " \
+                        "INNER JOIN tap_upload.upload_table ON " \
+                        "gaiaedr3.dr2_neighbourhood.dr2_source_id = tap_upload.upload_table.dr2_ids  "
+
+    job_gaiadr3_query = Gaia.launch_job(gaiadr3_query_string, upload_resource='scripts/ingests/Gaia/gaia_designations_wids.xml',
+                                     upload_table_name="upload_table", verbose=VERBOSE)
+
+    gaiadr3_names = job_gaiadr3_query.get_results()
+
+    return gaiadr3_names
+
+
+gaiadr3_names = query_gaiadr3_names()
+
+gaiadr3_names.write('scripts/ingests/Gaia/gaiadr3_designations.xml', format='votable', overwrite=True)
+
+
+def query_gaiadr2():
     gaia_query_string = "SELECT *,upload_table.db_names FROM gaiadr2.gaia_source " \
                              "INNER JOIN tap_upload.upload_table ON " \
                         "gaiadr2.gaia_source.designation = tap_upload.upload_table.gaia_designation  "
@@ -85,7 +111,7 @@ def query_gaia():
     return gaia_data
 
 # Re-run Gaia query
-# gaia_data = query_gaia()
+# gaia_data = query_gaiadr2()
 
 
 # read results from saved table
@@ -129,7 +155,7 @@ def update_ref_tables():
 # update_ref_tables()
 
 # add Gaia designations to Names table
-add_names(db, sources=gaia_data['db_names'], other_names=gaia_data['gaia_designation'], verbose=VERBOSE)
+# add_names(db, sources=gaia_data['db_names'], other_names=gaia_data['gaia_designation'], verbose=VERBOSE)
 
 
 # add Gaia proper motions
@@ -145,7 +171,7 @@ def add_gaia_pms():
                           refs)
 
 
-add_gaia_pms()
+# add_gaia_pms()
 
 
 # add Gaia parallaxes
@@ -158,7 +184,7 @@ def add_gaia_parallaxes():
                       gaia_parallaxes['parallax_error'], refs, verbose=VERBOSE)
 
 
-add_gaia_parallaxes()
+# add_gaia_parallaxes()
 
 
 def add_gaia_photometry():
@@ -187,7 +213,7 @@ def add_gaia_photometry():
     return
 
 
-add_gaia_photometry()
+# add_gaia_photometry()
 
 # query the database for number to add to the data tests
 # Expected numbers:
