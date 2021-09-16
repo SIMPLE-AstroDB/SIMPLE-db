@@ -76,7 +76,7 @@ gaiadr2_designations = Table.read('scripts/ingests/Gaia/gaia_designations.xml', 
 dr2_ids = []
 for row in gaiadr2_designations:
     dr2_id = row['gaia_designation'].split()[2]
-    dr2_ids.append(dr2_id)
+    dr2_ids.append(int(dr2_id))
 gaiadr2_designations['dr2_ids'] = dr2_ids
 
 gaiadr2_designations.write('scripts/ingests/Gaia/gaia_designations_wids.xml', format='votable', overwrite=True)
@@ -94,10 +94,11 @@ def query_gaiadr3_names():
     return gaiadr3_names
 
 
-gaiadr3_names = query_gaiadr3_names()
+# gaiadr3_names = query_gaiadr3_names()
+# gaiadr3_names.write('scripts/ingests/Gaia/gaiadr3_designations.xml', format='votable', overwrite=True)
+gaiadr3_names = Table.read('scripts/ingests/Gaia/gaiadr3_designations.xml', format='votable')
 
-gaiadr3_names.write('scripts/ingests/Gaia/gaiadr3_designations.xml', format='votable', overwrite=True)
-
+# TODO: Find duplicates in EDR3 names table. There are 14 extra rows between DR2 and DR3.
 
 def query_gaiadr2():
     gaia_query_string = "SELECT *,upload_table.db_names FROM gaiadr2.gaia_source " \
