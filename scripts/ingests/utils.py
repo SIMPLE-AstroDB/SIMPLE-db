@@ -1,4 +1,7 @@
-import sqlite3
+from pathlib import Path
+from astrodbkit2.astrodb import create_database
+from astrodbkit2.astrodb import Database
+from simple.schema import *
 import sys
 import numpy as np
 import re
@@ -27,6 +30,26 @@ def disable_exception_traceback():
     sys.tracebacklimit = 0
     yield
     sys.tracebacklimit = default_value  # revert changes
+
+
+def load_simpledb(RECREATE_DB=True):
+    # Utility function to load the database
+
+    db_file = 'SIMPLE.db'
+    db_file_path = Path(db_file)
+    db_connection_string = 'sqlite:///SIMPLE.db'
+
+    if RECREATE_DB and db_file_path.exists():
+        os.remove(db_file)  # removes the current .db file if one already exists
+
+    if not db_file_path.exists():
+        create_database(db_connection_string)  # creates empty database based on the simple schema
+        db = Database(db_connection_string)  # connects to the empty database
+        db.load_database('data/')  # loads the data from the data files into the database
+    else:
+        db = Database(db_connection_string)  # if database already exists, connects to .db file
+
+    return db
 
 
 def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., verbose=False):
@@ -181,7 +204,7 @@ def add_names(db, sources=None, other_names=None, names_table=None, verbose=True
 
     n_added = len(names_data)
 
-    verboseprint("Names added to database: ", n_added)
+    print("Names added to database: ", n_added)
 
     return
 
@@ -920,6 +943,12 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
 
     if isinstance(telescope, str):
         telescope = [telescope] * len(sources)
+
+    if isinstance(instrument, str):
+        instrument = [instrument] * len(sources)
+
+    if isinstance(ucds, str):
+        ucds = [ucds] * len(sources)
 
     if n_sources != len(reference) or n_sources != len(telescope) or n_sources != len(bands):
         raise RuntimeError("All lists should be same length")
