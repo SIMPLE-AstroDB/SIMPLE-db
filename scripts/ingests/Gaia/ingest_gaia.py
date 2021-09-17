@@ -1,9 +1,11 @@
 from scripts.ingests.utils import *
 from astroquery.gaia import Gaia
 from astroquery.simbad import Simbad
-from astropy.table import Table
+from astropy.table import Table, setdiff
+from astropy import table
 import numpy as np
 from sqlalchemy import func
+import numpy as np
 
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
@@ -72,14 +74,18 @@ def find_gaia_in_simbad(no_gaia_source_id):
 
 # gaia_designations = find_gaia_in_simbad(no_gaia_source_id)
 # Don't need to re-run since designations are in scripts/ingests/Gaia/gaia_designations.xml
-gaiadr2_designations = Table.read('scripts/ingests/Gaia/gaia_designations.xml', format='votable')
-dr2_ids = []
-for row in gaiadr2_designations:
-    dr2_id = row['gaia_designation'].split()[2]
-    dr2_ids.append(int(dr2_id))
-gaiadr2_designations['dr2_ids'] = dr2_ids
 
-gaiadr2_designations.write('scripts/ingests/Gaia/gaia_designations_wids.xml', format='votable', overwrite=True)
+def get_gaia_source_ids:
+    gaiadr2_designations = Table.read('scripts/ingests/Gaia/gaia_designations.xml', format='votable')
+    dr2_ids = []
+    for row in gaiadr2_designations:
+        dr2_id = row['gaia_designation'].split()[2]
+        dr2_ids.append(int(dr2_id))
+    gaiadr2_designations['dr2_ids'] = dr2_ids
+
+    gaiadr2_designations.write('scripts/ingests/Gaia/gaia_designations_wids.xml', format='votable', overwrite=True)
+
+# get_gaia_source_ids
 
 def query_gaiadr3_names():
     gaiadr3_query_string = "SELECT * FROM gaiaedr3.dr2_neighbourhood " \
@@ -99,6 +105,22 @@ def query_gaiadr3_names():
 gaiadr3_names = Table.read('scripts/ingests/Gaia/gaiadr3_designations.xml', format='votable')
 
 # TODO: Find duplicates in EDR3 names table. There are 14 extra rows between DR2 and DR3.
+
+# find dr2 sources with only one dr3 entry
+gaiadr3_unique = table.unique(gaiadr3_names, keys='dr2_source_id', keep='none')
+
+# dr2 sources with multiple dr3 matches
+dr3_dupes = setdiff(gaiadr3_names, gaiadr3_unique, keys='dr2_source_id')
+dr3_dupes_grouped = dr3_dupes.group_by('dr2_source_id')
+for group in dr3_dupes_grouped.groups:
+    if not np.ma.is_masked(min(abs(group['magnitude_difference']))):
+        min_mag_index = group['magnitude_difference'].tolist().index(min(abs(group['magnitude_difference'])))
+    min_angdist_index = group['angular_distance'].tolist().index(min(group['angular_distance']))
+    if min_angdist_index == min_mag_index:
+        print(group['dr2_source_id','dr3_source_id'][min_angdist_index],'\n')
+        gaiadr3_unique.add_row(group[min_mag_index])
+    else:
+        print('no choice for ', group['dr2_source_id','magnitude_difference', 'angular_distance'],'\n')
 
 def query_gaiadr2():
     gaia_query_string = "SELECT *,upload_table.db_names FROM gaiadr2.gaia_source " \
