@@ -9,8 +9,9 @@ import numpy as np
 
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = True  # recreates the .db file from the data files
-VERBOSE = False
+RECREATE_DB = False  # recreates the .db file from the data files
+VERBOSE = True
+DATE_SUFFIX = 'Sep2021'
 
 verboseprint = print if VERBOSE else lambda *a, **k: None
 
@@ -27,8 +28,24 @@ else:
     no_gaia_source_id = db.query(db.Sources.c.source).table()['source'].tolist()
 
 
-# Use SIMBAD to find Gaia designations for sources without a Gaia designation
-def find_gaia_in_simbad(no_gaia_source_id):
+
+def find_in_simbad(no_gaia_source_id, desig_prefix, source_id_index = None, verbose = False):
+    """
+    Function to extract source designations from SIMBAD
+
+    Parameters
+    ----------
+    no_gaia_source_id
+    desig_prefix
+    source_id_index
+    verbose
+
+    Returns
+    -------
+    Astropy table
+
+    """
+
     verboseprint = print if VERBOSE else lambda *a, **k: None
 
     sources = no_gaia_source_id
@@ -46,53 +63,79 @@ def find_gaia_in_simbad(no_gaia_source_id):
     simbad_ids = result_table['TYPED_ID', 'IDS'][ind]  # .topandas()
 
     db_names = []
-    simbad_gaia_designation = []
+    simbad_designations = []
+    if source_id_index is not None:
+        source_ids = []
 
     for row in simbad_ids:
         db_name = row['TYPED_ID']
         ids = row['IDS'].split('|')
-        gaia_designation = [i for i in ids if "Gaia DR2" in i]
+        designation = [i for i in ids if desig_prefix in i]
 
-        if gaia_designation:
-            verboseprint(db_name, gaia_designation[0])
+        if designation:
+            verboseprint(db_name, designation[0])
             db_names.append(db_name)
-            simbad_gaia_designation.append(gaia_designation[0])
+            simbad_designations.append(designation[0])
+            if source_id_index is not None:
+                source_id = designation[0].split()[source_id_index]
+                source_ids.append(int(source_id)) #convert to int since long in Gaia
 
     n_matches = len(db_names)
-    print('Found', n_matches, 'Gaia sources for', n_sources, ' sources')
+    print('Found', n_matches, desig_prefix, ' sources for', n_sources, ' sources')
 
-    # TODO: make table of db_names and simbad_gaia_designation and return it. ZIP?
-    # print(simbad_gaia_designation)
-    print(n_matches, len(simbad_gaia_designation))
+    result_table = Table([db_names, simbad_designations, source_ids],
+                      names=('db_names', 'designation', 'source_id'))
 
-    table = Table([db_names, simbad_gaia_designation], names=('db_names', 'gaia_designation'))
-
-    table.write('scripts/ingests/Gaia/gaia_designations.xml', format='votable', overwrite=True)
-
-    return table
+    return result_table
 
 
-# gaia_designations = find_gaia_in_simbad(no_gaia_source_id)
-# Don't need to re-run since designations are in scripts/ingests/Gaia/gaia_designations.xml
+# Use SIMBAD to find Gaia DR2 and DR3 designations for sources without a Gaia designation
+# dr2_designations = find_in_simbad(no_gaia_source_id, 'Gaia DR2', source_id_index=2, verbose=VERBOSE)
+dr2_desig_file_string = 'scripts/ingests/Gaia/gaia_dr2_designations_'+DATE_SUFFIX+'.xml'
+# dr2_designations.write(dr2_desig_file_string, format='votable', overwrite=True)
+dr2_designations = Table.read(dr2_desig_file_string, format='votable')
 
-def get_gaia_source_ids:
-    gaiadr2_designations = Table.read('scripts/ingests/Gaia/gaia_designations.xml', format='votable')
-    dr2_ids = []
-    for row in gaiadr2_designations:
-        dr2_id = row['gaia_designation'].split()[2]
-        dr2_ids.append(int(dr2_id))
-    gaiadr2_designations['dr2_ids'] = dr2_ids
+# Use once some DR3 designations in SIMBAD
+# dr3_designations = find_in_simbad(no_gaia_source_id, 'Gaia DR3', source_id_index=2, verbose=VERBOSE )
+# dr3_file_string = 'scripts/ingests/Gaia/gaia_dr3_designations',DATE_SUFFIX,'.xml'
+# if len(dr3_designations) > 1:
+#     print('Gaia DR3 hits in SIMBAD!')
+#     dr3_designations.write(dr3_file_string, format='votable', overwrite=True)
+# else:
+#     print('No Gaia DR3 hits in SIMBAD')
 
-    gaiadr2_designations.write('scripts/ingests/Gaia/gaia_designations_wids.xml', format='votable', overwrite=True)
 
-# get_gaia_source_ids
+def query_gaiadr2(input_table):
+    print('Gaia DR2 query started')
+    gaia_query_string = "SELECT *,upload_table.db_names FROM gaiadr2.gaia_source " \
+                             "INNER JOIN tap_upload.upload_table ON " \
+                        "gaiadr2.gaia_source.designation = tap_upload.upload_table.designation  "
+    job_gaia_query = Gaia.launch_job(gaia_query_string, upload_resource=input_table,
+                                     upload_table_name="upload_table", verbose=VERBOSE)
 
-def query_gaiadr3_names():
+    gaia_data = job_gaia_query.get_results()
+
+    print('Gaia DR2 query complete')
+
+    return gaia_data
+
+
+# GET GAIA DR2 DATA
+# Re-run Gaia query
+# gaia_dr2_data = query_gaiadr2(dr2_desig_file_string)
+dr2_data_file_string = 'scripts/ingests/Gaia/gaia_dr2_data_'+DATE_SUFFIX+'.xml'
+# gaia_dr2_data.write(dr2_data_file_string, format='votable')
+# read results from saved table
+gaia_dr2_data = Table.read(dr2_data_file_string, format='votable')
+
+
+# GET Gaia DR3 designations
+def query_gaiadr3_names_from_dr2(input_table):
     gaiadr3_query_string = "SELECT * FROM gaiaedr3.dr2_neighbourhood " \
                         "INNER JOIN tap_upload.upload_table ON " \
-                        "gaiaedr3.dr2_neighbourhood.dr2_source_id = tap_upload.upload_table.dr2_ids  "
+                        "gaiaedr3.dr2_neighbourhood.dr2_source_id = tap_upload.upload_table.source_id"
 
-    job_gaiadr3_query = Gaia.launch_job(gaiadr3_query_string, upload_resource='scripts/ingests/Gaia/gaia_designations_wids.xml',
+    job_gaiadr3_query = Gaia.launch_job(gaiadr3_query_string, upload_resource=input_table,
                                      upload_table_name="upload_table", verbose=VERBOSE)
 
     gaiadr3_names = job_gaiadr3_query.get_results()
@@ -100,9 +143,10 @@ def query_gaiadr3_names():
     return gaiadr3_names
 
 
-# gaiadr3_names = query_gaiadr3_names()
-# gaiadr3_names.write('scripts/ingests/Gaia/gaiadr3_designations.xml', format='votable', overwrite=True)
-gaiadr3_names = Table.read('scripts/ingests/Gaia/gaiadr3_designations.xml', format='votable')
+gaiadr3_names = query_gaiadr3_names_from_dr2(dr2_desig_file_string)
+dr3_desig_file_string = 'scripts/ingests/Gaia/gaia_dr3_designations_' + DATE_SUFFIX +'.xml'
+gaiadr3_names.write(dr3_desig_file_string, format='votable', overwrite=True)
+# gaiadr3_names = Table.read(dr3_desig_file_string, format='votable')
 
 # TODO: Find duplicates in EDR3 names table. There are 14 extra rows between DR2 and DR3.
 
@@ -121,25 +165,6 @@ for group in dr3_dupes_grouped.groups:
         gaiadr3_unique.add_row(group[min_mag_index])
     else:
         print('no choice for ', group['dr2_source_id','magnitude_difference', 'angular_distance'],'\n')
-
-def query_gaiadr2():
-    gaia_query_string = "SELECT *,upload_table.db_names FROM gaiadr2.gaia_source " \
-                             "INNER JOIN tap_upload.upload_table ON " \
-                        "gaiadr2.gaia_source.designation = tap_upload.upload_table.gaia_designation  "
-    job_gaia_query = Gaia.launch_job(gaia_query_string, upload_resource='scripts/ingests/Gaia/gaia_designations.xml',
-                                     upload_table_name="upload_table", verbose=VERBOSE)
-
-    gaia_data = job_gaia_query.get_results()
-
-    return gaia_data
-
-# Re-run Gaia query
-# gaia_data = query_gaiadr2()
-
-
-# read results from saved table
-gaia_data = Table.read('scripts/ingests/Gaia/gaia_data.xml', format='votable')
-
 
 # add Gaia telescope, instrument, and Gaia filters
 def update_ref_tables():
