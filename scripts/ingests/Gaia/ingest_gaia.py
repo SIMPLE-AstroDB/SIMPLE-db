@@ -140,31 +140,45 @@ def query_gaiadr3_names_from_dr2(input_table):
 
     gaiadr3_names = job_gaiadr3_query.get_results()
 
-    return gaiadr3_names
+    print("length of Dr3 names table: ", len(gaiadr3_names))
+
+    # Find Dupes
+
+    # find dr2 sources with only one dr3 entry
+    gaiadr3_unique = table.unique(gaiadr3_names, keys='dr2_source_id', keep='none')
+    print("Number of unique sources: ", len(gaiadr3_unique))
+
+    # dr2 sources with multiple dr3 matches
+    dr3_dupes = setdiff(gaiadr3_names, gaiadr3_unique, keys='dr2_source_id')
+    dr3_dupes_grouped = dr3_dupes.group_by('dr2_source_id')
+
+    for group in dr3_dupes_grouped.groups:
+        # print(group['dr2_source_id', 'dr3_source_id', 'magnitude_difference', 'angular_distance'])
+        if not np.ma.is_masked(min(abs(group['magnitude_difference']))):
+            min_mag_index = abs(group['magnitude_difference']).tolist().index(min(abs(group['magnitude_difference'])))
+        min_angdist_index = group['angular_distance'].tolist().index(min(group['angular_distance']))
+
+        if min_angdist_index == min_mag_index:
+            print('best one found \n', group['dr2_source_id', 'dr3_source_id'][min_angdist_index], '\n')
+            gaiadr3_unique.add_row(group[min_mag_index])
+        elif np.ma.is_masked(min(abs(group['magnitude_difference']))):
+            print('best one found just with angular distance \n', group['dr2_source_id', 'dr3_source_id'][min_angdist_index], '\n')
+            gaiadr3_unique.add_row(group[min_mag_index])
+        else:
+            print('no choice for \n', group['dr2_source_id', 'dr3_source_id', 'magnitude_difference', 'angular_distance'], '\n')
+
+    print("Number of unique sources after dupe fix:", len(gaiadr3_unique))
+
+    return gaiadr3_unique
 
 
-gaiadr3_names = query_gaiadr3_names_from_dr2(dr2_desig_file_string)
+# gaiadr3_names = query_gaiadr3_names_from_dr2(dr2_desig_file_string)
 dr3_desig_file_string = 'scripts/ingests/Gaia/gaia_dr3_designations_' + DATE_SUFFIX +'.xml'
-gaiadr3_names.write(dr3_desig_file_string, format='votable', overwrite=True)
-# gaiadr3_names = Table.read(dr3_desig_file_string, format='votable')
+# gaiadr3_names.write(dr3_desig_file_string, format='votable', overwrite=True)
+gaiadr3_names = Table.read(dr3_desig_file_string, format='votable')
 
-# TODO: Find duplicates in EDR3 names table. There are 14 extra rows between DR2 and DR3.
 
-# find dr2 sources with only one dr3 entry
-gaiadr3_unique = table.unique(gaiadr3_names, keys='dr2_source_id', keep='none')
-
-# dr2 sources with multiple dr3 matches
-dr3_dupes = setdiff(gaiadr3_names, gaiadr3_unique, keys='dr2_source_id')
-dr3_dupes_grouped = dr3_dupes.group_by('dr2_source_id')
-for group in dr3_dupes_grouped.groups:
-    if not np.ma.is_masked(min(abs(group['magnitude_difference']))):
-        min_mag_index = group['magnitude_difference'].tolist().index(min(abs(group['magnitude_difference'])))
-    min_angdist_index = group['angular_distance'].tolist().index(min(group['angular_distance']))
-    if min_angdist_index == min_mag_index:
-        print(group['dr2_source_id','dr3_source_id'][min_angdist_index],'\n')
-        gaiadr3_unique.add_row(group[min_mag_index])
-    else:
-        print('no choice for ', group['dr2_source_id','magnitude_difference', 'angular_distance'],'\n')
+# TODO: query eDR3
 
 # add Gaia telescope, instrument, and Gaia filters
 def update_ref_tables():
@@ -200,11 +214,13 @@ def update_ref_tables():
     db.save_reference_table('Telescopes', 'data')
     db.save_reference_table('PhotometryFilters', 'data')
 
+
+# TODO: add DR3 refs
 # update_ref_tables()
 
 # add Gaia designations to Names table
 # add_names(db, sources=gaia_data['db_names'], other_names=gaia_data['gaia_designation'], verbose=VERBOSE)
-
+# TODO: add DR3 designations
 
 # add Gaia proper motions
 def add_gaia_pms():
