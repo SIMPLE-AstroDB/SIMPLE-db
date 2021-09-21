@@ -894,8 +894,34 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
 
 
 def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, reference, ucds=None,
-                      telescope=None, instrument=None, epoch=None, comments=None, save_db=False, verbose=False):
+                      telescope=None, instrument=None, epoch=None, comments=None, verbose=False):
+
     n_added = 0
+
+    n_sources = len(sources)
+
+    if n_sources != len(magnitudes) or n_sources != len(magnitude_errors):
+        raise RuntimeError("N Sources:",len(sources), "   N Magnitudes", len(magnitudes), "   N Mag errors:",
+                                          len(magnitude_errors),
+                                        "\nSources, magnitudes, and magnitude error lists should all be same length")
+
+    if isinstance(bands, str):
+        bands = [bands] * len(sources)
+
+    if isinstance(reference, str):
+        reference = [reference] * len(sources)
+
+    if isinstance(telescope, str):
+        telescope = [telescope] * len(sources)
+
+    if isinstance(instrument, str):
+        instrument = [instrument] * len(sources)
+
+    if isinstance(ucds, str):
+        ucds = [ucds] * len(sources)
+
+    if n_sources != len(reference) or n_sources != len(telescope) or n_sources != len(bands):
+        raise RuntimeError("All lists should be same length")
 
     for i, source in enumerate(sources):
         db_name = db.search_object(source, output_table='Sources')[0]['source']
@@ -922,10 +948,6 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
                               "Add it with add_publication function. \n"
                               "The measurement may be a duplicate.")
 
-        if save_db:
-            db.save_database(directory='data/')
-            print("Photometry measurements added to database and saved: ", n_added)
-        else:
-            print("Photometry measurements added to database: ", n_added)
+    print("Photometry measurements added to database: ", n_added)
 
     return
