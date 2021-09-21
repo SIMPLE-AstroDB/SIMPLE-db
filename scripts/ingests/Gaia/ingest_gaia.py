@@ -178,7 +178,28 @@ dr3_desig_file_string = 'scripts/ingests/Gaia/gaia_dr3_designations_' + DATE_SUF
 gaiadr3_names = Table.read(dr3_desig_file_string, format='votable')
 
 
-# TODO: query eDR3
+def query_gaiaedr3(input_table):
+    print('Gaia eDR3 query started')
+    gaia_query_string = "SELECT *,upload_table.db_names FROM gaiaedr3.gaia_source " \
+                             "INNER JOIN tap_upload.upload_table ON " \
+                        "gaiaedr3.gaia_source.source_id = tap_upload.upload_table.dr3_source_id  "
+    job_gaia_query = Gaia.launch_job(gaia_query_string, upload_resource=input_table,
+                                     upload_table_name="upload_table", verbose=VERBOSE)
+
+    gaia_data = job_gaia_query.get_results()
+
+    print('Gaia eDR3 query complete')
+
+    return gaia_data
+
+
+# query eDR3
+gaia_edr3_data = query_gaiaedr3(gaiadr3_names)
+edr3_data_file_string = 'scripts/ingests/Gaia/gaia_edr3_data_'+DATE_SUFFIX+'.xml'
+gaia_edr3_data.write(edr3_data_file_string, format='votable')
+# read results from saved table
+# gaia_dr2_data = Table.read(dr2_data_file_string, format='votable')
+
 
 # add Gaia telescope, instrument, and Gaia filters
 def update_ref_tables():
@@ -237,7 +258,8 @@ def update_ref_tables():
 # update_ref_tables()
 
 # add Gaia designations to Names table
-# add_names(db, sources=gaia_data['db_names'], other_names=gaia_data['gaia_designation'], verbose=VERBOSE)
+# add_names(db, sources=gaia_dr2_data['db_names'], other_names=gaia_dr2_data['gaia_designation'], verbose=VERBOSE)
+add_names(db, sources=gaiadr3_names['db_names'],other_names=gaiadr3_names['designation'])
 # TODO: add DR3 designations
 
 # add Gaia proper motions
