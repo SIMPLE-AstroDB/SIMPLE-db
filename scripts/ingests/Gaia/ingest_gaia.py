@@ -194,11 +194,11 @@ def query_gaiaedr3(input_table):
 
 
 # query eDR3
-gaia_edr3_data = query_gaiaedr3(gaiadr3_names)
+# gaia_edr3_data = query_gaiaedr3(gaiadr3_names)
 edr3_data_file_string = 'scripts/ingests/Gaia/gaia_edr3_data_'+DATE_SUFFIX+'.xml'
-gaia_edr3_data.write(edr3_data_file_string, format='votable')
+# gaia_edr3_data.write(edr3_data_file_string, format='votable')
 # read results from saved table
-# gaia_dr2_data = Table.read(dr2_data_file_string, format='votable')
+gaia_edr3_data = Table.read(edr3_data_file_string, format='votable')
 
 
 # add Gaia telescope, instrument, and Gaia filters
@@ -259,23 +259,29 @@ def update_ref_tables():
 
 # add Gaia designations to Names table
 # add_names(db, sources=gaia_dr2_data['db_names'], other_names=gaia_dr2_data['gaia_designation'], verbose=VERBOSE)
-add_names(db, sources=gaiadr3_names['db_names'],other_names=gaiadr3_names['designation'])
-# TODO: add DR3 designations
+add_names(db, sources=gaia_edr3_data['db_names'], other_names=gaia_edr3_data['designation'])
 
 # add Gaia proper motions
-def add_gaia_pms():
-    gaia_pms_df = gaia_data['db_names', 'pmra', 'pmra_error', 'pmdec', 'pmdec_error'].to_pandas()
-    # drop empty rows using Pandas
-    gaia_pms_df = gaia_pms_df[gaia_pms_df['pmra'].notna()]
-    gaia_pms_df.reset_index(inplace=True, drop=True)
-    refs = ['GaiaDR2'] * len(gaia_pms_df)
-    ingest_proper_motions(db, gaia_pms_df['db_names'],
-                          gaia_pms_df['pmra'], gaia_pms_df['pmra_error'],
-                          gaia_pms_df['pmdec'], gaia_pms_df['pmdec_error'],
-                          refs)
+def add_gaia_pms(dr2_data, edr3_data):
+    unmasked_dr2_pms = np.logical_not(dr2_data['pmra'].mask).nonzero()
+    unmasked_edr3_pms = np.logical_not(edr3_data['pmra'].mask).nonzero()
+    dr2_pms = dr2_data[unmasked_dr2_pms]['db_names', 'pmra', 'pmra_error', 'pmdec', 'pmdec_error']
+    edr3_pms = edr3_data[unmasked_edr3_pms]['db_names', 'pmra', 'pmra_error', 'pmdec', 'pmdec_error']
+    dr2_refs = ['GaiaDR2'] * len(dr2_pms)
+    edr3_refs = ['GaiaEDR3'] * len(edr3_pms)
+
+    ingest_proper_motions(db, dr2_pms['db_names'],
+                          dr2_pms['pmra'], dr2_pms['pmra_error'],
+                          dr2_pms['pmdec'], dr2_pms['pmdec_error'],
+                          dr2_refs)
+
+    ingest_proper_motions(db, edr3_pms['db_names'],
+                          edr3_pms['pmra'], edr3_pms['pmra_error'],
+                          edr3_pms['pmdec'], edr3_pms['pmdec_error'],
+                          edr3_refs)
 
 
-# add_gaia_pms()
+add_gaia_pms(gaia_dr2_data, gaia_edr3_data)
 
 
 # add Gaia parallaxes
@@ -320,12 +326,16 @@ def add_gaia_photometry():
 # add_gaia_photometry()
 
 # query the database for number to add to the data tests
-# Expected numbers:
+# Expected numbers for DR2:
 #   Names added to database:  1266
 #   Proper motions added to database:  1076
 #   Parallaxes added to database:  1076
 #   Grp: Photometry measurements added to database:  1106
 #   G: Photometry measurements added to database:  1266
+# Expected numbers for EDR3:
+#   Names added to database:  1265
+#   Proper motions added to database:  1133
+
 
 phot_count = db.query(Photometry.band, func.count(Photometry.band)).group_by(Photometry.band).all()
 print('Photometry: ', phot_count)
