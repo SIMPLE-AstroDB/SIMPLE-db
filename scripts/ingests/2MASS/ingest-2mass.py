@@ -14,13 +14,8 @@ DATE_SUFFIX = 'Sep2021'
 
 db = load_simpledb(RECREATE_DB=RECREATE_DB)
 
-
-
-
-
-
 #get list of all sources
-sources = db.query(db.Sources.c.source)
+sources = db.query(db.Sources.c.source).astropy()
 
 # Use SIMBAD to 2MASS designations for all sources
 tmass_designations = find_in_simbad(sources, '2MASS', verbose=VERBOSE)
