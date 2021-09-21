@@ -262,30 +262,24 @@ def update_ref_tables():
 add_names(db, sources=gaia_edr3_data['db_names'], other_names=gaia_edr3_data['designation'])
 
 # add Gaia proper motions
-def add_gaia_pms(dr2_data, edr3_data):
-    unmasked_dr2_pms = np.logical_not(dr2_data['pmra'].mask).nonzero()
-    unmasked_edr3_pms = np.logical_not(edr3_data['pmra'].mask).nonzero()
-    dr2_pms = dr2_data[unmasked_dr2_pms]['db_names', 'pmra', 'pmra_error', 'pmdec', 'pmdec_error']
-    edr3_pms = edr3_data[unmasked_edr3_pms]['db_names', 'pmra', 'pmra_error', 'pmdec', 'pmdec_error']
-    dr2_refs = ['GaiaDR2'] * len(dr2_pms)
-    edr3_refs = ['GaiaEDR3'] * len(edr3_pms)
+def add_gaia_pms(gaia_data, ref):
+    unmasked_pms = np.logical_not(gaia_data['pmra'].mask).nonzero()
+    pms = gaia_data[unmasked_pms]['db_names', 'pmra', 'pmra_error', 'pmdec', 'pmdec_error']
+    refs = [ref] * len(pms)
 
-    ingest_proper_motions(db, dr2_pms['db_names'],
-                          dr2_pms['pmra'], dr2_pms['pmra_error'],
-                          dr2_pms['pmdec'], dr2_pms['pmdec_error'],
-                          dr2_refs)
+    ingest_proper_motions(db, pms['db_names'],
+                          pms['pmra'], pms['pmra_error'],
+                          pms['pmdec'], pms['pmdec_error'],
+                          refs)
 
-    ingest_proper_motions(db, edr3_pms['db_names'],
-                          edr3_pms['pmra'], edr3_pms['pmra_error'],
-                          edr3_pms['pmdec'], edr3_pms['pmdec_error'],
-                          edr3_refs)
+    return
 
 
-add_gaia_pms(gaia_dr2_data, gaia_edr3_data)
-
+add_gaia_pms(gaia_dr2_data, 'GAIADR2')
+add_gaia_pms(gaia_edr3_data, 'GAIAEDR3')
 
 # add Gaia parallaxes
-def add_gaia_parallaxes():
+def add_gaia_parallaxes(gaia_data):
     # drop empty rows using Astropy Tables
     unmasked_pi = np.logical_not(gaia_data['parallax'].mask).nonzero()
     gaia_parallaxes = gaia_data[unmasked_pi]['db_names', 'parallax', 'parallax_error']
@@ -294,7 +288,8 @@ def add_gaia_parallaxes():
                       gaia_parallaxes['parallax_error'], refs, verbose=VERBOSE)
 
 
-# add_gaia_parallaxes()
+add_gaia_parallaxes(gaia_dr2_data)
+add_gaia_parallaxes(gaia_edr3_data)
 
 
 def add_gaia_photometry():
