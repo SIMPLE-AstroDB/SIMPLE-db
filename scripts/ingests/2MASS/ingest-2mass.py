@@ -28,74 +28,15 @@ tmass_designations = Table.read(tmass_desig_file_string, format='votable')
 tmass_phot_file_string = 'scripts/ingests/2MASS/2MASS_data_'+DATE_SUFFIX+'.xml'
 # tmass_phot.write(tmass_phot_file_string, format='votable')
 # read results from saved table
-tmass_data = Table.read(tmass_phot_file_string, format='votable')
+tmass_phot = Table.read(tmass_phot_file_string, format='votable')
 
-
-# add 2MASS telescope, instrument, and filters
-def update_ref_tables():
-    add_publication(db, doi='10.1051/0004-6361/201629272', name='Gaia')
-    db.Publications.delete().where(db.Publications.c.name == 'GaiaDR2').execute()
-    db.Publications.update().where(db.Publications.c.name == 'Gaia18').values(name='GaiaDR2').execute()
-    add_publication(db, doi='10.1051/0004-6361/202039657', name='GaiaEDR3')
-
-    gaia_instrument = [{'name': 'Gaia', 'reference': 'Gaia'}]
-    gaia_telescope = gaia_instrument
-    db.Instruments.insert().execute(gaia_instrument)
-    db.Telescopes.insert().execute(gaia_telescope)
-
-    gaia_filters = [{'band': 'GAIA2.G',
-                     'instrument': 'Gaia',
-                     'telescope': 'Gaia',
-                     'effective_wavelength': 6230.,
-                     'width': 4183.},
-                    {'band': 'GAIA2.Grp',
-                     'instrument': 'Gaia',
-                     'telescope': 'Gaia',
-                     'effective_wavelength': 7730.,
-                     'width': 2757.},
-                    {'band': 'GAIA3.G',
-                     'instrument': 'Gaia',
-                     'telescope': 'Gaia',
-                     'effective_wavelength': 5822.,
-                     'width': 4053.},
-                    {'band': 'GAIA3.Grp',
-                     'instrument': 'Gaia',
-                     'telescope': 'Gaia',
-                     'effective_wavelength': 7620.,
-                     'width': 2924.}
-                    ]
-
-    gaia_dr3filters = [{'band': 'GAIA3.G',
-                     'instrument': 'Gaia',
-                     'telescope': 'Gaia',
-                     'effective_wavelength': 5822.,
-                     'width': 4053.},
-                    {'band': 'GAIA3.Grp',
-                     'instrument': 'Gaia',
-                     'telescope': 'Gaia',
-                     'effective_wavelength': 7620.,
-                     'width': 2924.}
-                    ]
-
-    db.PhotometryFilters.insert().execute(gaia_filters)
-    db.PhotometryFilters.insert().execute(gaia_dr3filters)
-    db.save_reference_table('Publications', 'data')
-    db.save_reference_table('Instruments', 'data')
-    db.save_reference_table('Telescopes', 'data')
-    db.save_reference_table('PhotometryFilters', 'data')
-
-
-# update_ref_tables()
 
 # add 2MASS designations to Names table as needed
 # Find difference between all 2MASS and Names Table
 # add_names(db, sources=gaia_dr2_data['db_names'], other_names=gaia_dr2_data['gaia_designation'], verbose=VERBOSE)
 
 
-
-
-
-add_tmass_photometry(db, tmass_data)
+add_tmass_photometry(db, tmass_phot)
 
 
 
