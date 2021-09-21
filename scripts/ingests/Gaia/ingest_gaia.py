@@ -293,8 +293,7 @@ add_gaia_parallaxes(gaia_dr2_data, 'GaiaDR2')
 add_gaia_parallaxes(gaia_edr3_data, 'GaiaEDR3')
 
 
-def add_gaia_photometry():
-    # drop empty rows
+def add_gaia_photometry(gaia_data,ref):
     unmasked_gphot = np.logical_not(gaia_data['phot_g_mean_mag'].mask).nonzero()
     gaia_g_phot = gaia_data[unmasked_gphot]['db_names', 'phot_g_mean_flux', 'phot_g_mean_flux_error',
                                             'phot_g_mean_mag']
@@ -309,28 +308,42 @@ def add_gaia_photometry():
     gaia_rp_phot['rp_unc'] = np.abs(
         -2.5 / np.log(10) * gaia_rp_phot['phot_rp_mean_flux_error'] / gaia_rp_phot['phot_rp_mean_flux'])
 
-    ingest_photometry(db, gaia_rp_phot['db_names'], 'GAIA2.Grp', gaia_rp_phot['phot_rp_mean_mag'],
-                      gaia_rp_phot['rp_unc'], 'GaiaDR2', ucds='em.opt.R', telescope='Gaia', instrument='Gaia',
-                      verbose=VERBOSE)
+    if ref == 'GaiaDR2':
+        g_band_name = 'GAIA2.G'
+        rp_band_name = 'GAIA2.Grp'
+    elif ref == 'GaiaEDR3':
+        g_band_name = 'GAIA3.G'
+        rp_band_name = 'GAIA2.Grp'
+    else:
+        raise Exception
 
-    ingest_photometry(db, gaia_g_phot['db_names'], 'GAIA2.G', gaia_g_phot['phot_g_mean_mag'], gaia_g_phot['g_unc'],
-                      'GaiaDR2', ucds='em.opt', telescope='Gaia', instrument='Gaia', verbose=VERBOSE)
+    ingest_photometry(db, gaia_g_phot['db_names'], g_band_name, gaia_g_phot['phot_g_mean_mag'], gaia_g_phot['g_unc'],
+                      ref, ucds='em.opt', telescope='Gaia', instrument='Gaia', verbose=VERBOSE)
+
+    ingest_photometry(db, gaia_rp_phot['db_names'], rp_band_name, gaia_rp_phot['phot_rp_mean_mag'],
+                      gaia_rp_phot['rp_unc'], ref, ucds='em.opt.R', telescope='Gaia', instrument='Gaia',
+                      verbose=VERBOSE)
 
     return
 
 
-# add_gaia_photometry()
+add_gaia_photometry(gaia_dr2_data, 'GaiaDR2')
+add_gaia_photometry(gaia_edr3_data, 'GaiaEDR3')
+
 
 # query the database for number to add to the data tests
 # Expected numbers for DR2:
 #   Names added to database:  1266
 #   Proper motions added to database:  1076
 #   Parallaxes added to database:  1076
-#   Grp: Photometry measurements added to database:  1106
 #   G: Photometry measurements added to database:  1266
+#   Rp: Photometry measurements added to database:  1106
 # Expected numbers for EDR3:
 #   Names added to database:  1265
 #   Proper motions added to database:  1133
+#   Parallaxes added to database:  1133
+#   G: Photometry measurements added to database:  1256
+#   Rp: Photometry measurements added to database:  1261
 
 
 phot_count = db.query(Photometry.band, func.count(Photometry.band)).group_by(Photometry.band).all()
