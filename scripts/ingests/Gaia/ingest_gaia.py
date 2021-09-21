@@ -270,26 +270,27 @@ def add_gaia_pms(gaia_data, ref):
     ingest_proper_motions(db, pms['db_names'],
                           pms['pmra'], pms['pmra_error'],
                           pms['pmdec'], pms['pmdec_error'],
-                          refs)
+                          refs, verbose=VERBOSE)
 
     return
 
 
-add_gaia_pms(gaia_dr2_data, 'GAIADR2')
-add_gaia_pms(gaia_edr3_data, 'GAIAEDR3')
+add_gaia_pms(gaia_dr2_data, 'GaiaDR2')
+add_gaia_pms(gaia_edr3_data, 'GaiaEDR3')
+
 
 # add Gaia parallaxes
-def add_gaia_parallaxes(gaia_data):
-    # drop empty rows using Astropy Tables
+def add_gaia_parallaxes(gaia_data, ref):
     unmasked_pi = np.logical_not(gaia_data['parallax'].mask).nonzero()
     gaia_parallaxes = gaia_data[unmasked_pi]['db_names', 'parallax', 'parallax_error']
-    refs = ['GaiaDR2'] * len(gaia_parallaxes)
+    refs = [ref] * len(gaia_parallaxes)
+
     ingest_parallaxes(db, gaia_parallaxes['db_names'], gaia_parallaxes['parallax'],
                       gaia_parallaxes['parallax_error'], refs, verbose=VERBOSE)
 
 
-add_gaia_parallaxes(gaia_dr2_data)
-add_gaia_parallaxes(gaia_edr3_data)
+add_gaia_parallaxes(gaia_dr2_data, 'GaiaDR2')
+add_gaia_parallaxes(gaia_edr3_data, 'GaiaEDR3')
 
 
 def add_gaia_photometry():
