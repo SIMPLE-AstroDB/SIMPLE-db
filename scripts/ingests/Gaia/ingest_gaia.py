@@ -185,18 +185,14 @@ def update_ref_tables():
     add_publication(db, doi='10.1051/0004-6361/201629272', name='Gaia')
     db.Publications.delete().where(db.Publications.c.name == 'GaiaDR2').execute()
     db.Publications.update().where(db.Publications.c.name == 'Gaia18').values(name='GaiaDR2').execute()
+    add_publication(db, doi='10.1051/0004-6361/202039657', name='GaiaEDR3')
 
     gaia_instrument = [{'name': 'Gaia', 'reference': 'Gaia'}]
     gaia_telescope = gaia_instrument
     db.Instruments.insert().execute(gaia_instrument)
     db.Telescopes.insert().execute(gaia_telescope)
 
-    gaia_filters = [{'band': 'GAIA2.Gbp',
-                     'instrument': 'Gaia',
-                     'telescope': 'Gaia',
-                     'effective_wavelength': 5050.,
-                     'width': 2347.},
-                    {'band': 'GAIA2.G',
+    gaia_filters = [{'band': 'GAIA2.G',
                      'instrument': 'Gaia',
                      'telescope': 'Gaia',
                      'effective_wavelength': 6230.,
@@ -205,17 +201,39 @@ def update_ref_tables():
                      'instrument': 'Gaia',
                      'telescope': 'Gaia',
                      'effective_wavelength': 7730.,
-                     'width': 2757.}
+                     'width': 2757.},
+                    {'band': 'GAIA3.G',
+                     'instrument': 'Gaia',
+                     'telescope': 'Gaia',
+                     'effective_wavelength': 5822.,
+                     'width': 4053.},
+                    {'band': 'GAIA3.Grp',
+                     'instrument': 'Gaia',
+                     'telescope': 'Gaia',
+                     'effective_wavelength': 7620.,
+                     'width': 2924.}
+                    ]
+
+    gaia_dr3filters = [{'band': 'GAIA3.G',
+                     'instrument': 'Gaia',
+                     'telescope': 'Gaia',
+                     'effective_wavelength': 5822.,
+                     'width': 4053.},
+                    {'band': 'GAIA3.Grp',
+                     'instrument': 'Gaia',
+                     'telescope': 'Gaia',
+                     'effective_wavelength': 7620.,
+                     'width': 2924.}
                     ]
 
     db.PhotometryFilters.insert().execute(gaia_filters)
+    db.PhotometryFilters.insert().execute(gaia_dr3filters)
     db.save_reference_table('Publications', 'data')
     db.save_reference_table('Instruments', 'data')
     db.save_reference_table('Telescopes', 'data')
     db.save_reference_table('PhotometryFilters', 'data')
 
 
-# TODO: add DR3 refs
 # update_ref_tables()
 
 # add Gaia designations to Names table
