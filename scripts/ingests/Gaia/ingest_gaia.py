@@ -9,7 +9,7 @@ import numpy as np
 
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = False  # recreates the .db file from the data files
+RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = True
 DATE_SUFFIX = 'Sep2021'
 
@@ -313,7 +313,7 @@ def add_gaia_photometry(gaia_data,ref):
         rp_band_name = 'GAIA2.Grp'
     elif ref == 'GaiaEDR3':
         g_band_name = 'GAIA3.G'
-        rp_band_name = 'GAIA2.Grp'
+        rp_band_name = 'GAIA3.Grp'
     else:
         raise Exception
 
