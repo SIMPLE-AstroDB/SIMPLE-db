@@ -18,19 +18,17 @@ db = load_simpledb(RECREATE_DB=RECREATE_DB)
 sources = db.query(db.Sources.c.source).astropy()
 
 # Use SIMBAD to 2MASS designations for all sources
-tmass_designations = find_in_simbad(sources, '2MASS', verbose=VERBOSE)
+# tmass_designations = find_in_simbad(sources, '2MASS', verbose=VERBOSE)
 tmass_desig_file_string = 'scripts/ingests/2MASS/2MASS_designations_'+DATE_SUFFIX+'.xml'
-tmass_designations.write(tmass_desig_file_string, format='votable', overwrite=True)
-# tmass_designations = Table.read(tmass_desig_file_string, format='votable')
+# tmass_designations.write(tmass_desig_file_string, format='votable', overwrite=True)
+tmass_designations = Table.read(tmass_desig_file_string, format='votable')
 
 
-tmass_data = query_tmass(tmass_designations)
-tmass_data_file_string = 'scripts/ingests/2MASS/2MASS_data_'+DATE_SUFFIX+'.xml'
-tmass_data.write(tmass_data_file_string, format='votable')
+# tmass_phot = query_tmass(tmass_designations['db_names'])
+tmass_phot_file_string = 'scripts/ingests/2MASS/2MASS_data_'+DATE_SUFFIX+'.xml'
+# tmass_phot.write(tmass_phot_file_string, format='votable')
 # read results from saved table
-# tmass_data = Table.read(tmass_data_file_string, format='votable')
-
-
+tmass_data = Table.read(tmass_phot_file_string, format='votable')
 
 
 # add 2MASS telescope, instrument, and filters
