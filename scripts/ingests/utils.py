@@ -2,11 +2,9 @@
 Utils functions for use in ingests
 """
 from collections import namedtuple
-import sys
 import os
 import re
 import warnings
-
 from pathlib import Path
 from astrodbkit2.astrodb import create_database
 from astrodbkit2.astrodb import Database
@@ -16,14 +14,10 @@ from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.simbad import Simbad
 from astropy.table import Table
-# from contextlib import contextmanager
-from sqlalchemy import or_
-from sqlalchemy import and_
+from sqlalchemy import or_, and_
 import sqlalchemy.exc
-# import sqlite3
 import numpy as np
 
-# import astrodbkit2
 
 warnings.filterwarnings("ignore", module='astroquery.simbad')
 
@@ -746,58 +740,54 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
         # Search for existing parallax data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
         adopted = None
-        duplicate = False
         source_plx_data = db.query(db.Parallaxes).filter(db.Parallaxes.c.source == db_name).table()
 
         if source_plx_data is None or len(source_plx_data) == 0:
             # if there's no other measurements in the database, set new data Adopted = True
             adopted = True
             old_adopted = None
+            verboseprint("No other measurement")
         elif len(source_plx_data) > 0:  # Parallax data already exists
             # check for duplicate measurement
             dupe_ind = source_plx_data['reference'] == plx_refs[i]
             if sum(dupe_ind):
-                duplicate = True
-                verboseprint("Duplicate measurement\n", source_plx_data[dupe_ind])
+                verboseprint("Duplicate measurement\n", source_plx_data[dupe_ind],'\n')
+                continue
             else:
-                duplicate = False
                 verboseprint("!!! Another Proper motion measurement exists,")
-                if verbose:
-                    source_plx_data.pprint_all()
+                # verboseprint(source_plx_data.pprint_all())
 
             # check for previous adopted measurement and find new adopted
             adopted_ind = source_plx_data['adopted'] == 1
             if sum(adopted_ind):
                 old_adopted = source_plx_data[adopted_ind]
-
                 # if errors of new data are less than other measurements, set Adopted = True.
                 if plx_errs[i] < min(source_plx_data['parallax_error']):
                     adopted = True
 
                     # unset old adopted
                     if old_adopted:
-                        db.Parallaxes.update().where(and_(db.Parallaxes.c.source == old_adopted['source'],
-                                                             db.Parallaxes.c.reference == old_adopted['reference'])).\
+                        db.Parallaxes.update().where(and_(db.Parallaxes.c.source == old_adopted['source'][0],
+                                                             db.Parallaxes.c.reference == old_adopted['reference'][0])).\
                             values(adopted=False).execute()
                         # check that adopted flag is successfully changed
-                        old_adopted_data = db.query(db.Parallaxes).filter(and_(db.Parallaxes.c.source == old_adopted['source'],
-                                                                          db.Parallaxes.c.reference == old_adopted['reference'])).table()
-                        verboseprint("Old adopted measurement unset\n", old_adopted_data)
+                        old_adopted_data = db.query(db.Parallaxes).filter(and_(db.Parallaxes.c.source == old_adopted['source'][0],
+                                                                          db.Parallaxes.c.reference == old_adopted['reference'][0])).table()
+                        verboseprint("Old adopted measurement unset")
+                        # verboseprint(old_adopted_data.pprint_all())
 
                 verboseprint("The new measurement's adopted flag is:", adopted)
-
         else:
             raise RuntimeError("Unexpected state")
 
-        if not duplicate:
-            # Construct data to be added
-            parallax_data = [{'source': db_name,
-                          'parallax': str(plxs[i]),
-                          'parallax_error': str(plx_errs[i]),
-                          'reference': plx_refs[i],
-                          'adopted': adopted}]
+        # Construct data to be added
+        parallax_data = [{'source': db_name,
+                      'parallax': plxs[i],
+                      'parallax_error': plx_errs[i],
+                      'reference': plx_refs[i],
+                      'adopted': adopted}]
 
-        verboseprint(parallax_data, verbose=verbose)
+        verboseprint(parallax_data,'\n')
 
         try:
             db.Parallaxes.insert().execute(parallax_data)
