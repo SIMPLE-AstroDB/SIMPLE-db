@@ -52,10 +52,9 @@ def verboseprint(*args, **kwargs):
 #     sys.tracebacklimit = default_value  # revert changes
 
 
-def load_simpledb(RECREATE_DB=True):
+def load_simpledb(db_file, RECREATE_DB=True):
     # Utility function to load the database
 
-    db_file = 'SIMPLE.db'
     db_file_path = Path(db_file)
     db_connection_string = 'sqlite:///SIMPLE.db'
 
@@ -749,32 +748,38 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
         adopted = None
         duplicate = False
         source_plx_data = db.query(db.Parallaxes).filter(db.Parallaxes.c.source == db_name).table()
-        # TODO: Write a function to deal with setting adopted flag
+
         if source_plx_data is None or len(source_plx_data) == 0:
             # if there's no other measurements in the database, set new data Adopted = True
             adopted = True
-            duplicate = False
             old_adopted = None
-        elif len(source_plx_data) > 0:  # plx data already exists
-            for plx_data in source_plx_data:
-                if plx_data['reference'] == plx_refs[i]:  # check to see if other measurement is a duplicate of the new data
-                    duplicate = True
-                    verboseprint("Duplicate measurement\n", plx_data)
-                if plx_data['adopted'] == 1:  # check if another measurement is adopted
-                    old_adopted = plx_data
-            if not duplicate:
+        elif len(source_plx_data) > 0:  # Parallax data already exists
+            # check for duplicate measurement
+            dupe_ind = source_plx_data['reference'] == plx_refs[i]
+            if sum(dupe_ind):
+                duplicate = True
+                verboseprint("Duplicate measurement\n", source_plx_data[dupe_ind])
+            else:
+                duplicate = False
                 verboseprint("!!! Another Proper motion measurement exists,")
                 if verbose:
                     source_plx_data.pprint_all()
 
+            # check for previous adopted measurement and find new adopted
+            adopted_ind = source_plx_data['adopted'] == 1
+            if sum(adopted_ind):
+                old_adopted = source_plx_data[adopted_ind]
+
                 # if errors of new data are less than other measurements, set Adopted = True.
                 if plx_errs[i] < min(source_plx_data['parallax_error']):
                     adopted = True
+
                     # unset old adopted
                     if old_adopted:
                         db.Parallaxes.update().where(and_(db.Parallaxes.c.source == old_adopted['source'],
                                                              db.Parallaxes.c.reference == old_adopted['reference'])).\
                             values(adopted=False).execute()
+                        # check that adopted flag is successfully changed
                         old_adopted_data = db.query(db.Parallaxes).filter(and_(db.Parallaxes.c.source == old_adopted['source'],
                                                                           db.Parallaxes.c.reference == old_adopted['reference'])).table()
                         verboseprint("Old adopted measurement unset\n", old_adopted_data)
@@ -996,3 +1001,60 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
     print("Photometry measurements added to database: ", n_added)
 
     return
+
+
+def find_in_simbad(sources, desig_prefix, source_id_index = None, verbose = False):
+    """
+    Function to extract source designations from SIMBAD
+
+    Parameters
+    ----------
+    sources
+    desig_prefix
+    source_id_index
+    verbose
+
+    Returns
+    -------
+    Astropy table
+
+    """
+
+    n_sources = len(sources)
+
+    Simbad.reset_votable_fields()
+    Simbad.add_votable_fields('typed_id')  # keep search term in result table
+    Simbad.add_votable_fields('ids')  # add all SIMBAD identifiers as an output column
+    print("simbad query started")
+    result_table = Simbad.query_objects(sources)
+    print("simbad query ended")
+
+    ind = result_table['SCRIPT_NUMBER_ID'] > 0  # find indexes which contain results
+
+    simbad_ids = result_table['TYPED_ID', 'IDS'][ind]  # .topandas()
+
+    db_names = []
+    simbad_designations = []
+    if source_id_index is not None:
+        source_ids = []
+
+    for row in simbad_ids:
+        db_name = row['TYPED_ID']
+        ids = row['IDS'].split('|')
+        designation = [i for i in ids if desig_prefix in i]
+
+        if designation:
+            verboseprint(db_name, designation[0])
+            db_names.append(db_name)
+            simbad_designations.append(designation[0])
+            if source_id_index is not None:
+                source_id = designation[0].split()[source_id_index]
+                source_ids.append(int(source_id)) #convert to int since long in Gaia
+
+    n_matches = len(db_names)
+    print('Found', n_matches, desig_prefix, ' sources for', n_sources, ' sources')
+
+    result_table = Table([db_names, simbad_designations, source_ids],
+                      names=('db_names', 'designation', 'source_id'))
+
+    return result_table
