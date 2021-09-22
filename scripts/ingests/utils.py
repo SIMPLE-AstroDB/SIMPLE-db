@@ -2,11 +2,15 @@
 Utils functions for use in ingests
 """
 from collections import namedtuple
-# import sys
+import sys
 import os
 import re
 import warnings
 
+from pathlib import Path
+from astrodbkit2.astrodb import create_database
+from astrodbkit2.astrodb import Database
+from simple.schema import *
 import ads
 from astropy.coordinates import SkyCoord
 import astropy.units as u
@@ -46,6 +50,25 @@ def verboseprint(*args, **kwargs):
 #     sys.tracebacklimit = 0
 #     yield
 #     sys.tracebacklimit = default_value  # revert changes
+
+
+def load_simpledb(db_file, RECREATE_DB=True):
+    # Utility function to load the database
+
+    db_file_path = Path(db_file)
+    db_connection_string = 'sqlite:///SIMPLE.db'
+
+    if RECREATE_DB and db_file_path.exists():
+        os.remove(db_file)  # removes the current .db file if one already exists
+
+    if not db_file_path.exists():
+        create_database(db_connection_string)  # creates empty database based on the simple schema
+        db = Database(db_connection_string)  # connects to the empty database
+        db.load_database('data/')  # loads the data from the data files into the database
+    else:
+        db = Database(db_connection_string)  # if database already exists, connects to .db file
+
+    return db
 
 
 def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., verbose=False):
@@ -156,7 +179,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
     return missing_sources_index, existing_sources_index, alt_names_table
 
 
-def add_names(db, sources=None, other_names=None, names_table=None, verbose=True, save_db=False):
+def add_names(db, sources=None, other_names=None, names_table=None, verbose=True):
     """
     Add source names to the Names table in the database.
     Provide either two lists of sources and other_names or a 2D names_table.
@@ -172,15 +195,15 @@ def add_names(db, sources=None, other_names=None, names_table=None, verbose=True
         table with source and other_names.
         Expecting source name to be first column and other_names in the 2nd.
     verbose
-    save_db
     """
 
-    if names_table and sources:
+    if names_table is not None and sources is not None:
         raise RuntimeError("Both names table and sources list provided. Provide one or the other")
 
     names_data = []
 
-    if sources is not None:
+
+    if sources is not None or other_names is not None:
         # Length of sources and other_names list should be equal
         if len(sources) != len(other_names):
             raise RuntimeError("Length of sources and other_names should be equal")
@@ -199,11 +222,7 @@ def add_names(db, sources=None, other_names=None, names_table=None, verbose=True
 
     n_added = len(names_data)
 
-    if save_db:
-        db.save_database(directory='data/')
-        verboseprint("Names added to database and saved: ", n_added, verbose=verbose)
-    else:
-        verboseprint("Names added to database: ", n_added, verbose=verbose)
+    print("Names added to database: ", n_added)
 
     return
 
@@ -358,9 +377,12 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
     else:
         use_ads = False
 
-    if 'arXiv' in bibcode:
-        arxiv_id = bibcode
-        bibcode = None
+    if bibcode:
+        if 'arXiv' in bibcode:
+            arxiv_id = bibcode
+            bibcode = None
+        else:
+            arxiv_id = None
     else:
         arxiv_id = None
 
@@ -692,7 +714,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     return
 
 
-def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verbose=False):
+def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
     """
 
     Parameters
@@ -707,9 +729,6 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verb
         list of parallaxes uncertainties
     plx_refs
         list of references for the parallax data
-    save_db: bool, optional
-        If set to False (default), will modify the .db file, but not the JSON files
-        If set to True, will save the JSON files
     verbose: bool, optional
         If true, outputs information to the screen
 
@@ -721,26 +740,63 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verb
 
     n_added = 0
 
-    for i, source in enumerate(sources):
+    for i, source in enumerate(sources): # loop through sources with parallax data to ingest
         db_name = db.search_object(source, output_table='Sources')[0]['source']
 
-        # Search for existing parallax data.
+        # Search for existing parallax data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
-        # TODO: figure out adopted in cases of multiple measurements.
         adopted = None
+        duplicate = False
         source_plx_data = db.query(db.Parallaxes).filter(db.Parallaxes.c.source == db_name).table()
-        if source_plx_data is None or len(source_plx_data) == 0:
-            adopted = True
-        else:
-            print("\nOTHER PARALLAX EXISTS, adopted = None")
-            print(source_plx_data)
 
-        # Construct data to be added
-        parallax_data = [{'source': db_name,
+        if source_plx_data is None or len(source_plx_data) == 0:
+            # if there's no other measurements in the database, set new data Adopted = True
+            adopted = True
+            old_adopted = None
+        elif len(source_plx_data) > 0:  # Parallax data already exists
+            # check for duplicate measurement
+            dupe_ind = source_plx_data['reference'] == plx_refs[i]
+            if sum(dupe_ind):
+                duplicate = True
+                verboseprint("Duplicate measurement\n", source_plx_data[dupe_ind])
+            else:
+                duplicate = False
+                verboseprint("!!! Another Proper motion measurement exists,")
+                if verbose:
+                    source_plx_data.pprint_all()
+
+            # check for previous adopted measurement and find new adopted
+            adopted_ind = source_plx_data['adopted'] == 1
+            if sum(adopted_ind):
+                old_adopted = source_plx_data[adopted_ind]
+
+                # if errors of new data are less than other measurements, set Adopted = True.
+                if plx_errs[i] < min(source_plx_data['parallax_error']):
+                    adopted = True
+
+                    # unset old adopted
+                    if old_adopted:
+                        db.Parallaxes.update().where(and_(db.Parallaxes.c.source == old_adopted['source'],
+                                                             db.Parallaxes.c.reference == old_adopted['reference'])).\
+                            values(adopted=False).execute()
+                        # check that adopted flag is successfully changed
+                        old_adopted_data = db.query(db.Parallaxes).filter(and_(db.Parallaxes.c.source == old_adopted['source'],
+                                                                          db.Parallaxes.c.reference == old_adopted['reference'])).table()
+                        verboseprint("Old adopted measurement unset\n", old_adopted_data)
+
+                verboseprint("The new measurement's adopted flag is:", adopted)
+
+        else:
+            raise RuntimeError("Unexpected state")
+
+        if not duplicate:
+            # Construct data to be added
+            parallax_data = [{'source': db_name,
                           'parallax': str(plxs[i]),
                           'parallax_error': str(plx_errs[i]),
                           'reference': plx_refs[i],
                           'adopted': adopted}]
+
         verboseprint(parallax_data, verbose=verbose)
 
         try:
@@ -752,11 +808,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, save_db=False, verb
                               "Add it with add_publication function. \n"
                               "The parallax measurement may be a duplicate.")
 
-    if save_db:
-        db.save_database(directory='data/')
-        print("Parallaxes added to database and saved: ", n_added)
-    else:
-        print("Parallaxes added to database: ", n_added)
+    print("Parallaxes added to database: ", n_added)
 
     return
 
@@ -844,9 +896,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                     adopted = True
                 elif min(source_pm_data['mu_ra_error']) < pm_ra_errs[i] and min(source_pm_data['mu_dec_error']) < \
                         pm_dec_errs[i]:
-                    # TODO: implement once Proper Motion table actually has an adopted column.
-                    # Issue #180
-                    # check if something is alraedy  marked as Adopted.
+                    # TODO: implement approach from ingest_parallaxes to set/unset adopted flag
                     adopted_pm = db.ProperMotions.update().where(and_(db.ProperMotions.c.source == db_name,
                                                                       db.ProperMotions.c.mu_ra_error == min(
                                                                           source_pm_data['mu_ra_error']),
@@ -951,3 +1001,60 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
     print("Photometry measurements added to database: ", n_added)
 
     return
+
+
+def find_in_simbad(sources, desig_prefix, source_id_index = None, verbose = False):
+    """
+    Function to extract source designations from SIMBAD
+
+    Parameters
+    ----------
+    sources
+    desig_prefix
+    source_id_index
+    verbose
+
+    Returns
+    -------
+    Astropy table
+
+    """
+
+    n_sources = len(sources)
+
+    Simbad.reset_votable_fields()
+    Simbad.add_votable_fields('typed_id')  # keep search term in result table
+    Simbad.add_votable_fields('ids')  # add all SIMBAD identifiers as an output column
+    print("simbad query started")
+    result_table = Simbad.query_objects(sources)
+    print("simbad query ended")
+
+    ind = result_table['SCRIPT_NUMBER_ID'] > 0  # find indexes which contain results
+
+    simbad_ids = result_table['TYPED_ID', 'IDS'][ind]  # .topandas()
+
+    db_names = []
+    simbad_designations = []
+    if source_id_index is not None:
+        source_ids = []
+
+    for row in simbad_ids:
+        db_name = row['TYPED_ID']
+        ids = row['IDS'].split('|')
+        designation = [i for i in ids if desig_prefix in i]
+
+        if designation:
+            verboseprint(db_name, designation[0])
+            db_names.append(db_name)
+            simbad_designations.append(designation[0])
+            if source_id_index is not None:
+                source_id = designation[0].split()[source_id_index]
+                source_ids.append(int(source_id)) #convert to int since long in Gaia
+
+    n_matches = len(db_names)
+    print('Found', n_matches, desig_prefix, ' sources for', n_sources, ' sources')
+
+    result_table = Table([db_names, simbad_designations, source_ids],
+                      names=('db_names', 'designation', 'source_id'))
+
+    return result_table
