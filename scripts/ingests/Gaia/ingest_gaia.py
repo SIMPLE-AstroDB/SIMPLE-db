@@ -8,7 +8,7 @@ import numpy as np
 # GLOBAL VARIABLES
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
-VERBOSE = True
+VERBOSE = False
 DATE_SUFFIX = 'Sep2021'
 
 
@@ -246,11 +246,11 @@ edr3_data_file_string = 'scripts/ingests/Gaia/gaia_edr3_data_'+DATE_SUFFIX+'.xml
 gaia_edr3_data = Table.read(edr3_data_file_string, format='votable')
 
 # ADD Gaia TELESCOPE, INSTRUMENT AND Gaia FILTERS
-update_ref_tables()
+# update_ref_tables()
 
 # ADD Gaia DESIGNATIONS TO NAMES TABLE
-# add_names(db, sources=gaia_dr2_data['db_names'], other_names=gaia_dr2_data['designation'], verbose=VERBOSE)
-add_names(db, sources=gaia_edr3_data['db_names'], other_names=gaia_edr3_data['designation'])
+add_names(db, sources=gaia_dr2_data['db_names'], other_names=gaia_dr2_data['designation'], verbose=VERBOSE)
+add_names(db, sources=gaia_edr3_data['db_names'], other_names=gaia_edr3_data['designation'], verbose=VERBOSE)
 
 # ADD Gaia PROPER MOTIONS
 add_gaia_pms(gaia_dr2_data, 'GaiaDR2')
@@ -279,17 +279,26 @@ add_gaia_photometry(gaia_edr3_data, 'GaiaEDR3')
 #   G: Photometry measurements added to database:  1256
 #   Rp: Photometry measurements added to database:  1261
 
-phot_count = db.query(Photometry.band, func.count(Photometry.band)).group_by(Photometry.band).all()
-print('Photometry: ', phot_count)
+pm_count = db.query(ProperMotions.reference, func.count(ProperMotions.reference)).group_by(ProperMotions.reference).\
+    order_by(func.count(ProperMotions.reference).desc()).limit(20).all()
+print("Proper motion count: ", pm_count)
+# Proper motion count:  [('GaiaEDR3', 1133), ('GaiaDR2', 1076), ('Best20a', 348), ('Gagn15a', 325), ('Fahe09', 216),
+# ('Kirk19', 182), ('Best15', 120), ('Burn13', 97), ('Dahn17', 79), ('Jame08', 73), ('vanL07', 68), ('Smar18', 68),
+# ('Liu_16', 50), ('Zhan10', 45), ('Schm10b', 44), ('Card15', 40), ('Wein16', 37), ('Case08', 35), ('Luhm14c', 31),
+# ('Fahe12', 30)]
 
 pi_count = db.query(Parallaxes.reference, func.count(Parallaxes.reference)).group_by(Parallaxes.reference).\
     order_by(func.count(Parallaxes.reference).desc()).limit(10).all()
 print("Parallax count: ", pi_count)
+# Parallax count:  [('GaiaEDR3', 1133), ('GaiaDR2', 1076), ('Kirk19', 22), ('Mart18', 15), ('Missing', 7),
+# ('Vrba04', 3), ('Fahe12', 3), ('Dupu12a', 3), ('Tinn14', 2), ('Maro13', 2)]
 
-pm_count = db.query(ProperMotions.reference, func.count(ProperMotions.reference)).group_by(ProperMotions.reference).\
-    order_by(func.count(ProperMotions.reference).desc()).limit(20).all()
-print("Proper motion count: ", pm_count)
+phot_count = db.query(Photometry.band, func.count(Photometry.band)).group_by(Photometry.band).all()
+print('Photometry: ', phot_count)
+# Photometry:  [('GAIA2.G', 1266), ('GAIA2.Grp', 1106), ('GAIA3.G', 1256), ('GAIA3.Grp', 1261), ('IRAC.I1', 22),
+# ('IRAC.I2', 22), ('WISE.W1', 349), ('WISE.W2', 349), ('WISE.W3', 347), ('WISE.W4', 340)]
 
-# Write the JSON files
+
+# WRITE THE JSON FILES
 if SAVE_DB:
     db.save_database(directory='data/')
