@@ -14,6 +14,56 @@
     "Names": [
         {
             "other_name": "2MASSI J0006205-172051"
+        },
+        {
+            "other_name": "Gaia DR2 2414607592787544320"
+        },
+        {
+            "other_name": "Gaia EDR3 2414607592787544320"
+        }
+    ],
+    "Parallaxes": [
+        {
+            "parallax": 25.177992106872185,
+            "parallax_error": 1.883332936853915,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaDR2"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 20.73130226135254,
+            "magnitude_error": 0.013606510874249252,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 20.670921325683594,
+            "magnitude_error": 0.012249878582609362,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 19.108436584472656,
+            "magnitude_error": 0.06986278173185034,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ],
     "ProperMotions": [
@@ -22,9 +72,18 @@
             "mu_ra_error": 17.0,
             "mu_dec": 17.0,
             "mu_dec_error": 18.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Fahe09"
+        },
+        {
+            "mu_ra": -32.720057174374034,
+            "mu_ra_error": 3.2705306645889616,
+            "mu_dec": 10.384031991200374,
+            "mu_dec_error": 2.0005693184528495,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaDR2"
         }
     ]
 }
