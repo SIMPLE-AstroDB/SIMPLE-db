@@ -225,7 +225,7 @@ def add_names(db, sources=None, other_names=None, names_table=None, verbose=True
 
     n_added = len(names_data)
 
-    verbose.print("Names added to database: ", n_added, verbose=True)
+    verbose.print("Names added to database: ", n_added)
 
     return
 
@@ -257,7 +257,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     >>> test = search_publication(db, name='Cruz')
     Found 8 matching publications for Cruz or None or None
 
-    >>> test = search_publication(db, name='Kirk19', verbose=True)
+    >>> test = search_publication(db, name='Kirk19')
     Found 1 matching publications for Kirk19 or None or None
      name        bibcode                 doi
     ------ ------------------- ------------------------
@@ -768,10 +768,10 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
             dupe_ind = source_plx_data['reference'] == plx_refs[i]
             if sum(dupe_ind):
                 duplicate = True
-                verbose.print("Duplicate measurement\n", source_plx_data[dupe_ind], verbose=True)
+                verbose.print("Duplicate measurement\n", source_plx_data[dupe_ind])
             else:
                 duplicate = False
-                verbose.print("!!! Another Proper motion measurement exists,", verbose=True)
+                verbose.print("!!! Another Proper motion measurement exists,")
                 if verbose:
                     source_plx_data.pprint_all()
 
@@ -1011,7 +1011,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
                               "Add it with add_publication function. \n"
                               "The measurement may be a duplicate.")
 
-    verbose.print("Photometry measurements added to database: ", n_added, verbose=True)
+    verbose.print("Photometry measurements added to database: ", n_added)
 
     return
 
@@ -1039,9 +1039,9 @@ def find_in_simbad(sources, desig_prefix, source_id_index=None, verbose=False):
     Simbad.reset_votable_fields()
     Simbad.add_votable_fields('typed_id')  # keep search term in result table
     Simbad.add_votable_fields('ids')  # add all SIMBAD identifiers as an output column
-    verbose.print("simbad query started", verbose=True)
+    verbose.print("simbad query started")
     result_table = Simbad.query_objects(sources)
-    verbose.print("simbad query ended", verbose=True)
+    verbose.print("simbad query ended")
 
     ind = result_table['SCRIPT_NUMBER_ID'] > 0  # find indexes which contain results
 
