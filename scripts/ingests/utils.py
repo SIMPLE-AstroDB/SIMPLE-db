@@ -42,6 +42,10 @@ class VerbosePrint:
         if self.verbose:
             print(*args, **kwargs)
 
+    def pprint_all(self, t: Table):
+        if self.verbose:
+            t.pprint_all()
+
 
 # TODO: commented out as not using with the new custom error
 # @contextmanager
@@ -163,7 +167,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
     verbose.print("\n Missing Sources:\n", ingest_names[missing_sources_index])
     verbose.print("\n Existing Sources with different name:\n")
     if verbose:
-        # TODO: does pprint_all work here? If it's just a list that's undefined
+        # TODO: does pprint_all work here? alt_names_table appears to be a list instead of a astropy Table
         # alt_names_table.pprint_all()
         pass
 
@@ -300,14 +304,12 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
 
     if n_pubs_found == 1:
         verbose.print(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
-        if verbose:
-            pub_search_table.pprint_all()
+        verbose.pprint_all(pub_search_table)
         return True, 1
 
     if n_pubs_found > 1:
         verbose.print(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
-        if verbose:
-            pub_search_table.pprint_all()
+        verbose.pprint_all(pub_search_table)
         return False, n_pubs_found
 
     # If no matches found, search using first four characters of input name
@@ -325,8 +327,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
 
         if n_pubs_found_short > 0:
             verbose.print(f'Found {n_pubs_found_short} matching publications for {shorter_name}')
-            if verbose:
-                pub_search_table.pprint_all()
+            verbose.pprint_all(pub_search_table)
             return False, n_pubs_found_short
     else:
         return False, n_pubs_found
@@ -772,8 +773,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
             else:
                 duplicate = False
                 verbose.print("!!! Another Proper motion measurement exists,")
-                if verbose:
-                    source_plx_data.pprint_all()
+                verbose.pprint_all(source_plx_data)
 
             # check for previous adopted measurement and find new adopted
             adopted_ind = source_plx_data['adopted'] == 1
@@ -921,8 +921,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                                   )
 
                 verbose.print("!!! Another Proper motion exists, Adopted:", adopted)
-                if verbose:
-                    source_pm_data.pprint_all()
+                verbose.pprint_all(source_pm_data)
 
         else:
             raise RuntimeError("Unexpected state")
