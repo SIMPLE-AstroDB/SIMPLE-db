@@ -5,8 +5,9 @@ from astropy import table
 from sqlalchemy import func
 import numpy as np
 
+
 # GLOBAL VARIABLES
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = False
 DATE_SUFFIX = 'Sep2021'
@@ -244,6 +245,10 @@ gaiadr3_names = Table.read(dr3_desig_file_string, format='votable')
 edr3_data_file_string = 'scripts/ingests/Gaia/gaia_edr3_data_'+DATE_SUFFIX+'.xml'
 # gaia_edr3_data.write(edr3_data_file_string, format='votable')
 gaia_edr3_data = Table.read(edr3_data_file_string, format='votable')
+
+#sort by ra
+gaia_dr2_data.sort('ra')
+gaia_edr3_data.sort('ra')
 
 # ADD Gaia TELESCOPE, INSTRUMENT AND Gaia FILTERS
 # update_ref_tables()

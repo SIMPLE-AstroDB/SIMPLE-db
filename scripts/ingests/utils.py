@@ -2,11 +2,9 @@
 Utils functions for use in ingests
 """
 from collections import namedtuple
-import sys  # not being used?
 import os
 import re
 import warnings
-
 from pathlib import Path
 from astrodbkit2.astrodb import create_database
 from astrodbkit2.astrodb import Database
@@ -16,14 +14,9 @@ from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.simbad import Simbad
 from astropy.table import Table
-# from contextlib import contextmanager
-from sqlalchemy import or_
-from sqlalchemy import and_
+from sqlalchemy import or_, and_
 import sqlalchemy.exc
-# import sqlite3
 import numpy as np
-
-# import astrodbkit2
 
 warnings.filterwarnings("ignore", module='astroquery.simbad')
 
@@ -756,21 +749,20 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
         # Search for existing parallax data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
         adopted = None
-        duplicate = False
         source_plx_data: Table = db.query(db.Parallaxes).filter(db.Parallaxes.c.source == db_name).table()
 
         if source_plx_data is None or len(source_plx_data) == 0:
             # if there's no other measurements in the database, set new data Adopted = True
             adopted = True
-            # old_adopted = None  # not being used
+            # old_adopted = None  # not used
+            verbosed.print("No other measurement")
         elif len(source_plx_data) > 0:  # Parallax data already exists
             # check for duplicate measurement
             dupe_ind = source_plx_data['reference'] == plx_refs[i]
             if sum(dupe_ind):
-                duplicate = True
-                verbosed.print("Duplicate measurement\n", source_plx_data[dupe_ind])
+                verbosed.print("Duplicate measurement\n", source_plx_data[dupe_ind], '\n')
+                continue
             else:
-                duplicate = False
                 verbosed.print("!!! Another Proper motion measurement exists,")
                 verbosed.pprint_all(source_plx_data)
 
@@ -778,37 +770,34 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
             adopted_ind = source_plx_data['adopted'] == 1
             if sum(adopted_ind):
                 old_adopted = source_plx_data[adopted_ind]
-
                 # if errors of new data are less than other measurements, set Adopted = True.
                 if plx_errs[i] < min(source_plx_data['parallax_error']):
                     adopted = True
 
                     # unset old adopted
                     if old_adopted:
-                        db.Parallaxes.update().where(and_(db.Parallaxes.c.source == old_adopted['source'],
-                                                          db.Parallaxes.c.reference == old_adopted['reference'])). \
+                        db.Parallaxes.update().where(and_(db.Parallaxes.c.source == old_adopted['source'][0],
+                                                          db.Parallaxes.c.reference == old_adopted['reference'][0])). \
                             values(adopted=False).execute()
                         # check that adopted flag is successfully changed
                         old_adopted_data = db.query(db.Parallaxes).filter(
-                            and_(db.Parallaxes.c.source == old_adopted['source'],
-                                 db.Parallaxes.c.reference == old_adopted['reference'])).table()
-                        verbosed.print("Old adopted measurement unset\n", old_adopted_data)
+                            and_(db.Parallaxes.c.source == old_adopted['source'][0],
+                                 db.Parallaxes.c.reference == old_adopted['reference'][0])).table()
+                        verbosed.print("Old adopted measurement unset")
+                        verbose.pprint_all(old_adopted_data)
 
                 verbosed.print("The new measurement's adopted flag is:", adopted)
-
         else:
             raise RuntimeError("Unexpected state")
 
-        parallax_data = []
-        if not duplicate:
-            # Construct data to be added
-            parallax_data = [{'source': db_name,
-                              'parallax': str(plxs[i]),
-                              'parallax_error': str(plx_errs[i]),
-                              'reference': plx_refs[i],
-                              'adopted': adopted}]
+        # Construct data to be added
+        parallax_data = [{'source': db_name,
+                          'parallax': plxs[i],
+                          'parallax_error': plx_errs[i],
+                          'reference': plx_refs[i],
+                          'adopted': adopted}]
 
-        verbosed.print(parallax_data)
+        verbosed.print(parallax_data, '\n')
 
         try:
             db.Parallaxes.insert().execute(parallax_data)
@@ -824,7 +813,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
     return
 
 
-def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs, pm_references, save_db=False,
+def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs, pm_references,
                           verbose=False):
     """
 
@@ -844,9 +833,6 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
         list of uncertanties in proper motion dec
     pm_references
         list of references for the proper motion measurements
-    save_db: bool, optional
-        If set to False (default), will modify the .db file, but not the JSON files
-        If set to True, will save the JSON files
     verbose: bool, optional
         If True, outputs information to the screen
 
@@ -888,27 +874,41 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
 
         # Search for existing proper motion data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
-        adopted = None
-        duplicate = False
+        # adopted = None  # not used
         source_pm_data = db.query(db.ProperMotions).filter(db.ProperMotions.c.source == db_name).table()
         if source_pm_data is None or len(source_pm_data) == 0:
             # if there's no other measurements in the database, set new data Adopted = True
             adopted = True
-            duplicate = False
         elif len(source_pm_data) > 0:
+
             # check to see if other measurement is a duplicate of the new data
-            for pm_data in source_pm_data:
-                if pm_data['reference'] == pm_references[i]:
-                    duplicate = True
-                    verbosed.print("Duplicate measurement\n", pm_data)
-            if not duplicate:
-                # if errors of new data are less than other measurements, set Adopted = True.
-                if pm_ra_errs[i] < min(source_pm_data['mu_ra_error']) and pm_dec_errs[i] < min(
-                        source_pm_data['mu_dec_error']):
-                    adopted = True
-                elif min(source_pm_data['mu_ra_error']) < pm_ra_errs[i] and min(source_pm_data['mu_dec_error']) < \
-                        pm_dec_errs[i]:
-                    # TODO: implement approach from ingest_parallaxes to set/unset adopted flag
+            dupe_ind = source_pm_data['reference'] == pm_references[i]
+            if sum(dupe_ind):
+                verbosed.print("Duplicate measurement\n", source_pm_data)
+                continue
+
+            # check for previous adopted measurement
+            adopted_ind = source_pm_data['adopted'] == 1
+            if sum(adopted_ind):
+                old_adopted = source_pm_data[adopted_ind]
+            else:
+                old_adopted = None
+
+            # if errors of new data are less than other measurements, set Adopted = True.
+            if pm_ra_errs[i] < min(source_pm_data['mu_ra_error']) and pm_dec_errs[i] < min(
+                    source_pm_data['mu_dec_error']):
+                adopted = True
+                # unset old adopted if it exists
+                if old_adopted:
+                    db.ProperMotions.update().where(and_(db.ProperMotions.c.source == old_adopted['source'][0],
+                                                         db.ProperMotions.c.reference == old_adopted['reference'][0])).\
+                        values(adopted=False).execute()
+            else:
+                adopted = False
+                # if no previous adopted measurement, set adopted to the measurement with the smallest errors
+                if not adopted and not old_adopted and \
+                        min(source_pm_data['mu_ra_error']) < pm_ra_errs[i] and \
+                        min(source_pm_data['mu_dec_error']) < pm_dec_errs[i]:
                     adopted_pm = db.ProperMotions.update().where(and_(db.ProperMotions.c.source == db_name,
                                                                       db.ProperMotions.c.mu_ra_error == min(
                                                                           source_pm_data['mu_ra_error']),
@@ -916,39 +916,34 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                                                                           source_pm_data['mu_dec_error']))). \
                         values(adopted=True)
                     db.engine.execute(adopted_pm)
-                    verbosed.print("Will eventually make measurement with min ra and dec errors Adopted.")
-
-                verbosed.print("!!! Another Proper motion exists, Adopted:", adopted)
-                verbosed.pprint_all(source_pm_data)
+            verbosed.print("!!! Another Proper motion exists")
+            verbosed.pprint_all(source_pm_data)
 
         else:
             raise RuntimeError("Unexpected state")
 
         # Construct data to be added
-        if not duplicate:
-            pm_data = [{'source': db_name,
-                        'mu_ra': pm_ras[i],
-                        'mu_ra_error': pm_ra_errs[i],
-                        'mu_dec': pm_decs[i],
-                        'mu_dec_error': pm_dec_errs[i],
-                        'adopted': adopted,
-                        'reference': pm_references[i]}]
-            verbosed.print('Proper motion data to add: ', pm_data)
+        pm_data = [{'source': db_name,
+                    'mu_ra': pm_ras[i],
+                    'mu_ra_error': pm_ra_errs[i],
+                    'mu_dec': pm_decs[i],
+                    'mu_dec_error': pm_dec_errs[i],
+                    'adopted': adopted,
+                    'reference': pm_references[i]}]
+        verbosed.print('Proper motion data to add: ', pm_data)
 
-            try:
-                db.ProperMotions.insert().execute(pm_data)
-                n_added += 1
-            except sqlalchemy.exc.IntegrityError:
-                raise SimpleError("The source may not exist in Sources table.\n"
-                                  "The proper motion reference may not exist in Publications table. "
-                                  "Add it with add_publication function. \n"
-                                  "The proper motion measurement may be a duplicate.")
+        try:
+            db.ProperMotions.insert().execute(pm_data)
+            n_added += 1
+        except sqlalchemy.exc.IntegrityError:
+            raise SimpleError("The source may not exist in Sources table.\n"
+                              "The proper motion reference may not exist in Publications table. "
+                              "Add it with add_publication function. \n"
+                              "The proper motion measurement may be a duplicate.")
 
-    if save_db:
-        db.save_database(directory='data/')
-        verbosed.print("Proper motions added to database and saved: ", n_added)
-    else:
-        verbosed.print("Proper motions added to database: ", n_added)
+        updated_source_pm_data = db.query(db.ProperMotions).filter(db.ProperMotions.c.source == db_name).table()
+        verbosed.print('Updated proper motion data:')
+        verbosed.pprint_all(updated_source_pm_data)
 
     return
 
