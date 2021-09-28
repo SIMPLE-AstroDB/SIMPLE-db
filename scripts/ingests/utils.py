@@ -976,12 +976,18 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
     for i, source in enumerate(sources):
         db_name = db.search_object(source, output_table='Sources')[0]['source']
 
+        # if the uncertainty is masked, don't ingest anything
+        if isinstance(magnitude_errors[i], np.ma.core.MaskedConstant):
+            mag_error = None
+        else:
+            mag_error = str(magnitude_errors[i])
+
         # Construct data to be added
         photometry_data = [{'source': db_name,
                             'band': bands[i],
                             'ucd': ucds[i],
-                            'magnitude': magnitudes[i],
-                            'magnitude_error': magnitude_errors[i],
+                            'magnitude': str(magnitudes[i]), # Convert to string to maintain significant digits
+                            'magnitude_error': mag_error,
                             'telescope': telescope[i],
                             'instrument': instrument[i],
                             'epoch': epoch,
