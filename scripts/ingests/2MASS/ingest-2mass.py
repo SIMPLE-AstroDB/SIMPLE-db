@@ -1,17 +1,17 @@
 from scripts.ingests.utils import *
-from scripts.ingests.ingest_utils import *
-from astropy.table import Table, setdiff
+from astropy.table import Table, unique, setdiff
 from sqlalchemy import func
 
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = True  # recreates the .db file from the data files
+RECREATE_DB = False  # recreates the .db file from the data files
 VERBOSE = True
 DATE_SUFFIX = 'Sep2021'
 
-db = load_simpledb(RECREATE_DB=RECREATE_DB)
+db = load_simpledb(db_file='SIMPLE.db', RECREATE_DB=RECREATE_DB)
 
-## FUNCITONS
+## FUNCTIONS
+
 # QUERY SIMBAD TO GET 2MASS PHOTOMETRY
 def query_tmass(source_names):
     Simbad.reset_votable_fields()
@@ -39,13 +39,13 @@ def query_tmass(source_names):
     return tmass_phot_unique
 
 #get list of all sources
-# sources = db.query(db.Sources.c.source).astropy()
+sources = db.query(db.Sources.c.source).astropy()
 
 # Use SIMBAD to 2MASS designations for all sources
-# tmass_designations = find_in_simbad(sources, '2MASS', verbose=VERBOSE)
-# tmass_desig_file_string = 'scripts/ingests/2MASS/2MASS_designations_'+DATE_SUFFIX+'.xml'
+# tmass_designations = find_in_simbad(sources['source'], '2MASS J')
+tmass_desig_file_string = 'scripts/ingests/2MASS/2MASS_designations_'+DATE_SUFFIX+'.xml'
 # tmass_designations.write(tmass_desig_file_string, format='votable', overwrite=True)
-# tmass_designations = Table.read(tmass_desig_file_string, format='votable')
+tmass_designations = Table.read(tmass_desig_file_string, format='votable')
 
 
 # tmass_phot = query_tmass(tmass_designations['db_names'])
@@ -58,7 +58,15 @@ tmass_phot_unique = unique(tmass_phot, keys='TYPED_ID',keep='first')
 # TODO: add missing 2MASS designations
 # add 2MASS designations to Names table as needed
 # Find difference between all 2MASS and Names Table
-# add_names(db, sources=gaia_dr2_data['db_names'], other_names=gaia_dr2_data['gaia_designation'], verbose=VERBOSE)
+tmass_desig_in_db = db.query(db.Names).filter(db.Names.c.other_name.in_(tmass_designations['designation'])).table()
+# find sources in tmass_designations not in tmass
+tmass_desig_in_db['designation']=tmass_desig_in_db['other_name']
+tmass_not_in_db = setdiff(tmass_designations, tmass_desig_in_db, keys=['designation'])
+add_names(db, sources=tmass_not_in_db['db_names'][801:], other_names=tmass_not_in_db['designation'][801:])
+# TODO: problem at 500 with 2MASS J12475047-0152142
+# TODO: Look into 2MASS sources with blank other_name entries
+
+
 
 # ADD J band photometry
 unmasked_J_phot = np.logical_not(tmass_phot_unique['FLUX_J'].mask).nonzero()
