@@ -14,6 +14,12 @@
     "Names": [
         {
             "other_name": "2MASS J17502484-0016151"
+        },
+        {
+            "other_name": "Gaia DR2 4371611781971072768"
+        },
+        {
+            "other_name": "Gaia EDR3 4371611781966708992"
         }
     ],
     "Parallaxes": [
@@ -23,6 +29,37 @@
             "adopted": true,
             "comments": null,
             "reference": "Andr11"
+        },
+        {
+            "parallax": 108.26759618585253,
+            "parallax_error": 0.2551588718986809,
+            "adopted": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 18.29413604736328,
+            "magnitude_error": 0.003977724930975209,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 20.906124114990234,
+            "magnitude_error": 0.01904488148997253,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ],
     "ProperMotions": [
@@ -34,6 +71,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Dahn17"
+        },
+        {
+            "mu_ra": -397.1541954182367,
+            "mu_ra_error": 0.45571199525760087,
+            "mu_dec": 197.92130612262432,
+            "mu_dec_error": 0.40171627638199775,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
         }
     ],
     "SpectralTypes": [

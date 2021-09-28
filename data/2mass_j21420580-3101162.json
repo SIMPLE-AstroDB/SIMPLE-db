@@ -14,6 +14,67 @@
     "Names": [
         {
             "other_name": "2MASS J21420580-3101162"
+        },
+        {
+            "other_name": "Gaia DR2 6593114518388811392"
+        },
+        {
+            "other_name": "Gaia EDR3 6593114518388811392"
+        }
+    ],
+    "Parallaxes": [
+        {
+            "parallax": 29.203963650606266,
+            "parallax_error": 1.4604923725128174,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 20.806703567504883,
+            "magnitude_error": 0.01573909648443345,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 19.095354080200195,
+            "magnitude_error": 0.09807622704776695,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 20.757396697998047,
+            "magnitude_error": 0.007871436943812956,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 19.276506423950195,
+            "magnitude_error": 0.04272507839670564,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ],
     "ProperMotions": [
@@ -22,9 +83,18 @@
             "mu_ra_error": 6.2,
             "mu_dec": -97.31,
             "mu_dec_error": 5.09,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Case08"
+        },
+        {
+            "mu_ra": 50.25357679853592,
+            "mu_ra_error": 2.2555735111236572,
+            "mu_dec": -117.98442848681691,
+            "mu_dec_error": 1.7143231630325317,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ]
 }

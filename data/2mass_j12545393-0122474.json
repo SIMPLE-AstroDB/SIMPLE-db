@@ -16,6 +16,12 @@
             "other_name": "2MASS J12545393-0122474"
         },
         {
+            "other_name": "Gaia DR2 3688766613886655744"
+        },
+        {
+            "other_name": "Gaia EDR3 3688766613886655744"
+        },
+        {
             "other_name": "SDSS J125453.90-012247.5"
         },
         {
@@ -25,7 +31,60 @@
             "other_name": "WISEP J125453.57-012245.8"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 74.18384561243197,
+            "parallax_error": 2.305689366799139,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaDR2"
+        }
+    ],
     "Photometry": [
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 20.883434295654297,
+            "magnitude_error": 0.014619807166229428,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 18.8925724029541,
+            "magnitude_error": 0.08336063486519038,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 20.83668327331543,
+            "magnitude_error": 0.012717258041973219,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 19.011547088623047,
+            "magnitude_error": 0.07790391899785085,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "band": "WISE.W1",
             "ucd": null,
@@ -80,6 +139,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Dahn17"
+        },
+        {
+            "mu_ra": -491.5544345401453,
+            "mu_ra_error": 4.387108332770213,
+            "mu_dec": 110.68756905762262,
+            "mu_dec_error": 3.2060377139611336,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
         }
     ]
 }

@@ -125,6 +125,13 @@ def test_proper_motion_refs(db):
     proper_motion_mearsurements = db.query(ProperMotions.reference, func.count(ProperMotions.reference)).\
         group_by(ProperMotions.reference).order_by(func.count(ProperMotions.reference).desc()).limit(20).all()
     """
+    ref = 'GaiaEDR3'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 1133, f'found {len(t)} proper motion reference entries for {ref}'
+
+    ref = 'GaiaDR2'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 1076, f'found {len(t)} proper motion reference entries for {ref}'
 
     ref = 'Best20a'
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
@@ -163,6 +170,49 @@ def test_proper_motion_refs(db):
     ref = 'Smar18'
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 68, f'found {len(t)} proper motion reference entries for {ref}'
+
+def test_parallax_refs(db):
+    ref = 'GaiaDR2'
+    t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
+    assert len(t) == 1076, f'found {len(t)} parallax reference entries for {ref}'
+
+    ref = 'GaiaEDR3'
+    t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
+    assert len(t) == 1133, f'found {len(t)} parallax reference entries for {ref}'
+
+
+def test_photometry_bands(db):
+    band = 'GAIA2.G'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 1266, f'found {len(t)} photometry measurements for {band}'
+
+    band = 'GAIA2.Grp'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 1106, f'found {len(t)} photometry measurements for {band}'
+
+    band = 'GAIA3.G'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 1256, f'found {len(t)} photometry measurements for {band}'
+
+    band = 'GAIA3.Grp'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 1261, f'found {len(t)} photometry measurements for {band}'
+
+    band = 'WISE.W1'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 349, f'found {len(t)} photometry measurements for {band}'
+
+    band = 'WISE.W2'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 349, f'found {len(t)} photometry measurements for {band}'
+
+    band = 'WISE.W3'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 347, f'found {len(t)} photometry measurements for {band}'
+
+    band = 'WISE.W4'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 340, f'found {len(t)} photometry measurements for {band}'
 
 
 # Individual ingest tests
