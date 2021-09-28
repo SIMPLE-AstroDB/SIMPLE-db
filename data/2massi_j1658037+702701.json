@@ -22,10 +22,76 @@
             "other_name": "2MASSW J1658037+702701"
         },
         {
+            "other_name": "Gaia DR2 1649407285800074240"
+        },
+        {
+            "other_name": "Gaia EDR3 1649407285800074240"
+        },
+        {
             "other_name": "LSPM J1658+7027"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 54.11723278777105,
+            "parallax_error": 0.20578213013708155,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 54.13468568253727,
+            "parallax_error": 0.12912416458129883,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
     "Photometry": [
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 18.11188507080078,
+            "magnitude_error": 0.0018257906162240506,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 16.490392684936523,
+            "magnitude_error": 0.010510447299548703,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 18.114532470703125,
+            "magnitude_error": 0.0018257703817024004,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 16.530248641967773,
+            "magnitude_error": 0.004685132710473298,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "band": "WISE.W1",
             "ucd": null,
@@ -77,9 +143,27 @@
             "mu_ra_error": 0.56,
             "mu_dec": -314.12,
             "mu_dec_error": 0.31,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Dahn17"
+        },
+        {
+            "mu_ra": -139.5395815648552,
+            "mu_ra_error": 0.3130361561926434,
+            "mu_dec": -315.37660436552125,
+            "mu_dec_error": 0.3738881937445633,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": -139.86121980340084,
+            "mu_ra_error": 0.16342616081237793,
+            "mu_dec": -314.8535930260554,
+            "mu_dec_error": 0.16069874167442322,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ]
 }

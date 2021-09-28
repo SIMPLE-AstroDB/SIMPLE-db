@@ -13,16 +13,75 @@
     ],
     "Names": [
         {
+            "other_name": "Gaia DR2 4032613861584002048"
+        },
+        {
+            "other_name": "Gaia EDR3 4032613861584002048"
+        },
+        {
             "other_name": "SDSS J115306.12+371653.4"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 10.802055178407016,
+            "parallax_error": 2.2654309272766113,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 20.94220542907715,
+            "magnitude_error": 0.01611448533580945,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 20.910234451293945,
+            "magnitude_error": 0.01286248537806445,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 19.269166946411133,
+            "magnitude_error": 0.0711737946278645,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
     "ProperMotions": [
+        {
+            "mu_ra": 197.82176742666547,
+            "mu_ra_error": 2.0940754413604736,
+            "mu_dec": -77.25749213140529,
+            "mu_dec_error": 2.525703191757202,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "mu_ra": 245.8,
             "mu_ra_error": 50.8,
             "mu_dec": -10.8,
             "mu_dec_error": 16.5,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Schm10b"
         }
