@@ -35,8 +35,8 @@ class SimpleError(Exception):
 class VerbosePrint:
     verbose = False
 
-    def __init__(self, isverbose: bool):
-        self.verbose = isverbose
+    def __init__(self, verbose: bool):
+        self.verbose = verbose
 
     def print(self, *args, **kwargs):
         if self.verbose:
@@ -78,7 +78,7 @@ def load_simpledb(db_file, recreatedb=True):
     return db
 
 
-def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., isverbose=False):
+def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., verbose=False):
     """
     Classifying sources to be ingested into the database into three categories:
     1) in the database with the same name,
@@ -97,7 +97,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., i
         Declinations of sources. Decimal degrees.
     search_radius
         radius in arcseconds to use for source matching
-    isverbose
+    verbose
 
     Returns
     -------
@@ -108,7 +108,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., i
     alt_names_table
         List of tuples with Other Names to add to database
     """
-    verbose = VerbosePrint(isverbose)
+    verbose = VerbosePrint(verbose)
 
     existing_sources_index = []
     missing_sources_index = []
@@ -186,7 +186,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., i
     return missing_sources_index, existing_sources_index, alt_names_table
 
 
-def add_names(db, sources=None, other_names=None, names_table=None, isverbose=True):
+def add_names(db, sources=None, other_names=None, names_table=None, verbose=True):
     """
     Add source names to the Names table in the database.
     Provide either two lists of sources and other_names or a 2D names_table.
@@ -201,9 +201,9 @@ def add_names(db, sources=None, other_names=None, names_table=None, isverbose=Tr
     names_table
         table with source and other_names.
         Expecting source name to be first column and other_names in the 2nd.
-    isverbose
+    verbose
     """
-    verbose = VerbosePrint(isverbose)
+    verbose = VerbosePrint(verbose)
 
     if names_table is not None and sources is not None:
         raise RuntimeError("Both names table and sources list provided. Provide one or the other")
@@ -234,7 +234,7 @@ def add_names(db, sources=None, other_names=None, names_table=None, isverbose=Tr
     return
 
 
-def search_publication(db, name: str = None, doi: str = None, bibcode: str = None, isverbose: bool = False):
+def search_publication(db, name: str = None, doi: str = None, bibcode: str = None, verbose: bool = False):
     """
     Find publications in the database by matching on the publication name,  doi, or bibcode
 
@@ -248,7 +248,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
         DOI of publication to search
     bibcode: str
         ADS Bibcode of publication to search
-    isverbose : bool
+    verbose : bool
 
     Returns
     -------
@@ -281,7 +281,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     add_publication: Function to add publications in the database
 
     """
-    verbose = VerbosePrint(isverbose)
+    verbose = VerbosePrint(verbose)
 
     # Make sure a search term is provided
     if name is None and doi is None and bibcode is None:
@@ -337,7 +337,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
 
 def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None,
                     ignore_ads: bool = False, save_db=False,
-                    isverbose: bool = True):
+                    verbose: bool = True):
     """
     Adds publication to the database using DOI or ADS Bibcode, including metadata found with ADS.
 
@@ -358,14 +358,14 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         Description of the paper, typically the title of the papre [optional]
     ignore_ads: bool
     save_db: bool
-    isverbose: bool
+    verbose: bool
 
     See Also
     --------
     search_publication: Function to find publications in the database
 
     """
-    verbose = VerbosePrint(isverbose)
+    verbose = VerbosePrint(verbose)
 
     if not (doi or bibcode):
         verbose.print('DOI or Bibcode is required input')
@@ -538,8 +538,8 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
 
 
 # Make sure all source names are Simbad resolvable:
-def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', isverbose=False):
-    verbose = VerbosePrint(isverbose)
+def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', verbose=False):
+    verbose = VerbosePrint(verbose)
     resolved_names = []
     n_sources = len(ingest_names)
     n_name_matches = 0
@@ -549,7 +549,7 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', isverbo
 
     for i, ingest_name in enumerate(ingest_names):
         # Query Simbad for identifiers matching the ingest source name
-        identifer_result_table = Simbad.query_object(ingest_name, isverbose=False)
+        identifer_result_table = Simbad.query_object(ingest_name, verbose=False)
 
         # Successfully resolved one matching identifier in Simbad
         if identifer_result_table is not None and len(identifer_result_table) == 1:
@@ -607,16 +607,16 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', isverbo
     return resolved_names
 
 
-def convert_spt_string_to_code(spectral_types, isverbose=False):
+def convert_spt_string_to_code(spectral_types, verbose=False):
     """
     normal tests: M0, M5.5, L0, L3.5, T0, T3, T4.5, Y0, Y5, Y9.
     weird TESTS: sdM4, ≥Y4, T5pec, L2:, L0blue, Lpec, >L9, >M10, >L, T, Y
     digits are needed in current implementation.
     :param spectral_types:
-    :param isverbose:
+    :param verbose:
     :return:
     """
-    verbose = VerbosePrint(isverbose)
+    verbose = VerbosePrint(verbose)
 
     spectral_type_codes = []
     for spt in spectral_types:
@@ -653,7 +653,7 @@ def convert_spt_string_to_code(spectral_types, isverbose=False):
 
 
 def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=None,
-                   equinoxes=None, isverbose=False, save_db=False):
+                   equinoxes=None, verbose=False, save_db=False):
     """
     Script to ingest sources
 
@@ -667,14 +667,14 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     comments
     epochs
     equinoxes
-    isverbose
+    verbose
     save_db
 
     Returns
     -------
 
     """
-    verbose = VerbosePrint(isverbose)
+    verbose = VerbosePrint(verbose)
 
     n_added = 0
     n_sources = len(sources)
@@ -724,7 +724,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     return
 
 
-def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, isverbose=False):
+def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
     """
 
     Parameters
@@ -739,7 +739,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, isverbose=False):
         list of parallaxes uncertainties
     plx_refs
         list of references for the parallax data
-    isverbose: bool, optional
+    verbose: bool, optional
         If true, outputs information to the screen
 
     Examples
@@ -747,7 +747,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, isverbose=False):
     > ingest_parallaxes(db, my_sources, my_plx, my_plx_unc, my_plx_refs, verbose = True)
 
     """
-    verbose = VerbosePrint(isverbose)
+    verbose = VerbosePrint(verbose)
 
     n_added = 0
 
@@ -826,7 +826,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, isverbose=False):
 
 
 def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs, pm_references, save_db=False,
-                          isverbose=False):
+                          verbose=False):
     """
 
     Parameters
@@ -848,7 +848,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
     save_db: bool, optional
         If set to False (default), will modify the .db file, but not the JSON files
         If set to True, will save the JSON files
-    isverbose: bool, optional
+    verbose: bool, optional
         If True, outputs information to the screen
 
     Examples
@@ -857,7 +857,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                             verbose = True)
 
     """
-    verbose = VerbosePrint(isverbose)
+    verbose = VerbosePrint(verbose)
 
     n_added = 0
 
@@ -956,8 +956,8 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
 
 
 def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, reference, ucds=None,
-                      telescope=None, instrument=None, epoch=None, comments=None, isverbose=False):
-    verbose = VerbosePrint(isverbose)
+                      telescope=None, instrument=None, epoch=None, comments=None, verbose=False):
+    verbose = VerbosePrint(verbose)
     n_added = 0
 
     n_sources = len(sources)
@@ -1015,7 +1015,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
     return
 
 
-def find_in_simbad(sources, desig_prefix, source_id_index=None, isverbose=False):
+def find_in_simbad(sources, desig_prefix, source_id_index=None, verbose=False):
     """
     Function to extract source designations from SIMBAD
 
@@ -1024,14 +1024,14 @@ def find_in_simbad(sources, desig_prefix, source_id_index=None, isverbose=False)
     sources
     desig_prefix
     source_id_index
-    isverbose
+    verbose
 
     Returns
     -------
     Astropy table
 
     """
-    verbose = VerbosePrint(isverbose)
+    verbose = VerbosePrint(verbose)
 
     n_sources = len(sources)
 
