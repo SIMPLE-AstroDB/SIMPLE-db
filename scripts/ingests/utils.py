@@ -21,7 +21,7 @@ import numpy as np
 
 warnings.filterwarnings("ignore", module='astroquery.simbad')
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
-                    datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
+                    datefmt='%m/%d/%Y %I:%M:%S %p')
 
 
 class SimpleError(Exception):
@@ -1052,3 +1052,7 @@ def find_in_simbad(sources, desig_prefix, source_id_index=None):
                          names=('db_names', 'designation', 'source_id'))
 
     return result_table
+
+
+if __name__ == '__main__':
+    logging.getLogger().setLevel(logging.INFO)
