@@ -22,6 +22,7 @@ import numpy as np
 warnings.filterwarnings("ignore", module='astroquery.simbad')
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p')
+logger = logging.getLogger('SIMPLE')
 
 
 class SimpleError(Exception):
@@ -96,13 +97,13 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60.):
     db_names = []
 
     for i, name in enumerate(ingest_names):
-        logging.debug(''.join(map(str, ["\n", i, ": searching:,", name])))
+        logger.debug(''.join(map(str, ["\n", i, ": searching:,", name])))
 
         namematches = db.search_object(name)
 
         # if no matches, try resolving with Simbad
         if len(namematches) == 0:
-            logging.debug(''.join(map(str, [i, ": no name matches, trying simbad search"])))
+            logger.debug(''.join(map(str, [i, ": no name matches, trying simbad search"])))
             try:
                 namematches = db.search_object(name, resolve_simbad=True)
                 if len(namematches) == 1:
@@ -116,8 +117,8 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60.):
         if len(namematches) == 0:
             location = SkyCoord(ingest_ras[i], ingest_decs[i], frame='icrs', unit='deg')
             radius = u.Quantity(search_radius, unit='arcsec')
-            logging.debug(''.join(map(str, [i, ": no Simbad match, trying coord search around ",
-                                            location.ra.hour, location.dec])))
+            logger.debug(''.join(map(str, [i, ": no Simbad match, trying coord search around ",
+                                           location.ra.hour, location.dec])))
             nearby_matches = db.query_region(location, radius=radius)
             if len(nearby_matches) == 1:
                 namematches = nearby_matches
@@ -125,31 +126,31 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60.):
                 # Populate list with ingest name and database name match
                 alt_names_table.append(Alt_names(coord_match, name))
             if len(nearby_matches) > 1:
-                logging.debug(''.join(map(str, [nearby_matches])))
-                logging.critical("too many nearby sources!")
+                logger.debug(''.join(map(str, [nearby_matches])))
+                logger.critical("too many nearby sources!")
                 raise RuntimeError()
 
         if len(namematches) == 1:
             existing_sources_index.append(i)
             source_match = namematches[0]['source']
             db_names.append(source_match)
-            logging.debug(''.join(map(str, [i, "match found: ", source_match])))
+            logger.debug(''.join(map(str, [i, "match found: ", source_match])))
         elif len(namematches) > 1:
-            logging.critical(''.join(map(str, [i, "More than one match for ", name, "/n,", namematches])))
+            logger.critical(''.join(map(str, [i, "More than one match for ", name, "/n,", namematches])))
             raise RuntimeError()
         elif len(namematches) == 0:
-            logging.debug(''.join(map(str, [i, ": Not in database"])))
+            logger.debug(''.join(map(str, [i, ": Not in database"])))
             missing_sources_index.append(i)
             db_names.append(ingest_names[i])
         else:
-            logging.critical(''.join(map(str, [i, "unexpected condition"])))
+            logger.critical(''.join(map(str, [i, "unexpected condition"])))
             raise RuntimeError()
 
-    logging.info(''.join(map(str, ["\n ALL SOURCES SORTED"])))
-    logging.info(''.join(map(str, ["\n Existing Sources:\n", ingest_names[existing_sources_index]])))
-    logging.info(''.join(map(str, ["\n Missing Sources:\n", ingest_names[missing_sources_index]])))
-    logging.info(''.join(map(str, ["\n Existing Sources with different name:\n"])))
-    if logging.getLogger().level == 10:  # debug
+    logger.info(''.join(map(str, ["\n ALL SOURCES SORTED"])))
+    logger.info(''.join(map(str, ["\n Existing Sources:\n", ingest_names[existing_sources_index]])))
+    logger.info(''.join(map(str, ["\n Missing Sources:\n", ingest_names[missing_sources_index]])))
+    logger.info(''.join(map(str, ["\n Existing Sources with different name:\n"])))
+    if logger.level == 10:  # debug
         # TODO: does pprint_all work here? alt_names_table appears to be a list instead of a astropy Table
         # alt_names_table.pprint_all()
         pass
@@ -160,12 +161,12 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60.):
     n_missing = len(missing_sources_index)
 
     if n_ingest != n_existing + n_missing:
-        logging.critical("Unexpected number of sources")
+        logger.critical("Unexpected number of sources")
         raise RuntimeError()
 
-    logging.info(''.join(map(str, [n_existing, "sources already in database."])))
-    logging.info(''.join(map(str, [n_alt, "sources found with alternate names"])))
-    logging.info(''.join(map(str, [n_missing, "sources not found in the database"])))
+    logger.info(''.join(map(str, [n_existing, "sources already in database."])))
+    logger.info(''.join(map(str, [n_alt, "sources found with alternate names"])))
+    logger.info(''.join(map(str, [n_missing, "sources not found in the database"])))
 
     return missing_sources_index, existing_sources_index, alt_names_table
 
@@ -188,7 +189,7 @@ def add_names(db, sources=None, other_names=None, names_table=None):
     """
 
     if names_table is not None and sources is not None:
-        logging.critical("Both names table and sources list provided. Provide one or the other")
+        logger.critical("Both names table and sources list provided. Provide one or the other")
         raise RuntimeError()
 
     names_data = []
@@ -196,7 +197,7 @@ def add_names(db, sources=None, other_names=None, names_table=None):
     if sources is not None or other_names is not None:
         # Length of sources and other_names list should be equal
         if len(sources) != len(other_names):
-            logging.critical("Length of sources and other_names should be equal")
+            logger.critical("Length of sources and other_names should be equal")
             raise RuntimeError()
 
         for source, other_name in zip(sources, other_names):
@@ -204,7 +205,7 @@ def add_names(db, sources=None, other_names=None, names_table=None):
 
     if names_table is not None:
         if len(names_table[0]) != 2:
-            logging.critical("Each row should have two elements")
+            logger.critical("Each row should have two elements")
             raise RuntimeError()
 
         for name_row in names_table:
@@ -214,7 +215,7 @@ def add_names(db, sources=None, other_names=None, names_table=None):
 
     n_added = len(names_data)
 
-    logging.info(''.join(map(str, ["Names added to database: ", n_added])))
+    logger.info(''.join(map(str, ["Names added to database: ", n_added])))
 
     return
 
@@ -268,7 +269,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
 
     # Make sure a search term is provided
     if name is None and doi is None and bibcode is None:
-        logging.error("Name, Bibcode, or DOI must be provided")
+        logger.error("Name, Bibcode, or DOI must be provided")
         return False, 0
 
     not_null_pub_filters = []
@@ -286,34 +287,34 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     n_pubs_found = len(pub_search_table)
 
     if n_pubs_found == 1:
-        logging.info(''.join(map(str, [f'Found {n_pubs_found} matching publications for'
-                                       f' {name} or {doi} or {bibcode}'])))
-        if logging.getLogger().level <= 20:  # info
+        logger.info(''.join(map(str, [f'Found {n_pubs_found} matching publications for'
+                                      f' {name} or {doi} or {bibcode}'])))
+        if logger.level <= 20:  # info
             pub_search_table.pprint_all()
         return True, 1
 
     if n_pubs_found > 1:
-        logging.warning(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
-        if logging.getLogger().level <= 30:  # warning
+        logger.warning(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
+        if logger.level <= 30:  # warning
             pub_search_table.pprint_all()
         return False, n_pubs_found
 
     # If no matches found, search using first four characters of input name
     if n_pubs_found == 0 and name:
         shorter_name = name[:4]
-        logging.debug(''.join(map(str, [f'No matching publications for {name}, Trying {shorter_name}'])))
+        logger.debug(''.join(map(str, [f'No matching publications for {name}, Trying {shorter_name}'])))
         fuzzy_query_shorter_name = '%' + shorter_name + '%'
         pub_search_table = db.query(db.Publications).filter(
             db.Publications.c.name.ilike(fuzzy_query_shorter_name)).table()
         n_pubs_found_short = len(pub_search_table)
         if n_pubs_found_short == 0:
-            logging.warning(f'No matching publications for {shorter_name}')
-            logging.warning('Use add_publication() to add it to the database.')
+            logger.warning(f'No matching publications for {shorter_name}')
+            logger.warning('Use add_publication() to add it to the database.')
             return False, 0
 
         if n_pubs_found_short > 0:
-            logging.warning(f'Found {n_pubs_found_short} matching publications for {shorter_name}')
-            if logging.getLogger().level == 20:  # info:
+            logger.warning(f'Found {n_pubs_found_short} matching publications for {shorter_name}')
+            if logger.level == 20:  # info:
                 pub_search_table.pprint_all()
             return False, n_pubs_found_short
     else:
@@ -352,14 +353,14 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
     """
 
     if not (doi or bibcode):
-        logging.error('DOI or Bibcode is required input')
+        logger.error('DOI or Bibcode is required input')
         return
 
     ads.config.token = os.getenv('ADS_TOKEN')
 
     if not ads.config.token and (not name and (not doi or not bibcode)):
-        logging.error("An ADS_TOKEN environment variable must be set in order to auto-populate the fields.\n"
-                      "Without an ADS_TOKEN, name and bibcode or DOI must be set explicity.")
+        logger.error("An ADS_TOKEN environment variable must be set in order to auto-populate the fields.\n"
+                     "Without an ADS_TOKEN, name and bibcode or DOI must be set explicity.")
         return
 
     if ads.config.token and not ignore_ads:
@@ -382,13 +383,13 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         arxiv_matches = ads.SearchQuery(q=arxiv_id, fl=['id', 'bibcode', 'title', 'first_author', 'year', 'doi'])
         arxiv_matches_list = list(arxiv_matches)
         if len(arxiv_matches_list) != 1:
-            logging.error('should only be one matching arxiv id')
+            logger.error('should only be one matching arxiv id')
             return
 
         if len(arxiv_matches_list) == 1:
-            logging.info(''.join(map(str, ["Publication found in ADS using arxiv id: ", arxiv_id])))
+            logger.info(''.join(map(str, ["Publication found in ADS using arxiv id: ", arxiv_id])))
             article = arxiv_matches_list[0]
-            logging.info(''.join(map(str, [article.first_author, article.year, article.bibcode, article.title])))
+            logger.info(''.join(map(str, [article.first_author, article.year, article.bibcode, article.title])))
             if not name:  # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
@@ -408,13 +409,13 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         doi_matches = ads.SearchQuery(doi=doi, fl=['id', 'bibcode', 'title', 'first_author', 'year', 'doi'])
         doi_matches_list = list(doi_matches)
         if len(doi_matches_list) != 1:
-            logging.error('should only be one matching DOI')
+            logger.error('should only be one matching DOI')
             return
 
         if len(doi_matches_list) == 1:
-            logging.info(''.join(map(str, ["Publication found in ADS using DOI: ", doi])))
+            logger.info(''.join(map(str, ["Publication found in ADS using DOI: ", doi])))
             article = doi_matches_list[0]
-            logging.info(''.join(map(str, [article.first_author, article.year, article.bibcode, article.title])))
+            logger.info(''.join(map(str, [article.first_author, article.year, article.bibcode, article.title])))
             if not name:  # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
@@ -432,20 +433,20 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         bibcode_matches = ads.SearchQuery(bibcode=bibcode, fl=['id', 'bibcode', 'title', 'first_author', 'year', 'doi'])
         bibcode_matches_list = list(bibcode_matches)
         if len(bibcode_matches_list) == 0:
-            logging.error('not a valid bibcode:' + str(bibcode))
-            logging.critical('nothing added')
+            logger.error('not a valid bibcode:' + str(bibcode))
+            logger.critical('nothing added')
             raise
 
         elif len(bibcode_matches_list) > 1:
-            logging.error('should only be one matching bibcode for:' + str(bibcode))
-            logging.critical('nothing added')
+            logger.error('should only be one matching bibcode for:' + str(bibcode))
+            logger.critical('nothing added')
             raise
 
         elif len(bibcode_matches_list) == 1:
-            logging.info(''.join(map(str, ["Publication found in ADS using bibcode: ", bibcode])))
+            logger.info(''.join(map(str, ["Publication found in ADS using bibcode: ", bibcode])))
             article = bibcode_matches_list[0]
-            logging.info(''.join(map(str, [article.first_author, article.year, article.bibcode,
-                                           article.doi, article.title])))
+            logger.info(''.join(map(str, [article.first_author, article.year, article.bibcode,
+                                          article.doi, article.title])))
             if not name:  # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
@@ -466,17 +467,17 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
 
     try:
         db.Publications.insert().execute(new_ref)
-        logging.info(''.join(map(str, [f'Added {name_add} to Publications table'])))
+        logger.info(''.join(map(str, [f'Added {name_add} to Publications table'])))
     except sqlalchemy.exc.IntegrityError:
-        logging.critical("It's possible that a similar publication already exists in database\n"
-                         "Use search_publication function before adding a new record")
+        logger.critical("It's possible that a similar publication already exists in database\n"
+                        "Use search_publication function before adding a new record")
         raise SimpleError()
 
     if save_db:
         db.save_reference_table(table='Publications', directory='data/')
-        logging.info(''.join(map(str, ["Publication added to database and saved: ", name_add])))
+        logger.info(''.join(map(str, ["Publication added to database and saved: ", name_add])))
     else:
-        logging.info(''.join(map(str, ["Publication added to database: ", name_add])))
+        logger.info(''.join(map(str, ["Publication added to database: ", name_add])))
 
     return
 
@@ -542,12 +543,12 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s'):
                 resolved_names.append(identifer_result_table['MAIN_ID'][0])
             else:
                 resolved_names.append(identifer_result_table['MAIN_ID'][0].decode())
-            logging.debug(''.join(map(str, [resolved_names[i], "Found name match in Simbad"])))
+            logger.debug(''.join(map(str, [resolved_names[i], "Found name match in Simbad"])))
             n_name_matches = n_name_matches + 1
 
         # If no identifier match found, search within "radius" of coords for a Simbad object
         else:
-            logging.debug(''.join(map(str, ["searching around ", ingest_name])))
+            logger.debug(''.join(map(str, ["searching around ", ingest_name])))
             coord_result_table = Simbad.query_region(
                 SkyCoord(ingest_ra[i], ingest_dec[i], unit=(u.deg, u.deg), frame='icrs'),
                 radius=radius)
@@ -555,19 +556,19 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s'):
             # If no match is found in Simbad, use the name in the ingest table
             if coord_result_table is None:
                 resolved_names.append(ingest_name)
-                logging.debug(''.join(map(str, ["coord search failed"])))
+                logger.debug(''.join(map(str, ["coord search failed"])))
                 n_notfound = n_notfound + 1
 
             # If more than one match found within "radius", query user for selection and append to resolved_name
             elif len(coord_result_table) > 1:
                 for j, name in enumerate(coord_result_table['MAIN_ID']):
-                    logging.debug(''.join(map(str, [f'{j}: {name}'])))
+                    logger.debug(''.join(map(str, [f'{j}: {name}'])))
                 selection = int(input('Choose \n'))
                 if isinstance(coord_result_table['MAIN_ID'][selection], str):
                     resolved_names.append(coord_result_table['MAIN_ID'][selection])
                 else:
                     resolved_names.append(coord_result_table['MAIN_ID'][selection].decode())
-                logging.debug(''.join(map(str, [resolved_names[i], "you selected"])))
+                logger.debug(''.join(map(str, [resolved_names[i], "you selected"])))
                 n_selections = n_selections + 1
 
             # If there is only one match found, accept it and append to the resolved_name list
@@ -576,17 +577,17 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s'):
                     resolved_names.append(coord_result_table['MAIN_ID'][0])
                 else:
                     resolved_names.append(coord_result_table['MAIN_ID'][0].decode())
-                logging.debug(''.join(map(str, [resolved_names[i], "only result nearby in Simbad"])))
+                logger.debug(''.join(map(str, [resolved_names[i], "only result nearby in Simbad"])))
                 n_nearby = n_nearby + 1
 
     # Report how many find via which methods
-    logging.info(''.join(map(str, ["Names Found:", n_name_matches])))
-    logging.info(''.join(map(str, ["Names Selected", n_selections])))
-    logging.info(''.join(map(str, ["Names Found", n_nearby])))
-    logging.info(''.join(map(str, ["Not found", n_notfound])))
+    logger.info(''.join(map(str, ["Names Found:", n_name_matches])))
+    logger.info(''.join(map(str, ["Names Selected", n_selections])))
+    logger.info(''.join(map(str, ["Names Found", n_nearby])))
+    logger.info(''.join(map(str, ["Not found", n_notfound])))
 
     n_found = n_notfound + n_name_matches + n_selections + n_nearby
-    logging.warning('problem' if n_found != n_sources else (str(n_sources) + 'names'))
+    logger.warning('problem' if n_found != n_sources else (str(n_sources) + 'names'))
 
     return resolved_names
 
@@ -602,12 +603,12 @@ def convert_spt_string_to_code(spectral_types):
 
     spectral_type_codes = []
     for spt in spectral_types:
-        logging.debug(''.join(map(str, ["Trying to convert:", spt])))
+        logger.debug(''.join(map(str, ["Trying to convert:", spt])))
         spt_code = np.nan
 
         if spt == "":
             spectral_type_codes.append(spt_code)
-            logging.debug(''.join(map(str, ["Appended NAN"])))
+            logger.debug(''.join(map(str, ["Appended NAN"])))
             continue
 
         # identify main spectral class, loop over any prefix text to identify MLTY
@@ -630,7 +631,7 @@ def convert_spt_string_to_code(spectral_types):
 
         spt_code += float(re.findall('\d*\.?\d+', spt[i + 1:])[0])
         spectral_type_codes.append(spt_code)
-        logging.debug(''.join(map(str, [spt, spt_code])))
+        logger.debug(''.join(map(str, [spt, spt_code])))
     return spectral_type_codes
 
 
@@ -676,7 +677,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                         'epoch': epochs[i],
                         'equinox': equinoxes[i],
                         'comments': comments[i]}]
-        logging.debug(''.join(map(str, [source_data])))
+        logger.debug(''.join(map(str, [source_data])))
 
         try:
             db.Sources.insert().execute(source_data)
@@ -689,19 +690,19 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                     db.Sources.insert().execute(source_data)
                     n_added += 1
                 except sqlalchemy.exc.IntegrityError:
-                    logging.critical("Discovery reference may not exist in the Publications table."
-                                     "Add it with add_publication function. ")
+                    logger.critical("Discovery reference may not exist in the Publications table."
+                                    "Add it with add_publication function. ")
                     raise SimpleError()
             else:
-                logging.critical("Discovery reference may not exist in the Publications table."
-                                 "Add it with add_publication function. ")
+                logger.critical("Discovery reference may not exist in the Publications table."
+                                "Add it with add_publication function. ")
                 raise SimpleError()
 
     if save_db:
         db.save_database(directory='data/')
-        logging.info(''.join(map(str, [n_added, "sources added to database and saved"])))
+        logger.info(''.join(map(str, [n_added, "sources added to database and saved"])))
     else:
-        logging.info(''.join(map(str, [n_added, "sources added to database"])))
+        logger.info(''.join(map(str, [n_added, "sources added to database"])))
 
     return
 
@@ -742,16 +743,16 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
             # if there's no other measurements in the database, set new data Adopted = True
             adopted = True
             # old_adopted = None  # not used
-            logging.debug(''.join(map(str, ["No other measurement"])))
+            logger.debug(''.join(map(str, ["No other measurement"])))
         elif len(source_plx_data) > 0:  # Parallax data already exists
             # check for duplicate measurement
             dupe_ind = source_plx_data['reference'] == plx_refs[i]
             if sum(dupe_ind):
-                logging.debug(''.join(map(str, ["Duplicate measurement\n", source_plx_data[dupe_ind], '\n'])))
+                logger.debug(''.join(map(str, ["Duplicate measurement\n", source_plx_data[dupe_ind], '\n'])))
                 continue
             else:
-                logging.debug(''.join(map(str, ["!!! Another Proper motion measurement exists,"])))
-                if logging.getLogger().level == 10:
+                logger.debug(''.join(map(str, ["!!! Another Proper motion measurement exists,"])))
+                if logger.level == 10:
                     source_plx_data.pprint_all()
 
             # check for previous adopted measurement and find new adopted
@@ -771,13 +772,13 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
                         old_adopted_data = db.query(db.Parallaxes).filter(
                             and_(db.Parallaxes.c.source == old_adopted['source'][0],
                                  db.Parallaxes.c.reference == old_adopted['reference'][0])).table()
-                        logging.debug(''.join(map(str, ["Old adopted measurement unset"])))
-                        if logging.getLogger().level == 10:
+                        logger.debug(''.join(map(str, ["Old adopted measurement unset"])))
+                        if logger.level == 10:
                             old_adopted_data.pprint_all()
 
-                logging.debug(''.join(map(str, ["The new measurement's adopted flag is:", adopted])))
+                logger.debug(''.join(map(str, ["The new measurement's adopted flag is:", adopted])))
         else:
-            logging.critical('Unexpected state')
+            logger.critical('Unexpected state')
             raise RuntimeError()
 
         # Construct data to be added
@@ -787,19 +788,19 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
                           'reference': plx_refs[i],
                           'adopted': adopted}]
 
-        logging.debug(''.join(map(str, [parallax_data, '\n'])))
+        logger.debug(''.join(map(str, [parallax_data, '\n'])))
 
         try:
             db.Parallaxes.insert().execute(parallax_data)
             n_added += 1
         except sqlalchemy.exc.IntegrityError:
-            logging.critical("The source may not exist in Sources table.\n"
-                             "The parallax reference may not exist in Publications table. "
-                             "Add it with add_publication function. \n"
-                             "The parallax measurement may be a duplicate.")
+            logger.critical("The source may not exist in Sources table.\n"
+                            "The parallax reference may not exist in Publications table. "
+                            "Add it with add_publication function. \n"
+                            "The parallax measurement may be a duplicate.")
             raise SimpleError()
 
-    logging.info(''.join(map(str, ["Parallaxes added to database: ", n_added])))
+    logger.info(''.join(map(str, ["Parallaxes added to database: ", n_added])))
 
     return
 
@@ -843,20 +844,20 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
         # If still no matches, try to resolve the name with Simbad
         if len(db_name_match) == 0:
             db_name_match = db.search_object(source, output_table='Sources', resolve_simbad=True)
-        logging.debug(''.join(map(str, ["\n", source])))
+        logger.debug(''.join(map(str, ["\n", source])))
         if len(db_name_match) == 1:
             db_name = db_name_match['source'][0]
-            logging.debug(''.join(map(str, ["\n", db_name, "One source match found"])))
+            logger.debug(''.join(map(str, ["\n", db_name, "One source match found"])))
         elif len(db_name_match) > 1:
-            logging.debug(''.join(map(str, [db_name_match])))
-            logging.critical(''.join(map(str, [source, "More than one match source found in the database"])))
+            logger.debug(''.join(map(str, [db_name_match])))
+            logger.critical(''.join(map(str, [source, "More than one match source found in the database"])))
             raise RuntimeError()
         elif len(db_name_match) == 0:
-            logging.critical(''.join(map(str, [source, "No source found in the database"])))
+            logger.critical(''.join(map(str, [source, "No source found in the database"])))
             raise RuntimeError()
         else:
-            logging.debug(''.join(map(str, [db_name_match])))
-            logging.critical(''.join(map(str, [source, "unexpected condition"])))
+            logger.debug(''.join(map(str, [db_name_match])))
+            logger.critical(''.join(map(str, [source, "unexpected condition"])))
             raise RuntimeError()
 
         # Search for existing proper motion data and determine if this is the best
@@ -871,7 +872,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
             # check to see if other measurement is a duplicate of the new data
             dupe_ind = source_pm_data['reference'] == pm_references[i]
             if sum(dupe_ind):
-                logging.debug(''.join(map(str, ["Duplicate measurement\n", source_pm_data])))
+                logger.debug(''.join(map(str, ["Duplicate measurement\n", source_pm_data])))
                 continue
 
             # check for previous adopted measurement
@@ -904,12 +905,12 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                                                                           source_pm_data['mu_dec_error']))). \
                         values(adopted=True)
                     db.engine.execute(adopted_pm)
-            logging.debug(''.join(map(str, ["!!! Another Proper motion exists"])))
-            if logging.getLogger().level == 10:
+            logger.debug(''.join(map(str, ["!!! Another Proper motion exists"])))
+            if logger.level == 10:
                 source_pm_data.pprint_all()
 
         else:
-            logging.critical('Unexpected state')
+            logger.critical('Unexpected state')
             raise RuntimeError()
 
         # Construct data to be added
@@ -920,21 +921,21 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                     'mu_dec_error': pm_dec_errs[i],
                     'adopted': adopted,
                     'reference': pm_references[i]}]
-        logging.debug(''.join(map(str, ['Proper motion data to add: ', pm_data])))
+        logger.debug(''.join(map(str, ['Proper motion data to add: ', pm_data])))
 
         try:
             db.ProperMotions.insert().execute(pm_data)
             n_added += 1
         except sqlalchemy.exc.IntegrityError:
-            logging.critical("The source may not exist in Sources table.\n"
-                             "The proper motion reference may not exist in Publications table. "
-                             "Add it with add_publication function. \n"
-                             "The proper motion measurement may be a duplicate.")
+            logger.critical("The source may not exist in Sources table.\n"
+                            "The proper motion reference may not exist in Publications table. "
+                            "Add it with add_publication function. \n"
+                            "The proper motion measurement may be a duplicate.")
             raise SimpleError()
 
         updated_source_pm_data = db.query(db.ProperMotions).filter(db.ProperMotions.c.source == db_name).table()
-        logging.debug(''.join(map(str, ['Updated proper motion data:'])))
-        if logging.getLogger().level == 10:
+        logger.debug(''.join(map(str, ['Updated proper motion data:'])))
+        if logger.level == 10:
             updated_source_pm_data.pprint_all()
 
     return
@@ -947,10 +948,10 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
     n_sources = len(sources)
 
     if n_sources != len(magnitudes) or n_sources != len(magnitude_errors):
-        logging.critical(''.join(map(str, ["N Sources:", len(sources),
-                                           " N Magnitudes", len(magnitudes),
-                                           " N Mag errors:", len(magnitude_errors),
-                         "\nSources, magnitudes, and magnitude error lists should all be same length"])))
+        logger.critical(''.join(map(str, ["N Sources:", len(sources),
+                                          " N Magnitudes", len(magnitudes),
+                                          " N Mag errors:", len(magnitude_errors),
+                                          "\nSources, magnitudes, and magnitude error lists should all be same length"])))
         raise RuntimeError()
 
     if isinstance(bands, str):
@@ -969,7 +970,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
         ucds = [ucds] * len(sources)
 
     if n_sources != len(reference) or n_sources != len(telescope) or n_sources != len(bands):
-        logging.critical("All lists should be same length")
+        logger.critical("All lists should be same length")
         raise RuntimeError()
 
     for i, source in enumerate(sources):
@@ -986,19 +987,19 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
                             'epoch': epoch,
                             'comments': comments,
                             'reference': reference[i]}]
-        logging.debug(''.join(map(str, ['Photometry data: ', photometry_data])))
+        logger.debug(''.join(map(str, ['Photometry data: ', photometry_data])))
 
         try:
             db.Photometry.insert().execute(photometry_data)
             n_added += 1
         except sqlalchemy.exc.IntegrityError:
-            logging.critical("The source may not exist in Sources table.\n"
-                             "The reference may not exist in the Publications table. "
-                             "Add it with add_publication function. \n"
-                             "The measurement may be a duplicate.")
+            logger.critical("The source may not exist in Sources table.\n"
+                            "The reference may not exist in the Publications table. "
+                            "Add it with add_publication function. \n"
+                            "The measurement may be a duplicate.")
             raise SimpleError()
 
-    logging.info(''.join(map(str, ["Photometry measurements added to database: ", n_added])))
+    logger.info(''.join(map(str, ["Photometry measurements added to database: ", n_added])))
 
     return
 
@@ -1024,9 +1025,9 @@ def find_in_simbad(sources, desig_prefix, source_id_index=None):
     Simbad.reset_votable_fields()
     Simbad.add_votable_fields('typed_id')  # keep search term in result table
     Simbad.add_votable_fields('ids')  # add all SIMBAD identifiers as an output column
-    logging.info(''.join(map(str, ["simbad query started"])))
+    logger.info(''.join(map(str, ["simbad query started"])))
     result_table = Simbad.query_objects(sources)
-    logging.info(''.join(map(str, ["simbad query ended"])))
+    logger.info(''.join(map(str, ["simbad query ended"])))
 
     ind = result_table['SCRIPT_NUMBER_ID'] > 0  # find indexes which contain results
 
@@ -1042,7 +1043,7 @@ def find_in_simbad(sources, desig_prefix, source_id_index=None):
         designation = [i for i in ids if desig_prefix in i]
 
         if designation:
-            logging.debug(''.join(map(str, [db_name, designation[0]])))
+            logger.debug(''.join(map(str, [db_name, designation[0]])))
             db_names.append(db_name)
             simbad_designations.append(designation[0])
             if source_id_index is not None:
@@ -1050,7 +1051,7 @@ def find_in_simbad(sources, desig_prefix, source_id_index=None):
                 source_ids.append(int(source_id))  # convert to int since long in Gaia
 
     n_matches = len(db_names)
-    logging.info(''.join(map(str, ['Found', n_matches, desig_prefix, ' sources for', n_sources, ' sources'])))
+    logger.info(''.join(map(str, ['Found', n_matches, desig_prefix, ' sources for', n_sources, ' sources'])))
 
     result_table = Table([db_names, simbad_designations, source_ids],
                          names=('db_names', 'designation', 'source_id'))
@@ -1059,4 +1060,4 @@ def find_in_simbad(sources, desig_prefix, source_id_index=None):
 
 
 if __name__ == '__main__':
-    logging.getLogger().setLevel(logging.INFO)
+    logger.setLevel(logging.INFO)
