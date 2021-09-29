@@ -19,10 +19,76 @@
             "other_name": "DENIS J124514.1-442907"
         },
         {
+            "other_name": "Gaia DR2 6132672029732817024"
+        },
+        {
+            "other_name": "Gaia EDR3 6132672029732817024"
+        },
+        {
             "other_name": "TWA 29"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 12.004415484297592,
+            "parallax_error": 0.5025912116169694,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 12.154921771252145,
+            "parallax_error": 0.33758851885795593,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
     "Photometry": [
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 19.386667251586914,
+            "magnitude_error": 0.004383261855662417,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 17.72230339050293,
+            "magnitude_error": 0.019290201998080753,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 19.38414764404297,
+            "magnitude_error": 0.003347366792542358,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 17.772388458251953,
+            "magnitude_error": 0.010086984019872007,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "band": "WISE.W1",
             "ucd": null,
@@ -107,9 +173,27 @@
             "mu_ra_error": 7.0,
             "mu_dec": -23.0,
             "mu_dec_error": 3.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Duco14"
+        },
+        {
+            "mu_ra": -46.266471773435434,
+            "mu_ra_error": 0.8122642121672045,
+            "mu_dec": -21.930955407634308,
+            "mu_dec_error": 0.66627261132959,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": -46.15237747900009,
+            "mu_ra_error": 0.3093613088130951,
+            "mu_dec": -22.516688964298353,
+            "mu_dec_error": 0.2399635910987854,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ]
 }

@@ -14,6 +14,74 @@
     "Names": [
         {
             "other_name": "2MASS J03333313-3215181"
+        },
+        {
+            "other_name": "Gaia DR2 5055322334418565888"
+        },
+        {
+            "other_name": "Gaia EDR3 5055322334418565888"
+        }
+    ],
+    "Parallaxes": [
+        {
+            "parallax": 20.580325679425318,
+            "parallax_error": 0.09310269318461324,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 20.478212174771276,
+            "parallax_error": 0.08291727304458618,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 16.984363555908203,
+            "magnitude_error": 0.0010167765434193118,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 15.525397300720215,
+            "magnitude_error": 0.00392490175749361,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 16.985837936401367,
+            "magnitude_error": 0.0011358033341343095,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 15.520430564880371,
+            "magnitude_error": 0.0032669656388500095,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ],
     "ProperMotions": [
@@ -22,9 +90,27 @@
             "mu_ra_error": 6.0,
             "mu_dec": -49.4,
             "mu_dec_error": 6.5,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Gagn15a"
+        },
+        {
+            "mu_ra": 68.93903318621747,
+            "mu_ra_error": 0.1251113012263154,
+            "mu_dec": -45.2496208744171,
+            "mu_dec_error": 0.17319291472556841,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": 68.85938743797097,
+            "mu_ra_error": 0.06914511322975159,
+            "mu_dec": -45.00714490677485,
+            "mu_dec_error": 0.09814617037773132,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ]
 }
