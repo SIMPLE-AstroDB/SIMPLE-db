@@ -3,8 +3,8 @@ from astropy.table import Table, unique, setdiff
 from sqlalchemy import func
 
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = False  # recreates the .db file from the data files
+SAVE_DB = True  # save the data files in addition to modifying the .db file
+RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = True
 DATE_SUFFIX = 'Sep2021'
 
@@ -38,6 +38,12 @@ def query_tmass(source_names):
     print(len(tmass_phot), len(tmass_phot_unique))
     return tmass_phot_unique
 
+# remove sources with blank other_name
+# blank_names = db.query(db.Names).filter(db.Names.c.other_name == '').astropy()
+# db.Names.delete().where(db.Names.c.other_name == '').execute()
+# db.save_database(directory='data/')
+
+
 #get list of all sources
 sources = db.query(db.Sources.c.source).astropy()
 
@@ -47,7 +53,7 @@ tmass_desig_file_string = 'scripts/ingests/2MASS/2MASS_designations_'+DATE_SUFFI
 # tmass_designations.write(tmass_desig_file_string, format='votable', overwrite=True)
 tmass_designations = Table.read(tmass_desig_file_string, format='votable')
 
-
+# Use SIMBAD to get 2MASS photometry for all 2MASS sources
 # tmass_phot = query_tmass(tmass_designations['db_names'])
 tmass_phot_file_string = 'scripts/ingests/2MASS/2MASS_data_'+DATE_SUFFIX+'.xml'
 # tmass_phot.write(tmass_phot_file_string, format='votable')
@@ -55,17 +61,18 @@ tmass_phot_file_string = 'scripts/ingests/2MASS/2MASS_data_'+DATE_SUFFIX+'.xml'
 tmass_phot = Table.read(tmass_phot_file_string, format='votable')
 tmass_phot_unique = unique(tmass_phot, keys='TYPED_ID',keep='first')
 
-# TODO: add missing 2MASS designations
+
 # add 2MASS designations to Names table as needed
+
 # Find difference between all 2MASS and Names Table
 tmass_desig_in_db = db.query(db.Names).filter(db.Names.c.other_name.in_(tmass_designations['designation'])).table()
+
 # find sources in tmass_designations not in tmass
 tmass_desig_in_db['designation']=tmass_desig_in_db['other_name']
 tmass_not_in_db = setdiff(tmass_designations, tmass_desig_in_db, keys=['designation'])
-add_names(db, sources=tmass_not_in_db['db_names'][801:], other_names=tmass_not_in_db['designation'][801:])
-# TODO: problem at 500 with 2MASS J12475047-0152142
-# TODO: Look into 2MASS sources with blank other_name entries
 
+add_names(db, sources=tmass_not_in_db['db_names'], other_names=tmass_not_in_db['designation'])
+# There was a problem with 2MASS J12475047-0152142. \t in source name. Modified JSON directly.
 
 
 # ADD J band photometry
