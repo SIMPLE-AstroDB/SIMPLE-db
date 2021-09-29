@@ -127,8 +127,9 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60.):
                 alt_names_table.append(Alt_names(coord_match, name))
             if len(nearby_matches) > 1:
                 logger.debug(''.join(map(str, [nearby_matches])))
-                logger.critical("too many nearby sources!")
-                raise RuntimeError()
+                msg = "too many nearby sources!"
+                logger.error(msg)
+                raise RuntimeError(msg)
 
         if len(namematches) == 1:
             existing_sources_index.append(i)
@@ -136,15 +137,17 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60.):
             db_names.append(source_match)
             logger.debug(''.join(map(str, [i, "match found: ", source_match])))
         elif len(namematches) > 1:
-            logger.critical(''.join(map(str, [i, "More than one match for ", name, "/n,", namematches])))
-            raise RuntimeError()
+            msg = ''.join(map(str, [i, "More than one match for ", name, "/n,", namematches]))
+            logger.error(msg)
+            raise RuntimeError(msg)
         elif len(namematches) == 0:
             logger.debug(''.join(map(str, [i, ": Not in database"])))
             missing_sources_index.append(i)
             db_names.append(ingest_names[i])
         else:
-            logger.critical(''.join(map(str, [i, "unexpected condition"])))
-            raise RuntimeError()
+            msg = ''.join(map(str, [i, "unexpected condition"]))
+            logger.error(msg)
+            raise RuntimeError(msg)
 
     logger.info(''.join(map(str, ["\n ALL SOURCES SORTED"])))
     logger.info(''.join(map(str, ["\n Existing Sources:\n", ingest_names[existing_sources_index]])))
@@ -161,8 +164,9 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60.):
     n_missing = len(missing_sources_index)
 
     if n_ingest != n_existing + n_missing:
-        logger.critical("Unexpected number of sources")
-        raise RuntimeError()
+        msg = "Unexpected number of sources"
+        logger.error(msg)
+        raise RuntimeError("Unexpected number of sources")
 
     logger.info(''.join(map(str, [n_existing, "sources already in database."])))
     logger.info(''.join(map(str, [n_alt, "sources found with alternate names"])))
@@ -189,24 +193,27 @@ def add_names(db, sources=None, other_names=None, names_table=None):
     """
 
     if names_table is not None and sources is not None:
-        logger.critical("Both names table and sources list provided. Provide one or the other")
-        raise RuntimeError()
+        msg = "Both names table and sources list provided. Provide one or the other"
+        logger.error(msg)
+        raise RuntimeError(msg)
 
     names_data = []
 
     if sources is not None or other_names is not None:
         # Length of sources and other_names list should be equal
         if len(sources) != len(other_names):
-            logger.critical("Length of sources and other_names should be equal")
-            raise RuntimeError()
+            msg = "Length of sources and other_names should be equal"
+            logger.error(msg)
+            raise RuntimeError(msg)
 
         for source, other_name in zip(sources, other_names):
             names_data.append({'source': source, 'other_name': other_name})
 
     if names_table is not None:
         if len(names_table[0]) != 2:
-            logger.critical("Each row should have two elements")
-            raise RuntimeError()
+            msg = "Each row should have two elements"
+            logger.error(msg)
+            raise RuntimeError(msg)
 
         for name_row in names_table:
             names_data.append({'source': name_row[0], 'other_name': name_row[1]})
@@ -434,12 +441,12 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         bibcode_matches_list = list(bibcode_matches)
         if len(bibcode_matches_list) == 0:
             logger.error('not a valid bibcode:' + str(bibcode))
-            logger.critical('nothing added')
+            logger.error('nothing added')
             raise
 
         elif len(bibcode_matches_list) > 1:
             logger.error('should only be one matching bibcode for:' + str(bibcode))
-            logger.critical('nothing added')
+            logger.error('nothing added')
             raise
 
         elif len(bibcode_matches_list) == 1:
@@ -469,9 +476,10 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
         db.Publications.insert().execute(new_ref)
         logger.info(''.join(map(str, [f'Added {name_add} to Publications table'])))
     except sqlalchemy.exc.IntegrityError:
-        logger.critical("It's possible that a similar publication already exists in database\n"
-                        "Use search_publication function before adding a new record")
-        raise SimpleError()
+        msg = "It's possible that a similar publication already exists in database\n" \
+              "Use search_publication function before adding a new record"
+        logger.error(msg)
+        raise SimpleError(msg)
 
     if save_db:
         db.save_reference_table(table='Publications', directory='data/')
@@ -690,13 +698,15 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                     db.Sources.insert().execute(source_data)
                     n_added += 1
                 except sqlalchemy.exc.IntegrityError:
-                    logger.critical("Discovery reference may not exist in the Publications table."
-                                    "Add it with add_publication function. ")
-                    raise SimpleError()
+                    msg = "Discovery reference may not exist in the Publications table." \
+                          "Add it with add_publication function. "
+                    logger.error(msg)
+                    raise SimpleError(msg)
             else:
-                logger.critical("Discovery reference may not exist in the Publications table."
-                                "Add it with add_publication function. ")
-                raise SimpleError()
+                msg = "Discovery reference may not exist in the Publications table." \
+                      "Add it with add_publication function. "
+                logger.error(msg)
+                raise SimpleError(msg)
 
     if save_db:
         db.save_database(directory='data/')
@@ -778,8 +788,9 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
 
                 logger.debug(''.join(map(str, ["The new measurement's adopted flag is:", adopted])))
         else:
-            logger.critical('Unexpected state')
-            raise RuntimeError()
+            msg = 'Unexpected state'
+            logger.error(msg)
+            raise RuntimeError(msg)
 
         # Construct data to be added
         parallax_data = [{'source': db_name,
@@ -794,11 +805,12 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
             db.Parallaxes.insert().execute(parallax_data)
             n_added += 1
         except sqlalchemy.exc.IntegrityError:
-            logger.critical("The source may not exist in Sources table.\n"
-                            "The parallax reference may not exist in Publications table. "
-                            "Add it with add_publication function. \n"
-                            "The parallax measurement may be a duplicate.")
-            raise SimpleError()
+            msg = "The source may not exist in Sources table.\n" \
+                  "The parallax reference may not exist in Publications table. " \
+                  "Add it with add_publication function. \n" \
+                  "The parallax measurement may be a duplicate."
+            logger.error(msg)
+            raise SimpleError(msg)
 
     logger.info(''.join(map(str, ["Parallaxes added to database: ", n_added])))
 
@@ -850,15 +862,18 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
             logger.debug(''.join(map(str, ["\n", db_name, "One source match found"])))
         elif len(db_name_match) > 1:
             logger.debug(''.join(map(str, [db_name_match])))
-            logger.critical(''.join(map(str, [source, "More than one match source found in the database"])))
-            raise RuntimeError()
+            msg = ''.join(map(str, [source, "More than one match source found in the database"]))
+            logger.error(msg)
+            raise RuntimeError(msg)
         elif len(db_name_match) == 0:
-            logger.critical(''.join(map(str, [source, "No source found in the database"])))
-            raise RuntimeError()
+            msg = ''.join(map(str, [source, "No source found in the database"]))
+            logger.error(msg)
+            raise RuntimeError(msg)
         else:
             logger.debug(''.join(map(str, [db_name_match])))
-            logger.critical(''.join(map(str, [source, "unexpected condition"])))
-            raise RuntimeError()
+            msg = ''.join(map(str, [source, "unexpected condition"]))
+            logger.error(msg)
+            raise RuntimeError(msg)
 
         # Search for existing proper motion data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
@@ -910,8 +925,9 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                 source_pm_data.pprint_all()
 
         else:
-            logger.critical('Unexpected state')
-            raise RuntimeError()
+            msg = 'Unexpected state'
+            logger.error(msg)
+            raise RuntimeError(msg)
 
         # Construct data to be added
         pm_data = [{'source': db_name,
@@ -927,11 +943,12 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
             db.ProperMotions.insert().execute(pm_data)
             n_added += 1
         except sqlalchemy.exc.IntegrityError:
-            logger.critical("The source may not exist in Sources table.\n"
-                            "The proper motion reference may not exist in Publications table. "
-                            "Add it with add_publication function. \n"
-                            "The proper motion measurement may be a duplicate.")
-            raise SimpleError()
+            msg = "The source may not exist in Sources table.\n" \
+                  "The proper motion reference may not exist in Publications table. " \
+                  "Add it with add_publication function. \n" \
+                  "The proper motion measurement may be a duplicate."
+            logger.error(msg)
+            raise SimpleError(msg)
 
         updated_source_pm_data = db.query(db.ProperMotions).filter(db.ProperMotions.c.source == db_name).table()
         logger.debug(''.join(map(str, ['Updated proper motion data:'])))
@@ -948,11 +965,12 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
     n_sources = len(sources)
 
     if n_sources != len(magnitudes) or n_sources != len(magnitude_errors):
-        logger.critical(''.join(map(str, ["N Sources:", len(sources),
-                                          " N Magnitudes", len(magnitudes),
-                                          " N Mag errors:", len(magnitude_errors),
-                                          "\nSources, magnitudes, and magnitude error lists should all be same length"])))
-        raise RuntimeError()
+        msg = ''.join(map(str, ["N Sources:", len(sources),
+                                " N Magnitudes", len(magnitudes),
+                                " N Mag errors:", len(magnitude_errors),
+                                "\nSources, magnitudes, and magnitude error lists should all be same length"]))
+        logger.error(msg)
+        raise RuntimeError(msg)
 
     if isinstance(bands, str):
         bands = [bands] * len(sources)
@@ -970,8 +988,9 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
         ucds = [ucds] * len(sources)
 
     if n_sources != len(reference) or n_sources != len(telescope) or n_sources != len(bands):
-        logger.critical("All lists should be same length")
-        raise RuntimeError()
+        msg = "All lists should be same length"
+        logger.error(msg)
+        raise RuntimeError(msg)
 
     for i, source in enumerate(sources):
         db_name = db.search_object(source, output_table='Sources')[0]['source']
@@ -993,11 +1012,12 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
             db.Photometry.insert().execute(photometry_data)
             n_added += 1
         except sqlalchemy.exc.IntegrityError:
-            logger.critical("The source may not exist in Sources table.\n"
-                            "The reference may not exist in the Publications table. "
-                            "Add it with add_publication function. \n"
-                            "The measurement may be a duplicate.")
-            raise SimpleError()
+            msg = "The source may not exist in Sources table.\n" \
+                  "The reference may not exist in the Publications table. " \
+                  "Add it with add_publication function. \n" \
+                  "The measurement may be a duplicate."
+            logger.error(msg)
+            raise SimpleError(msg)
 
     logger.info(''.join(map(str, ["Photometry measurements added to database: ", n_added])))
 
