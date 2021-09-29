@@ -10,7 +10,7 @@ from astropy.table import Table
 
 DB_NAME = 'temp.db'
 DB_PATH = 'data'
-logging.getLogger().setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 
 
 # Load the database for use in individual tests
