@@ -214,6 +214,18 @@ def test_photometry_bands(db):
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
     assert len(t) == 340, f'found {len(t)} photometry measurements for {band}'
 
+    band = '2MASS.J'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 1789, f'found {len(t)} photometry measurements for {band}'
+
+    band = '2MASS.H'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 1778, f'found {len(t)} photometry measurements for {band}'
+
+    band = '2MASS.Ks'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 1751, f'found {len(t)} photometry measurements for {band}'
+
 
 # Individual ingest tests
 # -----------------------------------------------------------------------------------------
