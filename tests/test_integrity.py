@@ -159,6 +159,10 @@ def test_names_table(db):
     assert len(name_list) == valid_name_counts, \
         'ERROR: There are entries in Names without Names.source == Names.other_name'
 
+    # Verify that there are no empty strings as other_names in Names
+    blank_names = db.query(db.Names).filter(db.Names.c.other_name == '').astropy()
+    assert len(blank_names) == 0, \
+        'ERROR: There are entries in Names which are empty strings'
 
 def test_source_uniqueness2(db):
     # Verify that all Sources.source values are unique and find the duplicates
