@@ -65,17 +65,20 @@ def load_simpledb(db_file, RECREATE_DB=True):
     return db
 
 
-def find_in_simbad(sources, desig_prefix, source_id_index = None, verbose = False):
+def find_in_simbad(sources, desig_prefix, source_id_index = None):
     """
     Function to extract source designations from SIMBAD
 
     Parameters
     ----------
-    sources
+    sources: astropy.table.Table
         Sources names to search for in SIMBAD
     desig_prefix
         prefix to search for in list of identifiers
     source_id_index
+        After a designation is split, this index indicates source id suffix.
+        For example, source_id_index = 2 to extract suffix from "Gaia DR2" designations.
+        source_id_index = 1 to exctract suffix from "2MASS" designations.
     verbose
 
     Returns
@@ -110,7 +113,12 @@ def find_in_simbad(sources, desig_prefix, source_id_index = None, verbose = Fals
         if designation:
             verboseprint(db_name, designation[0])
             db_names.append(db_name)
-            simbad_designations.append(designation[0])
+            if len(designation) == 1:
+                simbad_designations.append(designation[0])
+            else:
+                simbad_designations.append(designation[0])
+                print('WARNING: more than one designation matched', designation)
+                #TODO: convert to logger warning
 
             if source_id_index is not None:
                 source_id = designation[0].split()[source_id_index]
