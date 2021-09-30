@@ -43,3 +43,4 @@ for row in data[0:10]:
                  'reference': publication_shortname}]
     print(row_data)
     db.Spectra.insert().execute(row_data)
+
