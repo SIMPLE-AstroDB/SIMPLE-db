@@ -65,7 +65,7 @@ def load_simpledb(db_file, RECREATE_DB=True):
     return db
 
 
-def find_in_simbad(sources, desig_prefix, source_id_index = None):
+def find_in_simbad(sources, desig_prefix, source_id_index=None):
     """
     Function to extract source designations from SIMBAD
 
@@ -79,7 +79,6 @@ def find_in_simbad(sources, desig_prefix, source_id_index = None):
         After a designation is split, this index indicates source id suffix.
         For example, source_id_index = 2 to extract suffix from "Gaia DR2" designations.
         source_id_index = 1 to exctract suffix from "2MASS" designations.
-    verbose
 
     Returns
     -------
@@ -118,18 +117,18 @@ def find_in_simbad(sources, desig_prefix, source_id_index = None):
             else:
                 simbad_designations.append(designation[0])
                 print('WARNING: more than one designation matched', designation)
-                #TODO: convert to logger warning
+                # TODO: convert to logger warning
 
             if source_id_index is not None:
                 source_id = designation[0].split()[source_id_index]
-                source_ids.append(int(source_id)) #convert to int since long in Gaia
+                source_ids.append(int(source_id))  # convert to int since long in Gaia
 
     n_matches = len(db_names)
     print('Found', n_matches, desig_prefix, ' sources for', n_sources, ' sources')
 
     if source_id_index is not None:
         result_table = Table([db_names, simbad_designations, source_ids],
-                        names=('db_names', 'designation', 'source_id'))
+                            names=('db_names', 'designation', 'source_id'))
     else:
         result_table = Table([db_names, simbad_designations],
                              names=('db_names', 'designation'))
@@ -245,7 +244,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
     return missing_sources_index, existing_sources_index, alt_names_table
 
 
-def add_names(db, sources=None, other_names=None, names_table=None, verbose=True):
+def add_names(db, sources=None, other_names=None, names_table=None):
     """
     Add source names to the Names table in the database.
     Provide either two lists of sources and other_names or a 2D names_table.
@@ -260,14 +259,12 @@ def add_names(db, sources=None, other_names=None, names_table=None, verbose=True
     names_table
         table with source and other_names.
         Expecting source name to be first column and other_names in the 2nd.
-    verbose
     """
 
     if names_table is not None and sources is not None:
         raise RuntimeError("Both names table and sources list provided. Provide one or the other")
 
     names_data = []
-
 
     if sources is not None or other_names is not None:
         # Length of sources and other_names list should be equal
@@ -1073,66 +1070,3 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
     print("Photometry measurements added to database: ", n_added)
 
     return
-
-
-def find_in_simbad(sources, desig_prefix, source_id_index = None):
-    """
-    Function to extract source designations from SIMBAD
-
-    Parameters
-    ----------
-    sources
-        Designations to look for in Simbad
-    desig_prefix
-        String prefix which indicates the source name
-    source_id_index (optional)
-        Integer index location from which to extract a source ID suffix
-
-    Returns
-    -------
-    Astropy table
-
-    """
-
-    n_sources = len(sources)
-
-    Simbad.reset_votable_fields()
-    Simbad.add_votable_fields('typed_id')  # keep search term in result table
-    Simbad.add_votable_fields('ids')  # add all SIMBAD identifiers as an output column
-    print("simbad query started")
-    result_table = Simbad.query_objects(sources)
-    print("simbad query ended")
-
-    ind = result_table['SCRIPT_NUMBER_ID'] > 0  # find indexes which contain results
-
-    simbad_ids = result_table['TYPED_ID', 'IDS'][ind]
-
-    db_names = []
-    simbad_designations = []
-    if source_id_index is not None:
-        source_ids = []
-
-    for row in simbad_ids:
-        db_name = row['TYPED_ID']
-        ids = row['IDS'].split('|')
-        designation = [i for i in ids if desig_prefix in i]
-
-        if designation:
-            verboseprint(db_name, designation[0])
-            db_names.append(db_name)
-            simbad_designations.append(designation[0])
-            if source_id_index is not None:
-                source_id = designation[0].split()[source_id_index]
-                source_ids.append(int(source_id)) #convert to int since long in Gaia
-
-    n_matches = len(db_names)
-    print('Found', n_matches, desig_prefix, ' sources for', n_sources, ' sources')
-
-    if source_id_index is not None:
-        result_table = Table([db_names, simbad_designations, source_ids],
-                      names=('db_names', 'designation', 'source_id'))
-    else:
-        result_table = Table([db_names, simbad_designations],
-                             names=('db_names', 'designation'))
-
-    return result_table
