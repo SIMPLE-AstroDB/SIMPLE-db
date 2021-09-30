@@ -12,29 +12,47 @@ db = load_simpledb('SIMPLE.db', RECREATE_DB=RECREATE_DB)
 df = pd.read_csv('scripts/ingests/BDNYC_spectra2.csv')
 data = Table.from_pandas(df)
 # Extracting Columns from CSV
+
+# Adding missing modes
 sxd_mode = [{'name': 'SXD',
              'instrument': 'SpeX',
              'telescope': 'IRTF'}]
+# db.Modes.insert().execute(sxd_mode)
 
-#db.Modes.insert().execute(sxd_mode)
+source_names = data['designation']
+missing, existing, alt = sort_sources(db, source_names, verbose=True)
 
-for row in data:
+# TODO: do something with alt source names
+# alt_names = data[alt_names]
+# TODO: add missing sources
+# to_add = data[missing]
+
+# For now, just ingest the spectra for sources which are already in the database
+existing_data = data[existing]
+
+for row in existing_data:
     db_name = row['designation']
     source_spec_data = db.query(db.Spectra).filter(db.Spectra.c.source == db_name).table()
-    if len(source_spec_data) > 0:  # Spectra data already exists
-        # check for duplicate measurement
-        dupe_ind = source_spec_data['reference'] == row['publication_shortname']
-        if sum(dupe_ind):
-            print("Duplicate measurement\n", source_spec_data[dupe_ind], '\n')
-            continue
+
     if ma.is_masked(row['obs_date']):
         obs_date = None
         continue
     else:
         obs_date = pd.to_datetime(row["obs_date"])
+
     publication_shortname = row["publication_shortname"]
     if publication_shortname == 'Alle07':
         publication_shortname = 'Alle07a'
+
+    if len(source_spec_data) > 0:  # Spectra data already exists
+        # check for duplicate measurement
+        dupe_ind = source_spec_data['reference'] == publication_shortname
+        if sum(dupe_ind):
+            print("Skipping suspected duplicate measurement")
+            print(source_spec_data[dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference'])
+            print(row['designation', 'name.1', 'mode', 'obs_date', 'publication_shortname'], '\n')
+            continue  # Skip duplicate measurement
+
     Id = row['id']
     designation = row['designation']
     spectrum = row['spectrum']

@@ -136,7 +136,7 @@ def find_in_simbad(sources, desig_prefix, source_id_index=None):
     return result_table
 
 
-def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., verbose=False):
+def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_radius=60., verbose=False):
     """
     Classifying sources to be ingested into the database into three categories:
     1) in the database with the same name,
@@ -149,9 +149,9 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
     db
     ingest_names
         Names of sources
-    ingest_ras
+    ingest_ras, optional
         Right ascensions of sources. Decimal degrees.
-    ingest_decs
+    ingest_decs, optional
         Declinations of sources. Decimal degrees.
     search_radius
         radius in arcseconds to use for source matching
@@ -166,6 +166,11 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
     alt_names_table
         List of tuples with Other Names to add to database
     """
+
+    if ingest_ras and ingest_decs:
+        coords = True
+    else:
+        coords = False
 
     existing_sources_index = []
     missing_sources_index = []
@@ -191,7 +196,7 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
                 namematches = []
 
         # if still no matches, try spatial search using coordinates
-        if len(namematches) == 0:
+        if len(namematches) == 0 and coords:
             location = SkyCoord(ingest_ras[i], ingest_decs[i], frame='icrs', unit='deg')
             radius = u.Quantity(search_radius, unit='arcsec')
             verboseprint(i, ": no Simbad match, trying coord search around ", location.ra.hour, location.dec,
@@ -212,7 +217,12 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
             db_names.append(source_match)
             verboseprint(i, "match found: ", source_match, verbose=verbose)
         elif len(namematches) > 1:
-            raise RuntimeError(i, "More than one match for ", name, "/n,", namematches)
+            #raise RuntimeError(i, "More than one match for " + name + "\n,", namematches)
+            existing_sources_index.append(i)
+            dupe_match = namematches[0]['source']
+            db_names.append(dupe_match)
+            print(i, "More than one match for " + name + "\n,", namematches)
+            print(i, "choosing the first one: ", dupe_match)
         elif len(namematches) == 0:
             verboseprint(i, ": Not in database", verbose=verbose)
             missing_sources_index.append(i)
@@ -220,14 +230,16 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
         else:
             raise RuntimeError(i, "unexpected condition")
 
+        n_ingest = i+1
+        n_existing = len(existing_sources_index)
+        n_missing = len(missing_sources_index)
+        if n_ingest != n_existing + n_missing:
+            raise RuntimeError("Unexpected number of sources")
+
     verboseprint("\n ALL SOURCES SORTED", verbose=verbose)
     verboseprint("\n Existing Sources:\n", ingest_names[existing_sources_index], verbose=verbose)
     verboseprint("\n Missing Sources:\n", ingest_names[missing_sources_index], verbose=verbose)
-    verboseprint("\n Existing Sources with different name:\n", verbose=verbose)
-    if verbose:
-        # TODO: does pprint_all work here? If it's just a list that's undefined
-        # alt_names_table.pprint_all()
-        pass
+    verboseprint("\n Existing Sources with different name:\n", alt_names_table, verbose=verbose)
 
     n_ingest = len(ingest_names)
     n_existing = len(existing_sources_index)
@@ -235,6 +247,9 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60., v
     n_missing = len(missing_sources_index)
 
     if n_ingest != n_existing + n_missing:
+        print('n_ingest: ',n_ingest)
+        print('n_existing: ', n_existing)
+        print('n_missing: ', n_missing)
         raise RuntimeError("Unexpected number of sources")
 
     print(n_existing, "sources already in database.")
