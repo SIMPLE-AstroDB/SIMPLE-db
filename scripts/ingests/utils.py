@@ -65,77 +65,6 @@ def load_simpledb(db_file, RECREATE_DB=True):
     return db
 
 
-def find_in_simbad(sources, desig_prefix, source_id_index=None):
-    """
-    Function to extract source designations from SIMBAD
-
-    Parameters
-    ----------
-    sources: astropy.table.Table
-        Sources names to search for in SIMBAD
-    desig_prefix
-        prefix to search for in list of identifiers
-    source_id_index
-        After a designation is split, this index indicates source id suffix.
-        For example, source_id_index = 2 to extract suffix from "Gaia DR2" designations.
-        source_id_index = 1 to exctract suffix from "2MASS" designations.
-
-    Returns
-    -------
-    Astropy table
-
-    """
-
-    n_sources = len(sources)
-
-    Simbad.reset_votable_fields()
-    Simbad.add_votable_fields('typed_id')  # keep search term in result table
-    Simbad.add_votable_fields('ids')  # add all SIMBAD identifiers as an output column
-
-    print("simbad query started")
-    result_table = Simbad.query_objects(sources['source'])
-    print("simbad query ended")
-
-    ind = result_table['SCRIPT_NUMBER_ID'] > 0  # find indexes which contain results
-    simbad_ids = result_table['TYPED_ID', 'IDS'][ind]
-
-    db_names = []
-    simbad_designations = []
-    if source_id_index is not None:
-        source_ids = []
-
-    for row in simbad_ids:
-        db_name = row['TYPED_ID']
-        ids = row['IDS'].split('|')
-        designation = [i for i in ids if desig_prefix in i]
-
-        if designation:
-            verboseprint(db_name, designation[0])
-            db_names.append(db_name)
-            if len(designation) == 1:
-                simbad_designations.append(designation[0])
-            else:
-                simbad_designations.append(designation[0])
-                print('WARNING: more than one designation matched', designation)
-                # TODO: convert to logger warning
-
-            if source_id_index is not None:
-                source_id = designation[0].split()[source_id_index]
-                source_ids.append(int(source_id))  # convert to int since long in Gaia
-
-    n_matches = len(db_names)
-    print('Found', n_matches, desig_prefix, ' sources for', n_sources, ' sources')
-
-    if source_id_index is not None:
-        result_table = Table([db_names, simbad_designations, source_ids],
-                            names=('db_names', 'designation', 'source_id'))
-    else:
-        result_table = Table([db_names, simbad_designations],
-                             names=('db_names', 'designation'))
-
-    return result_table
-
-
 def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_radius=60., verbose=False):
     """
     Classifying sources to be ingested into the database into three categories:
@@ -217,7 +146,7 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
             db_names.append(source_match)
             verboseprint(i, "match found: ", source_match, verbose=verbose)
         elif len(namematches) > 1:
-            #raise RuntimeError(i, "More than one match for " + name + "\n,", namematches)
+            # raise RuntimeError(i, "More than one match for " + name + "\n,", namematches)
             existing_sources_index.append(i)
             dupe_match = namematches[0]['source']
             db_names.append(dupe_match)
@@ -247,7 +176,7 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
     n_missing = len(missing_sources_index)
 
     if n_ingest != n_existing + n_missing:
-        print('n_ingest: ',n_ingest)
+        print('n_ingest: ', n_ingest)
         print('n_existing: ', n_existing)
         print('n_missing: ', n_missing)
         raise RuntimeError("Unexpected number of sources")
@@ -257,6 +186,246 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
     print(n_missing, "sources not found in the database")
 
     return missing_sources_index, existing_sources_index, alt_names_table
+
+
+def find_source_in_db(db, source):
+
+    db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=False)
+
+    # If no matches, try fuzzy search
+    if len(db_name_match) == 0:
+        db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=True)
+
+    # If still no matches, try to resolve the name with Simbad
+    if len(db_name_match) == 0:
+        db_name_match = db.search_object(source, output_table='Sources', resolve_simbad=True)
+
+    if len(db_name_match) == 1:
+        db_name = db_name_match['source'][0]
+        # print("\n", db_name, "One source match found", verbose=verbose)
+    elif len(db_name_match) > 1:
+        print("\n", source)
+        print(db_name_match)
+        raise RuntimeError(source, "More than one match source found in the database")
+    elif len(db_name_match) == 0:
+        print("\n", source)
+        raise RuntimeError(source, "No source found in the database")
+    else:
+        print("\n", source)
+        print(db_name_match)
+        raise RuntimeError(source, "unexpected condition")
+
+    return db_name
+
+
+def find_in_simbad(sources, desig_prefix, source_id_index=None):
+    """
+    Function to extract source designations from SIMBAD
+
+    Parameters
+    ----------
+    sources: astropy.table.Table
+        Sources names to search for in SIMBAD
+    desig_prefix
+        prefix to search for in list of identifiers
+    source_id_index
+        After a designation is split, this index indicates source id suffix.
+        For example, source_id_index = 2 to extract suffix from "Gaia DR2" designations.
+        source_id_index = 1 to exctract suffix from "2MASS" designations.
+
+    Returns
+    -------
+    Astropy table
+
+    """
+
+    n_sources = len(sources)
+
+    Simbad.reset_votable_fields()
+    Simbad.add_votable_fields('typed_id')  # keep search term in result table
+    Simbad.add_votable_fields('ids')  # add all SIMBAD identifiers as an output column
+
+    print("simbad query started")
+    result_table = Simbad.query_objects(sources['source'])
+    print("simbad query ended")
+
+    ind = result_table['SCRIPT_NUMBER_ID'] > 0  # find indexes which contain results
+    simbad_ids = result_table['TYPED_ID', 'IDS'][ind]
+
+    db_names = []
+    simbad_designations = []
+    if source_id_index is not None:
+        source_ids = []
+
+    for row in simbad_ids:
+        db_name = row['TYPED_ID']
+        ids = row['IDS'].split('|')
+        designation = [i for i in ids if desig_prefix in i]
+
+        if designation:
+            verboseprint(db_name, designation[0])
+            db_names.append(db_name)
+            if len(designation) == 1:
+                simbad_designations.append(designation[0])
+            else:
+                simbad_designations.append(designation[0])
+                print('WARNING: more than one designation matched', designation)
+                # TODO: convert to logger warning
+
+            if source_id_index is not None:
+                source_id = designation[0].split()[source_id_index]
+                source_ids.append(int(source_id))  # convert to int since long in Gaia
+
+    n_matches = len(db_names)
+    print('Found', n_matches, desig_prefix, ' sources for', n_sources, ' sources')
+
+    if source_id_index is not None:
+        result_table = Table([db_names, simbad_designations, source_ids],
+                            names=('db_names', 'designation', 'source_id'))
+    else:
+        result_table = Table([db_names, simbad_designations],
+                             names=('db_names', 'designation'))
+
+    return result_table
+
+
+def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', verbose=False):
+    resolved_names = []
+    n_sources = len(ingest_names)
+    n_name_matches = 0
+    n_selections = 0
+    n_nearby = 0
+    n_notfound = 0
+
+    for i, ingest_name in enumerate(ingest_names):
+        # Query Simbad for identifiers matching the ingest source name
+        identifer_result_table = Simbad.query_object(ingest_name, verbose=False)
+
+        # Successfully resolved one matching identifier in Simbad
+        if identifer_result_table is not None and len(identifer_result_table) == 1:
+            # Add the Simbad resolved identifier ot the resolved_name list and deals with unicode
+            if isinstance(identifer_result_table['MAIN_ID'][0], str):
+                resolved_names.append(identifer_result_table['MAIN_ID'][0])
+            else:
+                resolved_names.append(identifer_result_table['MAIN_ID'][0].decode())
+            verboseprint(resolved_names[i], "Found name match in Simbad", verbose=verbose)
+            n_name_matches = n_name_matches + 1
+
+        # If no identifier match found, search within "radius" of coords for a Simbad object
+        else:
+            verboseprint("searching around ", ingest_name, verbose=verbose)
+            coord_result_table = Simbad.query_region(
+                SkyCoord(ingest_ra[i], ingest_dec[i], unit=(u.deg, u.deg), frame='icrs'),
+                radius=radius, verbose=verbose)
+
+            # If no match is found in Simbad, use the name in the ingest table
+            if coord_result_table is None:
+                resolved_names.append(ingest_name)
+                verboseprint("coord search failed", verbose=verbose)
+                n_notfound = n_notfound + 1
+
+            # If more than one match found within "radius", query user for selection and append to resolved_name
+            elif len(coord_result_table) > 1:
+                for j, name in enumerate(coord_result_table['MAIN_ID']):
+                    print(f'{j}: {name}')
+                selection = int(input('Choose \n'))
+                if isinstance(coord_result_table['MAIN_ID'][selection], str):
+                    resolved_names.append(coord_result_table['MAIN_ID'][selection])
+                else:
+                    resolved_names.append(coord_result_table['MAIN_ID'][selection].decode())
+                verboseprint(resolved_names[i], "you selected", verbose=verbose)
+                n_selections = n_selections + 1
+
+            # If there is only one match found, accept it and append to the resolved_name list
+            elif len(coord_result_table) == 1:
+                if isinstance(coord_result_table['MAIN_ID'][0], str):
+                    resolved_names.append(coord_result_table['MAIN_ID'][0])
+                else:
+                    resolved_names.append(coord_result_table['MAIN_ID'][0].decode())
+                verboseprint(resolved_names[i], "only result nearby in Simbad", verbose=verbose)
+                n_nearby = n_nearby + 1
+
+    # Report how many find via which methods
+    print("Names Found:", n_name_matches)
+    print("Names Selected", n_selections)
+    print("Names Found", n_nearby)
+    print("Not found", n_notfound)
+
+    n_found = n_notfound + n_name_matches + n_selections + n_nearby
+    print('problem' if n_found != n_sources else (n_sources, 'names'))
+
+    return resolved_names
+
+
+def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=None,
+                   equinoxes=None, verbose=False, save_db=False):
+    """
+    Script to ingest sources
+
+    Parameters
+    ----------
+    db
+    sources
+    ras
+    decs
+    references
+    comments
+    epochs
+    equinoxes
+    verbose
+    save_db
+
+    Returns
+    -------
+
+    """
+
+    n_added = 0
+    n_sources = len(sources)
+
+    if epochs is None:
+        epochs = [None] * n_sources
+    if equinoxes is None:
+        equinoxes = [None] * n_sources
+    if comments is None:
+        comments = [None] * n_sources
+
+    for i, source in enumerate(sources):
+
+        # Construct data to be added
+        source_data = [{'source': sources[i],
+                        'ra': ras[i],
+                        'dec': decs[i],
+                        'reference': references[i],
+                        'epoch': epochs[i],
+                        'equinox': equinoxes[i],
+                        'comments': comments[i]}]
+        verboseprint(source_data, verbose=verbose)
+
+        try:
+            db.Sources.insert().execute(source_data)
+            n_added += 1
+        except sqlalchemy.exc.IntegrityError:
+            # try reference without last letter e.g.Smit04 instead of Smit04a
+            if source_data[0]['reference'][-1] in ('a', 'b'):
+                source_data[0]['reference'] = references[i][:-1]
+                try:
+                    db.Sources.insert().execute(source_data)
+                    n_added += 1
+                except sqlalchemy.exc.IntegrityError:
+                    raise SimpleError("Discovery reference may not exist in the Publications table. "
+                                      "Add it with add_publication function. ")
+            else:
+                raise SimpleError("Discovery reference may not exist in the Publications table. "
+                                  "Add it with add_publication function. ")
+
+    if save_db:
+        db.save_database(directory='data/')
+        print(n_added, "sources added to database and saved")
+    else:
+        print(n_added, "sources added to database")
+
+    return
 
 
 def add_names(db, sources=None, other_names=None, names_table=None):
@@ -608,75 +777,7 @@ def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, 
 #     return
 
 
-# Make sure all source names are Simbad resolvable:
-def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', verbose=False):
-    resolved_names = []
-    n_sources = len(ingest_names)
-    n_name_matches = 0
-    n_selections = 0
-    n_nearby = 0
-    n_notfound = 0
-
-    for i, ingest_name in enumerate(ingest_names):
-        # Query Simbad for identifiers matching the ingest source name
-        identifer_result_table = Simbad.query_object(ingest_name, verbose=False)
-
-        # Successfully resolved one matching identifier in Simbad
-        if identifer_result_table is not None and len(identifer_result_table) == 1:
-            # Add the Simbad resolved identifier ot the resolved_name list and deals with unicode
-            if isinstance(identifer_result_table['MAIN_ID'][0], str):
-                resolved_names.append(identifer_result_table['MAIN_ID'][0])
-            else:
-                resolved_names.append(identifer_result_table['MAIN_ID'][0].decode())
-            verboseprint(resolved_names[i], "Found name match in Simbad", verbose=verbose)
-            n_name_matches = n_name_matches + 1
-
-        # If no identifier match found, search within "radius" of coords for a Simbad object
-        else:
-            verboseprint("searching around ", ingest_name, verbose=verbose)
-            coord_result_table = Simbad.query_region(
-                SkyCoord(ingest_ra[i], ingest_dec[i], unit=(u.deg, u.deg), frame='icrs'),
-                radius=radius, verbose=verbose)
-
-            # If no match is found in Simbad, use the name in the ingest table
-            if coord_result_table is None:
-                resolved_names.append(ingest_name)
-                verboseprint("coord search failed", verbose=verbose)
-                n_notfound = n_notfound + 1
-
-            # If more than one match found within "radius", query user for selection and append to resolved_name
-            elif len(coord_result_table) > 1:
-                for j, name in enumerate(coord_result_table['MAIN_ID']):
-                    print(f'{j}: {name}')
-                selection = int(input('Choose \n'))
-                if isinstance(coord_result_table['MAIN_ID'][selection], str):
-                    resolved_names.append(coord_result_table['MAIN_ID'][selection])
-                else:
-                    resolved_names.append(coord_result_table['MAIN_ID'][selection].decode())
-                verboseprint(resolved_names[i], "you selected", verbose=verbose)
-                n_selections = n_selections + 1
-
-            # If there is only one match found, accept it and append to the resolved_name list
-            elif len(coord_result_table) == 1:
-                if isinstance(coord_result_table['MAIN_ID'][0], str):
-                    resolved_names.append(coord_result_table['MAIN_ID'][0])
-                else:
-                    resolved_names.append(coord_result_table['MAIN_ID'][0].decode())
-                verboseprint(resolved_names[i], "only result nearby in Simbad", verbose=verbose)
-                n_nearby = n_nearby + 1
-
-    # Report how many find via which methods
-    print("Names Found:", n_name_matches)
-    print("Names Selected", n_selections)
-    print("Names Found", n_nearby)
-    print("Not found", n_notfound)
-
-    n_found = n_notfound + n_name_matches + n_selections + n_nearby
-    print('problem' if n_found != n_sources else (n_sources, 'names'))
-
-    return resolved_names
-
-
+# Make sure all source names are Simbad resolvable
 def convert_spt_string_to_code(spectral_types, verbose=False):
     """
     normal tests: M0, M5.5, L0, L3.5, T0, T3, T4.5, Y0, Y5, Y9.
@@ -719,77 +820,6 @@ def convert_spt_string_to_code(spectral_types, verbose=False):
         spectral_type_codes.append(spt_code)
         verboseprint(spt, spt_code, verbose=verbose)
     return spectral_type_codes
-
-
-def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=None,
-                   equinoxes=None, verbose=False, save_db=False):
-    """
-    Script to ingest sources
-
-    Parameters
-    ----------
-    db
-    sources
-    ras
-    decs
-    references
-    comments
-    epochs
-    equinoxes
-    verbose
-    save_db
-
-    Returns
-    -------
-
-    """
-
-    n_added = 0
-    n_sources = len(sources)
-
-    if epochs is None:
-        epochs = [None] * n_sources
-    if equinoxes is None:
-        equinoxes = [None] * n_sources
-    if comments is None:
-        comments = [None] * n_sources
-
-    for i, source in enumerate(sources):
-
-        # Construct data to be added
-        source_data = [{'source': sources[i],
-                        'ra': ras[i],
-                        'dec': decs[i],
-                        'reference': references[i],
-                        'epoch': epochs[i],
-                        'equinox': equinoxes[i],
-                        'comments': comments[i]}]
-        verboseprint(source_data, verbose=verbose)
-
-        try:
-            db.Sources.insert().execute(source_data)
-            n_added += 1
-        except sqlalchemy.exc.IntegrityError:
-            # try reference without last letter e.g.Smit04 instead of Smit04a
-            if source_data[0]['reference'][-1] in ('a', 'b'):
-                source_data[0]['reference'] = references[i][:-1]
-                try:
-                    db.Sources.insert().execute(source_data)
-                    n_added += 1
-                except sqlalchemy.exc.IntegrityError:
-                    raise SimpleError("Discovery reference may not exist in the Publications table. "
-                                      "Add it with add_publication function. ")
-            else:
-                raise SimpleError("Discovery reference may not exist in the Publications table. "
-                                  "Add it with add_publication function. ")
-
-    if save_db:
-        db.save_database(directory='data/')
-        print(n_added, "sources added to database and saved")
-    else:
-        print(n_added, "sources added to database")
-
-    return
 
 
 def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
@@ -887,8 +917,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
     return
 
 
-def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs, pm_references,
-                          verbose=False):
+def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs, pm_references):
     """
 
     Parameters
@@ -920,30 +949,8 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
     n_added = 0
 
     for i, source in enumerate(sources):
-        db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=False)
 
-        # If no matches, try fuzzy search
-        if len(db_name_match) == 0:
-            db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=True)
-
-        # If still no matches, try to resolve the name with Simbad
-        if len(db_name_match) == 0:
-            db_name_match = db.search_object(source, output_table='Sources', resolve_simbad=True)
-
-        if len(db_name_match) == 1:
-            db_name = db_name_match['source'][0]
-            verboseprint("\n", db_name, "One source match found", verbose=verbose)
-        elif len(db_name_match) > 1:
-            print("\n", source)
-            print(db_name_match)
-            raise RuntimeError(source, "More than one match source found in the database")
-        elif len(db_name_match) == 0:
-            print("\n", source)
-            raise RuntimeError(source, "No source found in the database")
-        else:
-            print("\n", source)
-            print(db_name_match)
-            raise RuntimeError(source, "unexpected condition")
+        db_name = find_source_in_db(db, source)
 
         # Search for existing proper motion data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement

@@ -11,38 +11,48 @@ db = load_simpledb('SIMPLE.db', RECREATE_DB=RECREATE_DB)
 # Read in CSV file with Pandas
 df = pd.read_csv('scripts/ingests/BDNYC_spectra2.csv')
 data = Table.from_pandas(df)
+
 # Inserting Gemini North in various tables
 telescope_gnirs = [{'name': 'Gemini North'}]
-#db.Telescopes.insert().execute(telescope_gnirs)
 instruments_gnirs = [{'name': 'GNIRS'}]
-#db.Instruments.insert().execute(instruments_gnirs)
 sxd_mode_gnirs = [{'name': 'SXD',
                    'instrument': 'GNIRS',
                    'telescope': 'Gemini North'}]
-#db.Modes.insert().execute(sxd_mode_gnirs)
 # Adding missing modes
 sxd_mode = [{'name': 'SXD',
              'instrument': 'SpeX',
              'telescope': 'IRTF'}]
-
+# db.Instruments.insert().execute(instruments_gnirs)
+# db.Telescopes.insert().execute(telescope_gnirs)
+# db.Modes.insert().execute(sxd_mode_gnirs)
 # db.Modes.insert().execute(sxd_mode)
 
 source_names = data['designation']
-missing, existing, alt = sort_sources(db, source_names, verbose=True)
+
+# Run once and then comment out:
+missing, existing, alt_names = sort_sources(db, source_names, verbose=False)
 
 # TODO: do something with alt source names
-# alt_names = data[alt_names]
+# alt_names_string = 'BDNYC_ingest_spectra_alt_names.vot'
+# alt_names.write(alt_names_string, format='votable')
 # TODO: add missing sources
 # to_add = data[missing]
+# missing_string = 'BDNYC_ingest_spectra_missing.vot'
+# to_add.write(missing_string, format='votable')
 
 # For now, just ingest the spectra for sources which are already in the database
+existing_string = 'BDNYC_ingest_spectra_existing.vot'
+# Run once to write file and then comment out 46-47 and uncomment 48
 existing_data = data[existing]
+existing_data.write(existing_string, format='votable')
+# existing_data = Table.read(existing_string, format='votable')
 
 for row in existing_data:
-    db_name = row['designation']
+    db_name = find_source_in_db(db, row['designation'])
+
     source_spec_data = db.query(db.Spectra).filter(db.Spectra.c.source == db_name).table()
 
-    if ma.is_masked(row['obs_date']):
+    if ma.is_masked(row['obs_date']) or row['obs_date'] == '':
         obs_date = None
         continue
     else:
@@ -62,7 +72,7 @@ for row in existing_data:
             continue  # Skip duplicate measurement
 
     Id = row['id']
-    designation = row['designation']
+    designation = db_name
     spectrum = row['spectrum']
     wavelength_units = row["wavelength_units"]
     flux_units = row["flux_units"]
