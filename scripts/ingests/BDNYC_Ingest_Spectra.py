@@ -11,12 +11,20 @@ db = load_simpledb('SIMPLE.db', RECREATE_DB=RECREATE_DB)
 # Read in CSV file with Pandas
 df = pd.read_csv('scripts/ingests/BDNYC_spectra2.csv')
 data = Table.from_pandas(df)
-# Extracting Columns from CSV
-
+# Inserting Gemini North in various tables
+telescope_gnirs = [{'name': 'Gemini North'}]
+#db.Telescopes.insert().execute(telescope_gnirs)
+instruments_gnirs = [{'name': 'GNIRS'}]
+#db.Instruments.insert().execute(instruments_gnirs)
+sxd_mode_gnirs = [{'name': 'SXD',
+                   'instrument': 'GNIRS',
+                   'telescope': 'Gemini North'}]
+#db.Modes.insert().execute(sxd_mode_gnirs)
 # Adding missing modes
 sxd_mode = [{'name': 'SXD',
              'instrument': 'SpeX',
              'telescope': 'IRTF'}]
+
 # db.Modes.insert().execute(sxd_mode)
 
 source_names = data['designation']
