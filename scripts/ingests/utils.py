@@ -917,7 +917,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, verbose=False):
     return
 
 
-def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs, pm_references):
+def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs, pm_references, verbose=False):
     """
 
     Parameters
