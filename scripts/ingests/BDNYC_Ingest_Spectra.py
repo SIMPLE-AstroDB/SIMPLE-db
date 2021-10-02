@@ -11,6 +11,49 @@ db = load_simpledb('SIMPLE.db', RECREATE_DB=RECREATE_DB)
 # Read in CSV file with Pandas
 df = pd.read_csv('scripts/ingests/BDNYC_spectra2.csv')
 data = Table.from_pandas(df)
+#Inserting CTIO 1.5m
+telescope_ct = [{'name': 'CTIO 1.5m'}]
+instruments_ct = [{'name': 'OSIRIS'}]
+sxd_mode_ct = [{'name': 'SXD',
+                'instrument': 'OSIRIS',
+                'telescope': 'CTIO 1.5m'}]
+#db.Telescopes.insert().execute(telescope_ct)
+#db.Instruments.insert().execute(instruments_ct)
+#db.Modes.insert().execute(sxd_mode_ct)
+
+#Inserting LL Mode
+ll_mode = [{'name': 'LL',
+            'instrument': 'IRS',
+            'telescope': 'Spitzer'}]
+#db.Modes.insert().execute(ll_mode)
+
+#Inserting Magellan I Baade
+telescope_mgl = [{'name': 'Magellan I Baade'}]
+instruments_mgl = [{'name': 'FIRE'}]
+echelle_mode = [{'name': 'Echelle',
+                 'instrument': 'FIRE',
+                 'telescope': 'Magellan I Baade'}]
+#db.Telescopes.insert().execute(telescope_mgl)
+#db.Instruments.insert().execute(instruments_mgl)
+#db.Modes.insert().execute(echelle_mode)
+
+# Inserting IRS instrument and SL mode
+instrument_sl = [{'name': 'IRS'}]
+sxd_mode_sl = [{'name': 'SL',
+                'instrument': 'IRS',
+                'telescope': 'Spitzer'}]
+# db.Instruments.insert().execute(instrument_sl)
+# db.Modes.insert().execute(sxd_mode_sl)
+
+# Inserting Gemini South in various tables
+telescope_gmos = [{'name': 'Gemini South'}]
+instruments_gmos = [{'name': 'GMOS-S'}]
+prism_mode_gmos = [{'name': 'Prism',
+                    'instrument': 'GMOS-S',
+                    'telescope': 'Gemini South'}]
+#db.Telescopes.insert().execute(telescope_gmos)
+#db.Instruments.insert().execute(instruments_gmos)
+#db.Modes.insert().execute(prism_mode_gmos)
 
 # Inserting Gemini North in various tables
 telescope_gnirs = [{'name': 'Gemini North'}]
@@ -18,6 +61,13 @@ instruments_gnirs = [{'name': 'GNIRS'}]
 sxd_mode_gnirs = [{'name': 'SXD',
                    'instrument': 'GNIRS',
                    'telescope': 'Gemini North'}]
+instrument_gmos_n = [{'name': 'GMOS-N'}]
+prism_mode_gmos_n = [{'name': 'Prism',
+                      'instrument': 'GMOS-N',
+                      'telescope': 'Gemini North'}]
+#db.Instruments.insert().execute(instrument_gmos_n)
+#db.Modes.insert().execute(prism_mode_gmos_n)
+
 # Adding missing modes
 sxd_mode = [{'name': 'SXD',
              'instrument': 'SpeX',
@@ -30,7 +80,7 @@ sxd_mode = [{'name': 'SXD',
 source_names = data['designation']
 
 # Run once and then comment out:
-missing, existing, alt_names = sort_sources(db, source_names, verbose=False)
+# missing, existing, alt_names = sort_sources(db, source_names, verbose=False)
 
 # TODO: do something with alt source names
 # alt_names_string = 'BDNYC_ingest_spectra_alt_names.vot'
@@ -43,9 +93,9 @@ missing, existing, alt_names = sort_sources(db, source_names, verbose=False)
 # For now, just ingest the spectra for sources which are already in the database
 existing_string = 'BDNYC_ingest_spectra_existing.vot'
 # Run once to write file and then comment out 46-47 and uncomment 48
-existing_data = data[existing]
-existing_data.write(existing_string, format='votable')
-# existing_data = Table.read(existing_string, format='votable')
+# existing_data = data[existing]
+# existing_data.write(existing_string, format='votable')
+existing_data = Table.read(existing_string, format='votable')
 
 for row in existing_data:
     db_name = find_source_in_db(db, row['designation'])
