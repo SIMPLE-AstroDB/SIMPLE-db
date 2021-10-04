@@ -214,6 +214,26 @@ def test_photometry_bands(db):
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
     assert len(t) == 340, f'found {len(t)} photometry measurements for {band}'
 
+    band = '2MASS.J'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 1789, f'found {len(t)} photometry measurements for {band}'
+
+    band = '2MASS.H'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 1778, f'found {len(t)} photometry measurements for {band}'
+
+    band = '2MASS.Ks'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 1751, f'found {len(t)} photometry measurements for {band}'
+
+# TODO: Tests of Gaia and 2MASS designations
+# If 2MASS designation in Names, 2MASS photometry should exist
+# If 2MASS photometry, 2MASS designation should be in Names
+# If Gaia designation in Names, Gaia phot and astrometry should exist
+# If Gaia phot, Gaia designation should be in Names
+# If Gaia pm, Gaia designation should be in Names
+# If Gaia parallax, Gaia designation should be in Names
+
 
 # Individual ingest tests
 # -----------------------------------------------------------------------------------------
