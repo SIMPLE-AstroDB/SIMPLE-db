@@ -6,7 +6,9 @@ SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = False  # recreates the .db file from the data files
 VERBOSE = False
 
-db = load_simpledb('SIMPLE.db', RECREATE_DB=RECREATE_DB)
+logger.setLevel(logging.INFO)
+
+db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
 # Read in CSV file with Pandas
 df = pd.read_csv('scripts/ingests/BDNYC_spectra2.csv')
@@ -80,11 +82,15 @@ sxd_mode = [{'name': 'SXD',
 source_names = data['designation']
 
 # Run once and then comment out:
-# missing, existing, alt_names = sort_sources(db, source_names, verbose=False)
+missing_indices, existing_indices, alt_names_table = sort_sources(db, source_names)
 
-# TODO: do something with alt source names
+print(len(alt_names_table))
 # alt_names_string = 'BDNYC_ingest_spectra_alt_names.vot'
-# alt_names.write(alt_names_string, format='votable')
+# alt_names_table.write(alt_names_string, format='votable')
+# alt_names_table = Table.read(alt_names_string, format='votable')
+
+add_names(db, names_table=alt_names_table)
+
 # TODO: add missing sources
 # to_add = data[missing]
 # missing_string = 'BDNYC_ingest_spectra_missing.vot'
@@ -116,9 +122,10 @@ for row in existing_data:
         # check for duplicate measurement
         dupe_ind = source_spec_data['reference'] == publication_shortname
         if sum(dupe_ind):
-            print("Skipping suspected duplicate measurement")
-            print(source_spec_data[dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference'])
-            print(row['designation', 'name.1', 'mode', 'obs_date', 'publication_shortname'], '\n')
+            msg = f"Skipping suspected duplicate measurement \n"
+            msg2 = f"{source_spec_data[dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
+            msg3 = f"{row['designation', 'name.1', 'mode', 'obs_date', 'publication_shortname']} \n"
+            logger.info(msg+msg2+msg3)
             continue  # Skip duplicate measurement
 
     Id = row['id']
@@ -146,5 +153,5 @@ for row in existing_data:
                  'wavelength_order': wavelength_order,
                  'comments': comments,
                  'reference': publication_shortname}]
-    print(row_data)
+    logger.debug(row_data)
     db.Spectra.insert().execute(row_data)

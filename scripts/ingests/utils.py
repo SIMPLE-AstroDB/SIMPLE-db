@@ -1,6 +1,7 @@
 """
 Utils functions for use in ingests
 """
+import sqlite3
 from collections import namedtuple
 import logging
 import os
@@ -20,7 +21,7 @@ import sqlalchemy.exc
 import numpy as np
 
 warnings.filterwarnings("ignore", module='astroquery.simbad')
-logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
+logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p')
 logger = logging.getLogger('SIMPLE')
 
@@ -60,7 +61,7 @@ def load_simpledb(db_file, recreatedb=True):
     return db
 
 
-def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_radius=60., verbose=False):
+def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_radius=60.):
     """
     Classifying sources to be ingested into the database into three categories:
     1) in the database with the same name,
@@ -87,7 +88,8 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
     existing_sources_index
         Indices of sources which are already in the database
     alt_names_table
-        List of tuples with Other Names to add to database
+        Astropy Table with Other Names to add to database
+        Can be used as input to add_names function
     """
 
     if ingest_ras and ingest_decs:
@@ -97,8 +99,8 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
 
     existing_sources_index = []
     missing_sources_index = []
-    Alt_names = namedtuple("Alt_names", "source other_name")
-    alt_names_table = []
+    # Alt_names = namedtuple("Alt_names", "source other_name")
+    alt_names_table = Table(names=('db_name','ingest_name'), dtype=('str','str'))
     db_names = []
 
     for i, name in enumerate(ingest_names):
@@ -110,11 +112,12 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
         if len(namematches) == 0:
             logger.debug(f"{i}, : no name matches, trying simbad search")
             try:
-                namematches = db.search_object(name, resolve_simbad=True)
+                namematches = db.search_object(name, resolve_simbad=True, verbose=False)
                 if len(namematches) == 1:
                     simbad_match = namematches[0]['source']
-                    # Populate list with ingest name and database name match
-                    alt_names_table.append(Alt_names(simbad_match, name))
+                    # Populate Astropy Table with ingest name and database name match
+                    alt_names_table.add_row((simbad_match, name))
+                    logger.info(f'New alt Name for {simbad_match}: {name}')
             except TypeError:  # no Simbad match
                 namematches = []
 
@@ -122,13 +125,14 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
         if len(namematches) == 0 and coords:
             location = SkyCoord(ingest_ras[i], ingest_decs[i], frame='icrs', unit='deg')
             radius = u.Quantity(search_radius, unit='arcsec')
-            logger.debug(f"{i}, : no Simbad match, trying coord search around, {location.ra.hour}, {location.dec}")
+            logger.info(f"{i}, : no Simbad match, trying coord search around, {location.ra.hour}, {location.dec}")
             nearby_matches = db.query_region(location, radius=radius)
             if len(nearby_matches) == 1:
                 namematches = nearby_matches
                 coord_match = namematches[0]['source']
-                # Populate list with ingest name and database name match
-                alt_names_table.append(Alt_names(coord_match, name))
+                # Populate Astropy Table with ingest name and database name match
+                alt_names_table.add_row((coord_match, name))
+                logger.info(f'New alt Name for {coord_match}: {name}')
             if len(nearby_matches) > 1:
                 logger.debug(f'{nearby_matches}')
                 msg = "too many nearby sources!"
@@ -141,9 +145,15 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
             db_names.append(source_match)
             logger.debug(f"{i}, match found: , {source_match}")
         elif len(namematches) > 1:
+            # If more than one match, just choose the first one
+            # TODO: Figure out way to let use choose correct match
+            existing_sources_index.append(i)
+            source_match = namematches[0]['source']
+            db_names.append(source_match)
             msg = f"{i}, More than one match for, {name}\n {namematches}"
-            logger.error(msg)
-            raise RuntimeError(msg)
+            msg2 = f"{i}, Using first one: {namematches[0]['source']}"
+            logger.warning(msg)
+            logger.warning(msg2)
         elif len(namematches) == 0:
             logger.debug(f"{i}: Not in database")
             missing_sources_index.append(i)
@@ -153,10 +163,10 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
             logger.error(msg)
             raise RuntimeError(msg)
 
-    logger.info("\n ALL SOURCES SORTED")
-    logger.info(f"\n Existing Sources:\n, {ingest_names[existing_sources_index]}")
-    logger.info(f"\n Missing Sources:\n, {ingest_names[missing_sources_index]}")
-    logger.info("\n Existing Sources with different name:\n")
+    logger.info("ALL SOURCES SORTED")
+    logger.debug(f"Existing Sources:\n, {ingest_names[existing_sources_index]}")
+    logger.debug(f"Missing Sources:\n, {ingest_names[missing_sources_index]}")
+    logger.debug("\n Existing Sources with different name:\n")
     if logger.level == 10:  # debug
         # TODO: does pprint_all work here? alt_names_table appears to be a list instead of a astropy Table
         # alt_names_table.pprint_all()
@@ -179,9 +189,9 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
         logger.error(msg)
         raise RuntimeError("Unexpected number of sources")
 
-    logger.info(f"{n_existing}, sources already in database.")
-    logger.info(f"{n_alt}, sources found with alternate names")
-    logger.info(f"{n_missing}, sources not found in the database")
+    logger.info(f"Sources already in database: {n_existing}")
+    logger.info(f"Sources found with alternate names: {n_alt}")
+    logger.info(f"Sources not found in the database: {n_missing}")
 
     return missing_sources_index, existing_sources_index, alt_names_table
 
@@ -461,19 +471,29 @@ def add_names(db, sources=None, other_names=None, names_table=None):
             names_data.append({'source': source, 'other_name': other_name})
 
     if names_table is not None:
-        if len(names_table[0]) != 2:
-            msg = "Each row should have two elements"
+        if len(names_table) == 0:
+            msg = "No new names to add to database"
+            logger.warning(msg)
+
+        elif len(names_table[0]) != 2:
+            msg = "Each tuple should have two elements"
             logger.error(msg)
             raise RuntimeError(msg)
 
         for name_row in names_table:
             names_data.append({'source': name_row[0], 'other_name': name_row[1]})
+            logger.debug(name_row)
 
-    db.Names.insert().execute(names_data)
+    n_names = len(names_data)
 
-    n_added = len(names_data)
+    if n_names > 0:
+        try:
+            db.Names.insert().execute(names_data)
+        except sqlalchemy.exc.IntegrityError:
+            msg = f"Could not {n_names} Names to database"
+            logger.warning(msg)
 
-    logger.info(f"Names added to database: , {n_added}")
+    logger.info(f"Names added to database: {n_names}")
 
     return
 
