@@ -25,7 +25,7 @@ logger = logging.getLogger('SIMPLE')
 # Logger setup
 # This will stream all logger messages to the standard output and apply formatting for that
 logger.propagate = False  # prevents duplicated logging messages
-LOGFORMAT = logging.Formatter('%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+LOGFORMAT = logging.Formatter('%(asctime)s %(levelname)s: %(message)s', datefmt='%m/%d/%Y %I:%M:%S%p')
 ch = logging.StreamHandler(stream=sys.stdout)
 ch.setFormatter(LOGFORMAT)
 # To prevent duplicate handlers, only add if they haven't been set previously
