@@ -19,6 +19,7 @@ from astropy.table import Table
 from sqlalchemy import or_, and_
 import sqlalchemy.exc
 import numpy as np
+import numpy.ma as ma
 
 warnings.filterwarnings("ignore", module='astroquery.simbad')
 logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
@@ -91,6 +92,7 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
         Astropy Table with Other Names to add to database
         Can be used as input to add_names function
     """
+    # TODO: add progress bar
 
     if ingest_ras and ingest_decs:
         coords = True
@@ -914,7 +916,7 @@ def convert_spt_string_to_code(spectral_types):
 
 
 def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=None,
-                   equinoxes=None, save_db=False):
+                   equinoxes=None):
     """
     Script to ingest sources
 
@@ -928,7 +930,6 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     comments
     epochs
     equinoxes
-    save_db
 
     Returns
     -------
@@ -936,6 +937,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     """
 
     n_added = 0
+    n_skipped = 0
     n_sources = len(sources)
 
     if epochs is None:
@@ -955,34 +957,47 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                         'epoch': epochs[i],
                         'equinox': equinoxes[i],
                         'comments': comments[i]}]
-        logger.debug(str(source_data))
+        # logger.debug(str(source_data))
 
         try:
             db.Sources.insert().execute(source_data)
             n_added += 1
+            msg = f"Added {str(source_data)}"
+            logger.debug(msg)
         except sqlalchemy.exc.IntegrityError:
             # try reference without last letter e.g.Smit04 instead of Smit04a
-            if source_data[0]['reference'][-1] in ('a', 'b'):
+            if ma.is_masked(source_data[0]['reference']):
+                msg = f"Skipping \n {str(source_data)}" \
+                      "\n Discovery reference is blank. \n"
+                logger.warning(msg)
+                n_skipped += 1
+                continue
+            elif source_data[0]['reference'][-1] in ('a', 'b'):
                 source_data[0]['reference'] = references[i][:-1]
                 try:
                     db.Sources.insert().execute(source_data)
                     n_added += 1
+                    msg = f"Added \n {str(source_data)}"
+                    logger.debug(msg)
                 except sqlalchemy.exc.IntegrityError:
-                    msg = "Discovery reference may not exist in the Publications table." \
-                          "Add it with add_publication function. "
-                    logger.error(msg)
-                    raise SimpleError(msg)
+                    msg = f"Skipping \n {str(source_data)}" \
+                          "\n Discovery reference may not exist in the Publications table." \
+                          "\n Add it with add_publication function. \n "
+                    logger.warning(msg)
+                    n_skipped += 1
+                    continue
+                    #raise SimpleError(msg)
             else:
-                msg = "Discovery reference may not exist in the Publications table." \
-                      "Add it with add_publication function. "
-                logger.error(msg)
-                raise SimpleError(msg)
+                msg = f"Skipping: \n {str(source_data)} " \
+                      f"\n Possible duplicate or discovery reference may not exist in the Publications table. " \
+                      f"\n Add it with add_publication function. \n "
+                logger.warning(msg)
+                n_skipped += 1
+                continue
+                # raise SimpleError(msg)
 
-    if save_db:
-        db.save_database(directory='data/')
-        logger.info(f"{n_added}, sources added to database and saved")
-    else:
-        logger.info(f"{n_added}, sources added to database")
+    logger.info(f"Sources added to database: {n_added}")
+    logger.info(f"Sources NOT added to database: {n_skipped} \n")
 
     return
 
