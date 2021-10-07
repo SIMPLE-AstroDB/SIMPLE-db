@@ -3,7 +3,7 @@ import pandas as pd
 import numpy.ma as ma
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = False  # recreates the .db file from the data files
+RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = False
 
 logger.setLevel(logging.INFO)
@@ -13,74 +13,79 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 # Read in CSV file with Pandas
 df = pd.read_csv('scripts/ingests/BDNYC_spectra3.csv')
 data = Table.from_pandas(df)
+
 # Inserting various Libraries for Modes,Telescopes and Instruments
-# Inserting CTIO 1.5m
-telescope_ct = [{'name': 'CTIO 1.5m'}]
-instruments_ct = [{'name': 'OSIRIS'}]
-sxd_mode_ct = [{'name': 'SXD',
-                'instrument': 'OSIRIS',
-                'telescope': 'CTIO 1.5m'}]
-# Inserting LL Mode
-ll_mode = [{'name': 'LL',
-            'instrument': 'IRS',
-            'telescope': 'Spitzer'}]
-# Inserting Magellan I Baade
-telescope_mgl = [{'name': 'Magellan I Baade'}]
-instruments_mgl = [{'name': 'FIRE'}]
-echelle_mode = [{'name': 'Echelle',
-                 'instrument': 'FIRE',
-                 'telescope': 'Magellan I Baade'}]
-# Inserting IRS instrument and SL mode
-instrument_sl = [{'name': 'IRS'}]
-sxd_mode_sl = [{'name': 'SL',
+def insert_new_modes():
+    # Inserting CTIO 1.5m
+    telescope_ct = [{'name': 'CTIO 1.5m'}]
+    instruments_ct = [{'name': 'OSIRIS'}]
+    sxd_mode_ct = [{'name': 'SXD',
+                    'instrument': 'OSIRIS',
+                    'telescope': 'CTIO 1.5m'}]
+    # Inserting LL Mode
+    ll_mode = [{'name': 'LL',
                 'instrument': 'IRS',
                 'telescope': 'Spitzer'}]
-# Inserting Gemini South in various tables
-telescope_gmos = [{'name': 'Gemini South'}]
-instruments_gmos = [{'name': 'GMOS-S'}]
-prism_mode_gmos = [{'name': 'Prism',
-                    'instrument': 'GMOS-S',
-                    'telescope': 'Gemini South'}]
-# Inserting Gemini North in various tables
-telescope_gnirs = [{'name': 'Gemini North'}]
-instruments_gnirs = [{'name': 'GNIRS'}]
-sxd_mode_gnirs = [{'name': 'SXD',
-                   'instrument': 'GNIRS',
-                   'telescope': 'Gemini North'}]
-instrument_gmos_n = [{'name': 'GMOS-N'}]
-prism_mode_gmos_n = [{'name': 'Prism',
-                      'instrument': 'GMOS-N',
-                      'telescope': 'Gemini North'}]
-# Adding missing modes
-sxd_mode = [{'name': 'SXD',
-             'instrument': 'SpeX',
-             'telescope': 'IRTF'}]
+    # Inserting Magellan I Baade
+    telescope_mgl = [{'name': 'Magellan I Baade'}]
+    instruments_mgl = [{'name': 'FIRE'}]
+    echelle_mode = [{'name': 'Echelle',
+                     'instrument': 'FIRE',
+                     'telescope': 'Magellan I Baade'}]
+    # Inserting IRS instrument and SL mode
+    instrument_sl = [{'name': 'IRS'}]
+    sxd_mode_sl = [{'name': 'SL',
+                    'instrument': 'IRS',
+                    'telescope': 'Spitzer'}]
+    # Inserting Gemini South in various tables
+    telescope_gmos = [{'name': 'Gemini South'}]
+    instruments_gmos = [{'name': 'GMOS-S'}]
+    prism_mode_gmos = [{'name': 'Prism',
+                        'instrument': 'GMOS-S',
+                        'telescope': 'Gemini South'}]
+    # Inserting Gemini North in various tables
+    telescope_gnirs = [{'name': 'Gemini North'}]
+    instruments_gnirs = [{'name': 'GNIRS'}]
+    sxd_mode_gnirs = [{'name': 'SXD',
+                       'instrument': 'GNIRS',
+                       'telescope': 'Gemini North'}]
+    instrument_gmos_n = [{'name': 'GMOS-N'}]
+    prism_mode_gmos_n = [{'name': 'Prism',
+                          'instrument': 'GMOS-N',
+                          'telescope': 'Gemini North'}]
+    # Adding missing modes
+    sxd_mode = [{'name': 'SXD',
+                 'instrument': 'SpeX',
+                 'telescope': 'IRTF'}]
+    db.Telescopes.insert().execute(telescope_ct)
+    db.Telescopes.insert().execute(telescope_mgl)
+    db.Telescopes.insert().execute(telescope_gmos)
+    db.Telescopes.insert().execute(telescope_gnirs)
+    db.Instruments.insert().execute(instruments_gmos)
+    db.Instruments.insert().execute(instrument_sl)
+    db.Instruments.insert().execute(instruments_mgl)
+    db.Instruments.insert().execute(instruments_ct)
+    db.Instruments.insert().execute(instrument_gmos_n)
+    db.Instruments.insert().execute(instruments_gnirs)
+    db.Modes.insert().execute(sxd_mode_ct)
+    db.Modes.insert().execute(ll_mode)
+    db.Modes.insert().execute(echelle_mode)
+    db.Modes.insert().execute(sxd_mode_sl)
+    db.Modes.insert().execute(prism_mode_gmos)
+    db.Modes.insert().execute(prism_mode_gmos_n)
+    db.Modes.insert().execute(sxd_mode_gnirs)
+    db.Modes.insert().execute(sxd_mode)
 
-# db.Telescopes.insert().execute(telescope_ct)
-# db.Instruments.insert().execute(instruments_ct)
-# db.Modes.insert().execute(sxd_mode_ct)
-# db.Modes.insert().execute(ll_mode)
-# db.Telescopes.insert().execute(telescope_mgl)
-# db.Instruments.insert().execute(instruments_mgl)
-# db.Modes.insert().execute(echelle_mode)
-# db.Instruments.insert().execute(instrument_sl)
-# db.Modes.insert().execute(sxd_mode_sl)
-# db.Telescopes.insert().execute(telescope_gmos)
-# db.Instruments.insert().execute(instruments_gmos)
-# db.Modes.insert().execute(prism_mode_gmos)
-# db.Instruments.insert().execute(instrument_gmos_n)
-# db.Modes.insert().execute(prism_mode_gmos_n)
-# db.Instruments.insert().execute(instruments_gnirs)
-# db.Telescopes.insert().execute(telescope_gnirs)
-# db.Modes.insert().execute(sxd_mode_gnirs)
-# db.Modes.insert().execute(sxd_mode)
+    return
+
+
+insert_new_modes()
 
 source_names = data['designation']
 
 # Run once and then comment out:
 missing_indices, existing_indices, alt_names_table = sort_sources(db, source_names)
 
-print(len(alt_names_table))
 # alt_names_string = 'BDNYC_ingest_spectra_alt_names.vot'
 # alt_names_table.write(alt_names_string, format='votable')
 # alt_names_table = Table.read(alt_names_string, format='votable')
@@ -91,12 +96,14 @@ add_names(db, names_table=alt_names_table)
 # run this at the same time as the adding info one
 # [15-, 49-, 89-, 90-, 103-, 146-, 147-, 153-, 160-, 171-, 182-, 206-, 244-, 251-, 274-, 277-, 284-, 387-, 434-, 451-, 580-]
 
-#to_add = data[missing_indices]
-missing_string = 'BDNYC_ingest_spectra_missing.vot'
-#to_add.write(missing_string, format='votable')
-to_add = Table.read(missing_string, format='votable')
+to_add = data[missing_indices]
+# missing_string = 'BDNYC_ingest_spectra_missing.vot'
+# to_add.write(missing_string, format='votable')
+# to_add = Table.read(missing_string, format='votable')
 
 # ingest sources function
+ingest_sources(db, to_add['designation'], to_add['ra'], to_add['dec'], to_add['publication_shortname'], comments=to_add['comments'])
+
 # ingest_sources(db, ['2MASS J01330461-1355271'], [23.269208], [-13.924194], ['Kirk10'])
 # ingest_sources(db, ['2MASS J08555320-0259207'], [133.97129], [-2.9893056], ['Cruz18'], comments='giant')
 # ingest_sources(db, ['2MASS J03180906+4925189'], [49.53775], [49.421917], ['Missing'])
@@ -129,6 +136,9 @@ existing_string = 'BDNYC_ingest_spectra_existing.vot'
 # existing_data.write(existing_string, format='votable')
 existing_data = Table.read(existing_string, format='votable')
 
+n_skipped = 0
+n_added = 0
+
 for row in existing_data:
     db_name = find_source_in_db(db, row['designation'])
 
@@ -148,12 +158,15 @@ for row in existing_data:
         # check for duplicate measurement
         dupe_ind = source_spec_data['reference'] == publication_shortname
         if sum(dupe_ind):
+            # TODO: use observation date to check for duplicate
             msg = f"Skipping suspected duplicate measurement \n"
             msg2 = f"{source_spec_data[dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
             msg3 = f"{row['designation', 'name.1', 'mode', 'obs_date', 'publication_shortname']} \n"
-            logger.info(msg+msg2+msg3)
+            logger.warning(msg+msg2+msg3)
+            n_skipped += 1
             continue  # Skip duplicate measurement
 
+    # TODO: remove unecessary variable definitions
     Id = row['id']
     designation = db_name
     spectrum = row['spectrum']
@@ -180,4 +193,9 @@ for row in existing_data:
                  'comments': comments,
                  'reference': publication_shortname}]
     logger.debug(row_data)
+    # TODO: make into try/except
     db.Spectra.insert().execute(row_data)
+    n_added += 1
+
+logger.info(f"Spectra added: {n_added}")
+logger.info(f"Spectra skipped: {n_skipped}")
