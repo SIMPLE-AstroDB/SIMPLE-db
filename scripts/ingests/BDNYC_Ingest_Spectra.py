@@ -11,52 +11,36 @@ logger.setLevel(logging.INFO)
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
 # Read in CSV file with Pandas
-df = pd.read_csv('scripts/ingests/BDNYC_spectra2.csv')
+df = pd.read_csv('scripts/ingests/BDNYC_spectra3.csv')
 data = Table.from_pandas(df)
-#Inserting CTIO 1.5m
+# Inserting various Libraries for Modes,Telescopes and Instruments
+# Inserting CTIO 1.5m
 telescope_ct = [{'name': 'CTIO 1.5m'}]
 instruments_ct = [{'name': 'OSIRIS'}]
 sxd_mode_ct = [{'name': 'SXD',
                 'instrument': 'OSIRIS',
                 'telescope': 'CTIO 1.5m'}]
-#db.Telescopes.insert().execute(telescope_ct)
-#db.Instruments.insert().execute(instruments_ct)
-#db.Modes.insert().execute(sxd_mode_ct)
-
-#Inserting LL Mode
+# Inserting LL Mode
 ll_mode = [{'name': 'LL',
             'instrument': 'IRS',
             'telescope': 'Spitzer'}]
-#db.Modes.insert().execute(ll_mode)
-
-#Inserting Magellan I Baade
+# Inserting Magellan I Baade
 telescope_mgl = [{'name': 'Magellan I Baade'}]
 instruments_mgl = [{'name': 'FIRE'}]
 echelle_mode = [{'name': 'Echelle',
                  'instrument': 'FIRE',
                  'telescope': 'Magellan I Baade'}]
-#db.Telescopes.insert().execute(telescope_mgl)
-#db.Instruments.insert().execute(instruments_mgl)
-#db.Modes.insert().execute(echelle_mode)
-
 # Inserting IRS instrument and SL mode
 instrument_sl = [{'name': 'IRS'}]
 sxd_mode_sl = [{'name': 'SL',
                 'instrument': 'IRS',
                 'telescope': 'Spitzer'}]
-# db.Instruments.insert().execute(instrument_sl)
-# db.Modes.insert().execute(sxd_mode_sl)
-
 # Inserting Gemini South in various tables
 telescope_gmos = [{'name': 'Gemini South'}]
 instruments_gmos = [{'name': 'GMOS-S'}]
 prism_mode_gmos = [{'name': 'Prism',
                     'instrument': 'GMOS-S',
                     'telescope': 'Gemini South'}]
-#db.Telescopes.insert().execute(telescope_gmos)
-#db.Instruments.insert().execute(instruments_gmos)
-#db.Modes.insert().execute(prism_mode_gmos)
-
 # Inserting Gemini North in various tables
 telescope_gnirs = [{'name': 'Gemini North'}]
 instruments_gnirs = [{'name': 'GNIRS'}]
@@ -67,13 +51,25 @@ instrument_gmos_n = [{'name': 'GMOS-N'}]
 prism_mode_gmos_n = [{'name': 'Prism',
                       'instrument': 'GMOS-N',
                       'telescope': 'Gemini North'}]
-#db.Instruments.insert().execute(instrument_gmos_n)
-#db.Modes.insert().execute(prism_mode_gmos_n)
-
 # Adding missing modes
 sxd_mode = [{'name': 'SXD',
              'instrument': 'SpeX',
              'telescope': 'IRTF'}]
+
+# db.Telescopes.insert().execute(telescope_ct)
+# db.Instruments.insert().execute(instruments_ct)
+# db.Modes.insert().execute(sxd_mode_ct)
+# db.Modes.insert().execute(ll_mode)
+# db.Telescopes.insert().execute(telescope_mgl)
+# db.Instruments.insert().execute(instruments_mgl)
+# db.Modes.insert().execute(echelle_mode)
+# db.Instruments.insert().execute(instrument_sl)
+# db.Modes.insert().execute(sxd_mode_sl)
+# db.Telescopes.insert().execute(telescope_gmos)
+# db.Instruments.insert().execute(instruments_gmos)
+# db.Modes.insert().execute(prism_mode_gmos)
+# db.Instruments.insert().execute(instrument_gmos_n)
+# db.Modes.insert().execute(prism_mode_gmos_n)
 # db.Instruments.insert().execute(instruments_gnirs)
 # db.Telescopes.insert().execute(telescope_gnirs)
 # db.Modes.insert().execute(sxd_mode_gnirs)
@@ -92,14 +88,44 @@ print(len(alt_names_table))
 add_names(db, names_table=alt_names_table)
 
 # TODO: add missing sources
-# to_add = data[missing]
-# missing_string = 'BDNYC_ingest_spectra_missing.vot'
-# to_add.write(missing_string, format='votable')
+# run this at the same time as the adding info one
+# [15-, 49-, 89-, 90-, 103-, 146-, 147-, 153-, 160-, 171-, 182-, 206-, 244-, 251-, 274-, 277-, 284-, 387-, 434-, 451-, 580-]
+
+#to_add = data[missing_indices]
+missing_string = 'BDNYC_ingest_spectra_missing.vot'
+#to_add.write(missing_string, format='votable')
+to_add = Table.read(missing_string, format='votable')
+
+# ingest sources function
+# ingest_sources(db, ['2MASS J01330461-1355271'], [23.269208], [-13.924194], ['Kirk10'])
+# ingest_sources(db, ['2MASS J08555320-0259207'], [133.97129], [-2.9893056], ['Cruz18'], comments='giant')
+# ingest_sources(db, ['2MASS J03180906+4925189'], [49.53775], [49.421917], ['Missing'])
+# ingest_sources(db, ['2MASS J03194133+5030451'], [49.922083], [50.5125], ['Missing'])
+# ingest_sources(db, ['2MASS J14352035-4255403'], [218.834791667], [-42.9278611111], ['Missing'], comments='giant')
+# ingest_sources(db, ['2MASS J05574102-1333264'], [89.420954], [-13.557334], ['Cruz18'], comments='not M')
+# ingest_sources(db, ['2MASS J05574229-1333156'], [89.426209], [-13.554361], ['Cruz18'], comments='not M/galaxy')
+# ingest_sources(db, ['2MASS J08183325-0036282'], [124.63833], [-0.60777778], ['Cruz07'])
+# # ingest_sources(db, ['2MASS J09411157+4254031'], [145.29792], [42.900833], ['Cruz07'])
+# ingest_sources(db, ['2MASS J15010693-0531388'], [225.27817], [-5.5277778], ['Missing'], comments='Carbon Star ')
+# ingest_sources(db, ['2MASS J20151370-1252571'], [303.80692], [-12.881389], ['Cruz18'], comments='galaxy')
+# ingest_sources(db, ['2MASS J23202927+4123415'], [350.12167], [41.394722], ['Cruz18'])
+# ingest_sources(db, ['2MASS J12490458-3454080'], [192.26979], [-34.902194], ['Cruz18'], comments='galaxy')
+# ingest_sources(db, ['2MASS J15063706+2759544'], [226.65421], [27.998833], ['Cruz18'], comments='galaxy')
+# ingest_sources(db, ['2MASS J03435353+2431115'], [55.973051], [24.519865], ['Missing'])
+# ingest_sources(db, ['Cl* Melotte   22    NPL      40'], [57.204167], [24.340278], ['Missing'])
+# ingest_sources(db, ['2MASS J09411157+4254031'], [145.29792], [42.900833], ['Cruz07'])
+# Line 118 seems to have a missing reference
+# ingest_sources(db, ['2MASS J14044948-3159330'], [211.2058755], [-31.992516])
+# ingest_sources(db, ['2MASS J09171104-1650010'], [139.296], [-16.833611], ['Kirk'])
+# ingest_sources(db, ['2MASS J15010693-0531388'], [225.27817], [-5.5277778], ['Missing'], comments='Carbon Star')
+# Line 122 seems to have a missing reference
+# ingest_sources(db, ['LP  738-14 B'], [207.0103434], [-13.7367212])
+
 
 # For now, just ingest the spectra for sources which are already in the database
 existing_string = 'BDNYC_ingest_spectra_existing.vot'
 # Run once to write file and then comment out 46-47 and uncomment 48
-# existing_data = data[existing]
+# existing_data = data[existing_indices]
 # existing_data.write(existing_string, format='votable')
 existing_data = Table.read(existing_string, format='votable')
 
