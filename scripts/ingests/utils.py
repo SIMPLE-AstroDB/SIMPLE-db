@@ -367,77 +367,6 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s', verbose
     return resolved_names
 
 
-def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=None,
-                   equinoxes=None, verbose=False, save_db=False):
-    """
-    Script to ingest sources
-
-    Parameters
-    ----------
-    db
-    sources
-    ras
-    decs
-    references
-    comments
-    epochs
-    equinoxes
-    verbose
-    save_db
-
-    Returns
-    -------
-
-    """
-
-    n_added = 0
-    n_sources = len(sources)
-
-    if epochs is None:
-        epochs = [None] * n_sources
-    if equinoxes is None:
-        equinoxes = [None] * n_sources
-    if comments is None:
-        comments = [None] * n_sources
-
-    for i, source in enumerate(sources):
-
-        # Construct data to be added
-        source_data = [{'source': sources[i],
-                        'ra': ras[i],
-                        'dec': decs[i],
-                        'reference': references[i],
-                        'epoch': epochs[i],
-                        'equinox': equinoxes[i],
-                        'comments': comments[i]}]
-        verboseprint(source_data, verbose=verbose)
-
-        try:
-            db.Sources.insert().execute(source_data)
-            n_added += 1
-        except sqlalchemy.exc.IntegrityError:
-            # try reference without last letter e.g.Smit04 instead of Smit04a
-            if source_data[0]['reference'][-1] in ('a', 'b'):
-                source_data[0]['reference'] = references[i][:-1]
-                try:
-                    db.Sources.insert().execute(source_data)
-                    n_added += 1
-                except sqlalchemy.exc.IntegrityError:
-                    raise SimpleError("Discovery reference may not exist in the Publications table. "
-                                      "Add it with add_publication function. ")
-            else:
-                raise SimpleError("Discovery reference may not exist in the Publications table. "
-                                  "Add it with add_publication function. ")
-
-    if save_db:
-        db.save_database(directory='data/')
-        print(n_added, "sources added to database and saved")
-    else:
-        print(n_added, "sources added to database")
-
-    return
-
-
 def add_names(db, sources=None, other_names=None, names_table=None):
     """
     Add source names to the Names table in the database.
@@ -935,6 +864,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     -------
 
     """
+    # TODO: add example
 
     n_added = 0
     n_skipped = 0
