@@ -1,5 +1,5 @@
 # TODO: Look into New alt Name for 2MASS J12475047-0152142: 2MASS J12475047-0152142, 2MASS J11061197+2754225: 2MASS J11061191+2754215
-# TODO: after we ingest sources, then sort sources again
+
 
 
 from scripts.ingests.utils import *
@@ -67,27 +67,27 @@ def insert_new_modes():
     sxd_mode = [{'name': 'SXD',
                  'instrument': 'SpeX',
                  'telescope': 'IRTF'}]
-    # db.Telescopes.insert().execute(telescope_mgl2)
-    # db.Telescopes.insert().execute(telescope_ct)
-    # db.Telescopes.insert().execute(telescope_mgl)
-    # db.Telescopes.insert().execute(telescope_gmos)
-    # db.Telescopes.insert().execute(telescope_gnirs)
-    # db.Instruments.insert().execute(instrument_mgl2)
-    # db.Instruments.insert().execute(instruments_gmos)
-    # db.Instruments.insert().execute(instrument_sl)
-    # db.Instruments.insert().execute(instruments_mgl)
-    # db.Instruments.insert().execute(instruments_ct)
-    # db.Instruments.insert().execute(instrument_gmos_n)
-    # db.Instruments.insert().execute(instruments_gnirs)
-    # db.Modes.insert().execute(echelle2_mode)
-    # db.Modes.insert().execute(sxd_mode_ct)
-    # db.Modes.insert().execute(ll_mode)
-    # db.Modes.insert().execute(echelle_mode)
-    # db.Modes.insert().execute(sxd_mode_sl)
-    # db.Modes.insert().execute(prism_mode_gmos)
-    # db.Modes.insert().execute(prism_mode_gmos_n)
-    # db.Modes.insert().execute(sxd_mode_gnirs)
-    # db.Modes.insert().execute(sxd_mode)
+    db.Telescopes.insert().execute(telescope_mgl2)
+    db.Telescopes.insert().execute(telescope_ct)
+    db.Telescopes.insert().execute(telescope_mgl)
+    db.Telescopes.insert().execute(telescope_gmos)
+    db.Telescopes.insert().execute(telescope_gnirs)
+    db.Instruments.insert().execute(instrument_mgl2)
+    db.Instruments.insert().execute(instruments_gmos)
+    db.Instruments.insert().execute(instrument_sl)
+    db.Instruments.insert().execute(instruments_mgl)
+    db.Instruments.insert().execute(instruments_ct)
+    db.Instruments.insert().execute(instrument_gmos_n)
+    db.Instruments.insert().execute(instruments_gnirs)
+    db.Modes.insert().execute(echelle2_mode)
+    db.Modes.insert().execute(sxd_mode_ct)
+    db.Modes.insert().execute(ll_mode)
+    db.Modes.insert().execute(echelle_mode)
+    db.Modes.insert().execute(sxd_mode_sl)
+    db.Modes.insert().execute(prism_mode_gmos)
+    db.Modes.insert().execute(prism_mode_gmos_n)
+    db.Modes.insert().execute(sxd_mode_gnirs)
+    db.Modes.insert().execute(sxd_mode)
 
     return
 
@@ -96,28 +96,27 @@ def insert_new_modes():
 
 source_names = data['designation']
 
-missing_indices, existing_indices, alt_names_table = sort_sources(db, source_names)
+# missing_indices, existing_indices, alt_names_table = sort_sources(db, source_names)
 
-# alt_names_string = 'BDNYC_ingest_spectra_alt_names.vot'
+alt_names_string = 'BDNYC_ingest_spectra_alt_names.vot'
 # alt_names_table.write(alt_names_string, format='votable')
 # alt_names_table = Table.read(alt_names_string, format='votable')
 
-add_names(db, names_table=alt_names_table)
+# add_names(db, names_table=alt_names_table)
 
-to_add = data[missing_indices]
+# to_add = data[missing_indices]
 missing_string = 'BDNYC_ingest_spectra_missing.vot'
 # to_add.write(missing_string, format='votable')
 # to_add = Table.read(missing_string, format='votable')
 
 # ingest sources function
-ingest_sources(db, to_add['designation'], to_add['ra'], to_add['dec'], to_add['publication_shortname'],
-               comments=to_add['comments'])
+# ingest_sources(db, to_add['designation'], to_add['ra'], to_add['dec'], to_add['publication_shortname'],
+#                comments=to_add['comments'])
 
-# For now, just ingest the spectra for sources which are already in the database
-# TODO: add spectra for missing sources
-existing_string = 'BDNYC_ingest_spectra_existing.vot'
+# missing_indices2, existing_indices2, alt_names_table2 = sort_sources(db, source_names)
+existing_string = 'BDNYC_ingest_spectra_existing2.vot'
 # Run once to write file and then comment out 46-47 and uncomment 48
-# existing_data = data[existing_indices]
+# existing_data = data[existing_indices2]
 # existing_data.write(existing_string, format='votable')
 existing_data = Table.read(existing_string, format='votable')
 
@@ -135,24 +134,32 @@ for row in existing_data:
     else:
         obs_date = pd.to_datetime(row["obs_date"])
 
-    publication_shortname = row["publication_shortname"]
+    publication_shortname = row["publication_shortname.1"]
     if publication_shortname == 'Alle07':
         publication_shortname = 'Alle07a'
+    if publication_shortname == 'Wils03b':
+        publication_shortname = 'Wils03'
+    if publication_shortname == 'Kirk99':
+        publication_shortname = 'Kirk99a'
 
     if len(source_spec_data) > 0:  # Spectra data already exists
         # check for duplicate measurement
         ref_dupe_ind = source_spec_data['reference'] == publication_shortname
+        ref_debug_mgs = f"spec data: {source_spec_data['reference']}, publication_shortname: {publication_shortname}, ref_dupe_ind: {ref_dupe_ind}," \
+                        f"sum(ref_dupe_ind): {sum(ref_dupe_ind)}"
+        logger.debug(ref_debug_mgs)
         date_dupe_ind = source_spec_data['observation_date'] == obs_date
-        if sum(ref_dupe_ind) & sum(date_dupe_ind):
-            # TODO: use observation date to check for duplicate
+        date_debug_msg = f"spec data: {source_spec_data['observation_date']}, obs_date: {obs_date}, date_dupe_ind: {date_dupe_ind}," \
+                         f"sum(date_dup_ind): {sum(date_dupe_ind)} "
+        logger.debug(date_debug_msg)
+        if sum(ref_dupe_ind) and sum(date_dupe_ind):
             msg = f"Skipping suspected duplicate measurement \n"
             msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
-            msg3 = f"{row['designation', 'name.1', 'mode', 'obs_date', 'publication_shortname']} \n"
+            msg3 = f"{row['designation', 'name.1', 'mode', 'obs_date', 'publication_shortname.1']} \n"
             logger.warning(msg + msg2 + msg3)
             n_skipped += 1
             continue  # Skip duplicate measurement
 
-    # TODO: remove unnecessary variable definitions
     row_data = [{'source': db_name,
                  'spectrum': row['spectrum'],
                  'local_spectrum': row["local_spectrum"],
