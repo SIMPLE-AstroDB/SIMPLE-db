@@ -108,7 +108,7 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
     for i, name in enumerate(ingest_names):
         logger.debug(f"{i}, : searching:, {name}")
 
-        namematches = db.search_object(name)
+        namematches = db.search_object(name.strip())
 
         # if no matches, try resolving with Simbad
         if len(namematches) == 0:
