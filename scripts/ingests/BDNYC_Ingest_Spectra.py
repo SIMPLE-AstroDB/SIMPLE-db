@@ -96,27 +96,27 @@ def insert_new_modes():
 
 source_names = data['designation']
 
-# missing_indices, existing_indices, alt_names_table = sort_sources(db, source_names)
+missing_indices, existing_indices, alt_names_table = sort_sources(db, source_names)
 
 alt_names_string = 'BDNYC_ingest_spectra_alt_names.vot'
 # alt_names_table.write(alt_names_string, format='votable')
-# alt_names_table = Table.read(alt_names_string, format='votable')
+alt_names_table = Table.read(alt_names_string, format='votable')
 
-# add_names(db, names_table=alt_names_table)
+add_names(db, names_table=alt_names_table)
 
-# to_add = data[missing_indices]
+to_add = data[missing_indices]
 missing_string = 'BDNYC_ingest_spectra_missing.vot'
 # to_add.write(missing_string, format='votable')
-# to_add = Table.read(missing_string, format='votable')
+to_add = Table.read(missing_string, format='votable')
 
 # ingest sources function
 # ingest_sources(db, to_add['designation'], to_add['ra'], to_add['dec'], to_add['publication_shortname'],
 #                comments=to_add['comments'])
 
 # missing_indices2, existing_indices2, alt_names_table2 = sort_sources(db, source_names)
-existing_string = 'BDNYC_ingest_spectra_existing2.vot'
+existing_string = 'BDNYC_ingest_spectra_existing.vot'
 # Run once to write file and then comment out 46-47 and uncomment 48
-# existing_data = data[existing_indices2]
+existing_data = data[existing_indices]
 # existing_data.write(existing_string, format='votable')
 existing_data = Table.read(existing_string, format='votable')
 
@@ -134,7 +134,7 @@ for row in existing_data:
     else:
         obs_date = pd.to_datetime(row["obs_date"])
 
-    publication_shortname = row["publication_shortname.1"]
+    publication_shortname = row["publication_shortname"]
     if publication_shortname == 'Alle07':
         publication_shortname = 'Alle07a'
     if publication_shortname == 'Wils03b':
@@ -155,7 +155,7 @@ for row in existing_data:
         if sum(ref_dupe_ind) and sum(date_dupe_ind):
             msg = f"Skipping suspected duplicate measurement \n"
             msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
-            msg3 = f"{row['designation', 'name.1', 'mode', 'obs_date', 'publication_shortname.1']} \n"
+            msg3 = f"{row['designation', 'name.1', 'mode', 'obs_date', 'publication_shortname']} \n"
             logger.warning(msg + msg2 + msg3)
             n_skipped += 1
             continue  # Skip duplicate measurement
