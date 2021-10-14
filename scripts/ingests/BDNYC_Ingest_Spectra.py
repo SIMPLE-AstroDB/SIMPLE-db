@@ -1,7 +1,3 @@
-# TODO: Look into New alt Name for 2MASS J12475047-0152142: 2MASS J12475047-0152142, 2MASS J11061197+2754225: 2MASS J11061191+2754215
-
-
-
 from scripts.ingests.utils import *
 import pandas as pd
 import numpy.ma as ma
@@ -122,6 +118,7 @@ existing_data = Table.read(existing_string, format='votable')
 
 n_skipped = 0
 n_added = 0
+n_blank = 0
 
 for row in existing_data:
     db_name = find_source_in_db(db, row['designation'])
@@ -130,6 +127,11 @@ for row in existing_data:
 
     if ma.is_masked(row['obs_date']) or row['obs_date'] == '':
         obs_date = None
+        missing_obs_msg = f"Skipping spectrum with missing observation date \n"
+        missing_obs_spe = f"{source_spec_data}"
+        missing_row_spe = f"{row['designation', 'name.1', 'mode', 'obs_date', 'publication_shortname']} \n"
+        logger.warning(missing_obs_msg + missing_obs_spe + missing_row_spe)
+        n_blank += 1
         continue
     else:
         obs_date = pd.to_datetime(row["obs_date"])
@@ -180,3 +182,4 @@ for row in existing_data:
 
 logger.info(f"Spectra added: {n_added}")
 logger.info(f"Spectra skipped: {n_skipped}")
+logger.info(f"Spectra with blank obs_date: {n_blank}")
