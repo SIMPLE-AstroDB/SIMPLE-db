@@ -128,7 +128,7 @@ for row in existing_data:
     if ma.is_masked(row['obs_date']) or row['obs_date'] == '':
         obs_date = None
         missing_obs_msg = f"Skipping spectrum with missing observation date \n"
-        missing_obs_spe = f"{source_spec_data}"
+        missing_obs_spe = f"{row}"
         missing_row_spe = f"{row['designation', 'name.1', 'mode', 'obs_date', 'publication_shortname']} \n"
         logger.warning(missing_obs_msg + missing_obs_spe + missing_row_spe)
         n_blank += 1
