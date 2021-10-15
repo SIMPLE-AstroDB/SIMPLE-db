@@ -1,8 +1,6 @@
 """
 Utils functions for use in ingests
 """
-import sqlite3
-from collections import namedtuple
 import logging
 import os
 import sys
@@ -11,6 +9,7 @@ import warnings
 from pathlib import Path
 from astrodbkit2.astrodb import create_database
 from astrodbkit2.astrodb import Database
+from simple.schema import *
 import ads
 from astropy.coordinates import SkyCoord
 import astropy.units as u
@@ -102,6 +101,9 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
     """
     # TODO: add progress bar
 
+    n_sources = len(ingest_names)
+    logger.info(f"SORTING {n_sources} SOURCES\n")
+
     if ingest_ras and ingest_decs:
         coords = True
     else:
@@ -127,7 +129,7 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
                     simbad_match = namematches[0]['source']
                     # Populate Astropy Table with ingest name and database name match
                     alt_names_table.add_row((simbad_match, name))
-                    logger.info(f'New alt Name for {simbad_match}: {name}')
+                    logger.debug(f'New alt Name for {simbad_match}: {name}\n')
             except TypeError:  # no Simbad match
                 namematches = []
 
@@ -160,10 +162,9 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
             existing_sources_index.append(i)
             source_match = namematches[0]['source']
             db_names.append(source_match)
-            msg = f"{i}, More than one match for, {name}\n {namematches}"
-            msg2 = f"{i}, Using first one: {namematches[0]['source']}"
-            logger.warning(msg)
-            logger.warning(msg2)
+            msg = f"{i}, More than one match for, {name}\n {namematches}\n"
+            msg2 = f"{i}, Using first one: {namematches[0]['source']}\n"
+            logger.warning(msg + msg2)
         elif len(namematches) == 0:
             logger.debug(f"{i}: Not in database")
             missing_sources_index.append(i)
@@ -173,7 +174,7 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
             logger.error(msg)
             raise RuntimeError(msg)
 
-    logger.info("ALL SOURCES SORTED")
+    logger.info(f"ALL SOURCES SORTED: {n_sources}")
     logger.debug(f"Existing Sources:\n, {ingest_names[existing_sources_index]}")
     logger.debug(f"Missing Sources:\n, {ingest_names[missing_sources_index]}")
     logger.debug("\n Existing Sources with different name:\n")
@@ -187,8 +188,6 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
         if n_ingest != n_existing + n_missing:
             raise RuntimeError("Unexpected number of sources")
 
-
-
     n_ingest = len(ingest_names)
     n_existing = len(existing_sources_index)
     n_alt = len(alt_names_table)
@@ -201,7 +200,7 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
 
     logger.info(f"Sources already in database: {n_existing}")
     logger.info(f"Sources found with alternate names: {n_alt}")
-    logger.info(f"Sources not found in the database: {n_missing}")
+    logger.info(f"Sources not found in the database: {n_missing}\n")
 
     return missing_sources_index, existing_sources_index, alt_names_table
 
@@ -432,7 +431,7 @@ def add_names(db, sources=None, other_names=None, names_table=None):
             msg = f"Could not {n_names} Names to database"
             logger.warning(msg)
 
-    logger.info(f"Names added to database: {n_names}")
+    logger.info(f"Names added to database: {n_names}\n")
 
     return
 
@@ -878,6 +877,8 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     n_skipped = 0
     n_sources = len(sources)
 
+    logger.info(f"Trying to add {n_sources} sources")
+
     if epochs is None:
         epochs = [None] * n_sources
     if equinoxes is None:
@@ -905,9 +906,10 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
         except sqlalchemy.exc.IntegrityError:
             # try reference without last letter e.g.Smit04 instead of Smit04a
             if ma.is_masked(source_data[0]['reference']):
-                msg = f"Skipping \n {str(source_data)}" \
-                      "\n Discovery reference is blank. \n"
+                msg = f"Skipping: {sources[i]}. Discovery reference is blank. \n"
+                msg2 = f"\n {str(source_data)}\n"
                 logger.warning(msg)
+                logger.debug(msg2)
                 n_skipped += 1
                 continue
             elif source_data[0]['reference'][-1] in ('a', 'b'):
@@ -918,18 +920,21 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                     msg = f"Added \n {str(source_data)}"
                     logger.debug(msg)
                 except sqlalchemy.exc.IntegrityError:
-                    msg = f"Skipping \n {str(source_data)}" \
-                          "\n Discovery reference may not exist in the Publications table." \
-                          "\n Add it with add_publication function. \n "
+                    msg = f"Skipping {sources[i]} "
+                    msg2 = f"\n {str(source_data)} " \
+                           f"\n Discovery reference may not exist in the Publications table. " \
+                           "(Add it with add_publication function.) \n "
                     logger.warning(msg)
+                    logger.debug(msg2)
                     n_skipped += 1
                     continue
-                    #raise SimpleError(msg)
             else:
-                msg = f"Skipping: \n {str(source_data)} " \
-                      f"\n Possible duplicate or discovery reference may not exist in the Publications table. " \
-                      f"\n Add it with add_publication function. \n "
+                msg = f"Skipping: {sources[i]}"
+                msg2 = f"\n {str(source_data)} " \
+                       f"\n Possible duplicate source or discovery reference may not exist in the Publications table. " \
+                       f"\n Add it with add_publication function. \n "
                 logger.warning(msg)
+                logger.debug(msg2)
                 n_skipped += 1
                 continue
                 # raise SimpleError(msg)
@@ -1072,27 +1077,6 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
     for i, source in enumerate(sources):
 
         db_name = find_source_in_db(db, source)
-        # If still no matches, try to resolve the name with Simbad
-        # if len(db_name_match) == 0:
-        #     db_name_match = db.search_object(source, output_table='Sources', resolve_simbad=True)
-        # logger.debug(f'source')
-        # if len(db_name_match) == 1:
-        #     db_name = db_name_match['source'][0]
-        #     logger.debug(f"{db_name}, One source match found")
-        # elif len(db_name_match) > 1:
-        #     logger.debug(db_name_match)
-        #     msg = f"{source}, More than one match source found in the database"
-        #     logger.error(msg)
-        #     raise RuntimeError(msg)
-        # elif len(db_name_match) == 0:
-        #     msg = f"{source}, No source found in the database"
-        #     logger.error(msg)
-        #     raise RuntimeError(msg)
-        # else:
-        #     logger.debug(str(db_name_match))
-        #     msg = f"{source}, unexpected condition"
-        #     logger.error(msg)
-        #     raise RuntimeError(msg)
 
         # Search for existing proper motion data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
