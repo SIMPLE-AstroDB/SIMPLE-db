@@ -176,7 +176,7 @@ for row in existing_data:
                  'comments': row["comments"],
                  'reference': publication_shortname}]
     logger.debug(row_data)
-    # TODO: make into try/except
+
     db.Spectra.insert().execute(row_data)
     n_added += 1
 
