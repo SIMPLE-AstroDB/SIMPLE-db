@@ -194,7 +194,7 @@ class Spectra(Base):
                     nullable=False, primary_key=True)
 
     # Data
-    spectrum = Column(String(1000), nullable=False, primary_key=True)  # URL of spectrum location
+    spectrum = Column(String(1000), nullable=False)  # URL of spectrum location
     local_spectrum = Column(String(1000))  # local directory (via environment variable) of spectrum location
 
     # Metadata
