@@ -3,16 +3,15 @@ import pandas as pd
 import numpy.ma as ma
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = False  # recreates the .db file from the data files
+RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = False
 
 logger.setLevel(logging.INFO)
 
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
-# Read in CSV file with Pandas
-df = pd.read_csv('scripts/ingests/BDNYC_spectra3.csv')
-data = Table.from_pandas(df)
+# Read in CSV file as Astropy table
+data = Table.read('scripts/ingests/BDNYC_spectra3.csv')
 
 
 # Inserting various Libraries for Modes,Telescopes and Instruments
@@ -88,55 +87,52 @@ def insert_new_modes():
     return
 
 
-# insert_new_modes()
+insert_new_modes()
 
 source_names = data['designation']
 
 missing_indices, existing_indices, alt_names_table = sort_sources(db, source_names)
 
-alt_names_string = 'BDNYC_ingest_spectra_alt_names.vot'
+#alt_names_string = 'BDNYC_ingest_spectra_alt_names.vot'
 # alt_names_table.write(alt_names_string, format='votable')
-alt_names_table = Table.read(alt_names_string, format='votable')
+#alt_names_table = Table.read(alt_names_string, format='votable')
 
 add_names(db, names_table=alt_names_table)
 
+# ADD MISSING SOURCES
 to_add = data[missing_indices]
-missing_string = 'BDNYC_ingest_spectra_missing.vot'
-# to_add.write(missing_string, format='votable')
-to_add = Table.read(missing_string, format='votable')
+ingest_sources(db, to_add['designation'], to_add['ra'], to_add['dec'], to_add['publication_shortname'],
+                comments=to_add['comments'])
 
-# ingest sources function
-# ingest_sources(db, to_add['designation'], to_add['ra'], to_add['dec'], to_add['publication_shortname'],
-#                comments=to_add['comments'])
-
-# missing_indices2, existing_indices2, alt_names_table2 = sort_sources(db, source_names)
-existing_string = 'BDNYC_ingest_spectra_existing.vot'
-# Run once to write file and then comment out 46-47 and uncomment 48
-existing_data = data[existing_indices]
-# existing_data.write(existing_string, format='votable')
-existing_data = Table.read(existing_string, format='votable')
+missing_indices2, existing_indices2, alt_names_table2 = sort_sources(db, source_names)
+existing_data = data[existing_indices2]
 
 n_skipped = 0
 n_added = 0
 n_blank = 0
 
 for row in existing_data:
+    # TODO: convert to function in utils
+    # TODO: check that spectrum can be read by astrodbkit
+
     db_name = find_source_in_db(db, row['designation'])
 
     source_spec_data = db.query(db.Spectra).filter(db.Spectra.c.source == db_name).table()
 
+    # SKIP if observation date is blank
+    # TODO: try to populate obs date from meta data
     if ma.is_masked(row['obs_date']) or row['obs_date'] == '':
         obs_date = None
-        missing_obs_msg = f"Skipping spectrum with missing observation date \n"
-        missing_obs_spe = f"{row}"
-        missing_row_spe = f"{row['designation', 'name.1', 'mode', 'obs_date', 'publication_shortname']} \n"
-        logger.warning(missing_obs_msg + missing_obs_spe + missing_row_spe)
+        missing_obs_msg = f"Skipping spectrum with missing observation date: {row['designation']} \n"
+        missing_row_spe = f"{row['designation', 'name_1', 'mode', 'obs_date', 'publication_shortname']} \n"
+        logger.info(missing_obs_msg)
+        logger.debug(missing_row_spe)
         n_blank += 1
         continue
     else:
         obs_date = pd.to_datetime(row["obs_date"])
 
-    publication_shortname = row["publication_shortname.1"]
+    publication_shortname = row["publication_shortname_1"]
     if publication_shortname == 'Alle07':
         publication_shortname = 'Alle07a'
     if publication_shortname == 'Wils03b':
@@ -146,34 +142,32 @@ for row in existing_data:
 
     if len(source_spec_data) > 0:  # Spectra data already exists
         # check for duplicate measurement
+        # TODO: Move to be as part of try/except
         ref_dupe_ind = source_spec_data['reference'] == publication_shortname
-        ref_debug_mgs = f"spec data: {source_spec_data['reference']}, publication_shortname: {publication_shortname}, ref_dupe_ind: {ref_dupe_ind}," \
-                        f"sum(ref_dupe_ind): {sum(ref_dupe_ind)}"
-        logger.debug(ref_debug_mgs)
         date_dupe_ind = source_spec_data['observation_date'] == obs_date
-        instrument_dupe_ind = source_spec_data['instrument'] == row['name.1']
+        instrument_dupe_ind = source_spec_data['instrument'] == row['name_1']
         mode_dupe_ind = source_spec_data['mode'] == row['mode']
         file_dupe_ind = source_spec_data['spectrum'] == row['spectrum']
         if sum(ref_dupe_ind) and sum(date_dupe_ind) and sum(instrument_dupe_ind) and sum(mode_dupe_ind) and sum(file_dupe_ind):
             msg = f"Skipping suspected duplicate measurement \n"
             msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
-            msg3 = f"{row['designation', 'name.1', 'mode', 'obs_date', 'publication_shortname']} \n"
+            msg3 = f"{row['designation', 'name_1', 'mode', 'obs_date', 'publication_shortname']} \n"
             logger.warning(msg + msg2 + msg3)
             n_skipped += 1
             continue  # Skip duplicate measurement
 
     row_data = [{'source': db_name,
                  'spectrum': row['spectrum'],
-                 'local_spectrum': row["local_spectrum"],
+                 'local_spectrum': None if ma.is_masked(row["local_spectrum"]) else row["local_spectrum"],
                  'regime': row["regime"],
                  'telescope': row["name"],
-                 'instrument': row["name.1"],
+                 'instrument': row["name_1"],
                  'mode': row["mode"],
                  'observation_date': obs_date,
-                 'wavelength_units': row["wavelength_units"],
-                 'flux_units': row["flux_units"],
-                 'wavelength_order': row["wavelength_order"],
-                 'comments': row["comments"],
+                 'wavelength_units': None if ma.is_masked(row["wavelength_units"]) else row["wavelength_units"],
+                 'flux_units': None if ma.is_masked(row["flux_units"]) else row["flux_units"],
+                 'wavelength_order': None if ma.is_masked(row["wavelength_order"]) else row["wavelength_order"],
+                 'comments': None if ma.is_masked(row["comments_1"]) else row["comments_1"],
                  'reference': publication_shortname}]
     logger.debug(row_data)
 
@@ -186,6 +180,10 @@ for row in existing_data:
         logger.error(msg)
         raise SimpleError(msg)
 
+# TODO: add test to be sure skipped + blank + added = total
+
 logger.info(f"Spectra added: {n_added}")
 logger.info(f"Spectra skipped: {n_skipped}")
 logger.info(f"Spectra with blank obs_date: {n_blank}")
+
+# TODO: Count some spectra and add to tests
