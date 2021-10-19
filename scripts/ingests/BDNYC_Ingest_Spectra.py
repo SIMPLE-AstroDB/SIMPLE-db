@@ -136,7 +136,7 @@ for row in existing_data:
     else:
         obs_date = pd.to_datetime(row["obs_date"])
 
-    publication_shortname = row["publication_shortname"]
+    publication_shortname = row["publication_shortname.1"]
     if publication_shortname == 'Alle07':
         publication_shortname = 'Alle07a'
     if publication_shortname == 'Wils03b':
