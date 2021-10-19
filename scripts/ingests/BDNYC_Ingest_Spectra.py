@@ -136,7 +136,7 @@ for row in existing_data:
     else:
         obs_date = pd.to_datetime(row["obs_date"])
 
-    publication_shortname = row["publication_shortname"]
+    publication_shortname = row["publication_shortname.1"]
     if publication_shortname == 'Alle07':
         publication_shortname = 'Alle07a'
     if publication_shortname == 'Wils03b':
@@ -151,10 +151,10 @@ for row in existing_data:
                         f"sum(ref_dupe_ind): {sum(ref_dupe_ind)}"
         logger.debug(ref_debug_mgs)
         date_dupe_ind = source_spec_data['observation_date'] == obs_date
-        date_debug_msg = f"spec data: {source_spec_data['observation_date']}, obs_date: {obs_date}, date_dupe_ind: {date_dupe_ind}," \
-                         f"sum(date_dup_ind): {sum(date_dupe_ind)} "
-        logger.debug(date_debug_msg)
-        if sum(ref_dupe_ind) and sum(date_dupe_ind):
+        instrument_dupe_ind = source_spec_data['instrument'] == row['name.1']
+        mode_dupe_ind = source_spec_data['mode'] == row['mode']
+        file_dupe_ind = source_spec_data['spectrum'] == row['spectrum']
+        if sum(ref_dupe_ind) and sum(date_dupe_ind) and sum(instrument_dupe_ind) and sum(mode_dupe_ind) and sum(file_dupe_ind):
             msg = f"Skipping suspected duplicate measurement \n"
             msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
             msg3 = f"{row['designation', 'name.1', 'mode', 'obs_date', 'publication_shortname']} \n"
@@ -176,9 +176,14 @@ for row in existing_data:
                  'comments': row["comments"],
                  'reference': publication_shortname}]
     logger.debug(row_data)
-
+try:
     db.Spectra.insert().execute(row_data)
     n_added += 1
+except sqlalchemy.exc.IntegrityError:
+    msgint = f"Spectrum could not be added to the database: \n {row_data} \n" \
+             f"Reference may not exist in the Publications table."
+    logger.error(msgint)
+    raise SimpleError(msgint)
 
 logger.info(f"Spectra added: {n_added}")
 logger.info(f"Spectra skipped: {n_skipped}")
