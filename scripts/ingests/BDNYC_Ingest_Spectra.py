@@ -107,9 +107,13 @@ ingest_sources(db, to_add['designation'], to_add['ra'], to_add['dec'], to_add['p
 missing_indices2, existing_indices2, alt_names_table2 = sort_sources(db, source_names)
 existing_data = data[existing_indices2]
 
+n_spectra = len(existing_data)
 n_skipped = 0
 n_added = 0
 n_blank = 0
+
+msg = f'Adding {n_spectra} spectra'
+logger.info(msg)
 
 for row in existing_data:
     # TODO: convert to function in utils
@@ -180,10 +184,13 @@ for row in existing_data:
         logger.error(msg)
         raise SimpleError(msg)
 
-# TODO: add test to be sure skipped + blank + added = total
-
 logger.info(f"Spectra added: {n_added}")
 logger.info(f"Spectra skipped: {n_skipped}")
 logger.info(f"Spectra with blank obs_date: {n_blank}")
+
+if n_added + n_skipped + n_blank != n_spectra:
+    msg = "Numbers don't add up: "
+    logger.error(msg)
+    raise SimpleError(msg)
 
 # TODO: Count some spectra and add to tests
