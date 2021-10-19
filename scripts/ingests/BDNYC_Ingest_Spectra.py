@@ -177,8 +177,14 @@ for row in existing_data:
                  'reference': publication_shortname}]
     logger.debug(row_data)
 
-    db.Spectra.insert().execute(row_data)
-    n_added += 1
+    try:
+        db.Spectra.insert().execute(row_data)
+        n_added += 1
+    except sqlalchemy.exc.IntegrityError:
+        msg = f"Spectrum could not be added to the database: \n {row_data} \n" \
+              f"Reference may not exist in the Publications table."
+        logger.error(msg)
+        raise SimpleError(msg)
 
 logger.info(f"Spectra added: {n_added}")
 logger.info(f"Spectra skipped: {n_skipped}")
