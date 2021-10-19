@@ -4,12 +4,12 @@ Utils functions for use in ingests
 from collections import namedtuple
 import logging
 import os
+import sys
 import re
 import warnings
 from pathlib import Path
 from astrodbkit2.astrodb import create_database
 from astrodbkit2.astrodb import Database
-from simple.schema import *  # not being used?
 import ads
 from astropy.coordinates import SkyCoord
 import astropy.units as u
@@ -20,9 +20,17 @@ import sqlalchemy.exc
 import numpy as np
 
 warnings.filterwarnings("ignore", module='astroquery.simbad')
-logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
-                    datefmt='%m/%d/%Y %I:%M:%S %p')
 logger = logging.getLogger('SIMPLE')
+
+# Logger setup
+# This will stream all logger messages to the standard output and apply formatting for that
+logger.propagate = False  # prevents duplicated logging messages
+LOGFORMAT = logging.Formatter('%(asctime)s %(levelname)s: %(message)s', datefmt='%m/%d/%Y %I:%M:%S%p')
+ch = logging.StreamHandler(stream=sys.stdout)
+ch.setFormatter(LOGFORMAT)
+# To prevent duplicate handlers, only add if they haven't been set previously
+if not len(logger.handlers):
+    logger.addHandler(ch)
 
 
 class SimpleError(Exception):
