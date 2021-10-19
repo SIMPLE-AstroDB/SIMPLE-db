@@ -151,10 +151,10 @@ for row in existing_data:
                         f"sum(ref_dupe_ind): {sum(ref_dupe_ind)}"
         logger.debug(ref_debug_mgs)
         date_dupe_ind = source_spec_data['observation_date'] == obs_date
-        date_debug_msg = f"spec data: {source_spec_data['observation_date']}, obs_date: {obs_date}, date_dupe_ind: {date_dupe_ind}," \
-                         f"sum(date_dup_ind): {sum(date_dupe_ind)} "
-        logger.debug(date_debug_msg)
-        if sum(ref_dupe_ind) and sum(date_dupe_ind):
+        instrument_dupe_ind = source_spec_data['instrument'] == row['name.1']
+        mode_dupe_ind = source_spec_data['mode'] == row['mode']
+        file_dupe_ind = source_spec_data['spectrum'] == row['spectrum']
+        if sum(ref_dupe_ind) and sum(date_dupe_ind) and sum(instrument_dupe_ind) and sum(mode_dupe_ind) and sum(file_dupe_ind):
             msg = f"Skipping suspected duplicate measurement \n"
             msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
             msg3 = f"{row['designation', 'name.1', 'mode', 'obs_date', 'publication_shortname']} \n"
