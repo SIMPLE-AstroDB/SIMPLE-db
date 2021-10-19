@@ -36,3 +36,6 @@ Enumerations for regime include:
  - radio
  - unknown
  
+# Notes
+ - An accurate observation date is required for a spectrum to be ingested.
+ - Spectra for companions should be associated with individual sources and not grouped with the primary source.
