@@ -220,7 +220,7 @@ if n_added + n_dupes + n_blank + n_skipped != n_spectra:
     logger.error(msg)
     raise SimpleError(msg)
 
-# TODO: Count some spectra and add to tests
+# TODO: add to tests
 from sqlalchemy import func
 spec_count = db.query(Spectra.regime, func.count(Spectra.regime)).group_by(Spectra.regime).all()
 # [(<Regime.mir: 'em.IR.MIR'>, 91), (<Regime.nir: 'em.IR.NIR'>, 457), (<Regime.optical: 'em.opt'>, 720)]
@@ -228,6 +228,12 @@ spec_count = db.query(Spectra.regime, func.count(Spectra.regime)).group_by(Spect
 
 spec_ref_count = db.query(Spectra.reference, func.count(Spectra.reference)).\
     group_by(Spectra.reference).order_by(func.count(Spectra.reference).desc()).limit(20).all()
-# [('Reid08b', 280), ('Cruz03', 191), ('Cruz18', 186), ('Cruz07', 158), ('Bard14', 57), ('Burg10a', 46), ('Cush06b', 30), ('Rayn09', 17), ('Kirk10', 15), ('Burg08d', 15), ('Burg04b', 15), ('Fili15', 14), ('PID51', 13), ('Kirk00', 11), ('PID3136', 10), ('CruzUnpub', 10), ('Burg06b', 10), ('Kirk08', 9), ('Cruz09', 9), ('Bonn14b', 8)]
+# [('Reid08b', 280), ('Cruz03', 191), ('Cruz18', 186), ('Cruz07', 158), ('Bard14', 57), ('Burg10a', 46),
+# ('Cush06b', 30), ('Rayn09', 17), ('Kirk10', 15), ('Burg08d', 15), ('Burg04b', 15), ('Fili15', 14),
+# ('PID51', 13), ('Kirk00', 11), ('PID3136', 10), ('CruzUnpub', 10), ('Burg06b', 10), ('Kirk08', 9),
+# ('Cruz09', 9), ('Bonn14b', 8)]
 
-logger.info(f'Spectra in the database: \n {spec_count} \n {spec_ref_count}' )
+telescope_spec_count = db.query(Spectra.telescope, func.count(Spectra.telescope)).\
+    group_by(Spectra.telescope).order_by(func.count(Spectra.telescope).desc()).limit(20).all()
+
+logger.info(f'Spectra in the database: \n {spec_count} \n {spec_ref_count} \n {telescope_spec_count}' )
