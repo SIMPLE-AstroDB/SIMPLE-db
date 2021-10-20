@@ -203,8 +203,8 @@ class Spectra(Base):
 
     # Metadata
     regime = Column(Enum(Regime, create_constraint=True), primary_key=True)  # eg, Optical, Infrared, etc
-    telescope = Column(String(30))
-    instrument = Column(String(30))
+    telescope = Column(String(30), ForeignKey(Telescopes.name))
+    instrument = Column(String(30), ForeignKey(Instruments.name))
     mode = Column(String(30))  # eg, Prism, Echelle, etc
     observation_date = Column(DateTime, primary_key=True)
     wavelength_units = Column(String(20))
