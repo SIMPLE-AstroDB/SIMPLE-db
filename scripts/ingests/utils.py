@@ -14,11 +14,12 @@ import ads
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.simbad import Simbad
-from astropy.table import Table
+from astropy.table import Table, unique
 from sqlalchemy import or_, and_
 import sqlalchemy.exc
 import numpy as np
 import numpy.ma as ma
+from tqdm import tqdm
 
 warnings.filterwarnings("ignore", module='astroquery.simbad')
 logger = logging.getLogger('SIMPLE')
@@ -115,8 +116,10 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
     alt_names_table = Table(names=('db_name','ingest_name'), dtype=('str','str'))
     db_names = []
 
-    for i, name in enumerate(ingest_names):
+    for i, name in tqdm(enumerate(ingest_names)):
         logger.debug(f"{i}, : searching:, {name}")
+
+        #TODO: Replace with find_source_in_db_function
 
         namematches = db.search_object(name.strip())
 
@@ -124,7 +127,7 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
         if len(namematches) == 0:
             logger.debug(f"{i}, : no name matches, trying simbad search")
             try:
-                namematches = db.search_object(name, resolve_simbad=True, verbose=False)
+                namematches = db.search_object(name, resolve_simbad=True, verbose=False, fuzzy_search=False)
                 if len(namematches) == 1:
                     simbad_match = namematches[0]['source']
                     # Populate Astropy Table with ingest name and database name match
@@ -206,16 +209,16 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
 
 
 def find_source_in_db(db, source):
-
-    db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=False)
+    # TODO: Merge with source finding in sort_sources function
+    db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=False, verbose=False)
 
     # If no matches, try fuzzy search
     if len(db_name_match) == 0:
-        db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=True)
+        db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=True, verbose=False)
 
     # If still no matches, try to resolve the name with Simbad
     if len(db_name_match) == 0:
-        db_name_match = db.search_object(source, output_table='Sources', resolve_simbad=True)
+        db_name_match = db.search_object(source, output_table='Sources', resolve_simbad=True, verbose=False)
 
     if len(db_name_match) == 1:
         db_name = db_name_match['source'][0]
@@ -418,6 +421,9 @@ def add_names(db, sources=None, other_names=None, names_table=None):
             logger.error(msg)
             raise RuntimeError(msg)
 
+        # Remove duplicate names
+        names_table = unique(names_table)
+
         for name_row in names_table:
             names_data.append({'source': name_row[0], 'other_name': name_row[1]})
             logger.debug(name_row)
@@ -427,11 +433,10 @@ def add_names(db, sources=None, other_names=None, names_table=None):
     if n_names > 0:
         try:
             db.Names.insert().execute(names_data)
+            logger.info(f"Names added to database: {n_names}\n")
         except sqlalchemy.exc.IntegrityError:
-            msg = f"Could not {n_names} Names to database"
+            msg = f"Could not add {n_names} alt names to database"
             logger.warning(msg)
-
-    logger.info(f"Names added to database: {n_names}\n")
 
     return
 

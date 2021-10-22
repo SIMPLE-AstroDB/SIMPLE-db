@@ -234,6 +234,47 @@ def test_photometry_bands(db):
 # If Gaia pm, Gaia designation should be in Names
 # If Gaia parallax, Gaia designation should be in Names
 
+def test_spectra(db):
+    regime = 'optical'
+    t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
+    # assert len(t) == 1266, f'found {len(t)} spectra in the {regime} regime'
+
+    regime = 'nir'
+    t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
+    # assert len(t) == 1266, f'found {len(t)} spectra in the {regime} regime'
+
+    regime = 'mir'
+    t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
+    # assert len(t) == 1266, f'found {len(t)} spectra in the {regime} regime'
+
+    telescope = 'IRTF'
+    t = db.query(db.Spectra).filter(db.Spectra.c.telescope == telescope).astropy()
+    # assert len(t) == 1266, f'found {len(t)} spectra from {telescope}'
+
+    ref = 'Reid08b'
+    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
+    # assert len(t) == 1266, f'found {len(t)} spectra from {ref}'
+
+    ref = 'Cruz03'
+    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
+    # assert len(t) == 1266, f'found {len(t)} spectra from {ref}'
+
+    ref = 'Cruz18'
+    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
+    # assert len(t) == 1266, f'found {len(t)} spectra from {ref}'
+
+    ref = 'Cruz07'
+    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
+    # assert len(t) == 1266, f'found {len(t)} spectra from {ref}'
+
+    ref = 'Bard14'
+    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
+    # assert len(t) == 1266, f'found {len(t)} spectra from {ref}'
+
+    ref = 'Burg10a'
+    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
+    # assert len(t) == 1266, f'found {len(t)} spectra from {ref}'
+
 
 # Individual ingest tests
 # -----------------------------------------------------------------------------------------
