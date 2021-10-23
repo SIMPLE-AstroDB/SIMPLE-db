@@ -61,19 +61,42 @@ def insert_new_modes():
     prism_mode_gmos_n = [{'name': 'Prism',
                           'instrument': 'GMOS-N',
                           'telescope': 'Gemini North'}]
+    # Inserting Keck I telescope and LRIS instrument
     telescopekc = [{'name': 'Keck I'}]
     instrumentlris = [{'name': 'LRIS'}]
-
-    # Adding missing modes
+    # Inserting CTIO 4m telescope and R-C Spec Instrument
+    telescope_ct4 = [{'name': 'CTIO 4m'}]
+    instrument_rc = [{'name': 'R-C Spec'}]
+    # Inserting SXD mode
     sxd_mode = [{'name': 'SXD',
                  'instrument': 'SpeX',
                  'telescope': 'IRTF'}]
+    # Inserting KPNO 2.1 telescope
+    telescope_kp = [{'name': 'KPNO 2.1m'}]
+    instrument_g = [{'name': 'GoldCam'}]
+    # Inserting KPNO 4m
+    telescope_kp4 = [{'name': 'KPNO 4m'}]
+    # Inserting LDSS3 instrument
+    instrument_ld = [{'name': 'LDSS3'}]
+    # Inserting ARC 3.5m telescope
+    telescope_arc = [{'name': 'ARC 3.5m'}]
+    # Inserting DIS instrument
+    instrument_dis = [{'name': 'DIS'}]
+    # Inserting ESO telescope and SINFONI instrument
+    telescope_eso = [{'name': 'ESO VLT U2'}]
+    instrument_sin = [{'name': 'SINFONI'}]
+
     db.Telescopes.insert().execute(telescope_mgl2)
     db.Telescopes.insert().execute(telescope_ct)
     db.Telescopes.insert().execute(telescope_mgl)
     db.Telescopes.insert().execute(telescope_gmos)
     db.Telescopes.insert().execute(telescope_gnirs)
     db.Telescopes.insert().execute(telescopekc)
+    db.Telescopes.insert().execute(telescope_ct4)
+    db.Telescopes.insert().execute(telescope_kp)
+    db.Telescopes.insert().execute(telescope_kp4)
+    db.Telescopes.insert().execute(telescope_arc)
+    db.Telescopes.insert().execute(telescope_eso)
     db.Instruments.insert().execute(instrument_mgl2)
     db.Instruments.insert().execute(instruments_gmos)
     db.Instruments.insert().execute(instrument_sl)
@@ -82,6 +105,11 @@ def insert_new_modes():
     db.Instruments.insert().execute(instrument_gmos_n)
     db.Instruments.insert().execute(instruments_gnirs)
     db.Instruments.insert().execute(instrumentlris)
+    db.Instruments.insert().execute(instrument_rc)
+    db.Instruments.insert().execute(instrument_g)
+    db.Instruments.insert().execute(instrument_ld)
+    db.Instruments.insert().execute(instrument_dis)
+    db.Instruments.insert().execute(instrument_sin)
     db.Modes.insert().execute(echelle2_mode)
     db.Modes.insert().execute(sxd_mode_ct)
     db.Modes.insert().execute(ll_mode)
