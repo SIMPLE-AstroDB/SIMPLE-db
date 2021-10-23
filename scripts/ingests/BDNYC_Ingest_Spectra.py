@@ -61,6 +61,9 @@ def insert_new_modes():
     prism_mode_gmos_n = [{'name': 'Prism',
                           'instrument': 'GMOS-N',
                           'telescope': 'Gemini North'}]
+    telescopekc = [{'name': 'Keck I'}]
+    instrumentlris = [{'name': 'LRIS'}]
+
     # Adding missing modes
     sxd_mode = [{'name': 'SXD',
                  'instrument': 'SpeX',
@@ -70,6 +73,7 @@ def insert_new_modes():
     db.Telescopes.insert().execute(telescope_mgl)
     db.Telescopes.insert().execute(telescope_gmos)
     db.Telescopes.insert().execute(telescope_gnirs)
+    db.Telescopes.insert().execute(telescopekc)
     db.Instruments.insert().execute(instrument_mgl2)
     db.Instruments.insert().execute(instruments_gmos)
     db.Instruments.insert().execute(instrument_sl)
@@ -77,6 +81,7 @@ def insert_new_modes():
     db.Instruments.insert().execute(instruments_ct)
     db.Instruments.insert().execute(instrument_gmos_n)
     db.Instruments.insert().execute(instruments_gnirs)
+    db.Instruments.insert().execute(instrumentlris)
     db.Modes.insert().execute(echelle2_mode)
     db.Modes.insert().execute(sxd_mode_ct)
     db.Modes.insert().execute(ll_mode)
