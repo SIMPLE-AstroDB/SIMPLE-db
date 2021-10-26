@@ -130,8 +130,9 @@ def test_add_names(db):
     sources_2 = ['Fake 1', 'Fake 2']
     other_names_2 = ['Fake 1 alt', 'Fake 2 alt']
     other_names_3 = ['Fake 1 alt', 'Fake 2 alt', 'Fake 3 alt']
-    Alt_names = namedtuple("Alt_names", "source other_name")
-    alt_names_table = [Alt_names('Fake 1', 'Fake 1 alternate'), Alt_names('Fake 2', 'Fake 2 alternate')]
+    alt_names_table = Table(names=('db_name', 'ingest_name'), dtype=('str', 'str'))
+    alt_names_table.add_row(('Fake 1', 'Fake 1 alternate'))
+    alt_names_table.add_row(('Fake 2', 'Fake 2 alternate'))
 
     alt_names_table3 = [('Fake 1', 'Fake 1 alternate', '3rd column')]
 
