@@ -1,6 +1,7 @@
 from scripts.ingests.utils import *
 import pandas as pd
 import numpy.ma as ma
+import dateutil
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
@@ -174,7 +175,7 @@ for row in existing_data:
     else:
         try:
             obs_date = pd.to_datetime(row["obs_date"])
-        except TypeError:
+        except dateutil.parser._parser.ParserError:
             logger.warning(f"Skipping {row['designation']} Cant convert obs date to Date Time object: {row['obs_date']}")
             n_skipped += 1
             continue
@@ -221,7 +222,7 @@ for row in existing_data:
             mode_dupe_ind = source_spec_data['mode'] == row['mode']
             file_dupe_ind = source_spec_data['spectrum'] == row['spectrum']
             if sum(ref_dupe_ind) and sum(date_dupe_ind) and sum(instrument_dupe_ind) and sum(mode_dupe_ind):
-                msg = f"Skipping suspected duplicate measurement \n {row['designation','name_1', 'mode', 'spectrum']} \n"
+                msg = f"Skipping suspected duplicate measurement \n {row['designation', 'name_1', 'mode', 'spectrum']} \n"
                 msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
                 msg3 = f"{row['designation', 'name_1', 'mode', 'obs_date', 'publication_shortname']} \n"
                 logger.warning(msg)
@@ -230,9 +231,9 @@ for row in existing_data:
                 continue  # Skip duplicate measurement
             else:
                 msg = f'Spectrum could not be added to the database (other data exist): \n ' \
-                      f"{row['designation', 'name_1', 'mode', 'obs_date', 'publication_shortname','spectrum']} \n"
+                      f"{row['designation', 'name_1', 'mode', 'obs_date', 'publication_shortname', 'spectrum']} \n"
                 msg2 = f"Existing Data: \n " \
-                       f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference','spectrum']}"
+                       f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference', 'spectrum']}"
                 msg3 = f"Data not able to add: \n {row_data} \n "
                 logger.warning(msg + msg2)
                 logger.debug(msg3)
@@ -255,18 +256,19 @@ if n_added + n_dupes + n_blank + n_skipped != n_spectra:
 
 # TODO: add to tests
 from sqlalchemy import func
+
 spec_count = db.query(Spectra.regime, func.count(Spectra.regime)).group_by(Spectra.regime).all()
 # [(<Regime.mir: 'em.IR.MIR'>, 91), (<Regime.nir: 'em.IR.NIR'>, 457), (<Regime.optical: 'em.opt'>, 720)]
 
 
-spec_ref_count = db.query(Spectra.reference, func.count(Spectra.reference)).\
+spec_ref_count = db.query(Spectra.reference, func.count(Spectra.reference)). \
     group_by(Spectra.reference).order_by(func.count(Spectra.reference).desc()).limit(20).all()
 # [('Reid08b', 280), ('Cruz03', 191), ('Cruz18', 186), ('Cruz07', 158), ('Bard14', 57), ('Burg10a', 46),
 # ('Cush06b', 30), ('Rayn09', 17), ('Kirk10', 15), ('Burg08d', 15), ('Burg04b', 15), ('Fili15', 14),
 # ('PID51', 13), ('Kirk00', 11), ('PID3136', 10), ('CruzUnpub', 10), ('Burg06b', 10), ('Kirk08', 9),
 # ('Cruz09', 9), ('Bonn14b', 8)]
 
-telescope_spec_count = db.query(Spectra.telescope, func.count(Spectra.telescope)).\
+telescope_spec_count = db.query(Spectra.telescope, func.count(Spectra.telescope)). \
     group_by(Spectra.telescope).order_by(func.count(Spectra.telescope).desc()).limit(20).all()
 
-logger.info(f'Spectra in the database: \n {spec_count} \n {spec_ref_count} \n {telescope_spec_count}' )
+logger.info(f'Spectra in the database: \n {spec_count} \n {spec_ref_count} \n {telescope_spec_count}')
