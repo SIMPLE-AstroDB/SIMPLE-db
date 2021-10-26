@@ -149,9 +149,9 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
     db
     ingest_names
         Names of sources
-    ingest_ras, optional
+    ingest_ras: (optional)
         Right ascensions of sources. Decimal degrees.
-    ingest_decs, optional
+    ingest_decs: (optional)
         Declinations of sources. Decimal degrees.
     search_radius
         radius in arcseconds to use for source matching
@@ -179,13 +179,13 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
     existing_sources_index = []
     missing_sources_index = []
     # Alt_names = namedtuple("Alt_names", "source other_name")
-    alt_names_table = Table(names=('db_name','ingest_name'), dtype=('str','str'))
+    alt_names_table = Table(names=('db_name', 'ingest_name'), dtype=('str', 'str'))
     db_names = []
 
     for i, name in tqdm(enumerate(ingest_names)):
         logger.debug(f"{i}, : searching:, {name}")
 
-        #TODO: Replace with find_source_in_db_function
+        # TODO: Replace with find_source_in_db function
 
         namematches = db.search_object(name.strip())
 
@@ -251,11 +251,6 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
         # TODO: does pprint_all work here? alt_names_table appears to be a list instead of a astropy Table
         # alt_names_table.pprint_all()
         pass
-        n_ingest = i+1
-        n_existing = len(existing_sources_index)
-        n_missing = len(missing_sources_index)
-        if n_ingest != n_existing + n_missing:
-            raise RuntimeError("Unexpected number of sources")
 
     n_ingest = len(ingest_names)
     n_existing = len(existing_sources_index)
@@ -276,6 +271,7 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
 
 def find_source_in_db(db, source):
     # TODO: Merge with source finding in sort_sources function
+    # TODO: Convert to using logger and custom error messages
     db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=False, verbose=False)
 
     # If no matches, try fuzzy search
@@ -863,7 +859,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
             else:
                 msg = f"Skipping: {sources[i]}"
                 msg2 = f"\n {str(source_data)} " \
-                       f"\n Possible duplicate source or discovery reference may not exist in the Publications table. " \
+                       f"\n Possible duplicate source or discovery reference may not exist in the Publications table." \
                        f"\n Add it with add_publication function. \n "
                 logger.warning(msg)
                 logger.debug(msg2)
