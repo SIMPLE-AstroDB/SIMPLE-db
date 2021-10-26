@@ -97,5 +97,49 @@
             "comments": null,
             "reference": "Smar18"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/1331-0116.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/1331-0116.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": null,
+            "observation_date": "2006-01-28T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "PID20514"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U50174_1331-0116_BUR10A.fits",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/U50174_1331-0116_BUR10A.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2008-01-14T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Wm-2um-1",
+            "wavelength_order": null,
+            "comments": "None",
+            "reference": "Burg10a"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U50174_1331-0116_Hawley02.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U50174_1331-0116_Hawley02.fits",
+            "regime": "optical",
+            "telescope": "ARC 3.5m",
+            "instrument": null,
+            "mode": null,
+            "observation_date": "2001-02-03T05:05:17",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Hawl02"
+        }
     ]
 }

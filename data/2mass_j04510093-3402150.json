@@ -195,5 +195,35 @@
             "comments": null,
             "reference": "GaiaEDR3"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/0451-3402.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/0451-3402.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2012-09-27T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "normalized",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Bard14"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/U10334.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U10334.fits",
+            "regime": "optical",
+            "telescope": "CTIO 4m",
+            "instrument": "R-C Spec",
+            "mode": null,
+            "observation_date": "2002-01-22T23:29:00.765000",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cruz03"
+        }
     ]
 }

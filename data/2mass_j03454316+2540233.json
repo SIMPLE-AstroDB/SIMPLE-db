@@ -204,5 +204,49 @@
             "comments": null,
             "reference": "GaiaEDR3"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/2M0345_L0.fits",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/2M0345_L0.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-09-05T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg06a"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SINFONI/2M0345_SINFONIspeclib_JHK.fits",
+            "local_spectrum": "$BDNYC_spectra/SINFONI/2M0345_SINFONIspeclib_JHK.fits",
+            "regime": "nir",
+            "telescope": "ESO VLT U2",
+            "instrument": "SINFONI",
+            "mode": null,
+            "observation_date": "2010-04-19T00:00:00",
+            "wavelength_units": null,
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Bonn14b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/U20165_0345%2B2540_lris.fits",
+            "local_spectrum": "$BDNYC_spectra/LRIS/U20165_0345+2540_lris.fits",
+            "regime": "optical",
+            "telescope": "Keck I",
+            "instrument": "LRIS",
+            "mode": null,
+            "observation_date": "1997-11-09T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Kirk99a"
+        }
     ]
 }

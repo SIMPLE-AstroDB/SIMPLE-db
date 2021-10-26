@@ -127,6 +127,50 @@
             "reference": "Tinn03"
         }
     ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SDSS1624%2B0029_SL.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/SDSS1624+0029_SL.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2006-01-17T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cush06b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/1624%2B0029.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/1624+0029.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2004-03-12T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "normalized",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg06b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/2MASSJ16241436%2B0029158_T6_LRIS_Burg00.txt",
+            "local_spectrum": "$BDNYC_spectra/LRIS/2MASSJ16241436+0029158_T6_LRIS_Burg00.txt",
+            "regime": "optical",
+            "telescope": "Keck I",
+            "instrument": "LRIS",
+            "mode": null,
+            "observation_date": "1999-06-16T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg00b"
+        }
+    ],
     "SpectralTypes": [
         {
             "spectral_type_string": "T6",

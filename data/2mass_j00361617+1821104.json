@@ -192,5 +192,77 @@
             "comments": null,
             "reference": "GaiaEDR3"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/0036%2B1821.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/0036+1821.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": null,
+            "observation_date": "2004-01-06T02:58:46.222000",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cush06b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/IRS_DimSuns_S12/2MASS0036%2B1821_SL.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/2MASS0036+1821_SL.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2006-01-17T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Ardi10"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/2M0036_NIR.fits",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/2M0036_NIR.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-08-12T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": "2mass0036",
+            "reference": "Cruz18"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/L3.5_2MASSJ0036%2B1821.fits",
+            "local_spectrum": "$BDNYC_spectra/SpeX/IRTF Library (Prism+LXD)/L3.5_2MASSJ0036+1821.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "SXD",
+            "observation_date": "2009-12-01T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Rayn09"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/2M0036.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/2M0036.fits",
+            "regime": "optical",
+            "telescope": "KPNO 4m",
+            "instrument": "R-C Spec",
+            "mode": null,
+            "observation_date": "2002-09-27T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cruz07"
+        }
     ]
 }

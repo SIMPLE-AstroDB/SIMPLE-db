@@ -170,6 +170,64 @@
             "reference": "Wein16"
         }
     ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SDSS0539-0059_SL.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/SDSS0539-0059_SL.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2006-01-17T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cush06b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U50061_0539-0059_CUS-NP.fits",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/U50061_0539-0059_CUS-NP.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2000-11-06T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "normalized",
+            "wavelength_order": null,
+            "comments": "None",
+            "reference": "Schn14"
+        },
+        {
+            "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1099/type/native/viewcontent",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/SDSSJ0539-0059.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "SXD",
+            "observation_date": "2005-04-06T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Wm-2um-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cush05"
+        },
+        {
+            "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1124/type/native/viewcontent",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/U50061_SDSS0539-00_Fan00.fits",
+            "regime": "optical",
+            "telescope": "ARC 3.5m",
+            "instrument": "DIS",
+            "mode": null,
+            "observation_date": "1999-03-20T00:00:00",
+            "wavelength_units": null,
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Fan_00"
+        }
+    ],
     "SpectralTypes": [
         {
             "spectral_type_string": "L5",

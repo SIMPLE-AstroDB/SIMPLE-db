@@ -198,5 +198,49 @@
             "comments": null,
             "reference": "GaiaEDR3"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U20329.fits",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U20329.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2004-11-07T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg10a"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U20329_0905%2B5623.fits",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/U20329_0905+5623.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2011-12-07T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs s-1 cm-2 A-1",
+            "wavelength_order": null,
+            "comments": "None",
+            "reference": "Cruz18"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20329.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U20329.fits",
+            "regime": "optical",
+            "telescope": "Gemini North",
+            "instrument": "GMOS-N",
+            "mode": "Prism",
+            "observation_date": "2005-11-18T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Reid08b"
+        }
     ]
 }

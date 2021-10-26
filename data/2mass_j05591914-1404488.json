@@ -200,6 +200,64 @@
             "reference": "GaiaEDR3"
         }
     ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/2MASS0559-1404_SL.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/2MASS0559-1404_SL.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2006-01-17T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cush06b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSJ05591914-1404488_20040311_BUR06C.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_2MASSJ05591914-1404488_20040311_BUR06C.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2004-03-11T00:00:00",
+            "wavelength_units": null,
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg06b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/IRTF%20Library%20%28Prism%2BLXD%29/T4.5_2MASSJ0559-1404.fits",
+            "local_spectrum": "$BDNYC_spectra/SpeX/IRTF Library (Prism+LXD)/T4.5_2MASSJ0559-1404.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "SXD",
+            "observation_date": "2009-12-01T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Wm-2um-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Rayn09"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/2MASSJ05591914-1404488_T5_LRIS_Burg03.txt",
+            "local_spectrum": "$BDNYC_spectra/LRIS/2MASSJ05591914-1404488_T5_LRIS_Burg03.txt",
+            "regime": "optical",
+            "telescope": "Keck I",
+            "instrument": "LRIS",
+            "mode": null,
+            "observation_date": "2000-03-05T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg03d"
+        }
+    ],
     "SpectralTypes": [
         {
             "spectral_type_string": "T4.5",
