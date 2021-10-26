@@ -175,7 +175,7 @@ for row in existing_data:
         try:
             obs_date = pd.to_datetime(row["obs_date"])
         except TypeError:
-            logger.warning(f"Skipping {row['designation']} Cant convert obs date to Date Time object: {obs_date}")
+            logger.warning(f"Skipping {row['designation']} Cant convert obs date to Date Time object: {row['obs_date']}")
             n_skipped += 1
             continue
 
