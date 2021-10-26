@@ -4,9 +4,8 @@ import numpy.ma as ma
 import dateutil
 from sqlalchemy import func
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
-VERBOSE = False
 
 logger.setLevel(logging.INFO)
 
@@ -17,6 +16,7 @@ db.Spectra.delete().where(db.Spectra.c.source == '2MASS J00192626+4614078').exec
 
 # Read in CSV file as Astropy table
 data = Table.read('scripts/ingests/BDNYC_spectra4.csv')
+
 
 # Inserting various Libraries for Modes,Telescopes and Instruments
 def insert_new_modes():
@@ -123,6 +123,7 @@ def insert_new_modes():
 
     return
 
+
 if RECREATE_DB:
     insert_new_modes()
 
@@ -221,7 +222,7 @@ for row in existing_data:
             mode_dupe_ind = source_spec_data['mode'] == row['mode']
             file_dupe_ind = source_spec_data['spectrum'] == row['spectrum']
             if sum(ref_dupe_ind) and sum(date_dupe_ind) and sum(instrument_dupe_ind) and sum(mode_dupe_ind):
-                msg = f"Skipping suspected duplicate measurement \n {row['designation', 'name_1', 'mode', 'spectrum']} \n"
+                msg = f"Skipping suspected duplicate measurement\n{row['designation', 'name_1', 'mode', 'spectrum']}\n"
                 msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
                 msg3 = f"{row['designation', 'name_1', 'mode', 'obs_date', 'publication_shortname']} \n"
                 logger.warning(msg)
@@ -271,3 +272,7 @@ telescope_spec_count = db.query(Spectra.telescope, func.count(Spectra.telescope)
 #  ('ESO VLT U2', 7), ('Magellan I Baade', 5)]
 
 logger.info(f'Spectra in the database: \n {spec_count} \n {spec_ref_count} \n {telescope_spec_count}')
+
+# WRITE THE JSON FILES
+if SAVE_DB:
+    db.save_database(directory='data/')
