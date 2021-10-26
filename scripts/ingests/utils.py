@@ -802,6 +802,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     # TODO: add example
 
     n_added = 0
+    n_names = 0
     n_skipped = 0
     n_sources = len(sources)
 
@@ -825,6 +826,9 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                         'equinox': equinoxes[i],
                         'comments': comments[i]}]
         # logger.debug(str(source_data))
+
+        names_data = [{'source': sources[i],
+                       'other_name': sources[i]}]
 
         try:
             db.Sources.insert().execute(source_data)
@@ -867,7 +871,18 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                 continue
                 # raise SimpleError(msg)
 
+        try:
+            db.Names.insert().execute(names_data)
+            logger.debug(f"Name added to database: {names_data}\n")
+            n_names += 1
+        except sqlalchemy.exc.IntegrityError:
+            msg = f"Could not add {names_data} to database"
+            logger.warning(msg)
+            raise(msg)
+
+
     logger.info(f"Sources added to database: {n_added}")
+    logger.info(f"Names added to database: {n_names} \n")
     logger.info(f"Sources NOT added to database: {n_skipped} \n")
 
     return
