@@ -4,7 +4,7 @@ import numpy.ma as ma
 import dateutil
 from sqlalchemy import func
 
-SAVE_DB = True  # save the data files in addition to modifying the .db file
+SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 
 logger.setLevel(logging.INFO)
@@ -124,14 +124,15 @@ def insert_new_modes():
     return
 
 
-if RECREATE_DB:
-    insert_new_modes()
+# if RECREATE_DB:
+#    insert_new_modes()
 
 source_names = data['designation']
 
 missing_indices, existing_indices, alt_names_table = sort_sources(db, source_names)
 
-add_names(db, names_table=alt_names_table)
+if len(alt_names_table) > 0:
+    add_names(db, names_table=alt_names_table)
 
 # ADD MISSING SOURCES
 to_add = data[missing_indices]
