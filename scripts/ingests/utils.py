@@ -338,14 +338,13 @@ def add_names(db, sources=None, other_names=None, names_table=None):
         if len(names_table) == 0:
             msg = "No new names to add to database"
             logger.warning(msg)
-
         elif len(names_table[0]) != 2:
             msg = "Each tuple should have two elements"
             logger.error(msg)
             raise RuntimeError(msg)
-
-        # Remove duplicate names
-        names_table = unique(names_table)
+        else:
+            # Remove duplicate names
+            names_table = unique(names_table)
 
         for name_row in names_table:
             names_data.append({'source': name_row[0], 'other_name': name_row[1]})
@@ -824,7 +823,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                         'reference': references[i],
                         'epoch': epochs[i],
                         'equinox': equinoxes[i],
-                        'comments': comments[i]}]
+                        'comments': None if ma.is_masked(comments[i]) else comments[i]}]
         # logger.debug(str(source_data))
 
         names_data = [{'source': sources[i],
