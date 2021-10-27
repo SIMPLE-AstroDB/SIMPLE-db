@@ -68,35 +68,72 @@ def load_simpledb(db_file, recreatedb=True):
     return db
 
 
-def find_source_in_db(db, source):
-    # TODO: Merge with source finding in sort_sources function
-    # TODO: Convert to using logger and custom error messages
-    db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=False, verbose=False)
+def find_source_in_db(db, source, ingest_ra=None, ingest_dec=None, search_radius=60.):
+    """
+    Find a source in the database given a source name and optional coordinates.
 
+    Parameters
+    ----------
+    db
+    source
+    ingest_ra: (Optional)
+        Right ascensions of sources. Decimal degrees.
+    ingest_dec: (optional)
+        Declinations of sources. Decimal degrees.
+    search_radius
+        radius in arcseconds to use for source matching
+    Returns
+    -------
+    one match: String with database source name
+    multiple matches: list of possible database names
+    no matches: None
+
+    """
+
+    # TODO: In astrodbkit2, convert verbose to using logger
+
+    if ingest_ra and ingest_dec:
+        coords = True
+    else:
+        coords = False
+
+    source = source.strip()
+
+    logger.debug(f'Searching {source} for match in database.')
+
+    db_name_matches = db.search_object(source, output_table='Sources', fuzzy_search=False, verbose=False)
+
+    # NO MATCHES
     # If no matches, try fuzzy search
-    if len(db_name_match) == 0:
-        db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=True, verbose=False)
+    if len(db_name_matches) == 0:
+        db_name_matches = db.search_object(source, output_table='Sources', fuzzy_search=True, verbose=False)
 
     # If still no matches, try to resolve the name with Simbad
-    if len(db_name_match) == 0:
-        db_name_match = db.search_object(source, output_table='Sources', resolve_simbad=True, verbose=False)
+    if len(db_name_matches) == 0:
+        logger.debug(f"No name matches, trying simbad search")
+        db_name_matches = db.search_object(source, resolve_simbad=True, fuzzy_search=False, verbose=False)
 
-    if len(db_name_match) == 1:
-        db_name = db_name_match['source'][0]
-        # print("\n", db_name, "One source match found", verbose=verbose)
-    elif len(db_name_match) > 1:
-        print("\n", source)
-        print(db_name_match)
-        raise RuntimeError(source, "More than one match source found in the database")
-    elif len(db_name_match) == 0:
-        print("\n", source)
-        raise RuntimeError(source, "No source found in the database")
+    # if still no matches, try spatial search using coordinates, if provided
+    if len(db_name_matches) == 0 and coords:
+        location = SkyCoord(ingest_ra, ingest_dec, frame='icrs', unit='deg')
+        radius = u.Quantity(search_radius, unit='arcsec')
+        logger.info(f"No Simbad match, trying coord search around, {location.ra.hour}, {location.dec}")
+        db_name_matches = db.query_region(location, radius=radius)
+
+    if len(db_name_matches) == 1:
+        db_names = db_name_matches['source'][0]
+        logger.debug(f'One match found for {source}: {db_names}')
+    elif len(db_name_matches) > 1:
+        db_names = db_name_matches['source']
+        logger.debug(f'More than match found for {source}:\n {db_names}')
+        # TODO: Find way for user to choose correct match
+    elif len(db_name_matches) == 0:
+        db_names = None
+        logger.debug(f'No match found for {source}')
     else:
-        print("\n", source)
-        print(db_name_match)
-        raise RuntimeError(source, "unexpected condition")
+        raise SimpleError(f'Unexpected condition searching for {source}')
 
-    return db_name
+    return db_names
 
 
 def search_publication(db, name: str = None, doi: str = None, bibcode: str = None):

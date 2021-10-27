@@ -70,14 +70,21 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
 
         if len(name_matches) == 1:
             existing_sources_index.append(i)
-            #db_names.append(name_matches)
             logger.debug(f"{i}, match found for {name}: {name_matches}")
+
+            # Figure out if ingest name is an alternate name
+            db_matches = db.search_object(name, output_table='Sources', fuzzy_search=False)
+            if len(db_matches) == 0:
+                alt_names_table.add_row([name_matches, name])
+
         elif len(name_matches) > 1:
             existing_sources_index.append(i)
             #db_names.append(name_matches[0])
             msg = f"{i}, More than one match for {name}\n {name_matches}\n"
             #msg2 = f"{i}, Using first one: {name_matches[0]}\n"
             logger.warning(msg)
+
+
         elif len(name_matches) == 0:
             logger.debug(f"{i}: Not in database: {name}")
             missing_sources_index.append(i)
