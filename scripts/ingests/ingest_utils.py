@@ -1,13 +1,15 @@
 """
 Utils functions for use in ingests
 """
+from scripts.ingests.utils import *
 import logging
 import numpy as np
 import numpy.ma as ma
 from tqdm import tqdm
-
+from astropy.table import Table, unique
 
 logger = logging.getLogger('SIMPLE')
+
 
 # SOURCES
 def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_radius=60.):
@@ -16,7 +18,6 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
     1) in the database with the same name,
     2) in the database with a different name, or
     3) not in the database and need to be added.
-
 
     Parameters
     ----------
@@ -40,7 +41,6 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
         Astropy Table with Other Names to add to database
         Can be used as input to add_names function
     """
-    # TODO: add progress bar
 
     n_sources = len(ingest_names)
     logger.info(f"SORTING {n_sources} SOURCES\n")
@@ -52,79 +52,47 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
 
     existing_sources_index = []
     missing_sources_index = []
-    # Alt_names = namedtuple("Alt_names", "source other_name")
     alt_names_table = Table(names=('db_name', 'ingest_name'), dtype=('str', 'str'))
     db_names = []
 
     for i, name in tqdm(enumerate(ingest_names)):
-        logger.debug(f"{i}, : searching:, {name}")
+        # TODO: format progress bar better
 
-        # TODO: Replace with find_source_in_db function
+        logger.debug(f"{i}, : sorting: {name}")
 
-        namematches = db.search_object(name.strip())
-
-        # if no matches, try resolving with Simbad
-        if len(namematches) == 0:
-            logger.debug(f"{i}, : no name matches, trying simbad search")
-            try:
-                namematches = db.search_object(name, resolve_simbad=True, verbose=False, fuzzy_search=False)
-                if len(namematches) == 1:
-                    simbad_match = namematches[0]['source']
-                    # Populate Astropy Table with ingest name and database name match
-                    alt_names_table.add_row((simbad_match, name))
-                    logger.debug(f'New alt Name for {simbad_match}: {name}\n')
-            except TypeError:  # no Simbad match
-                namematches = []
-
-        # if still no matches, try spatial search using coordinates
-        if len(namematches) == 0 and coords:
-            location = SkyCoord(ingest_ras[i], ingest_decs[i], frame='icrs', unit='deg')
-            radius = u.Quantity(search_radius, unit='arcsec')
-            logger.info(f"{i}, : no Simbad match, trying coord search around, {location.ra.hour}, {location.dec}")
-            nearby_matches = db.query_region(location, radius=radius)
-            if len(nearby_matches) == 1:
-                namematches = nearby_matches
-                coord_match = namematches[0]['source']
-                # Populate Astropy Table with ingest name and database name match
-                alt_names_table.add_row((coord_match, name))
-                logger.info(f'New alt Name for {coord_match}: {name}')
-            if len(nearby_matches) > 1:
-                logger.debug(f'{nearby_matches}')
-                msg = "too many nearby sources!"
-                logger.error(msg)
-                raise RuntimeError(msg)
-
-        if len(namematches) == 1:
-            existing_sources_index.append(i)
-            source_match = namematches[0]['source']
-            db_names.append(source_match)
-            logger.debug(f"{i}, match found: , {source_match}")
-        elif len(namematches) > 1:
-            # If more than one match, just choose the first one
-            # TODO: Figure out way to let use choose correct match
-            existing_sources_index.append(i)
-            source_match = namematches[0]['source']
-            db_names.append(source_match)
-            msg = f"{i}, More than one match for, {name}\n {namematches}\n"
-            msg2 = f"{i}, Using first one: {namematches[0]['source']}\n"
-            logger.warning(msg + msg2)
-        elif len(namematches) == 0:
-            logger.debug(f"{i}: Not in database")
-            missing_sources_index.append(i)
-            db_names.append(ingest_names[i])
+        if coords:
+            name_matches = find_source_in_db(db, name, ingest_ra=ingest_ras[i], ingest_dec=ingest_decs[i],
+                                            search_radius=search_radius)
         else:
-            msg = f"{i}: unexpected condition"
+            name_matches = find_source_in_db(db, name)
+
+        # TODO: Find new way to populate alt names table
+
+        if len(name_matches) == 1:
+            existing_sources_index.append(i)
+            #db_names.append(name_matches)
+            logger.debug(f"{i}, match found for {name}: {name_matches}")
+        elif len(name_matches) > 1:
+            existing_sources_index.append(i)
+            #db_names.append(name_matches[0])
+            msg = f"{i}, More than one match for {name}\n {name_matches}\n"
+            #msg2 = f"{i}, Using first one: {name_matches[0]}\n"
+            logger.warning(msg)
+        elif len(name_matches) == 0:
+            logger.debug(f"{i}: Not in database: {name}")
+            missing_sources_index.append(i)
+            #db_names.append(ingest_names[i])
+        else:
+            msg = f"{i}: unexpected condition encountered sorting {name}"
             logger.error(msg)
-            raise RuntimeError(msg)
+            raise SimpleError(msg)
 
     logger.info(f"ALL SOURCES SORTED: {n_sources}")
     logger.debug(f"Existing Sources:\n, {ingest_names[existing_sources_index]}")
     logger.debug(f"Missing Sources:\n, {ingest_names[missing_sources_index]}")
     logger.debug("\n Existing Sources with different name:\n")
     if logger.level == 10:  # debug
-        # TODO: does pprint_all work here? alt_names_table appears to be a list instead of a astropy Table
-        # alt_names_table.pprint_all()
-        pass
+        alt_names_table.pprint_all()
 
     n_ingest = len(ingest_names)
     n_existing = len(existing_sources_index)
