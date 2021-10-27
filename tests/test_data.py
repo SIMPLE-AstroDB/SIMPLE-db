@@ -66,11 +66,11 @@ def test_discovery_references(db):
 
     ref = 'Reid08b'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 143, f'found {len(t)} discovery reference entries for {ref}'
+    assert len(t) == 206, f'found {len(t)} discovery reference entries for {ref}'
 
     ref = 'Cruz03'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 110, f'found {len(t)} discovery reference entries for {ref}'
+    assert len(t) == 165, f'found {len(t)} discovery reference entries for {ref}'
 
     ref = 'Maro15'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
@@ -106,11 +106,11 @@ def test_discovery_references(db):
 
     ref = 'Kirk10'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 55, f'found {len(t)} discovery reference entries for {ref}'
+    assert len(t) == 56, f'found {len(t)} discovery reference entries for {ref}'
 
     ref = 'Cruz07'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 50, f'found {len(t)} discovery reference entries for {ref}'
+    assert len(t) == 91, f'found {len(t)} discovery reference entries for {ref}'
 
 
 def test_proper_motion_refs(db):
@@ -170,6 +170,7 @@ def test_proper_motion_refs(db):
     ref = 'Smar18'
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 68, f'found {len(t)} proper motion reference entries for {ref}'
+
 
 def test_parallax_refs(db):
     ref = 'GaiaDR2'
@@ -234,46 +235,47 @@ def test_photometry_bands(db):
 # If Gaia pm, Gaia designation should be in Names
 # If Gaia parallax, Gaia designation should be in Names
 
+
 def test_spectra(db):
     regime = 'optical'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    # assert len(t) == 1266, f'found {len(t)} spectra in the {regime} regime'
+    assert len(t) == 718, f'found {len(t)} spectra in the {regime} regime'
 
     regime = 'nir'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    # assert len(t) == 1266, f'found {len(t)} spectra in the {regime} regime'
+    assert len(t) == 450, f'found {len(t)} spectra in the {regime} regime'
 
     regime = 'mir'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    # assert len(t) == 1266, f'found {len(t)} spectra in the {regime} regime'
+    assert len(t) == 91, f'found {len(t)} spectra in the {regime} regime'
 
     telescope = 'IRTF'
     t = db.query(db.Spectra).filter(db.Spectra.c.telescope == telescope).astropy()
-    # assert len(t) == 1266, f'found {len(t)} spectra from {telescope}'
+    assert len(t) == 436, f'found {len(t)} spectra from {telescope}'
 
     ref = 'Reid08b'
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
-    # assert len(t) == 1266, f'found {len(t)} spectra from {ref}'
+    assert len(t) == 280, f'found {len(t)} spectra from {ref}'
 
     ref = 'Cruz03'
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
-    # assert len(t) == 1266, f'found {len(t)} spectra from {ref}'
+    assert len(t) == 191, f'found {len(t)} spectra from {ref}'
 
     ref = 'Cruz18'
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
-    # assert len(t) == 1266, f'found {len(t)} spectra from {ref}'
+    assert len(t) == 186, f'found {len(t)} spectra from {ref}'
 
     ref = 'Cruz07'
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
-    # assert len(t) == 1266, f'found {len(t)} spectra from {ref}'
+    assert len(t) == 158, f'found {len(t)} spectra from {ref}'
 
     ref = 'Bard14'
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
-    # assert len(t) == 1266, f'found {len(t)} spectra from {ref}'
+    assert len(t) == 57, f'found {len(t)} spectra from {ref}'
 
     ref = 'Burg10a'
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
-    # assert len(t) == 1266, f'found {len(t)} spectra from {ref}'
+    assert len(t) == 46, f'found {len(t)} spectra from {ref}'
 
 
 # Individual ingest tests
