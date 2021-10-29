@@ -195,5 +195,63 @@
             "comments": null,
             "reference": "Wein16"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/DENIS0255-4700_SL.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/DENIS0255-4700_SL.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2006-01-17T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cush06b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0255-4700_adam.fits",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0255-4700_adam.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2004-09-08T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg06c"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/L8_DENISJ0255-4700.fits",
+            "local_spectrum": "$BDNYC_spectra/SpeX/IRTF Library (Prism+LXD)/L8_DENISJ0255-4700.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "SXD",
+            "observation_date": "2009-12-01T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Wm-2um-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Rayn09"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/U10158_D0255-47_lris.fits",
+            "local_spectrum": "$BDNYC_spectra/LRIS/U10158_D0255-47_lris.fits",
+            "regime": "optical",
+            "telescope": "Keck I",
+            "instrument": "LRIS",
+            "mode": null,
+            "observation_date": "2000-12-26T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Kirk08"
+        }
     ]
 }

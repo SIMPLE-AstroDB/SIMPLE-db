@@ -198,5 +198,35 @@
             "comments": null,
             "reference": "GaiaEDR3"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/1036-3441.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/1036-3441.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": null,
+            "observation_date": "2006-01-23T19:26:34.143000",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "PID51"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1036-3441.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_1036-3441.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2008-01-13T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "normalized",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg10a"
+        }
     ]
 }

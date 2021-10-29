@@ -154,5 +154,49 @@
             "comments": null,
             "reference": "Wein16"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/LHS3003_SL.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/LHS3003_SL.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2006-01-14T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cush06b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/spex_prism_lhs3003_080729.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_lhs3003_080729.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2008-07-29T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "normalized",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Bard14"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/U11264.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U11264.fits",
+            "regime": "optical",
+            "telescope": "KPNO 2.1m",
+            "instrument": "GoldCam",
+            "mode": null,
+            "observation_date": "2003-03-13T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Reid08b"
+        }
     ]
 }

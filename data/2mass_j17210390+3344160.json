@@ -148,5 +148,49 @@
             "comments": null,
             "reference": "GaiaEDR3"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/1721%2B3344.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/1721+3344.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": null,
+            "observation_date": "2008-08-01T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "PID50059"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U11694.fits",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/U11694.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-08-12T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cruz18"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U11694_1721%2B3344.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U11694_1721+3344.fits",
+            "regime": "optical",
+            "telescope": "KPNO 4m",
+            "instrument": "R-C Spec",
+            "mode": null,
+            "observation_date": "2001-07-19T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cruz03"
+        }
     ]
 }

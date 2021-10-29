@@ -213,5 +213,35 @@
             "comments": null,
             "reference": "GaiaEDR3"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/U11800.fits",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/U11800.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-09-05T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cruz18"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/LHS3406.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/LHS3406.fits",
+            "regime": "optical",
+            "telescope": "KPNO 2.1m",
+            "instrument": "GoldCam",
+            "mode": null,
+            "observation_date": "2000-10-01T04:23:37",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cruz03"
+        }
     ]
 }

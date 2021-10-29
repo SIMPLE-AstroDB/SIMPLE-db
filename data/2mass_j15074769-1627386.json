@@ -200,6 +200,50 @@
             "reference": "GaiaEDR3"
         }
     ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/2MASS1507-1627_SL.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/2MASS1507-1627_SL.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2006-01-17T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cush06b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/2M1507.fits",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/2M1507.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-08-12T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg07d"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/L5_2MASSJ1507-1627.fits",
+            "local_spectrum": "$BDNYC_spectra/SpeX/IRTF Library (Prism+LXD)/L5_2MASSJ1507-1627.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": null,
+            "observation_date": "2009-12-01T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Wm-2um-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Rayn09"
+        }
+    ],
     "SpectralTypes": [
         {
             "spectral_type_string": "L5.5",

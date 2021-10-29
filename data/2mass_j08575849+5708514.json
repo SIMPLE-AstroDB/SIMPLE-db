@@ -160,5 +160,49 @@
             "comments": null,
             "reference": "GaiaEDR3"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/0857%2B5708.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/0857+5708.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": null,
+            "observation_date": "2004-10-23T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "PID3431"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0857%2B5708_080108.fits",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0857+5708_080108.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2008-01-08T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg10a"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20320_sdss0857%2B5708_tell_davy.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U20320_sdss0857+5708_tell_davy.fits",
+            "regime": "optical",
+            "telescope": "Keck I",
+            "instrument": "LRIS",
+            "mode": null,
+            "observation_date": "2002-01-02T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Kirk08"
+        }
     ]
 }

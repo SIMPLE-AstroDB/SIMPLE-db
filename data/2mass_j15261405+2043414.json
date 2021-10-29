@@ -207,5 +207,49 @@
             "comments": null,
             "reference": "GaiaEDR3"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/2MASS1526%2B2043_SL.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/2MASS1526+2043_SL.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2006-01-17T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cush06b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/1526%2B2043.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/1526+2043.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-05-23T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "normalized",
+            "wavelength_order": null,
+            "comments": "Wrong Amazon spectrum-this is08435",
+            "reference": "Burg04b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/U50175_1526%2B2043_K00.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U50175_1526+2043_K00.fits",
+            "regime": "optical",
+            "telescope": "Keck I",
+            "instrument": "LRIS",
+            "mode": null,
+            "observation_date": "1998-09-20T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Kirk00"
+        }
     ]
 }

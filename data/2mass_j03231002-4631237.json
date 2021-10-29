@@ -192,5 +192,35 @@
             "comments": null,
             "reference": "GaiaEDR3"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/spex_prism_0323-4631_U20157.fits",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0323-4631_U20157.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2007-11-13T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Fahe16"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/U20157.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U20157.fits",
+            "regime": "optical",
+            "telescope": "Gemini South",
+            "instrument": "GMOS-S",
+            "mode": null,
+            "observation_date": "2005-01-01T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Reid08b"
+        }
     ]
 }

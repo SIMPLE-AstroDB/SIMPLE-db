@@ -182,5 +182,63 @@
             "comments": null,
             "reference": "GaiaDR2"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/1254-0122.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/1254-0122.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2004-02-04T05:31:36.427000",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "PID51"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SDSS1254-0122_SL.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/SDSS1254-0122_SL.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2005-09-21T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cush06b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_SDSSpJ125453.90-012247.4_20030522_BUR04B.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_SDSSpJ125453.90-012247.4_20030522_BUR04B.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-05-22T00:00:00",
+            "wavelength_units": null,
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg04b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/spex_prism_1254-0122_030522.fits",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/spex_prism_1254-0122_030522.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-05-22T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Wm-2um-1",
+            "wavelength_order": null,
+            "comments": "standard",
+            "reference": "Cruz18"
+        }
     ]
 }

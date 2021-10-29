@@ -192,5 +192,63 @@
             "comments": null,
             "reference": "GaiaEDR3"
         }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1707%2B4301_080908.fits",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_1707+4301_080908.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2008-09-08T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Bard14"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U11682.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U11682.fits",
+            "regime": "optical",
+            "telescope": "KPNO 4m",
+            "instrument": "R-C Spec",
+            "mode": null,
+            "observation_date": "2001-07-19T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": "strong Ha",
+            "reference": "Cruz03"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U11682_n2.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U11682_n2.fits",
+            "regime": "optical",
+            "telescope": "KPNO 4m",
+            "instrument": "R-C Spec",
+            "mode": null,
+            "observation_date": "2003-07-10T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": "quiet",
+            "reference": "CruzUnpub"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U11682_n3.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U11682_n3.fits",
+            "regime": "optical",
+            "telescope": "KPNO 4m",
+            "instrument": "R-C Spec",
+            "mode": null,
+            "observation_date": "2003-07-11T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": "very low S/N.",
+            "reference": "CruzUnpub"
+        }
     ]
 }

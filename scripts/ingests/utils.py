@@ -338,14 +338,13 @@ def add_names(db, sources=None, other_names=None, names_table=None):
         if len(names_table) == 0:
             msg = "No new names to add to database"
             logger.warning(msg)
-
         elif len(names_table[0]) != 2:
             msg = "Each tuple should have two elements"
             logger.error(msg)
             raise RuntimeError(msg)
-
-        # Remove duplicate names
-        names_table = unique(names_table)
+        else:
+            # Remove duplicate names
+            names_table = unique(names_table)
 
         for name_row in names_table:
             names_data.append({'source': name_row[0], 'other_name': name_row[1]})
@@ -802,6 +801,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     # TODO: add example
 
     n_added = 0
+    n_names = 0
     n_skipped = 0
     n_sources = len(sources)
 
@@ -823,8 +823,11 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                         'reference': references[i],
                         'epoch': epochs[i],
                         'equinox': equinoxes[i],
-                        'comments': comments[i]}]
+                        'comments': None if ma.is_masked(comments[i]) else comments[i]}]
         # logger.debug(str(source_data))
+
+        names_data = [{'source': sources[i],
+                       'other_name': sources[i]}]
 
         try:
             db.Sources.insert().execute(source_data)
@@ -867,7 +870,17 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                 continue
                 # raise SimpleError(msg)
 
+        try:
+            db.Names.insert().execute(names_data)
+            logger.debug(f"Name added to database: {names_data}\n")
+            n_names += 1
+        except sqlalchemy.exc.IntegrityError:
+            msg = f"Could not add {names_data} to database"
+            logger.warning(msg)
+
+
     logger.info(f"Sources added to database: {n_added}")
+    logger.info(f"Names added to database: {n_names} \n")
     logger.info(f"Sources NOT added to database: {n_skipped} \n")
 
     return

@@ -16,6 +16,9 @@
             "other_name": "2MASS J03454126+2354099"
         },
         {
+            "other_name": "Cl* Melotte   22    PPL       1"
+        },
+        {
             "other_name": "Cl* Melotte 22 PPL 1"
         },
         {
@@ -108,6 +111,36 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U40018_PPl1_dagny.fits",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/U40018_PPl1_dagny.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2007-02-24T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Fili15"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U40018_ppl1_davy.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U40018_ppl1_davy.fits",
+            "regime": "optical",
+            "telescope": "Keck I",
+            "instrument": "LRIS",
+            "mode": null,
+            "observation_date": "2008-11-03T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Stau98"
         }
     ]
 }
