@@ -123,6 +123,8 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     """
     Script to ingest sources
 
+    TODO: Make a keyword which toggles warnings/errors for sources and names which aren't ingested
+
     Parameters
     ----------
     db
