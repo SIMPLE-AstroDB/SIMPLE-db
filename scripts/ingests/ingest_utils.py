@@ -219,7 +219,6 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
         except sqlalchemy.exc.IntegrityError:
             msg = f"Could not add {names_data} to database"
             logger.warning(msg)
-            raise(msg)
 
 
     logger.info(f"Sources added to database: {n_added}")
