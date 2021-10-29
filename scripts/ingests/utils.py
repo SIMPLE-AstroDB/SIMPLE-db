@@ -86,7 +86,7 @@ def find_source_in_db(db, source, ingest_ra=None, ingest_dec=None, search_radius
     -------
     one match: String with database source name
     multiple matches: list of possible database names
-    no matches: None
+    no matches: empty list
 
     """
 
@@ -99,37 +99,38 @@ def find_source_in_db(db, source, ingest_ra=None, ingest_dec=None, search_radius
 
     source = source.strip()
 
-    logger.debug(f'Searching {source} for match in database.')
+    logger.debug(f'{source}: Searching for match in database.')
 
     db_name_matches = db.search_object(source, output_table='Sources', fuzzy_search=False, verbose=False)
 
     # NO MATCHES
     # If no matches, try fuzzy search
     if len(db_name_matches) == 0:
+        logger.debug(f"{source}: No name matches, trying fuzzy search")
         db_name_matches = db.search_object(source, output_table='Sources', fuzzy_search=True, verbose=False)
 
     # If still no matches, try to resolve the name with Simbad
     if len(db_name_matches) == 0:
-        logger.debug(f"No name matches, trying simbad search")
+        logger.debug(f"{source}: No name matches, trying Simbad search")
         db_name_matches = db.search_object(source, resolve_simbad=True, fuzzy_search=False, verbose=False)
 
     # if still no matches, try spatial search using coordinates, if provided
     if len(db_name_matches) == 0 and coords:
         location = SkyCoord(ingest_ra, ingest_dec, frame='icrs', unit='deg')
         radius = u.Quantity(search_radius, unit='arcsec')
-        logger.info(f"No Simbad match, trying coord search around, {location.ra.hour}, {location.dec}")
+        logger.info(f"{source}: No Simbad match, trying coord search around {location.ra.hour}, {location.dec}")
         db_name_matches = db.query_region(location, radius=radius)
 
     if len(db_name_matches) == 1:
-        db_names = db_name_matches['source'][0]
-        logger.debug(f'One match found for {source}: {db_names}')
+        db_names = db_name_matches['source'].tolist()
+        logger.debug(f'One match found for {source}: {db_names[0]}')
     elif len(db_name_matches) > 1:
-        db_names = db_name_matches['source']
-        logger.debug(f'More than match found for {source}:\n {db_names}')
+        db_names = db_name_matches['source'].tolist()
+        logger.debug(f'More than match found for {source}: {db_names[0]}')
         # TODO: Find way for user to choose correct match
     elif len(db_name_matches) == 0:
-        db_names = None
-        logger.debug(f'No match found for {source}')
+        db_names = []
+        logger.debug(f' {source}: No match found')
     else:
         raise SimpleError(f'Unexpected condition searching for {source}')
 

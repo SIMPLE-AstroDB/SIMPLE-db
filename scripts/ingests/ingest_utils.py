@@ -45,61 +45,45 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
     n_sources = len(ingest_names)
     logger.info(f"SORTING {n_sources} SOURCES\n")
 
-    if ingest_ras and ingest_decs:
-        coords = True
-    else:
+    if ingest_ras is None and ingest_decs is None:
         coords = False
+    else:
+        coords = True
 
     existing_sources_index = []
+    n_multiples = 0
     missing_sources_index = []
     alt_names_table = Table(names=('db_name', 'ingest_name'), dtype=('str', 'str'))
-    db_names = []
 
-    for i, name in tqdm(enumerate(ingest_names)):
-        # TODO: format progress bar better
+    for i, name in enumerate(ingest_names):
 
-        logger.debug(f"{i}, : sorting: {name}")
+        logger.debug(f"{i}: sorting {name}")
 
         if coords:
             name_matches = find_source_in_db(db, name, ingest_ra=ingest_ras[i], ingest_dec=ingest_decs[i],
-                                            search_radius=search_radius)
+                                             search_radius=search_radius)
         else:
             name_matches = find_source_in_db(db, name)
 
-        # TODO: Find new way to populate alt names table
-
         if len(name_matches) == 1:
             existing_sources_index.append(i)
-            logger.debug(f"{i}, match found for {name}: {name_matches}")
-
+            logger.debug(f"{i}, match found for {name}: {name_matches[0]}")
             # Figure out if ingest name is an alternate name
             db_matches = db.search_object(name, output_table='Sources', fuzzy_search=False)
             if len(db_matches) == 0:
                 alt_names_table.add_row([name_matches, name])
-
         elif len(name_matches) > 1:
             existing_sources_index.append(i)
-            #db_names.append(name_matches[0])
+            n_multiples += 1
             msg = f"{i}, More than one match for {name}\n {name_matches}\n"
-            #msg2 = f"{i}, Using first one: {name_matches[0]}\n"
             logger.warning(msg)
-
-
         elif len(name_matches) == 0:
             logger.debug(f"{i}: Not in database: {name}")
             missing_sources_index.append(i)
-            #db_names.append(ingest_names[i])
         else:
             msg = f"{i}: unexpected condition encountered sorting {name}"
             logger.error(msg)
             raise SimpleError(msg)
-
-    logger.info(f"ALL SOURCES SORTED: {n_sources}")
-    logger.debug(f"Existing Sources:\n, {ingest_names[existing_sources_index]}")
-    logger.debug(f"Missing Sources:\n, {ingest_names[missing_sources_index]}")
-    logger.debug("\n Existing Sources with different name:\n")
-    if logger.level == 10:  # debug
-        alt_names_table.pprint_all()
 
     n_ingest = len(ingest_names)
     n_existing = len(existing_sources_index)
@@ -111,9 +95,18 @@ def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_rad
         logger.error(msg)
         raise RuntimeError("Unexpected number of sources")
 
+    print(' ')
+    logger.info(f"ALL SOURCES SORTED: {n_sources}")
     logger.info(f"Sources already in database: {n_existing}")
+    logger.info(f"Sources with multiple matches in database: {n_multiples}")
     logger.info(f"Sources found with alternate names: {n_alt}")
     logger.info(f"Sources not found in the database: {n_missing}\n")
+
+    logger.debug(f"Existing Sources:\n, {ingest_names[existing_sources_index]}")
+    logger.debug(f"Missing Sources:\n, {ingest_names[missing_sources_index]}")
+    logger.debug("Existing Sources with different name:\n")
+    if logger.level == 10:  # debug
+        alt_names_table.pprint_all()
 
     return missing_sources_index, existing_sources_index, alt_names_table
 
