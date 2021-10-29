@@ -1,7 +1,6 @@
 """
 Utils functions for use in ingests
 """
-from collections import namedtuple
 import logging
 import os
 import sys
@@ -10,14 +9,17 @@ import warnings
 from pathlib import Path
 from astrodbkit2.astrodb import create_database
 from astrodbkit2.astrodb import Database
+from simple.schema import *
 import ads
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.simbad import Simbad
-from astropy.table import Table
+from astropy.table import Table, unique
 from sqlalchemy import or_, and_
 import sqlalchemy.exc
 import numpy as np
+import numpy.ma as ma
+from tqdm import tqdm
 
 warnings.filterwarnings("ignore", module='astroquery.simbad')
 logger = logging.getLogger('SIMPLE')
@@ -71,7 +73,6 @@ def load_simpledb(db_file, recreatedb=True):
 def find_in_simbad(sources, desig_prefix, source_id_index=None):
     """
     Function to extract source designations from SIMBAD
-
     Parameters
     ----------
     sources: astropy.table.Table
@@ -82,11 +83,9 @@ def find_in_simbad(sources, desig_prefix, source_id_index=None):
         After a designation is split, this index indicates source id suffix.
         For example, source_id_index = 2 to extract suffix from "Gaia DR2" designations.
         source_id_index = 1 to exctract suffix from "2MASS" designations.
-
     Returns
     -------
     Astropy table
-
     """
 
     n_sources = len(sources)
@@ -137,7 +136,7 @@ def find_in_simbad(sources, desig_prefix, source_id_index=None):
     return result_table
 
 
-def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60.):
+def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_radius=60.):
     """
     Classifying sources to be ingested into the database into three categories:
     1) in the database with the same name,
@@ -150,9 +149,9 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60.):
     db
     ingest_names
         Names of sources
-    ingest_ras
+    ingest_ras: (optional)
         Right ascensions of sources. Decimal degrees.
-    ingest_decs
+    ingest_decs: (optional)
         Declinations of sources. Decimal degrees.
     search_radius
         radius in arcseconds to use for source matching
@@ -164,43 +163,57 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60.):
     existing_sources_index
         Indices of sources which are already in the database
     alt_names_table
-        List of tuples with Other Names to add to database
+        Astropy Table with Other Names to add to database
+        Can be used as input to add_names function
     """
+    # TODO: add progress bar
+
+    n_sources = len(ingest_names)
+    logger.info(f"SORTING {n_sources} SOURCES\n")
+
+    if ingest_ras and ingest_decs:
+        coords = True
+    else:
+        coords = False
 
     existing_sources_index = []
     missing_sources_index = []
-    Alt_names = namedtuple("Alt_names", "source other_name")
-    alt_names_table = []
+    # Alt_names = namedtuple("Alt_names", "source other_name")
+    alt_names_table = Table(names=('db_name', 'ingest_name'), dtype=('str', 'str'))
     db_names = []
 
-    for i, name in enumerate(ingest_names):
+    for i, name in tqdm(enumerate(ingest_names)):
         logger.debug(f"{i}, : searching:, {name}")
 
-        namematches = db.search_object(name)
+        # TODO: Replace with find_source_in_db function
+
+        namematches = db.search_object(name.strip())
 
         # if no matches, try resolving with Simbad
         if len(namematches) == 0:
             logger.debug(f"{i}, : no name matches, trying simbad search")
             try:
-                namematches = db.search_object(name, resolve_simbad=True)
+                namematches = db.search_object(name, resolve_simbad=True, verbose=False, fuzzy_search=False)
                 if len(namematches) == 1:
                     simbad_match = namematches[0]['source']
-                    # Populate list with ingest name and database name match
-                    alt_names_table.append(Alt_names(simbad_match, name))
+                    # Populate Astropy Table with ingest name and database name match
+                    alt_names_table.add_row((simbad_match, name))
+                    logger.debug(f'New alt Name for {simbad_match}: {name}\n')
             except TypeError:  # no Simbad match
                 namematches = []
 
         # if still no matches, try spatial search using coordinates
-        if len(namematches) == 0:
+        if len(namematches) == 0 and coords:
             location = SkyCoord(ingest_ras[i], ingest_decs[i], frame='icrs', unit='deg')
             radius = u.Quantity(search_radius, unit='arcsec')
-            logger.debug(f"{i}, : no Simbad match, trying coord search around, {location.ra.hour}, {location.dec}")
+            logger.info(f"{i}, : no Simbad match, trying coord search around, {location.ra.hour}, {location.dec}")
             nearby_matches = db.query_region(location, radius=radius)
             if len(nearby_matches) == 1:
                 namematches = nearby_matches
                 coord_match = namematches[0]['source']
-                # Populate list with ingest name and database name match
-                alt_names_table.append(Alt_names(coord_match, name))
+                # Populate Astropy Table with ingest name and database name match
+                alt_names_table.add_row((coord_match, name))
+                logger.info(f'New alt Name for {coord_match}: {name}')
             if len(nearby_matches) > 1:
                 logger.debug(f'{nearby_matches}')
                 msg = "too many nearby sources!"
@@ -213,9 +226,14 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60.):
             db_names.append(source_match)
             logger.debug(f"{i}, match found: , {source_match}")
         elif len(namematches) > 1:
-            msg = f"{i}, More than one match for, {name}\n {namematches}"
-            logger.error(msg)
-            raise RuntimeError(msg)
+            # If more than one match, just choose the first one
+            # TODO: Figure out way to let use choose correct match
+            existing_sources_index.append(i)
+            source_match = namematches[0]['source']
+            db_names.append(source_match)
+            msg = f"{i}, More than one match for, {name}\n {namematches}\n"
+            msg2 = f"{i}, Using first one: {namematches[0]['source']}\n"
+            logger.warning(msg + msg2)
         elif len(namematches) == 0:
             logger.debug(f"{i}: Not in database")
             missing_sources_index.append(i)
@@ -225,10 +243,10 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60.):
             logger.error(msg)
             raise RuntimeError(msg)
 
-    logger.info("\n ALL SOURCES SORTED")
-    logger.info(f"\n Existing Sources:\n, {ingest_names[existing_sources_index]}")
-    logger.info(f"\n Missing Sources:\n, {ingest_names[missing_sources_index]}")
-    logger.info("\n Existing Sources with different name:\n")
+    logger.info(f"ALL SOURCES SORTED: {n_sources}")
+    logger.debug(f"Existing Sources:\n, {ingest_names[existing_sources_index]}")
+    logger.debug(f"Missing Sources:\n, {ingest_names[missing_sources_index]}")
+    logger.debug("\n Existing Sources with different name:\n")
     if logger.level == 10:  # debug
         # TODO: does pprint_all work here? alt_names_table appears to be a list instead of a astropy Table
         # alt_names_table.pprint_all()
@@ -244,11 +262,42 @@ def sort_sources(db, ingest_names, ingest_ras, ingest_decs, search_radius=60.):
         logger.error(msg)
         raise RuntimeError("Unexpected number of sources")
 
-    logger.info(f"{n_existing}, sources already in database.")
-    logger.info(f"{n_alt}, sources found with alternate names")
-    logger.info(f"{n_missing}, sources not found in the database")
+    logger.info(f"Sources already in database: {n_existing}")
+    logger.info(f"Sources found with alternate names: {n_alt}")
+    logger.info(f"Sources not found in the database: {n_missing}\n")
 
     return missing_sources_index, existing_sources_index, alt_names_table
+
+
+def find_source_in_db(db, source):
+    # TODO: Merge with source finding in sort_sources function
+    # TODO: Convert to using logger and custom error messages
+    db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=False, verbose=False)
+
+    # If no matches, try fuzzy search
+    if len(db_name_match) == 0:
+        db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=True, verbose=False)
+
+    # If still no matches, try to resolve the name with Simbad
+    if len(db_name_match) == 0:
+        db_name_match = db.search_object(source, output_table='Sources', resolve_simbad=True, verbose=False)
+
+    if len(db_name_match) == 1:
+        db_name = db_name_match['source'][0]
+        # print("\n", db_name, "One source match found", verbose=verbose)
+    elif len(db_name_match) > 1:
+        print("\n", source)
+        print(db_name_match)
+        raise RuntimeError(source, "More than one match source found in the database")
+    elif len(db_name_match) == 0:
+        print("\n", source)
+        raise RuntimeError(source, "No source found in the database")
+    else:
+        print("\n", source)
+        print(db_name_match)
+        raise RuntimeError(source, "unexpected condition")
+
+    return db_name
 
 
 def add_names(db, sources=None, other_names=None, names_table=None):
@@ -286,19 +335,31 @@ def add_names(db, sources=None, other_names=None, names_table=None):
             names_data.append({'source': source, 'other_name': other_name})
 
     if names_table is not None:
-        if len(names_table[0]) != 2:
-            msg = "Each row should have two elements"
+        if len(names_table) == 0:
+            msg = "No new names to add to database"
+            logger.warning(msg)
+
+        elif len(names_table[0]) != 2:
+            msg = "Each tuple should have two elements"
             logger.error(msg)
             raise RuntimeError(msg)
 
+        # Remove duplicate names
+        names_table = unique(names_table)
+
         for name_row in names_table:
             names_data.append({'source': name_row[0], 'other_name': name_row[1]})
+            logger.debug(name_row)
 
-    db.Names.insert().execute(names_data)
+    n_names = len(names_data)
 
-    n_added = len(names_data)
-
-    logger.info(f"Names added to database: , {n_added}")
+    if n_names > 0:
+        try:
+            db.Names.insert().execute(names_data)
+            logger.info(f"Names added to database: {n_names}\n")
+        except sqlalchemy.exc.IntegrityError:
+            msg = f"Could not add {n_names} alt names to database"
+            logger.warning(msg)
 
     return
 
@@ -719,7 +780,7 @@ def convert_spt_string_to_code(spectral_types):
 
 
 def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=None,
-                   equinoxes=None, save_db=False):
+                   equinoxes=None):
     """
     Script to ingest sources
 
@@ -733,15 +794,18 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     comments
     epochs
     equinoxes
-    save_db
 
     Returns
     -------
 
     """
+    # TODO: add example
 
     n_added = 0
+    n_skipped = 0
     n_sources = len(sources)
+
+    logger.info(f"Trying to add {n_sources} sources")
 
     if epochs is None:
         epochs = [None] * n_sources
@@ -760,34 +824,51 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                         'epoch': epochs[i],
                         'equinox': equinoxes[i],
                         'comments': comments[i]}]
-        logger.debug(str(source_data))
+        # logger.debug(str(source_data))
 
         try:
             db.Sources.insert().execute(source_data)
             n_added += 1
+            msg = f"Added {str(source_data)}"
+            logger.debug(msg)
         except sqlalchemy.exc.IntegrityError:
             # try reference without last letter e.g.Smit04 instead of Smit04a
-            if source_data[0]['reference'][-1] in ('a', 'b'):
+            if ma.is_masked(source_data[0]['reference']):
+                msg = f"Skipping: {sources[i]}. Discovery reference is blank. \n"
+                msg2 = f"\n {str(source_data)}\n"
+                logger.warning(msg)
+                logger.debug(msg2)
+                n_skipped += 1
+                continue
+            elif source_data[0]['reference'][-1] in ('a', 'b'):
                 source_data[0]['reference'] = references[i][:-1]
                 try:
                     db.Sources.insert().execute(source_data)
                     n_added += 1
+                    msg = f"Added \n {str(source_data)}"
+                    logger.debug(msg)
                 except sqlalchemy.exc.IntegrityError:
-                    msg = "Discovery reference may not exist in the Publications table." \
-                          "Add it with add_publication function. "
-                    logger.error(msg)
-                    raise SimpleError(msg)
+                    msg = f"Skipping {sources[i]} "
+                    msg2 = f"\n {str(source_data)} " \
+                           f"\n Discovery reference may not exist in the Publications table. " \
+                           "(Add it with add_publication function.) \n "
+                    logger.warning(msg)
+                    logger.debug(msg2)
+                    n_skipped += 1
+                    continue
             else:
-                msg = "Discovery reference may not exist in the Publications table." \
-                      "Add it with add_publication function. "
-                logger.error(msg)
-                raise SimpleError(msg)
+                msg = f"Skipping: {sources[i]}"
+                msg2 = f"\n {str(source_data)} " \
+                       f"\n Possible duplicate source or discovery reference may not exist in the Publications table." \
+                       f"\n Add it with add_publication function. \n "
+                logger.warning(msg)
+                logger.debug(msg2)
+                n_skipped += 1
+                continue
+                # raise SimpleError(msg)
 
-    if save_db:
-        db.save_database(directory='data/')
-        logger.info(f"{n_added}, sources added to database and saved")
-    else:
-        logger.info(f"{n_added}, sources added to database")
+    logger.info(f"Sources added to database: {n_added}")
+    logger.info(f"Sources NOT added to database: {n_skipped} \n")
 
     return
 
@@ -922,33 +1003,8 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
     n_added = 0
 
     for i, source in enumerate(sources):
-        db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=False)
 
-        # If no matches, try fuzzy search
-        if len(db_name_match) == 0:
-            db_name_match = db.search_object(source, output_table='Sources', fuzzy_search=True)
-
-        # If still no matches, try to resolve the name with Simbad
-        if len(db_name_match) == 0:
-            db_name_match = db.search_object(source, output_table='Sources', resolve_simbad=True)
-        logger.debug(f'source')
-        if len(db_name_match) == 1:
-            db_name = db_name_match['source'][0]
-            logger.debug(f"{db_name}, One source match found")
-        elif len(db_name_match) > 1:
-            logger.debug(db_name_match)
-            msg = f"{source}, More than one match source found in the database"
-            logger.error(msg)
-            raise RuntimeError(msg)
-        elif len(db_name_match) == 0:
-            msg = f"{source}, No source found in the database"
-            logger.error(msg)
-            raise RuntimeError(msg)
-        else:
-            logger.debug(str(db_name_match))
-            msg = f"{source}, unexpected condition"
-            logger.error(msg)
-            raise RuntimeError(msg)
+        db_name = find_source_in_db(db, source)
 
         # Search for existing proper motion data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
