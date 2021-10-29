@@ -14,12 +14,16 @@ def load_reference(file, path, table):
         data = json.load(f)
 
     for json_data in data:
-        name = json_data['name']
-        count = db[table].count_documents({'name': name})
+        colname = 'name'
+        name = json_data.get(colname)
+        if name is None:
+            colname = 'band'
+            name = json_data.get(colname)
+        count = db[table].count_documents({colname: name})
 
         if count > 0:
             # Replace existing
-            cursor = db[table].find({'name': name})
+            cursor = db[table].find({colname: name})
             for doc in cursor:
                 result = db[table].replace_one(filter={'_id': doc['_id']}, replacement=json_data)
         else:
@@ -37,7 +41,7 @@ Sources = db.Sources
 # Sources.drop()  # drop collection, if needed
 # For other collections I will use the db['collection'] scheme
 
-reference_tables = ['Publications', 'Telescopes', 'Instruments']
+reference_tables = ['Publications', 'Telescopes', 'Instruments', 'Modes', 'PhotometryFilters']
 path = 'data'
 
 # Loop over the JSON files and add them to the database
@@ -76,7 +80,7 @@ for doc in cursor:
 
 # Note that MongoDB adds a unique _id key for each record
 # Can use projection to remove some of the output, like _id
-cursor = db['Sources'].find({'Photometry.band': 'WISE_W1'}, projection={'_id': 0})
+cursor = db['Sources'].find({'Photometry.band': 'WISE.W1'}, projection={'_id': 0})
 for doc in cursor.limit(1):
     print(json.dumps(doc, indent=4))  # pretty print
 # Note that this returns the full Sources information for anything that had WISE_W1 photometry
