@@ -137,7 +137,7 @@ def find_source_in_db(db, source, ra=None, dec=None, search_radius=60.):
     return db_names
 
 
-def search_publication(db, name: str = None, doi: str = None, bibcode: str = None):
+def find_publication(db, name: str = None, doi: str = None, bibcode: str = None):
     """
     Find publications in the database by matching on the publication name,  doi, or bibcode
 
@@ -240,7 +240,7 @@ def search_publication(db, name: str = None, doi: str = None, bibcode: str = Non
     return
 
 
-def add_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None,
+def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None,
                     ignore_ads: bool = False, save_db=False):
     """
     Adds publication to the database using DOI or ADS Bibcode, including metadata found with ADS.
