@@ -12,133 +12,51 @@ logger = logging.getLogger('SIMPLE')
 
 
 # SOURCES
-def sort_sources(db, ingest_names, ingest_ras=None, ingest_decs=None, search_radius=60.):
-    """
-    Classifying sources to be ingested into the database into three categories:
-    1) in the database with the same name,
-    2) in the database with a different name, or
-    3) not in the database and need to be added.
-
-    Parameters
-    ----------
-    db
-    ingest_names
-        Names of sources
-    ingest_ras: (optional)
-        Right ascensions of sources. Decimal degrees.
-    ingest_decs: (optional)
-        Declinations of sources. Decimal degrees.
-    search_radius
-        radius in arcseconds to use for source matching
-
-    Returns
-    -------
-    missing_sources_index
-        Indices of sources which are not in the database
-    existing_sources_index
-        Indices of sources which are already in the database
-    alt_names_table
-        Astropy Table with Other Names to add to database
-        Can be used as input to add_names function
-    """
-
-    n_sources = len(ingest_names)
-    logger.info(f"SORTING {n_sources} SOURCES\n")
-
-    if ingest_ras is None and ingest_decs is None:
-        coords = False
-    else:
-        coords = True
-
-    existing_sources_index = []
-    n_multiples = 0
-    missing_sources_index = []
-    alt_names_table = Table(names=('db_name', 'ingest_name'), dtype=('str', 'str'))
-
-    for i, name in enumerate(ingest_names):
-
-        logger.debug(f"{i}: sorting {name}")
-
-        if coords:
-            name_matches = find_source_in_db(db, name, ingest_ra=ingest_ras[i], ingest_dec=ingest_decs[i],
-                                             search_radius=search_radius)
-        else:
-            name_matches = find_source_in_db(db, name)
-
-        if len(name_matches) == 1:
-            existing_sources_index.append(i)
-            logger.debug(f"{i}, match found for {name}: {name_matches[0]}")
-            # Figure out if ingest name is an alternate name
-            db_matches = db.search_object(name, output_table='Sources', fuzzy_search=False)
-            if len(db_matches) == 0:
-                alt_names_table.add_row([name_matches, name])
-        elif len(name_matches) > 1:
-            existing_sources_index.append(i)
-            n_multiples += 1
-            msg = f"{i}, More than one match for {name}\n {name_matches}\n"
-            logger.warning(msg)
-        elif len(name_matches) == 0:
-            logger.debug(f"{i}: Not in database: {name}")
-            missing_sources_index.append(i)
-        else:
-            msg = f"{i}: unexpected condition encountered sorting {name}"
-            logger.error(msg)
-            raise SimpleError(msg)
-
-    n_ingest = len(ingest_names)
-    n_existing = len(existing_sources_index)
-    n_alt = len(alt_names_table)
-    n_missing = len(missing_sources_index)
-
-    if n_ingest != n_existing + n_missing:
-        msg = "Unexpected number of sources"
-        logger.error(msg)
-        raise RuntimeError("Unexpected number of sources")
-
-    print(' ')
-    logger.info(f"ALL SOURCES SORTED: {n_sources}")
-    logger.info(f"Sources already in database: {n_existing}")
-    logger.info(f"Sources with multiple matches in database: {n_multiples}")
-    logger.info(f"Sources found with alternate names: {n_alt}")
-    logger.info(f"Sources not found in the database: {n_missing}\n")
-
-    logger.debug(f"Existing Sources:\n, {ingest_names[existing_sources_index]}")
-    logger.debug(f"Missing Sources:\n, {ingest_names[missing_sources_index]}")
-    logger.debug("Existing Sources with different name:\n")
-    if logger.level == 10:  # debug
-        alt_names_table.pprint_all()
-
-    return missing_sources_index, existing_sources_index, alt_names_table
-
-
 def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=None,
-                   equinoxes=None):
+                   equinoxes=None, raise_error=True):
     """
     Script to ingest sources
 
-    TODO: Make a keyword which toggles warnings/errors for sources and names which aren't ingested
-
     Parameters
     ----------
-    db
-    sources
-    ras
-    decs
-    references
-    comments
-    epochs
-    equinoxes
+    db: astrodbkit2.astrodb.Database
+        Database object created by astrodbkit2
+    sources: list of strings
+        Names of sources
+    ras: list of floats
+        Right ascensions of sources. Decimal degrees.
+    decs: list of floats
+        Declinations of sources. Decimal degrees.
+    references: list of strings
+        Discovery references of sources
+    comments: list of strings
+        Comments
+    epochs: list of floats
+        Epochs of coordinates
+    equinoxes: list of floats
+        Equinoxes of coordinates
+    raise_error: bool
+        True (default): Raise an error if a source cannot be ingested
+        False: Log a warning but skip sources which cannot be ingested
 
     Returns
     -------
+
+    None
 
     """
     # TODO: add example
 
     n_added = 0
     n_names = 0
+    n_alt_names = 0
     n_skipped = 0
     n_sources = len(sources)
+
+    existing_sources_index = []
+    n_multiples = 0
+    missing_sources_index = []
+    #alt_names_table = Table(names=('db_name', 'ingest_name'), dtype=('str', 'str'))
 
     logger.info(f"Trying to add {n_sources} sources")
 
@@ -150,34 +68,80 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
         comments = [None] * n_sources
 
     for i, source in enumerate(sources):
+        # Find out if source is already in database or not
+        name_matches = find_source_in_db(db, source, ra=ras[i], dec=decs[i])
 
-        # Construct data to be added
-        source_data = [{'source': sources[i],
-                        'ra': ras[i],
-                        'dec': decs[i],
-                        'reference': references[i],
-                        'epoch': epochs[i],
-                        'equinox': equinoxes[i],
-                        'comments': None if ma.is_masked(comments[i]) else comments[i]}]
-        # logger.debug(str(source_data))
+        if len(name_matches) == 1:
+            # Source is already in database
+            existing_sources_index.append(i)
+            msg1 = f"{i}: Skipping {source}. Already in database. \n "
+            msg2 = f"{i}: Match found for {source}: {name_matches[0]}"
+            logger.debug(msg1 + msg2)
 
-        names_data = [{'source': sources[i],
-                       'other_name': sources[i]}]
+            # Figure out if ingest name is an alternate name
+            db_matches = db.search_object(source, output_table='Sources', fuzzy_search=False)
+            if len(db_matches) == 0:
+                alt_names_data = [{'source': name_matches[0], 'other_name': source}]
+                try:
+                    db.Names.insert().execute(alt_names_data)
+                    logger.debug(f"{i}: Name added to database: {alt_names_data}\n")
+                    n_alt_names += 1
+                except sqlalchemy.exc.IntegrityError:
+                    msg = f"{i}: Could not add {alt_names_data} to database"
+                    logger.warning(msg)
+                    if raise_error:
+                        raise SimpleError(msg)
+                    else:
+                        continue
+            continue # Source is already in database, nothing new to ingest
+        elif len(name_matches) > 1:
+            existing_sources_index.append(i)
+            n_multiples += 1
+            msg1 = f"{i} Skipping {source} "
+            msg = f"{i} More than one match for {source}\n {name_matches}\n"
+            logger.warning(msg1+msg)
+            if raise_error:
+                raise SimpleError(msg)
+            else:
+                continue
+        elif len(name_matches) == 0:
+            logger.debug(f"{i}: Not in database: {source}")
+            missing_sources_index.append(i)
 
+            # Construct data to be added
+            source_data = [{'source': source,
+                            'ra': ras[i],
+                            'dec': decs[i],
+                            'reference': references[i],
+                            'epoch': epochs[i],
+                            'equinox': equinoxes[i],
+                            'comments': None if ma.is_masked(comments[i]) else comments[i]}]
+            names_data = [{'source': sources[i],
+                           'other_name': sources[i]}]
+        else:
+            msg = f"{i}: unexpected condition encountered ingesting {source}"
+            logger.error(msg)
+            raise SimpleError(msg)
+
+        # Try to add the source to the database
         try:
             db.Sources.insert().execute(source_data)
             n_added += 1
             msg = f"Added {str(source_data)}"
             logger.debug(msg)
         except sqlalchemy.exc.IntegrityError:
-            # try reference without last letter e.g.Smit04 instead of Smit04a
+            # check if reference is blank
             if ma.is_masked(source_data[0]['reference']):
-                msg = f"Skipping: {sources[i]}. Discovery reference is blank. \n"
+                msg = f"{i}: Skipping: {source}. Discovery reference is blank. \n"
                 msg2 = f"\n {str(source_data)}\n"
                 logger.warning(msg)
                 logger.debug(msg2)
                 n_skipped += 1
-                continue
+                if raise_error:
+                    raise SimpleError(msg + msg2)
+                else:
+                    continue
+            # try reference without last letter e.g.Smit04 instead of Smit04a
             elif source_data[0]['reference'][-1] in ('a', 'b'):
                 source_data[0]['reference'] = references[i][:-1]
                 try:
@@ -186,103 +150,52 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                     msg = f"Added \n {str(source_data)}"
                     logger.debug(msg)
                 except sqlalchemy.exc.IntegrityError:
-                    msg = f"Skipping {sources[i]} "
+                    msg = f"Skipping {source} "
                     msg2 = f"\n {str(source_data)} " \
                            f"\n Discovery reference may not exist in the Publications table. " \
                            "(Add it with add_publication function.) \n "
                     logger.warning(msg)
                     logger.debug(msg2)
                     n_skipped += 1
-                    continue
+                    if raise_error:
+                        raise SimpleError(msg + msg2)
+                    else:
+                        continue
             else:
-                msg = f"Skipping: {sources[i]}"
+                msg = f"{i}: Skipping: {source}"
                 msg2 = f"\n {str(source_data)} " \
                        f"\n Possible duplicate source or discovery reference may not exist in the Publications table." \
                        f"\n Add it with add_publication function. \n "
                 logger.warning(msg)
                 logger.debug(msg2)
                 n_skipped += 1
-                continue
-                # raise SimpleError(msg)
+                if raise_error:
+                    raise SimpleError(msg+msg2)
+                else:
+                    continue
 
         try:
             db.Names.insert().execute(names_data)
             logger.debug(f"Name added to database: {names_data}\n")
             n_names += 1
         except sqlalchemy.exc.IntegrityError:
-            msg = f"Could not add {names_data} to database"
+            msg = f"{i}: Could not add {names_data} to database"
             logger.warning(msg)
-
+            if raise_error:
+                raise SimpleError(msg)
+            else:
+                continue
 
     logger.info(f"Sources added to database: {n_added}")
     logger.info(f"Names added to database: {n_names} \n")
+    logger.info(f"Alt Names added to database: {n_alt_names} \n")
     logger.info(f"Sources NOT added to database: {n_skipped} \n")
 
-    return
-
-
-def add_names(db, sources=None, other_names=None, names_table=None):
-    """
-    Add source names to the Names table in the database.
-    Provide either two lists of sources and other_names or a 2D names_table.
-
-    Parameters
-    ----------
-    db
-    sources
-        list of source names which already exist in the database
-    other_names
-        list of alternate names for sources
-    names_table
-        table with source and other_names.
-        Expecting source name to be first column and other_names in the 2nd.
-    """
-
-    if names_table is not None and sources is not None:
-        msg = "Both names table and sources list provided. Provide one or the other"
-        logger.error(msg)
-        raise RuntimeError(msg)
-
-    names_data = []
-
-    if sources is not None or other_names is not None:
-        # Length of sources and other_names list should be equal
-        if len(sources) != len(other_names):
-            msg = "Length of sources and other_names should be equal"
-            logger.error(msg)
-            raise RuntimeError(msg)
-
-        for source, other_name in zip(sources, other_names):
-            names_data.append({'source': source, 'other_name': other_name})
-
-    if names_table is not None:
-        if len(names_table) == 0:
-            msg = "No new names to add to database"
-            logger.warning(msg)
-        elif len(names_table[0]) != 2:
-            msg = "Each tuple should have two elements"
-            logger.error(msg)
-            raise RuntimeError(msg)
-        else:
-            # Remove duplicate names
-            names_table = unique(names_table)
-
-        for name_row in names_table:
-            names_data.append({'source': name_row[0], 'other_name': name_row[1]})
-            logger.debug(name_row)
-
-    n_names = len(names_data)
-
-    if n_names > 0:
-        try:
-            db.Names.insert().execute(names_data)
-            logger.info(f"Names added to database: {n_names}\n")
-        except sqlalchemy.exc.IntegrityError:
-            msg = f"Could not add {n_names} alt names to database"
-            logger.warning(msg)
+    if n_added + n_skipped != n_sources:
+        msg = f"Number added + Number skipped doesn't add up to total sources"
+        raise SimpleError(msg)
 
     return
-
 
 # SURVEY DATA
 def find_survey_name_in_simbad(sources, desig_prefix, source_id_index=None):
@@ -355,6 +268,7 @@ def find_survey_name_in_simbad(sources, desig_prefix, source_id_index=None):
 # SPECTRAL TYPES
 def convert_spt_string_to_code(spectral_types):
     """
+    # TODO: Could be part of future ingest_spectral_types function
     normal tests: M0, M5.5, L0, L3.5, T0, T3, T4.5, Y0, Y5, Y9.
     weird TESTS: sdM4, ≥Y4, T5pec, L2:, L0blue, Lpec, >L9, >M10, >L, T, Y
     digits are needed in current implementation.

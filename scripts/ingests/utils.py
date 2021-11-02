@@ -68,7 +68,7 @@ def load_simpledb(db_file, recreatedb=True):
     return db
 
 
-def find_source_in_db(db, source, ingest_ra=None, ingest_dec=None, search_radius=60.):
+def find_source_in_db(db, source, ra=None, dec=None, search_radius=60.):
     """
     Find a source in the database given a source name and optional coordinates.
 
@@ -76,9 +76,9 @@ def find_source_in_db(db, source, ingest_ra=None, ingest_dec=None, search_radius
     ----------
     db
     source
-    ingest_ra: (Optional)
+    ra: (Optional)
         Right ascensions of sources. Decimal degrees.
-    ingest_dec: (optional)
+    dec: (optional)
         Declinations of sources. Decimal degrees.
     search_radius
         radius in arcseconds to use for source matching
@@ -92,7 +92,7 @@ def find_source_in_db(db, source, ingest_ra=None, ingest_dec=None, search_radius
 
     # TODO: In astrodbkit2, convert verbose to using logger
 
-    if ingest_ra and ingest_dec:
+    if ra and dec:
         coords = True
     else:
         coords = False
@@ -116,7 +116,7 @@ def find_source_in_db(db, source, ingest_ra=None, ingest_dec=None, search_radius
 
     # if still no matches, try spatial search using coordinates, if provided
     if len(db_name_matches) == 0 and coords:
-        location = SkyCoord(ingest_ra, ingest_dec, frame='icrs', unit='deg')
+        location = SkyCoord(ra, dec, frame='icrs', unit='deg')
         radius = u.Quantity(search_radius, unit='arcsec')
         logger.info(f"{source}: No Simbad match, trying coord search around {location.ra.hour}, {location.dec}")
         db_name_matches = db.query_region(location, radius=radius)
@@ -126,7 +126,7 @@ def find_source_in_db(db, source, ingest_ra=None, ingest_dec=None, search_radius
         logger.debug(f'One match found for {source}: {db_names[0]}')
     elif len(db_name_matches) > 1:
         db_names = db_name_matches['source'].tolist()
-        logger.debug(f'More than match found for {source}: {db_names[0]}')
+        logger.debug(f'More than match found for {source}: {db_names}')
         # TODO: Find way for user to choose correct match
     elif len(db_name_matches) == 0:
         db_names = []

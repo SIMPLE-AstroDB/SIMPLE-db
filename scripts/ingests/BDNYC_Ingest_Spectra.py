@@ -1,4 +1,5 @@
 from scripts.ingests.utils import *
+from scripts.ingests.ingest_utils import *
 import pandas as pd
 import numpy.ma as ma
 import dateutil
@@ -7,7 +8,7 @@ from sqlalchemy import func
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
@@ -15,7 +16,7 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 db.Spectra.delete().where(db.Spectra.c.source == '2MASS J00192626+4614078').execute()
 
 # Read in CSV file as Astropy table
-data = Table.read('scripts/ingests/BDNYC_spectra4.csv')
+data = Table.read('scripts/ingests/BDNYC_spectra-test.csv')
 
 
 # Inserting various Libraries for Modes,Telescopes and Instruments
@@ -155,7 +156,8 @@ msg = f'Trying to add {n_spectra} spectra'
 logger.info(msg)
 
 for row in existing_data:
-    # TODO: check that spectrum can be read by astrodbkit
+    # TODO: check that spectrum can be read by specutils
+    # if spectrum can't be loaded, add to Comment: "Unreadable by specutils as of <date>"
 
     # Get source name as it appears in the database
     db_name = find_source_in_db(db, row['designation'])

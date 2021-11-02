@@ -121,8 +121,9 @@ def test_search_publication(db):
 
 def test_add_publication(db):
     # should fail if trying to add a duplicate record
-    with pytest.raises(SimpleError):
+    with pytest.raises(SimpleError) as error_message:
         add_publication(db, name='Ref 1', bibcode='2020MNRAS.496.1922B')
+    assert 'duplicate' in str(error_message.value)
     # TODO - Mock environment  where ADS_TOKEN is not set. #117
 
 
