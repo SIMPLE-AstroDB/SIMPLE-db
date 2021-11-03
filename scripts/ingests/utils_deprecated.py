@@ -229,3 +229,40 @@ def check_names_simbad(ingest_names, ingest_ra, ingest_dec, radius='2s'):
     logger.warning('problem' if n_found != n_sources else (str(n_sources) + 'names'))
 
     return resolved_names
+
+
+def test_add_names(db):
+    sources_2 = ['Fake 1', 'Fake 2']
+    other_names_2 = ['Fake 1 alt', 'Fake 2 alt']
+    other_names_3 = ['Fake 1 alt', 'Fake 2 alt', 'Fake 3 alt']
+    alt_names_table = Table(names=('db_name', 'ingest_name'), dtype=('str', 'str'))
+    alt_names_table.add_row(('Fake 1', 'Fake 1 alternate'))
+    alt_names_table.add_row(('Fake 2', 'Fake 2 alternate'))
+
+    alt_names_table3 = [('Fake 1', 'Fake 1 alternate', '3rd column')]
+
+    # Add names using two lists
+    add_names(db, sources=sources_2, other_names=other_names_2)
+    results = db.query(db.Names).filter(db.Names.c.source == 'Fake 1').table()
+    assert results['other_name'][0] == 'Fake 1 alt'
+    results = db.query(db.Names).filter(db.Names.c.source == 'Fake 2').table()
+    assert results['other_name'][0] == 'Fake 2 alt'
+
+    # Add names using a table
+    add_names(db, names_table=alt_names_table)
+    results = db.query(db.Names).filter(db.Names.c.source == 'Fake 1').table()
+    assert results['other_name'][1] == 'Fake 1 alternate'
+    results = db.query(db.Names).filter(db.Names.c.source == 'Fake 2').table()
+    assert results['other_name'][1] == 'Fake 2 alternate'
+
+    # should fail if lists are different length
+    with pytest.raises(RuntimeError):
+        add_names(db, sources=sources_2, other_names=other_names_3)
+
+    # should fail if both table and sources list are given
+    with pytest.raises(RuntimeError):
+        add_names(db, sources=sources_2, other_names=other_names_2, names_table=alt_names_table)
+
+        # should fail if table has three columns
+        with pytest.raises(RuntimeError):
+            add_names(db, names_table=alt_names_table3)
