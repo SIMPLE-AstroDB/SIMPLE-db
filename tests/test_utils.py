@@ -71,6 +71,7 @@ def test_setup_db(db):
 
 
 def test_ingest_sources(db):
+    # TODO: Test adding an alt name
     source_data1 = Table([{'source': 'Fake 1', 'ra': 9.0673755, 'dec': 18.352889, 'reference': 'Ref 1'},
                           {'source': 'Fake 6', 'ra': 10.0673755, 'dec': 18.352889, 'reference': 'Ref 2'},
                           {'source': 'Fake 7', 'ra': 11.0673755, 'dec': 18.352889, 'reference': 'Ref 1'}])
@@ -90,7 +91,7 @@ def test_ingest_sources(db):
 
     with pytest.raises(SimpleError) as error_message:
         ingest_sources(db, source_data5['source'], ras=source_data5['ra'], decs=source_data5['dec'],
-                   references=source_data5['reference'], raise_error=True)
+                       references=source_data5['reference'], raise_error=True)
         assert 'blank' in str(error_message.value)
 
 
@@ -150,6 +151,7 @@ def test_ingest_publication(db):
     # TODO - Mock environment  where ADS_TOKEN is not set. #117
 
 
+# TODO: test for ingest_photometry
 
 
 
