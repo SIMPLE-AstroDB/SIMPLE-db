@@ -4,16 +4,13 @@ Utils functions for use in ingests
 import logging
 import os
 import sys
-import re
 import warnings
 from pathlib import Path
-from astrodbkit2.astrodb import create_database
-from astrodbkit2.astrodb import Database
+from astrodbkit2.astrodb import create_database, Database
 from simple.schema import *
 import ads
 from astropy.coordinates import SkyCoord
 import astropy.units as u
-from astroquery.simbad import Simbad
 from astropy.table import Table, unique
 from sqlalchemy import or_, and_
 import sqlalchemy.exc

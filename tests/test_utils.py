@@ -37,9 +37,9 @@ def db():
 # Create fake astropy Table of data to load
 @pytest.fixture(scope="module")
 def t_plx():
-    t_plx = Table([{'source': 'Fake 1', 'plx': 113, 'plx_err': 0.3, 'plx_ref': 'Ref 1'},
-                   {'source': 'Fake 2', 'plx': 145, 'plx_err': 0.5, 'plx_ref': 'Ref 1'},
-                   {'source': 'Fake 3', 'plx': 155, 'plx_err': 0.6, 'plx_ref': 'Ref 2'},
+    t_plx = Table([{'source': 'Fake 1', 'plx': 113., 'plx_err': 0.3, 'plx_ref': 'Ref 1'},
+                   {'source': 'Fake 2', 'plx': 145., 'plx_err': 0.5, 'plx_ref': 'Ref 1'},
+                   {'source': 'Fake 3', 'plx': 155., 'plx_err': 0.6, 'plx_ref': 'Ref 2'},
                    ])
     return t_plx
 
@@ -48,9 +48,9 @@ def t_plx():
 @pytest.fixture(scope="module")
 def t_pm():
     t_pm = Table(
-        [{'source': 'Fake 1', 'mu_ra': 113, 'mu_ra_err': 0.3, 'mu_dec': 113, 'mu_dec_err': 0.3, 'reference': 'Ref 1'},
-         {'source': 'Fake 2', 'mu_ra': 145, 'mu_ra_err': 0.5, 'mu_dec': 113, 'mu_dec_err': 0.3, 'reference': 'Ref 1'},
-         {'source': 'Fake 3', 'mu_ra': 55, 'mu_ra_err': 0.23, 'mu_dec': 113, 'mu_dec_err': 0.3, 'reference': 'Ref 2'},
+        [{'source': 'Fake 1', 'mu_ra': 113., 'mu_ra_err': 0.3, 'mu_dec': 113., 'mu_dec_err': 0.3, 'reference': 'Ref 1'},
+         {'source': 'Fake 2', 'mu_ra': 145., 'mu_ra_err': 0.5, 'mu_dec': 113., 'mu_dec_err': 0.3, 'reference': 'Ref 1'},
+         {'source': 'Fake 3', 'mu_ra': 55., 'mu_ra_err': 0.23, 'mu_dec': 113., 'mu_dec_err': 0.3, 'reference': 'Ref 2'},
          ])
     return t_pm
 
@@ -70,7 +70,7 @@ def test_setup_db(db):
     return db
 
 
-def test_ingest_sources():
+def test_ingest_sources(db):
     source_data1 = Table([{'source': 'Fake 1', 'ra': 9.0673755, 'dec': 18.352889, 'reference': 'Ref 1'},
                           {'source': 'Fake 6', 'ra': 10.0673755, 'dec': 18.352889, 'reference': 'Ref 2'},
                           {'source': 'Fake 7', 'ra': 11.0673755, 'dec': 18.352889, 'reference': 'Ref 1'}])
@@ -117,9 +117,7 @@ def test_ingest_parallaxes(db, t_plx):
 def test_ingest_proper_motions(db, t_pm):
     ingest_proper_motions(db, t_pm['source'], t_pm['mu_ra'], t_pm['mu_ra_err'],
                           t_pm['mu_dec'], t_pm['mu_dec_err'], t_pm['reference'])
-
-    results = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == 'Ref 1').table()
-    assert len(results) == 2
+    assert db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == 'Ref 1').count() == 2
     results = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == 'Ref 2').table()
     assert len(results) == 1
     assert results['source'][0] == 'Fake 3'
@@ -148,7 +146,7 @@ def test_ingest_publication(db):
     # should fail if trying to add a duplicate record
     with pytest.raises(SimpleError) as error_message:
         ingest_publication(db, name='Ref 1', bibcode='2020MNRAS.496.1922B')
-    assert 'duplicate' in str(error_message.value)
+    assert ' similar publication already exists' in str(error_message.value)
     # TODO - Mock environment  where ADS_TOKEN is not set. #117
 
 

@@ -6,6 +6,7 @@ import logging
 import numpy as np
 import numpy.ma as ma
 from astropy.table import Table, unique
+import re
 
 logger = logging.getLogger('SIMPLE')
 
@@ -454,6 +455,11 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
     for i, source in enumerate(sources):
 
         db_name = find_source_in_db(db, source)
+
+        if len(db_name) != 1:
+            raise SimpleError
+        else:
+            db_name= db_name[0]
 
         # Search for existing proper motion data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
