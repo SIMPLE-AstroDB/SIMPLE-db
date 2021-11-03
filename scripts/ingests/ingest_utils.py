@@ -5,7 +5,6 @@ from scripts.ingests.utils import *
 import logging
 import numpy as np
 import numpy.ma as ma
-from tqdm import tqdm
 from astropy.table import Table, unique
 
 logger = logging.getLogger('SIMPLE')
@@ -48,15 +47,12 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     # TODO: add example
 
     n_added = 0
+    n_existing = 0
     n_names = 0
     n_alt_names = 0
     n_skipped = 0
     n_sources = len(sources)
-
-    existing_sources_index = []
     n_multiples = 0
-    missing_sources_index = []
-    #alt_names_table = Table(names=('db_name', 'ingest_name'), dtype=('str', 'str'))
 
     logger.info(f"Trying to add {n_sources} sources")
 
@@ -67,18 +63,18 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     if comments is None:
         comments = [None] * n_sources
 
+    # Loop over each source and decide to ingest, skip, or add alt name
     for i, source in enumerate(sources):
         # Find out if source is already in database or not
         name_matches = find_source_in_db(db, source, ra=ras[i], dec=decs[i])
 
-        if len(name_matches) == 1:
-            # Source is already in database
-            existing_sources_index.append(i)
+        if len(name_matches) == 1: # Source is already in database
+            n_existing += 1
             msg1 = f"{i}: Skipping {source}. Already in database. \n "
             msg2 = f"{i}: Match found for {source}: {name_matches[0]}"
             logger.debug(msg1 + msg2)
 
-            # Figure out if ingest name is an alternate name
+            # Figure out if ingest name is an alternate name and add
             db_matches = db.search_object(source, output_table='Sources', fuzzy_search=False)
             if len(db_matches) == 0:
                 alt_names_data = [{'source': name_matches[0], 'other_name': source}]
@@ -94,8 +90,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                     else:
                         continue
             continue # Source is already in database, nothing new to ingest
-        elif len(name_matches) > 1:
-            existing_sources_index.append(i)
+        elif len(name_matches) > 1: # Multiple source matches in the database
             n_multiples += 1
             msg1 = f"{i} Skipping {source} "
             msg = f"{i} More than one match for {source}\n {name_matches}\n"
@@ -104,20 +99,19 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                 raise SimpleError(msg)
             else:
                 continue
-        elif len(name_matches) == 0:
+        elif len(name_matches) == 0: # No match in the database, INGEST!
             logger.debug(f"{i}: Not in database: {source}")
-            missing_sources_index.append(i)
 
             # Construct data to be added
             source_data = [{'source': source,
                             'ra': ras[i],
                             'dec': decs[i],
                             'reference': references[i],
-                            'epoch': epochs[i],
-                            'equinox': equinoxes[i],
+                            'epoch': None if ma.is_masked(epochs[i]) else epochs[i],
+                            'equinox': None if ma.is_masked(equinoxes[i]) else equinoxes[i],
                             'comments': None if ma.is_masked(comments[i]) else comments[i]}]
-            names_data = [{'source': sources[i],
-                           'other_name': sources[i]}]
+            names_data = [{'source': source,
+                           'other_name': source}]
         else:
             msg = f"{i}: unexpected condition encountered ingesting {source}"
             logger.error(msg)
@@ -130,8 +124,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
             msg = f"Added {str(source_data)}"
             logger.debug(msg)
         except sqlalchemy.exc.IntegrityError:
-            # check if reference is blank
-            if ma.is_masked(source_data[0]['reference']):
+            if ma.is_masked(source_data[0]['reference']):  # check if reference is blank
                 msg = f"{i}: Skipping: {source}. Discovery reference is blank. \n"
                 msg2 = f"\n {str(source_data)}\n"
                 logger.warning(msg)
@@ -141,31 +134,41 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                     raise SimpleError(msg + msg2)
                 else:
                     continue
+            elif db.query(db.Publications).filter(db.Publications.c.name == references[i]).count() == 0:
+                # check if reference is in Publications table
+                msg = f"{i}: Skipping: {source}. Discovery reference {references[i]} is not in Publications table. \n" \
+                      f"(Add it with add_publication function.) \n "
+                msg2 = f"\n {str(source_data)}\n"
+                logger.warning(msg)
+                logger.debug(msg2)
+                n_skipped += 1
+                if raise_error:
+                    raise SimpleError(msg + msg2)
+                else:
+                    continue
             # try reference without last letter e.g.Smit04 instead of Smit04a
-            elif source_data[0]['reference'][-1] in ('a', 'b'):
-                source_data[0]['reference'] = references[i][:-1]
-                try:
-                    db.Sources.insert().execute(source_data)
-                    n_added += 1
-                    msg = f"Added \n {str(source_data)}"
-                    logger.debug(msg)
-                except sqlalchemy.exc.IntegrityError:
-                    msg = f"Skipping {source} "
-                    msg2 = f"\n {str(source_data)} " \
-                           f"\n Discovery reference may not exist in the Publications table. " \
-                           "(Add it with add_publication function.) \n "
-                    logger.warning(msg)
-                    logger.debug(msg2)
-                    n_skipped += 1
-                    if raise_error:
-                        raise SimpleError(msg + msg2)
-                    else:
-                        continue
+            # elif source_data[0]['reference'][-1] in ('a', 'b'):
+            #    source_data[0]['reference'] = references[i][:-1]
+            #    try:
+            #        db.Sources.insert().execute(source_data)
+            #        n_added += 1
+            #        msg = f"Added \n {str(source_data)}"
+            #        logger.debug(msg)
+            #    except sqlalchemy.exc.IntegrityError:
+            #        msg = f"Skipping {source} "
+            #        msg2 = f"\n {str(source_data)} " \
+            #               f"\n Discovery reference may not exist in the Publications table. " \
+            #               "(Add it with add_publication function.) \n "
+            #        logger.warning(msg)
+            #        logger.debug(msg2)
+            #        n_skipped += 1
+            #        if raise_error:
+            #            raise SimpleError(msg + msg2)
+            #        else:
+            #            continue
             else:
-                msg = f"{i}: Skipping: {source}"
-                msg2 = f"\n {str(source_data)} " \
-                       f"\n Possible duplicate source or discovery reference may not exist in the Publications table." \
-                       f"\n Add it with add_publication function. \n "
+                msg = f"{i}: Skipping: {source}. Not sure why."
+                msg2 = f"\n {str(source_data)} "
                 logger.warning(msg)
                 logger.debug(msg2)
                 n_skipped += 1
@@ -188,10 +191,16 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
 
     logger.info(f"Sources added to database: {n_added}")
     logger.info(f"Names added to database: {n_names} \n")
+    logger.info(f"Sources already in database: {n_existing}")
     logger.info(f"Alt Names added to database: {n_alt_names} \n")
+    logger.info(f"Sources NOT added to database because multiple matches: {n_multiples} \n")
     logger.info(f"Sources NOT added to database: {n_skipped} \n")
 
-    if n_added + n_skipped != n_sources:
+    if n_added != n_names:
+        msg = f"Number added should equal names added."
+        raise SimpleError(msg)
+
+    if n_added + n_existing + n_multiples + n_skipped != n_sources:
         msg = f"Number added + Number skipped doesn't add up to total sources"
         raise SimpleError(msg)
 
