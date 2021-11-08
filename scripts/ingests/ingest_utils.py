@@ -346,8 +346,13 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
     n_added = 0
 
     for i, source in enumerate(sources):  # loop through sources with parallax data to ingest
-        # TODO: replace with find_source_in_db
-        db_name = db.search_object(source, output_table='Sources')[0]['source']
+        db_name = find_source_in_db(db, source)
+
+        if len(db_name) != 1:
+            msg = f"No unique source match for {source} in the database"
+            raise SimpleError(msg)
+        else:
+            db_name = db_name[0]
 
         # Search for existing parallax data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
@@ -457,7 +462,8 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
         db_name = find_source_in_db(db, source)
 
         if len(db_name) != 1:
-            raise SimpleError
+            msg = f"No unique source match for {source} in the database"
+            raise SimpleError(msg)
         else:
             db_name= db_name[0]
 
@@ -601,8 +607,13 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
         raise RuntimeError(msg)
 
     for i, source in enumerate(sources):
-        # TODO: replace with find_source_in_db
-        db_name = db.search_object(source, output_table='Sources')[0]['source']
+        db_name = find_source_in_db(db, source)
+
+        if len(db_name) != 1:
+            msg = f"No unique source match for {source} in the database"
+            raise SimpleError(msg)
+        else:
+            db_name= db_name[0]
 
         # if the uncertainty is masked, don't ingest anything
         if isinstance(magnitude_errors[i], np.ma.core.MaskedConstant):
