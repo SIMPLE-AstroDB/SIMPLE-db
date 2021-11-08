@@ -7,6 +7,9 @@ import numpy as np
 import numpy.ma as ma
 from astropy.table import Table, unique
 import re
+import dateutil
+import pandas as pd
+from sqlalchemy import func
 
 logger = logging.getLogger('SIMPLE')
 
@@ -543,8 +546,8 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
             raise SimpleError(msg)
 
         updated_source_pm_data = db.query(db.ProperMotions).filter(db.ProperMotions.c.source == db_name).table()
-        logger.debug('Updated proper motion data:')
-        if logger.level == 10:
+        logger.info('Updated proper motion data:')
+        if logger.level == 20: # Info = 20, Debug = 10
             updated_source_pm_data.pprint_all()
 
     return
@@ -646,5 +649,134 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
             raise SimpleError(msg)
 
     logger.info(f"Photometry measurements added to database: {n_added}")
+
+    return
+
+
+# SPECTRA
+def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes, obs_dates, references,
+                   wavelength_units=None, flux_units=None, wavelength_order=None, local_spectra=None,
+                   comments=None):
+    n_spectra = len(spectra)
+    n_skipped = 0
+    n_dupes = 0
+    n_added = 0
+    n_blank = 0
+
+    msg = f'Trying to add {n_spectra} spectra'
+    logger.info(msg)
+
+    # TODO: Add option for most inputs to be one element
+
+    for i, source in enumerate(sources):
+        # TODO: check that spectrum can be read by astrodbkit
+
+        # Get source name as it appears in the database
+        db_name = find_source_in_db(db, source)
+
+        if len(db_name) != 1:
+            msg = f"No unique source match for {source} in the database"
+            raise SimpleError(msg)
+        else:
+            db_name = db_name[0]
+
+        # Find what spectra already exists in database for this source
+        source_spec_data = db.query(db.Spectra).filter(db.Spectra.c.source == db_name).table()
+
+        # SKIP if observation date is blank
+        # TODO: try to populate obs date from meta data
+        if ma.is_masked(obs_dates[i]) or obs_dates[i] == '':
+            obs_date = None
+            missing_obs_msg = f"Skipping spectrum with missing observation date: {source} \n"
+            missing_row_spe = f"{source, obs_dates[i], references[i]} \n"
+            logger.info(missing_obs_msg)
+            logger.debug(missing_row_spe)
+            n_blank += 1
+            continue
+        else:
+            try:
+                obs_date = pd.to_datetime(obs_dates[i]) # TODO: Another method that doesn't require pandas?
+            except dateutil.parser._parser.ParserError:
+                logger.warning(
+                    f"Skipping {source} Cant convert obs date to Date Time object: {obs_dates[i]}")
+                n_skipped += 1
+                continue
+
+        row_data = [{'source': db_name,
+                     'spectrum': spectra[i],
+                     'local_spectrum': None if ma.is_masked(local_spectra[i]) else local_spectra[i],
+                     'regime': regimes[i],
+                     'telescope': telescopes[i],
+                     'instrument': None if ma.is_masked(instruments[i]) else instruments[i],
+                     'mode': None if ma.is_masked(modes[i]) else modes[i],
+                     'observation_date': obs_date,
+                     'wavelength_units': None if ma.is_masked(wavelength_units[i]) else wavelength_units[i],
+                     'flux_units': None if ma.is_masked(flux_units[i]) else flux_units[i],
+                     'wavelength_order': None if ma.is_masked(wavelength_order[i]) else wavelength_order[i],
+                     'comments': None if ma.is_masked(comments[i]) else comments[i],
+                     'reference': references[i]}]
+        logger.debug(row_data)
+
+        try:
+            db.Spectra.insert().execute(row_data)
+            n_added += 1
+        except sqlalchemy.exc.IntegrityError:
+            # TODO: add elif to check if reference is in Publications Table
+            if len(source_spec_data) > 0:  # Spectra data already exists
+                # check for duplicate measurement
+                ref_dupe_ind = source_spec_data['reference'] == references[i]
+                date_dupe_ind = source_spec_data['observation_date'] == obs_date
+                instrument_dupe_ind = source_spec_data['instrument'] == instruments[i]
+                mode_dupe_ind = source_spec_data['mode'] == modes[i]
+                file_dupe_ind = source_spec_data['spectrum'] == spectra[i]
+                if sum(ref_dupe_ind) and sum(date_dupe_ind) and sum(instrument_dupe_ind) and sum(mode_dupe_ind):
+                    msg = f"Skipping suspected duplicate measurement\n{source}\n"
+                    msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
+                    msg3 = f"{instruments[i], modes[i], obs_date, references[i], spectra[i]} \n"
+                    logger.warning(msg)
+                    logger.debug(msg2 + msg3)
+                    n_dupes += 1
+                    continue  # Skip duplicate measurement
+                else:
+                    msg = f'Spectrum could not be added to the database (other data exist): \n ' \
+                          f"{source, instruments[i], modes[i], obs_date, references[i], spectra[i]} \n"
+                    msg2 = f"Existing Data: \n " \
+                           f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference', 'spectrum']}"
+                    msg3 = f"Data not able to add: \n {row_data} \n "
+                    logger.warning(msg + msg2)
+                    logger.debug(msg3)
+                    n_skipped += 1
+                    continue
+            else:
+                msg = f'Spectrum could not be added to the database: \n {row_data} \n '
+                logger.error(msg)
+                raise SimpleError(msg)
+
+    logger.info(f"Spectra added: {n_added}")
+    logger.info(f"Spectra with blank obs_date: {n_blank}")
+    logger.info(f"Suspected duplicates skipped: {n_dupes}")
+    logger.info(f"Spectra skipped for unknown reason: {n_skipped}")
+
+    if n_added + n_dupes + n_blank + n_skipped != n_spectra:
+        msg = "Numbers don't add up: "
+        logger.error(msg)
+        raise SimpleError(msg)
+
+    spec_count = db.query(Spectra.regime, func.count(Spectra.regime)).group_by(Spectra.regime).all()
+    # [(<Regime.mir: 'em.IR.MIR'>, 91), (<Regime.nir: 'em.IR.NIR'>, 450), (<Regime.optical: 'em.opt'>, 718)]
+
+    spec_ref_count = db.query(Spectra.reference, func.count(Spectra.reference)). \
+        group_by(Spectra.reference).order_by(func.count(Spectra.reference).desc()).limit(20).all()
+    # [('Reid08b', 280), ('Cruz03', 191), ('Cruz18', 186), ('Cruz07', 158), ('Bard14', 57), ('Burg10a', 46),
+    #  ('Cush06b', 30), ('Rayn09', 17), ('Kirk10', 15), ('Burg08d', 15), ('Burg04b', 15), ('PID51', 13), ('Kirk00', 11),
+    #  ('PID3136', 10), ('Fili15', 10), ('CruzUnpub', 10), ('Burg06b', 10), ('Kirk08', 9), ('Cruz09', 8), ('Sieg07', 7)]
+
+    telescope_spec_count = db.query(Spectra.telescope, func.count(Spectra.telescope)). \
+        group_by(Spectra.telescope).order_by(func.count(Spectra.telescope).desc()).limit(20).all()
+    # [('IRTF', 436), ('KPNO 4m', 251), ('CTIO 4m', 179), ('KPNO 2.1m', 93), ('Spitzer', 91), ('Keck I', 63),
+    #  ('CTIO 1.5m', 48), ('Gemini South', 34), ('Gemini North', 27), ('ARC 3.5m', 14), ('Magellan II Clay', 11),
+    #  ('ESO VLT U2', 7), ('Magellan I Baade', 5)]
+
+    logger.info(f'Spectra in the database: \n {spec_count} \n {spec_ref_count} \n {telescope_spec_count}')
 
     return
