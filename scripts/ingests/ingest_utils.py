@@ -26,7 +26,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     ----------
     db: astrodbkit2.astrodb.Database
         Database object created by astrodbkit2
-    sources: list of strings
+    sources: list[str]
         Names of sources
     ras: list of floats
         Right ascensions of sources. Decimal degrees.
