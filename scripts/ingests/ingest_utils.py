@@ -1,15 +1,17 @@
 """
 Utils functions for use in ingests
 """
-from scripts.ingests.utils import *
-import logging
+from astropy.table import Table, unique
 import numpy as np
 import numpy.ma as ma
-from astropy.table import Table, unique
-import re
-import dateutil
 import pandas as pd
 from sqlalchemy import func
+
+import dateutil
+import logging
+import re
+
+from scripts.ingests.utils import *
 
 logger = logging.getLogger('SIMPLE')
 
@@ -24,7 +26,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     ----------
     db: astrodbkit2.astrodb.Database
         Database object created by astrodbkit2
-    sources: list of strings
+    sources: list[str]
         Names of sources
     ras: list of floats
         Right ascensions of sources. Decimal degrees.
@@ -86,11 +88,11 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                     db.Names.insert().execute(alt_names_data)
                     logger.debug(f"{i}: Name added to database: {alt_names_data}\n")
                     n_alt_names += 1
-                except sqlalchemy.exc.IntegrityError:
+                except sqlalchemy.exc.IntegrityError as e:
                     msg = f"{i}: Could not add {alt_names_data} to database"
                     logger.warning(msg)
                     if raise_error:
-                        raise SimpleError(msg)
+                        raise SimpleError(msg + '\n' + e)
                     else:
                         continue
             continue # Source is already in database, nothing new to ingest
@@ -589,20 +591,12 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
         logger.error(msg)
         raise RuntimeError(msg)
 
-    if isinstance(bands, str):
-        bands = [bands] * len(sources)
-
-    if isinstance(reference, str):
-        reference = [reference] * len(sources)
-
-    if isinstance(telescope, str):
-        telescope = [telescope] * len(sources)
-
-    if isinstance(instrument, str):
-        instrument = [instrument] * len(sources)
-
-    if isinstance(ucds, str):
-        ucds = [ucds] * len(sources)
+things = [bands, reference, telescope, instrument, ucds]
+for i, thing in enumerate(things):
+    if isinstance(thing, str):
+        thing = [thing] * len(sources)
+        things[i] = thing
+bands, reference, telescope, instrument, ucds = things
 
     if n_sources != len(reference) or n_sources != len(telescope) or n_sources != len(bands):
         msg = "All lists should be same length"
