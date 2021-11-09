@@ -657,6 +657,38 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
 def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes, obs_dates, references,
                    wavelength_units=None, flux_units=None, wavelength_order=None, local_spectra=None,
                    comments=None):
+    """
+
+    Parameters
+    ----------
+    db
+    sources
+        List of source names
+    spectra
+        List of filenames corresponding to spectra files
+    regimes
+        List or string
+    telescopes
+        List or string
+    instruments
+        List or string
+    modes
+        List or string
+    obs_dates
+        List of strings or datetime objects
+    references
+        List or string
+    wavelength_units
+        List or string
+    flux_units
+        List or string
+    wavelength_order
+        List or string
+    local_spectra
+    comments
+        List of strings
+
+    """
     n_spectra = len(spectra)
     n_skipped = 0
     n_dupes = 0
@@ -666,7 +698,29 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     msg = f'Trying to add {n_spectra} spectra'
     logger.info(msg)
 
-    # TODO: Add option for most inputs to be one element
+    if isinstance(regimes, str):
+        regimes = [regimes] * len(sources)
+
+    if isinstance(telescopes, str):
+        telescopes = [telescopes] * len(sources)
+
+    if isinstance(instruments, str):
+        instruments = [instruments] * len(sources)
+
+    if isinstance(modes, str):
+        modes = [modes] * len(sources)
+
+    if isinstance(wavelength_order, str):
+        wavelength_order = [wavelength_order] * len(sources)
+
+    if isinstance(wavelength_units, str):
+        wavelength_units = [wavelength_units] * len(sources)
+
+    if isinstance(flux_units, str):
+        flux_units = [flux_units] * len(sources)
+
+    if isinstance(references, str):
+        regimes = [references] * len(sources)
 
     for i, source in enumerate(sources):
         # TODO: check that spectrum can be read by astrodbkit
