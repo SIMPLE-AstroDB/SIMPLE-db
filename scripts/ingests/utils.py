@@ -72,18 +72,22 @@ def find_source_in_db(db, source, ra=None, dec=None, search_radius=60.):
     Parameters
     ----------
     db
-    source
-    ra: (Optional)
+    source: str
+        Source name
+    ra: float
         Right ascensions of sources. Decimal degrees.
-    dec: (optional)
+    dec: float
         Declinations of sources. Decimal degrees.
     search_radius
         radius in arcseconds to use for source matching
+
     Returns
     -------
-    one match: String with database source name
-    multiple matches: list of possible database names
-    no matches: empty list
+    List of strings.
+
+    one match: Single element list with one database source name
+    multiple matches: List of possible database names
+    no matches: Empty list
 
     """
 
