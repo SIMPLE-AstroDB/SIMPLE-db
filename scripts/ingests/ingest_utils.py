@@ -1,15 +1,17 @@
 """
 Utils functions for use in ingests
 """
-from scripts.ingests.utils import *
-import logging
+from astropy.table import Table, unique
 import numpy as np
 import numpy.ma as ma
-from astropy.table import Table, unique
-import re
-import dateutil
 import pandas as pd
 from sqlalchemy import func
+
+import dateutil
+import logging
+import re
+
+from scripts.ingests.utils import *
 
 logger = logging.getLogger('SIMPLE')
 
