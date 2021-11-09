@@ -591,20 +591,12 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
         logger.error(msg)
         raise RuntimeError(msg)
 
-    if isinstance(bands, str):
-        bands = [bands] * len(sources)
-
-    if isinstance(reference, str):
-        reference = [reference] * len(sources)
-
-    if isinstance(telescope, str):
-        telescope = [telescope] * len(sources)
-
-    if isinstance(instrument, str):
-        instrument = [instrument] * len(sources)
-
-    if isinstance(ucds, str):
-        ucds = [ucds] * len(sources)
+things = [bands, reference, telescope, instrument, ucds]
+for i, thing in enumerate(things):
+    if isinstance(thing, str):
+        thing = [thing] * len(sources)
+        things[i] = thing
+bands, reference, telescope, instrument, ucds = things
 
     if n_sources != len(reference) or n_sources != len(telescope) or n_sources != len(bands):
         msg = "All lists should be same length"
