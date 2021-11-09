@@ -88,11 +88,11 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                     db.Names.insert().execute(alt_names_data)
                     logger.debug(f"{i}: Name added to database: {alt_names_data}\n")
                     n_alt_names += 1
-                except sqlalchemy.exc.IntegrityError:
+                except sqlalchemy.exc.IntegrityError as e:
                     msg = f"{i}: Could not add {alt_names_data} to database"
                     logger.warning(msg)
                     if raise_error:
-                        raise SimpleError(msg)
+                        raise SimpleError(msg + '\n' + e)
                     else:
                         continue
             continue # Source is already in database, nothing new to ingest
