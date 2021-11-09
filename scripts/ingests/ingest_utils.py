@@ -1,14 +1,13 @@
 """
 Utils functions for use in ingests
 """
-from astropy.table import Table, unique
+from astroquery.simbad import Simbad
 import numpy as np
 import numpy.ma as ma
 import pandas as pd
 from sqlalchemy import func
 
 import dateutil
-import logging
 import re
 
 from scripts.ingests.utils import *
@@ -62,19 +61,19 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
 
     logger.info(f"Trying to add {n_sources} sources")
 
-    if epochs is None:
-        epochs = [None] * n_sources
-    if equinoxes is None:
-        equinoxes = [None] * n_sources
-    if comments is None:
-        comments = [None] * n_sources
+    # Convert single element input values into lists
+    input_values = [epochs, equinoxes, comments]
+    for i, input_value in enumerate(input_values):
+        if input_value is None:
+            input_values[i] = [None] * n_sources
+    epochs, equinoxes, comments = input_values
 
     # Loop over each source and decide to ingest, skip, or add alt name
     for i, source in enumerate(sources):
         # Find out if source is already in database or not
         name_matches = find_source_in_db(db, source, ra=ras[i], dec=decs[i])
 
-        if len(name_matches) == 1: # Source is already in database
+        if len(name_matches) == 1:  # Source is already in database
             n_existing += 1
             msg1 = f"{i}: Skipping {source}. Already in database. \n "
             msg2 = f"{i}: Match found for {source}: {name_matches[0]}"
@@ -92,11 +91,11 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                     msg = f"{i}: Could not add {alt_names_data} to database"
                     logger.warning(msg)
                     if raise_error:
-                        raise SimpleError(msg + '\n' + e)
+                        raise SimpleError(msg + '\n' + str(e))
                     else:
                         continue
-            continue # Source is already in database, nothing new to ingest
-        elif len(name_matches) > 1: # Multiple source matches in the database
+            continue  # Source is already in database, nothing new to ingest
+        elif len(name_matches) > 1:  # Multiple source matches in the database
             n_multiples += 1
             msg1 = f"{i} Skipping {source} "
             msg = f"{i} More than one match for {source}\n {name_matches}\n"
@@ -105,7 +104,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                 raise SimpleError(msg)
             else:
                 continue
-        elif len(name_matches) == 0: # No match in the database, INGEST!
+        elif len(name_matches) == 0:  # No match in the database, INGEST!
             logger.debug(f"{i}: Not in database: {source}")
 
             # Construct data to be added
@@ -211,6 +210,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
         raise SimpleError(msg)
 
     return
+
 
 # SURVEY DATA
 def find_survey_name_in_simbad(sources, desig_prefix, source_id_index=None):
@@ -333,13 +333,13 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
     ----------
     db
         Database object
-    sources
+    sources: list[str]
         list of source names
-    plxs
+    plxs: list[float]
         list of parallaxes corresponding to the sources
-    plx_errs
+    plx_errs: list[float]
         list of parallaxes uncertainties
-    plx_refs
+    plx_refs: str or list[str]
         list of references for the parallax data
 
     Examples
@@ -347,6 +347,10 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
     > ingest_parallaxes(db, my_sources, my_plx, my_plx_unc, my_plx_refs, verbose = True)
 
     """
+
+    # Convert single element input value to list
+    if isinstance(plx_refs, str):
+        plx_refs = [plx_refs] * len(sources)
 
     n_added = 0
 
@@ -440,18 +444,18 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
     ----------
     db
         Database object
-    sources
+    sources: list[str]
         list of source names
-    pm_ras
+    pm_ras: list[float]
         list of proper motions in right ascension (RA)
-    pm_ra_errs
+    pm_ra_errs: list[float]
         list of uncertanties in proper motion RA
-    pm_decs
+    pm_decs: list[float]
         list of proper motions in declination (dec)
-    pm_dec_errs
+    pm_dec_errs: list[float]
         list of uncertanties in proper motion dec
-    pm_references
-        list of references for the proper motion measurements
+    pm_references: str or list[str]
+        Reference or list of references for the proper motion measurements
 
     Examples
     ----------
@@ -459,6 +463,10 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                             verbose = True)
 
     """
+
+    # Convert single element input value to list
+    if isinstance(pm_references, str):
+        pm_references = [pm_references] * len(sources)
 
     n_added = 0
 
@@ -470,7 +478,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
             msg = f"No unique source match for {source} in the database"
             raise SimpleError(msg)
         else:
-            db_name= db_name[0]
+            db_name = db_name[0]
 
         # Search for existing proper motion data and determine if this is the best
         # If no previous measurement exists, set the new one to the Adopted measurement
@@ -549,7 +557,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
 
         updated_source_pm_data = db.query(db.ProperMotions).filter(db.ProperMotions.c.source == db_name).table()
         logger.info('Updated proper motion data:')
-        if logger.level == 20: # Info = 20, Debug = 10
+        if logger.level == 20:  # Info = 20, Debug = 10
             updated_source_pm_data.pprint_all()
 
     return
@@ -564,23 +572,21 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
     Parameters
     ----------
     db
-    sources
-    bands
-    magnitudes
-    magnitude_errors
-    reference
-    ucds
-    telescope
-    instrument
-    epoch
-    comments
+    sources: list[str]
+    bands: str or list[str]
+    magnitudes: list[float]
+    magnitude_errors: list[float]
+    reference: str or list[str]
+    ucds: str or list[str], optional
+    telescope: str or list[str]
+    instrument: str or list[str]
+    epoch: list[float], optional
+    comments: list[str], optional
 
     Returns
     -------
 
     """
-
-    n_added = 0
 
     n_sources = len(sources)
 
@@ -591,17 +597,20 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
         logger.error(msg)
         raise RuntimeError(msg)
 
-things = [bands, reference, telescope, instrument, ucds]
-for i, thing in enumerate(things):
-    if isinstance(thing, str):
-        thing = [thing] * len(sources)
-        things[i] = thing
-bands, reference, telescope, instrument, ucds = things
+    # Convert single element input values into lists
+    input_values = [bands, reference, telescope, instrument, ucds]
+    for i, input_value in enumerate(input_values):
+        if isinstance(input_value, str):
+            input_value = [input_value] * n_sources
+            input_values[i] = input_value
+    bands, reference, telescope, instrument, ucds = input_values
 
     if n_sources != len(reference) or n_sources != len(telescope) or n_sources != len(bands):
         msg = "All lists should be same length"
         logger.error(msg)
         raise RuntimeError(msg)
+
+    n_added = 0
 
     for i, source in enumerate(sources):
         db_name = find_source_in_db(db, source)
@@ -610,7 +619,7 @@ bands, reference, telescope, instrument, ucds = things
             msg = f"No unique source match for {source} in the database"
             raise SimpleError(msg)
         else:
-            db_name= db_name[0]
+            db_name = db_name[0]
 
         # if the uncertainty is masked, don't ingest anything
         if isinstance(magnitude_errors[i], np.ma.core.MaskedConstant):
@@ -656,33 +665,41 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     Parameters
     ----------
     db
-    sources
+    sources: list[str]
         List of source names
-    spectra
+    spectra: list[str]
         List of filenames corresponding to spectra files
-    regimes
+    regimes: str or list[str]
         List or string
-    telescopes
+    telescopes: str or list[str]
         List or string
-    instruments
+    instruments: str or list[str]
         List or string
-    modes
+    modes: str or list[str]
         List or string
-    obs_dates
+    obs_dates:
         List of strings or datetime objects
-    references
+    references: list[str]
         List or string
-    wavelength_units
+    wavelength_units: list[str], optional
         List or string
-    flux_units
+    flux_units: list[str], optional
         List or string
-    wavelength_order
-        List or string
-    local_spectra
-    comments
+    wavelength_order: list[int], optional
+    local_spectra: list[str], optional
+    comments: list[str], optional
         List of strings
 
     """
+
+    # Convert single value input values to lists
+    input_values = [regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references]
+    for i, input_value in enumerate(input_values):
+        if isinstance(input_value, str):
+            input_value = [input_value] * len(sources)
+            input_values[i] = input_value
+    regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references = input_values
+
     n_spectra = len(spectra)
     n_skipped = 0
     n_dupes = 0
@@ -691,30 +708,6 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
 
     msg = f'Trying to add {n_spectra} spectra'
     logger.info(msg)
-
-    if isinstance(regimes, str):
-        regimes = [regimes] * len(sources)
-
-    if isinstance(telescopes, str):
-        telescopes = [telescopes] * len(sources)
-
-    if isinstance(instruments, str):
-        instruments = [instruments] * len(sources)
-
-    if isinstance(modes, str):
-        modes = [modes] * len(sources)
-
-    if isinstance(wavelength_order, str):
-        wavelength_order = [wavelength_order] * len(sources)
-
-    if isinstance(wavelength_units, str):
-        wavelength_units = [wavelength_units] * len(sources)
-
-    if isinstance(flux_units, str):
-        flux_units = [flux_units] * len(sources)
-
-    if isinstance(references, str):
-        regimes = [references] * len(sources)
 
     for i, source in enumerate(sources):
         # TODO: check that spectrum can be read by astrodbkit
@@ -743,7 +736,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
             continue
         else:
             try:
-                obs_date = pd.to_datetime(obs_dates[i]) # TODO: Another method that doesn't require pandas?
+                obs_date = pd.to_datetime(obs_dates[i])  # TODO: Another method that doesn't require pandas?
             except dateutil.parser._parser.ParserError:
                 logger.warning(
                     f"Skipping {source} Cant convert obs date to Date Time object: {obs_dates[i]}")
