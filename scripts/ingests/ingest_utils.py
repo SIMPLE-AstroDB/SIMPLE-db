@@ -27,17 +27,17 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
         Database object created by astrodbkit2
     sources: list[str]
         Names of sources
-    ras: list of floats
+    ras: list[floats]
         Right ascensions of sources. Decimal degrees.
-    decs: list of floats
+    decs: list[floats]
         Declinations of sources. Decimal degrees.
-    references: list of strings
+    references: list[strings]
         Discovery references of sources
-    comments: list of strings
+    comments: list[strings]
         Comments
-    epochs: list of floats
+    epochs: list[floats]
         Epochs of coordinates
-    equinoxes: list of floats
+    equinoxes: list[floats]
         Equinoxes of coordinates
     raise_error: bool
         True (default): Raise an error if a source cannot be ingested
@@ -331,7 +331,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
 
     Parameters
     ----------
-    db
+    db: astrodbkit2.astrodb.Database
         Database object
     sources: list[str]
         list of source names
@@ -442,7 +442,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
 
     Parameters
     ----------
-    db
+    db: astrodbkit2.astrodb.Database
         Database object
     sources: list[str]
         list of source names
@@ -571,7 +571,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
 
     Parameters
     ----------
-    db
+    db: astrodbkit2.astrodb.Database
     sources: list[str]
     bands: str or list[str]
     magnitudes: list[float]
@@ -664,7 +664,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
 
     Parameters
     ----------
-    db
+    db: astrodbkit2.astrodb.Database
     sources: list[str]
         List of source names
     spectra: list[str]
