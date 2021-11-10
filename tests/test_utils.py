@@ -1,6 +1,7 @@
 # Test to verify functions in utils
 import pytest
 import sys
+import math
 
 sys.path.append('.')
 from scripts.ingests.utils import *
@@ -78,8 +79,16 @@ def test_ingest_sources(db):
     source_data5 = Table([{'source': 'Fake 5', 'ra': 9.06799, 'dec': 18.352889, 'reference': ''}])
     source_data8 = Table([{'source': 'Fake 8', 'ra': 9.06799, 'dec': 18.352889, 'reference': 'Ref 4'}])
 
+
     ingest_sources(db, source_data1['source'], ras=source_data1['ra'], decs=source_data1['dec'],
                    references=source_data1['reference'], raise_error=True)
+
+    ingest_sources(db, ['Barnard Star'], references='Ref 2', raise_error=True)
+    Barnard_star = db.query(db.Sources).filter(db.Sources.c.source == 'Barnard Star').astropy()
+    assert len(Barnard_star) == 1
+    assert math.isclose(Barnard_star['ra'], 269.452, abs_tol=0.001)
+    assert math.isclose(Barnard_star['dec'], 4.6933, abs_tol=0.001)
+
     assert db.query(db.Sources).filter(db.Sources.c.source == 'Fake 1').count() == 1
     assert db.query(db.Sources).filter(db.Sources.c.source == 'Fake 6').count() == 1
     assert db.query(db.Sources).filter(db.Sources.c.source == 'Fake 7').count() == 1
@@ -93,6 +102,10 @@ def test_ingest_sources(db):
         ingest_sources(db, source_data5['source'], ras=source_data5['ra'], decs=source_data5['dec'],
                        references=source_data5['reference'], raise_error=True)
         assert 'blank' in str(error_message.value)
+
+    with pytest.raises(SimpleError) as error_message:
+        ingest_sources(db, ['NotinSimbad'], references='Ref 1', raise_error=True)
+        assert 'Coordinates are needed' in str(error_message.value)
 
 
 def test_convert_spt_string_to_code():

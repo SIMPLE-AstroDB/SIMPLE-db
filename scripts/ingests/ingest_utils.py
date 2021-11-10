@@ -34,13 +34,13 @@ def ingest_sources(db, sources, references, ras=None, decs=None, comments=None, 
         Right ascensions of sources. Decimal degrees.
     decs: list[floats]
         Declinations of sources. Decimal degrees.
-    references: list[strings]
+    references: str or list[strings]
         Discovery references of sources
     comments: list[strings]
         Comments
-    epochs: list[floats]
+    epochs: str or list[str]
         Epochs of coordinates
-    equinoxes: list[floats]
+    equinoxes: str or list[string]
         Equinoxes of coordinates
     raise_error: bool
         True (default): Raise an error if a source cannot be ingested
@@ -55,19 +55,21 @@ def ingest_sources(db, sources, references, ras=None, decs=None, comments=None, 
     # TODO: add example
 
     # SETUP INPUTS
-    if ras and decs:
-        coords = True
-    else:
+    if ras is None and decs is None:
         coords = False
+    else:
+        coords = True
 
     n_sources = len(sources)
 
     # Convert single element input values into lists
-    input_values = [epochs, equinoxes, comments]
+    input_values = [references, epochs, equinoxes, comments]
     for i, input_value in enumerate(input_values):
         if input_value is None:
             input_values[i] = [None] * n_sources
-    epochs, equinoxes, comments = input_values
+        elif isinstance(input_value, str):
+            input_values[i] = [input_value] * n_sources
+    references, epochs, equinoxes, comments = input_values
 
     n_added = 0
     n_existing = 0
@@ -125,7 +127,15 @@ def ingest_sources(db, sources, references, ras=None, decs=None, comments=None, 
                 equinox = None if ma.is_masked(equinoxes[i]) else equinoxes[i]
             else:  # Try to get coordinates from SIMBAD
                 simbad_result_table = Simbad.query_object(source)
-                if len(simbad_result_table) == 1:
+                if simbad_result_table is None:
+                    n_skipped += 1
+                    msg = f"{i}: Skipping: {source}. Coordinates are needed and could not be retrieved from SIMBAD. \n"
+                    logger.warning(msg)
+                    if raise_error:
+                        raise SimpleError(msg)
+                    else:
+                        continue
+                elif len(simbad_result_table) == 1:
                     simbad_coords = simbad_result_table['RA'][0] + ' ' + simbad_result_table['DEC'][0]
                     simbad_skycoord = SkyCoord(simbad_coords, unit=(u.hourangle, u.deg))
                     ra = simbad_skycoord.to_string(style='decimal').split()[0]
