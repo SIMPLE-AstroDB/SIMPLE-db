@@ -2,6 +2,9 @@
 Utils functions for use in ingests
 """
 from astroquery.simbad import Simbad
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+
 import numpy as np
 import numpy.ma as ma
 import pandas as pd
@@ -16,7 +19,7 @@ logger = logging.getLogger('SIMPLE')
 
 
 # SOURCES
-def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=None,
+def ingest_sources(db, sources, references, ras=None, decs=None, comments=None, epochs=None,
                    equinoxes=None, raise_error=True):
     """
     Script to ingest sources
@@ -51,15 +54,13 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
     """
     # TODO: add example
 
-    n_added = 0
-    n_existing = 0
-    n_names = 0
-    n_alt_names = 0
-    n_skipped = 0
-    n_sources = len(sources)
-    n_multiples = 0
+    # SETUP INPUTS
+    if ras and decs:
+        coords = True
+    else:
+        coords = False
 
-    logger.info(f"Trying to add {n_sources} sources")
+    n_sources = len(sources)
 
     # Convert single element input values into lists
     input_values = [epochs, equinoxes, comments]
@@ -68,10 +69,22 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
             input_values[i] = [None] * n_sources
     epochs, equinoxes, comments = input_values
 
+    n_added = 0
+    n_existing = 0
+    n_names = 0
+    n_alt_names = 0
+    n_skipped = 0
+    n_multiples = 0
+
+    logger.info(f"Trying to add {n_sources} sources")
+
     # Loop over each source and decide to ingest, skip, or add alt name
     for i, source in enumerate(sources):
         # Find out if source is already in database or not
-        name_matches = find_source_in_db(db, source, ra=ras[i], dec=decs[i])
+        if coords:
+            name_matches = find_source_in_db(db, source, ra=ras[i], dec=decs[i])
+        else:
+            name_matches = find_source_in_db(db, source)
 
         if len(name_matches) == 1:  # Source is already in database
             n_existing += 1
@@ -105,22 +118,45 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
             else:
                 continue
         elif len(name_matches) == 0:  # No match in the database, INGEST!
-            logger.debug(f"{i}: Not in database: {source}")
+            if coords:  # Coordinates were provided as input
+                ra = ras[i]
+                dec = decs[i]
+                epoch = None if ma.is_masked(epochs[i]) else epochs[i]
+                equinox = None if ma.is_masked(equinoxes[i]) else equinoxes[i]
+            else:  # Try to get coordinates from SIMBAD
+                simbad_result_table = Simbad.query_object(source)
+                if len(simbad_result_table) == 1:
+                    simbad_coords = simbad_result_table['RA'][0] + ' ' + simbad_result_table['DEC'][0]
+                    simbad_skycoord = SkyCoord(simbad_coords, unit=(u.hourangle, u.deg))
+                    ra = simbad_skycoord.to_string(style='decimal').split()[0]
+                    dec = simbad_skycoord.to_string(style='decimal').split()[1]
+                    epoch = '2000'  # Default coordinates from SIMBAD are epoch 2000.
+                    equinox = 'J2000'  # Default frame from SIMBAD is IRCS and J2000.
+                else:
+                    n_skipped += 1
+                    msg = f"{i}: Skipping: {source}. Coordinates are needed and could not be retrieved from SIMBAD. \n"
+                    logger.warning(msg)
+                    if raise_error:
+                        raise SimpleError(msg)
+                    else:
+                        continue
 
-            # Construct data to be added
-            source_data = [{'source': source,
-                            'ra': ras[i],
-                            'dec': decs[i],
-                            'reference': references[i],
-                            'epoch': None if ma.is_masked(epochs[i]) else epochs[i],
-                            'equinox': None if ma.is_masked(equinoxes[i]) else equinoxes[i],
-                            'comments': None if ma.is_masked(comments[i]) else comments[i]}]
-            names_data = [{'source': source,
-                           'other_name': source}]
+            logger.debug(f"{i}: Ingesting {source}. Not already in database. ")
         else:
             msg = f"{i}: unexpected condition encountered ingesting {source}"
             logger.error(msg)
             raise SimpleError(msg)
+
+        # Construct data to be added
+        source_data = [{'source': source,
+                        'ra': ra,
+                        'dec': dec,
+                        'reference': references[i],
+                        'epoch': epoch ,
+                        'equinox': equinox ,
+                        'comments': None if ma.is_masked(comments[i]) else comments[i]}]
+        names_data = [{'source': source,
+                       'other_name': source}]
 
         # Try to add the source to the database
         try:
@@ -182,6 +218,7 @@ def ingest_sources(db, sources, ras, decs, references, comments=None, epochs=Non
                 else:
                     continue
 
+        # Try to add the source name to the Names table
         try:
             db.Names.insert().execute(names_data)
             logger.debug(f"Name added to database: {names_data}\n")
@@ -677,13 +714,13 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         List or string
     modes: str or list[str]
         List or string
-    obs_dates:
+    obs_dates: str or datetime
         List of strings or datetime objects
     references: list[str]
         List or string
-    wavelength_units: list[str], optional
+    wavelength_units: list[str] or Quantity, optional
         List or string
-    flux_units: list[str], optional
+    flux_units: list[str] or Quantity, optional
         List or string
     wavelength_order: list[int], optional
     local_spectra: list[str], optional
