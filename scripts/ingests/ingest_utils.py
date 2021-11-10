@@ -30,19 +30,19 @@ def ingest_sources(db, sources, references, ras=None, decs=None, comments=None, 
         Database object created by astrodbkit2
     sources: list[str]
         Names of sources
-    ras: list[floats]
-        Right ascensions of sources. Decimal degrees.
-    decs: list[floats]
-        Declinations of sources. Decimal degrees.
     references: str or list[strings]
         Discovery references of sources
-    comments: list[strings]
+    ras: list[floats], optional
+        Right ascensions of sources. Decimal degrees.
+    decs: list[floats], optional
+        Declinations of sources. Decimal degrees.
+    comments: list[strings], optional
         Comments
-    epochs: str or list[str]
+    epochs: str or list[str], optional
         Epochs of coordinates
-    equinoxes: str or list[string]
+    equinoxes: str or list[string], optional
         Equinoxes of coordinates
-    raise_error: bool
+    raise_error: bool, optional
         True (default): Raise an error if a source cannot be ingested
         False: Log a warning but skip sources which cannot be ingested
 
