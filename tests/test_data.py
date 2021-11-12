@@ -364,7 +364,7 @@ def test_Kirk19_ingest(db):
     # Test parallaxes 
     ref = 'Kirk19'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
-    assert len(t) == 22, f'found {len(t)} parallax entries for {ref}'
+    assert len(t) == 23, f'found {len(t)} parallax entries for {ref}'
     
     #Test proper motions added
     ref = 'Kirk19'
