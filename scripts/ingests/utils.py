@@ -28,7 +28,8 @@ ch.setFormatter(LOGFORMAT)
 # To prevent duplicate handlers, only add if they haven't been set previously
 if not len(logger.handlers):
     logger.addHandler(ch)
-
+logger.setLevel(logging.INFO)
+    
 
 class SimpleError(Exception):
     pass
