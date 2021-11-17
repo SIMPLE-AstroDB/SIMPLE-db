@@ -56,9 +56,9 @@ def test_discovery_references(db):
 
     '''
 
-    ref = 'Schm10b'
+    ref = 'Schm10.1808'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 207, f'found {len(t)} discovery reference entries for {ref}'
+    assert len(t) == 208, f'found {len(t)} discovery reference entries for {ref}'
 
     ref = 'West08'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
