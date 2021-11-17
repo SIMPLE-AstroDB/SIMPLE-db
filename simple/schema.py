@@ -13,7 +13,7 @@ class Publications(Base):
     This stores reference information (DOI, bibcodes, etc) and has shortname as the primary key
     """
     __tablename__ = 'Publications'
-    name = Column(String(30), primary_key=True, nullable=False)
+    name = Column(String(30), primary_key=True, nullable=False, onupdate='cascade')
     bibcode = Column(String(100))
     doi = Column(String(100))
     description = Column(String(1000))
@@ -151,7 +151,7 @@ class ProperMotions(Base):
     mu_dec_error = Column(Float)
     adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
+    reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), primary_key=True)
 
 
 class RadialVelocities(Base):
