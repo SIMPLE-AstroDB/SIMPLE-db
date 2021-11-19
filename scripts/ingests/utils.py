@@ -51,7 +51,7 @@ def load_simpledb(db_file, recreatedb=True):
     # Utility function to load the database
 
     db_file_path = Path(db_file)
-    db_connection_string = 'sqlite:///SIMPLE.db'
+    db_connection_string = 'sqlite:///' + db_file
 
     if recreatedb and db_file_path.exists():
         os.remove(db_file)  # removes the current .db file if one already exists
@@ -60,7 +60,7 @@ def load_simpledb(db_file, recreatedb=True):
         try: # Use fancy in-memory database, if supported by astrodbkit2
             db = Database('sqlite://')  # creates and connects to a temporary in-memory database
             db.load_database('data/')  # loads the data from the data files into the database
-            db.dump_sqlite('SIMPLE.db') # dump in-memory database to file
+            db.dump_sqlite(db_file) # dump in-memory database to file
             db = Database(db_connection_string) # replace database object with new file version
         except RuntimeError:
             # use in-file database
