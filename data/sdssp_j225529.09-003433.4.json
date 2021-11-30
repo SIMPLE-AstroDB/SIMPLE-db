@@ -13,16 +13,138 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J22552907-0034336"
+        },
+        {
+            "other_name": "Gaia DR2 2651588258793809280"
+        },
+        {
+            "other_name": "Gaia EDR3 2651588258793809280"
+        },
+        {
             "other_name": "SDSSp J225529.09-003433.4"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 16.325338297970237,
+            "parallax_error": 1.1031784977850398,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 16.901746790559397,
+            "parallax_error": 0.7655402421951294,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 14.756,
+            "magnitude_error": 0.058,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 15.65,
+            "magnitude_error": 0.056,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 14.437,
+            "magnitude_error": 0.075,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 20.32765769958496,
+            "magnitude_error": 0.009737921745653551,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 18.731966018676758,
+            "magnitude_error": 0.029656972857207493,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 20.30229377746582,
+            "magnitude_error": 0.00812578470709933,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 18.73309326171875,
+            "magnitude_error": 0.039829648668830334,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
     "ProperMotions": [
+        {
+            "mu_ra": -34.18289809018843,
+            "mu_ra_error": 1.9295899966871484,
+            "mu_dec": -176.86714621797185,
+            "mu_dec_error": 1.4809839408891894,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": -32.4077704482657,
+            "mu_ra_error": 0.9614189267158508,
+            "mu_dec": -178.55546850000871,
+            "mu_dec_error": 0.6881229281425476,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "mu_ra": -36.2,
             "mu_ra_error": 1.37,
             "mu_dec": -176.22,
             "mu_dec_error": 2.56,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Vrba04"
         }

@@ -13,7 +13,45 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J17433487+5844110"
+        },
+        {
             "other_name": "2MASSI J1743348+584411"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 13.198,
+            "magnitude_error": 0.031,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 14.01,
+            "magnitude_error": 0.027,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 12.681,
+            "magnitude_error": 0.019,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
         }
     ],
     "ProperMotions": [
@@ -25,6 +63,22 @@
             "adopted": true,
             "comments": null,
             "reference": "Gagn15a"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U11723.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U11723.fits",
+            "regime": "optical",
+            "telescope": "KPNO 4m",
+            "instrument": "R-C Spec",
+            "mode": null,
+            "observation_date": "2001-07-19T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cruz03"
         }
     ]
 }

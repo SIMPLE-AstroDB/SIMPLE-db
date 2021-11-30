@@ -14,17 +14,136 @@
     "Names": [
         {
             "other_name": "2MASS J13322442-0441126"
+        },
+        {
+            "other_name": "Gaia DR2 3633670498535888512"
+        },
+        {
+            "other_name": "Gaia EDR3 3633670498535888512"
+        }
+    ],
+    "Parallaxes": [
+        {
+            "parallax": 29.058476742311818,
+            "parallax_error": 0.6645913124084473,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 11.73,
+            "magnitude_error": 0.022,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 12.369,
+            "magnitude_error": 0.027,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 11.283,
+            "magnitude_error": 0.019,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 16.727155685424805,
+            "magnitude_error": 0.0057665610067653,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 15.074528694152832,
+            "magnitude_error": 0.008769088920104084,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 16.98412322998047,
+            "magnitude_error": 0.007574351836277514,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 15.106210708618164,
+            "magnitude_error": 0.002206050311703005,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": 49.4602982156352,
+            "mu_ra_error": 0.6119628548622131,
+            "mu_dec": 27.52283501525869,
+            "mu_dec_error": 0.3232737183570862,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "mu_ra": 86.6,
             "mu_ra_error": 85.49,
             "mu_dec": 50.0,
             "mu_dec_error": 82.12,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Schm07"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U11153.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U11153.fits",
+            "regime": "optical",
+            "telescope": "CTIO 1.5m",
+            "instrument": "R-C Spec",
+            "mode": null,
+            "observation_date": "2002-01-27T06:51:42.453000",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cruz03"
         }
     ]
 }

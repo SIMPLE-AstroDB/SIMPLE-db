@@ -19,6 +19,41 @@
             "other_name": "DENIS J195647.0-754226"
         }
     ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 15.036,
+            "magnitude_error": 0.096,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 16.154,
+            "magnitude_error": 0.103,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 14.227,
+            "magnitude_error": 0.066,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        }
+    ],
     "ProperMotions": [
         {
             "mu_ra": 9.7,
@@ -28,6 +63,22 @@
             "adopted": true,
             "comments": null,
             "reference": "Gagn15a"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20843.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U20843.fits",
+            "regime": "optical",
+            "telescope": "Gemini South",
+            "instrument": "GMOS-S",
+            "mode": null,
+            "observation_date": "2005-08-10T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cruz09"
         }
     ]
 }

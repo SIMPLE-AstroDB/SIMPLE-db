@@ -19,18 +19,134 @@
             "other_name": "GJ 1048B"
         },
         {
+            "other_name": "Gaia DR2 5125415028162047488"
+        },
+        {
+            "other_name": "Gaia EDR3 5125415028162047488"
+        },
+        {
             "other_name": "HD 16270B"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 46.581456630735914,
+            "parallax_error": 0.2863354167538321,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 46.4179684917792,
+            "parallax_error": 0.22391314804553986,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 18.597576141357422,
+            "magnitude_error": 0.004821984995366873,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 16.892009735107422,
+            "magnitude_error": 0.020025621436223752,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 18.598556518554688,
+            "magnitude_error": 0.0033838706836846854,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 16.963647842407227,
+            "magnitude_error": 0.015107532566474135,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
     "ProperMotions": [
+        {
+            "mu_ra": 94.67703681384904,
+            "mu_ra_error": 0.5359171929815333,
+            "mu_dec": 20.95802373114715,
+            "mu_dec_error": 0.6186861084684203,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": 94.62625833772069,
+            "mu_ra_error": 0.19538569450378418,
+            "mu_dec": 21.710053566988673,
+            "mu_dec_error": 0.21716295182704926,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "mu_ra": 83.67,
             "mu_ra_error": 0.98,
             "mu_dec": 13.57,
             "mu_dec_error": 0.78,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "vanL07"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/GJ1048B.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/GJ1048B.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": null,
+            "observation_date": "2009-01-19T21:59:42.525000",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "PID50367"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U50185_GJ1048B_0235-2331_BUR08B.fits",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/U50185_GJ1048B_0235-2331_BUR08B.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2006-12-23T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Wm-2um-1",
+            "wavelength_order": null,
+            "comments": "None",
+            "reference": "Burg08d"
         }
     ]
 }

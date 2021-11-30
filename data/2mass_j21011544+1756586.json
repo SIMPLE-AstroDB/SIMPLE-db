@@ -19,6 +19,41 @@
             "other_name": "2MASSW J2101154+175658"
         }
     ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 15.861,
+            "magnitude_error": 0.182,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 16.853,
+            "magnitude_error": 0.171,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 14.892,
+            "magnitude_error": 0.116,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        }
+    ],
     "ProperMotions": [
         {
             "mu_ra": 143.97,
@@ -28,6 +63,50 @@
             "adopted": true,
             "comments": null,
             "reference": "Vrba04"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/2101%2B1756_CHIU06.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/2101+1756_CHIU06.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2005-08-14T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "normalized",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Chiu06"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/2101%2B1756_BURG10a_1.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/2101+1756_BURG10a_1.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2005-09-07T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "normalized",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg10a"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/2101%2B1756_BURG10a_2.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/2101+1756_BURG10a_2.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2008-07-12T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "normalized",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg10a"
         }
     ]
 }

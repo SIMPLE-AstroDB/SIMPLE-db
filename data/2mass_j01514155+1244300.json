@@ -27,6 +27,39 @@
     ],
     "Photometry": [
         {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 15.603,
+            "magnitude_error": 0.112,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 16.566,
+            "magnitude_error": 0.129,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 15.183,
+            "magnitude_error": 0.189,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
             "band": "WISE.W1",
             "ucd": null,
             "magnitude": 14.586,
@@ -80,6 +113,22 @@
             "adopted": true,
             "comments": null,
             "reference": "Vrba04"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/0151%2B1244.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/0151+1244.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-12-19T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "normalized",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg04b"
         }
     ]
 }

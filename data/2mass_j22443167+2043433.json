@@ -30,6 +30,39 @@
     ],
     "Photometry": [
         {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 14.999,
+            "magnitude_error": 0.066,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 16.476,
+            "magnitude_error": 0.14,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 14.022,
+            "magnitude_error": 0.073,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
             "band": "WISE.W1",
             "ucd": null,
             "magnitude": 12.777,
@@ -83,6 +116,50 @@
             "adopted": true,
             "comments": null,
             "reference": "Liu_16"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/2244%2B2043.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/2244+2043.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": null,
+            "observation_date": "2004-12-10T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "PID3431"
+        },
+        {
+            "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1121/type/native/viewcontent",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/U20968_2244+2043_dagny.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2005-09-09T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Loop08b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/U20968_2244%2B2043_davy.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U20968_2244+2043_davy.fits",
+            "regime": "optical",
+            "telescope": "Keck I",
+            "instrument": "LRIS",
+            "mode": null,
+            "observation_date": "2008-03-25T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Kirk08"
         }
     ]
 }

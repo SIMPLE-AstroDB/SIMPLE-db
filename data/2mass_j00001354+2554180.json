@@ -30,6 +30,39 @@
     ],
     "Photometry": [
         {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 14.731,
+            "magnitude_error": 0.074,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 15.063,
+            "magnitude_error": 0.041,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 14.836,
+            "magnitude_error": 0.12,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
             "band": "WISE.W1",
             "ucd": null,
             "magnitude": 14.211,
@@ -83,6 +116,50 @@
             "adopted": true,
             "comments": null,
             "reference": "Dupu12a"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/0000%2B2554%20%285-14.5um%29.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/0000+2554 (5-14.5um).txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": null,
+            "observation_date": "2005-12-18T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "PID20514"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/0000%2B2554.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/0000+2554.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2005-12-18T09:35:53.225000",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Step09"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_SDSSJ000013.54%2B255418.6_20040724_BUR06C.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_SDSSJ000013.54+255418.6_20040724_BUR06C.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2004-07-24T00:00:00",
+            "wavelength_units": null,
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg06b"
         }
     ],
     "SpectralTypes": [

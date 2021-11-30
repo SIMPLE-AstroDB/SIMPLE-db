@@ -21,6 +21,39 @@
     ],
     "Photometry": [
         {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 14.436,
+            "magnitude_error": 0.042,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 15.527,
+            "magnitude_error": 0.054,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 13.751,
+            "magnitude_error": 0.058,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
             "band": "WISE.W1",
             "ucd": null,
             "magnitude": 12.881,
@@ -74,6 +107,36 @@
             "adopted": true,
             "comments": null,
             "reference": "Smar18"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U10789.fits",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U10789.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2004-11-08T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cruz18"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/RCspec/U10789.fits",
+            "local_spectrum": "$BDNYC_spectra/RCspec/U10789.fits",
+            "regime": "optical",
+            "telescope": "CTIO 4m",
+            "instrument": "R-C Spec",
+            "mode": null,
+            "observation_date": "2002-01-24T06:32:07.546000",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": "noisy",
+            "reference": "Cruz03"
         }
     ]
 }

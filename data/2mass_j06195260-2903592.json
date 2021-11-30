@@ -14,17 +14,152 @@
     "Names": [
         {
             "other_name": "2MASS J06195260-2903592"
+        },
+        {
+            "other_name": "Gaia DR2 2898355085095031808"
+        },
+        {
+            "other_name": "Gaia EDR3 2898355085095031808"
+        }
+    ],
+    "Parallaxes": [
+        {
+            "parallax": 7.020320874192929,
+            "parallax_error": 0.2954388688404331,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 6.750304428295099,
+            "parallax_error": 0.2293175458908081,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 14.195,
+            "magnitude_error": 0.041,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 15.136,
+            "magnitude_error": 0.036,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 13.453,
+            "magnitude_error": 0.046,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 19.26817512512207,
+            "magnitude_error": 0.009404463329088076,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 17.8459415435791,
+            "magnitude_error": 0.03129450832757051,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 19.236862182617188,
+            "magnitude_error": 0.005497497132166182,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 17.857973098754883,
+            "magnitude_error": 0.01780001202722632,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": 6.575907933981655,
+            "mu_ra_error": 0.4677147843122134,
+            "mu_dec": 1.5857961665717435,
+            "mu_dec_error": 0.5666705226681722,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": 6.281686757191174,
+            "mu_ra_error": 0.1867181658744812,
+            "mu_dec": 2.404750463064929,
+            "mu_dec_error": 0.22684045135974884,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "mu_ra": 4.5,
             "mu_ra_error": 2.1,
             "mu_dec": -8.1,
             "mu_dec_error": 3.9,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Liu_16"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U10538.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U10538.fits",
+            "regime": "optical",
+            "telescope": "CTIO 4m",
+            "instrument": "R-C Spec",
+            "mode": null,
+            "observation_date": "2002-01-24T05:30:45.957000",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cruz03"
         }
     ]
 }

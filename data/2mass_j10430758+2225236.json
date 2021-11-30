@@ -18,6 +18,39 @@
     ],
     "Photometry": [
         {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 14.725,
+            "magnitude_error": 0.04,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 15.965,
+            "magnitude_error": 0.065,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 13.991,
+            "magnitude_error": 0.041,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
             "band": "WISE.W1",
             "ucd": null,
             "magnitude": 13.061,
@@ -80,6 +113,36 @@
             "adopted": null,
             "comments": null,
             "reference": "Schm10b"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U10926.fits",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U10926.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2004-11-07T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Sieg07"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U10926.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U10926.fits",
+            "regime": "optical",
+            "telescope": "Gemini North",
+            "instrument": "GMOS-N",
+            "mode": "Prism",
+            "observation_date": "2004-11-07T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cruz07"
         }
     ]
 }

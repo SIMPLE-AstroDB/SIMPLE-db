@@ -28,6 +28,41 @@
             "other_name": "WISEP J102109.57-030421.5"
         }
     ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 15.346,
+            "magnitude_error": 0.101,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 16.253,
+            "magnitude_error": 0.091,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 15.126,
+            "magnitude_error": 0.173,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        }
+    ],
     "ProperMotions": [
         {
             "mu_ra": -187.0,
@@ -37,6 +72,36 @@
             "adopted": true,
             "comments": null,
             "reference": "Dupu17"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1120/type/native/viewcontent",
+            "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/SDSS1021-0304AB_SL.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2006-01-17T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Cush06b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/1021-0304.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/1021-0304.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2004-03-12T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "normalized",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg06b"
         }
     ]
 }

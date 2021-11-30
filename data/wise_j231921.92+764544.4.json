@@ -13,7 +13,111 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J23192137+7645437"
+        },
+        {
+            "other_name": "Gaia DR2 2233222229000888064"
+        },
+        {
+            "other_name": "Gaia EDR3 2233222229000888064"
+        },
+        {
             "other_name": "WISE J231921.92+764544.4"
+        }
+    ],
+    "Parallaxes": [
+        {
+            "parallax": 40.125388086775466,
+            "parallax_error": 1.2078420788243451,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 39.740249446441915,
+            "parallax_error": 0.9143399596214294,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 14.39,
+            "magnitude_error": 0.05,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 15.35,
+            "magnitude_error": 0.06,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 13.65,
+            "magnitude_error": 0.05,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 20.715576171875,
+            "magnitude_error": 0.01106280910152294,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 18.943208694458008,
+            "magnitude_error": 0.028991285774767124,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 20.65182876586914,
+            "magnitude_error": 0.00853136111161202,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 19.09856414794922,
+            "magnitude_error": 0.04710241538271471,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ],
     "ProperMotions": [
@@ -22,9 +126,27 @@
             "mu_ra_error": 10.0,
             "mu_dec": 70.0,
             "mu_dec_error": 10.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Cast16"
+        },
+        {
+            "mu_ra": 194.49384675791936,
+            "mu_ra_error": 2.9740689647432674,
+            "mu_dec": 59.83853426226542,
+            "mu_dec_error": 2.0841245319698194,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": 199.10275657068394,
+            "mu_ra_error": 0.8963678479194641,
+            "mu_dec": 63.152901195225354,
+            "mu_dec_error": 1.210431694984436,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ]
 }

@@ -13,10 +13,58 @@
     ],
     "Names": [
         {
-            "other_name": ""
+            "other_name": "2MASS J00110940+5149236"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 15.51,
+            "magnitude_error": 0.12,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
         },
         {
-            "other_name": "2MASS J00110940+5149236"
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 16.68,
+            "magnitude_error": 0.14,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 14.65,
+            "magnitude_error": 0.09,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U13005.fits",
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/U13005.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-09-05T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": "galaxy",
+            "reference": "Cruz18"
         }
     ]
 }

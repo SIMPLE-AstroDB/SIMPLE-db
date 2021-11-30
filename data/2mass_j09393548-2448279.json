@@ -18,6 +18,28 @@
     ],
     "Photometry": [
         {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 15.797,
+            "magnitude_error": 0.15,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 15.98,
+            "magnitude_error": 0.106,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
             "band": "WISE.W1",
             "ucd": null,
             "magnitude": 15.03,
@@ -71,6 +93,36 @@
             "adopted": true,
             "comments": null,
             "reference": "Burg08b"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/0939-2448.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/0939-2448.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2006-05-24T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "PID20544"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSJ09393548-2448279_20040310_BUR06C.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_2MASSJ09393548-2448279_20040310_BUR06C.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2004-03-11T00:00:00",
+            "wavelength_units": null,
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg06b"
         }
     ]
 }

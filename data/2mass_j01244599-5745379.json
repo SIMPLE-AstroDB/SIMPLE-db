@@ -14,6 +14,80 @@
     "Names": [
         {
             "other_name": "2MASS J01244599-5745379"
+        },
+        {
+            "other_name": "Gaia DR2 4909788600248238208"
+        },
+        {
+            "other_name": "Gaia EDR3 4909788600248238208"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 15.059,
+            "magnitude_error": 0.089,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 16.308,
+            "magnitude_error": 0.105,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 14.315,
+            "magnitude_error": 0.088,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 21.271432876586914,
+            "magnitude_error": 0.042775786177518454,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 21.165924072265625,
+            "magnitude_error": 0.06765625657465685,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 19.5753173828125,
+            "magnitude_error": 0.11163006984282592,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ],
     "ProperMotions": [
@@ -25,6 +99,22 @@
             "adopted": true,
             "comments": null,
             "reference": "Fahe09"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20065.fits",
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U20065.fits",
+            "regime": "optical",
+            "telescope": "Gemini South",
+            "instrument": "GMOS-S",
+            "mode": null,
+            "observation_date": "2005-08-19T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Reid08b"
         }
     ]
 }

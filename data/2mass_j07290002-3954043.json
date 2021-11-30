@@ -21,6 +21,28 @@
     ],
     "Photometry": [
         {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 15.979,
+            "magnitude_error": 0.183,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 15.92,
+            "magnitude_error": 0.077,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
             "band": "WISE.W1",
             "ucd": null,
             "magnitude": 14.931,
@@ -118,6 +140,22 @@
             "adopted": true,
             "comments": null,
             "reference": "Fahe12"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSJ07290002-3954043_20061208_LOO07A.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_2MASSJ07290002-3954043_20061208_LOO07A.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2006-12-08T00:00:00",
+            "wavelength_units": null,
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Loop07a"
         }
     ]
 }

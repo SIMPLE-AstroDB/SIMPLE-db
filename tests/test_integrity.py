@@ -159,6 +159,10 @@ def test_names_table(db):
     assert len(name_list) == valid_name_counts, \
         'ERROR: There are entries in Names without Names.source == Names.other_name'
 
+    # Verify that there are no empty strings as other_names in Names
+    blank_names = db.query(db.Names).filter(db.Names.c.other_name == '').astropy()
+    assert len(blank_names) == 0, \
+        'ERROR: There are entries in Names which are empty strings'
 
 def test_source_uniqueness2(db):
     # Verify that all Sources.source values are unique and find the duplicates
@@ -333,6 +337,21 @@ def test_gravities(db):
         print('\nEntries found without gravity values')
         print(t)
     assert len(t) == 0
+
+
+def test_spectra(db):
+    # Tests against the Spectra table
+
+    # There should be no entries in the Spectra table without a spectrum
+    t = db.query(db.Spectra.c.source). \
+        filter(db.Spectra.c.spectrum.is_(None)). \
+        astropy()
+    if len(t) > 0:
+        print('\nEntries found without spectrum')
+        print(t)
+    assert len(t) == 0
+
+    # TODO: Consider testing that units are astropy.units resolvable?
 
 
 def test_remove_database(db):

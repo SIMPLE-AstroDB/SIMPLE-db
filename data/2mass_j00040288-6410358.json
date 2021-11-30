@@ -14,9 +14,81 @@
     "Names": [
         {
             "other_name": "2MASS J00040288-6410358"
+        },
+        {
+            "other_name": "Gaia DR2 4901128090753842304"
+        },
+        {
+            "other_name": "Gaia EDR3 4901128090753842304"
         }
     ],
     "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 14.831,
+            "magnitude_error": 0.073,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 15.786,
+            "magnitude_error": 0.072,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 14.009,
+            "magnitude_error": 0.046,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 21.014060974121094,
+            "magnitude_error": 0.016417059650070637,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 20.969831466674805,
+            "magnitude_error": 0.012269644518513258,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 19.400436401367188,
+            "magnitude_error": 0.08727646921648434,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "band": "WISE.W1",
             "ucd": null,
@@ -71,6 +143,22 @@
             "adopted": true,
             "comments": null,
             "reference": "Fahe16"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/Y0004-6410.fits",
+            "local_spectrum": "$BDNYC_spectra/FIRE/Y0004-6410_F-140911.fits",
+            "regime": "nir",
+            "telescope": "Magellan I Baade",
+            "instrument": "FIRE",
+            "mode": "Echelle",
+            "observation_date": "2014-09-12T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "FaheSubm"
         }
     ]
 }

@@ -27,6 +27,39 @@
     ],
     "Photometry": [
         {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 15.756,
+            "magnitude_error": 0.171,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 15.6,
+            "magnitude_error": 0.061,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 15.556,
+            "magnitude_error": 0.194,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
             "band": "WISE.W1",
             "ucd": null,
             "magnitude": 15.0,
@@ -80,6 +113,50 @@
             "adopted": true,
             "comments": null,
             "reference": "Dupu12a"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/0727%2B1710.txt",
+            "local_spectrum": "$BDNYC_spectra/IRS/0727+1710.txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": null,
+            "observation_date": "2006-04-18T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "Jy",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "PID20544"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/0727%2B1710.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/0727+1710.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2004-03-10T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "normalized",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg06b"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/2MASSJ07271824%2B1710012_T8_LRIS_Burg03.txt",
+            "local_spectrum": "$BDNYC_spectra/LRIS/2MASSJ07271824+1710012_T8_LRIS_Burg03.txt",
+            "regime": "optical",
+            "telescope": "Keck I",
+            "instrument": "LRIS",
+            "mode": null,
+            "observation_date": "2000-03-05T00:00:00",
+            "wavelength_units": "A",
+            "flux_units": "ergs-1cm-2A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg03d"
         }
     ]
 }

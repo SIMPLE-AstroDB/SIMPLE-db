@@ -13,16 +13,138 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J15404341-5101357"
+        },
+        {
+            "other_name": "Gaia DR2 5985290231327158144"
+        },
+        {
+            "other_name": "Gaia EDR3 5985290231327158144"
+        },
+        {
             "other_name": "WISEA J154045.67-510139.3"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 188.04978670239896,
+            "parallax_error": 0.09388134358830756,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 187.7289806878707,
+            "parallax_error": 0.049631379544734955,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 8.299,
+            "magnitude_error": 0.038,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 8.961,
+            "magnitude_error": 0.025,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 7.943,
+            "magnitude_error": 0.04,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 12.755745887756348,
+            "magnitude_error": 0.00046362805887689343,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 11.29702377319336,
+            "magnitude_error": 0.0022221372417895974,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 12.735929489135742,
+            "magnitude_error": 0.0005554554758796773,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 11.28880786895752,
+            "magnitude_error": 0.0008417984048811353,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
     "ProperMotions": [
+        {
+            "mu_ra": 1949.1746193024535,
+            "mu_ra_error": 0.19262683350238738,
+            "mu_dec": -324.64192241031617,
+            "mu_dec_error": 0.16382699326561867,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": 1949.461491458244,
+            "mu_ra_error": 0.049766965210437775,
+            "mu_dec": -324.78911433214125,
+            "mu_dec_error": 0.04959414526820183,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "mu_ra": 1956.81,
             "mu_ra_error": 1.84,
             "mu_dec": -309.93,
             "mu_dec_error": 3.08,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Henr18"
         }

@@ -13,16 +13,138 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J01333248-6314415"
+        },
+        {
+            "other_name": "Gaia DR2 4712132354155559040"
+        },
+        {
+            "other_name": "Gaia EDR3 4712132354155559040"
+        },
+        {
             "other_name": "SSSPM J0134-6315"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 13.886703310274536,
+            "parallax_error": 0.1706073941859413,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 13.808035516241766,
+            "parallax_error": 0.11745651066303253,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 14.018,
+            "magnitude_error": 0.052,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 14.513,
+            "magnitude_error": 0.039,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 13.704,
+            "magnitude_error": 0.037,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 18.205913543701172,
+            "magnitude_error": 0.001989236948414106,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 16.74767303466797,
+            "magnitude_error": 0.007316373473793776,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 18.160791397094727,
+            "magnitude_error": 0.0014115269962666104,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 16.751319885253906,
+            "magnitude_error": 0.00685994851216779,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
     "ProperMotions": [
+        {
+            "mu_ra": 77.47132763084764,
+            "mu_ra_error": 0.4215195438741515,
+            "mu_dec": -79.42829815919113,
+            "mu_dec_error": 0.23605764554110104,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": 77.70234376418091,
+            "mu_ra_error": 0.1371791958808899,
+            "mu_dec": -78.86775861138442,
+            "mu_dec_error": 0.11736667156219482,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "mu_ra": 77.1,
             "mu_ra_error": 8.81,
             "mu_dec": -81.24,
             "mu_dec_error": 8.84,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Lodi05"
         }

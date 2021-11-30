@@ -13,7 +13,111 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J00064746-0852350"
+        },
+        {
+            "other_name": "Gaia DR2 2429054458317192576"
+        },
+        {
+            "other_name": "Gaia EDR3 2429054458317192576"
+        },
+        {
             "other_name": "LP 704-48"
+        }
+    ],
+    "Parallaxes": [
+        {
+            "parallax": 31.941825158090747,
+            "parallax_error": 0.1585369464800084,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 31.944219054598523,
+            "parallax_error": 0.12563583254814148,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 11.434,
+            "magnitude_error": 0.024,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 11.967,
+            "magnitude_error": 0.023,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 11.09,
+            "magnitude_error": 0.023,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 15.658912658691406,
+            "magnitude_error": 0.0008183747967544225,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 14.218551635742188,
+            "magnitude_error": 0.0035514337345563104,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 15.632710456848145,
+            "magnitude_error": 0.0008017704543569772,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 14.211360931396484,
+            "magnitude_error": 0.0013576711610734263,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ],
     "ProperMotions": [
@@ -22,9 +126,27 @@
             "mu_ra_error": 3.0,
             "mu_dec": -314.0,
             "mu_dec_error": 2.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Burg12b"
+        },
+        {
+            "mu_ra": -61.01018096204296,
+            "mu_ra_error": 0.3284752064876369,
+            "mu_dec": -321.3525916143928,
+            "mu_dec_error": 0.18079631982612887,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": -62.39348884419254,
+            "mu_ra_error": 0.13849127292633057,
+            "mu_dec": -320.57199383720484,
+            "mu_dec_error": 0.0850653201341629,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ]
 }

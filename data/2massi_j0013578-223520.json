@@ -13,16 +13,138 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J00135779-2235200"
+        },
+        {
             "other_name": "2MASSI J0013578-223520"
+        },
+        {
+            "other_name": "Gaia DR2 2361294885296927488"
+        },
+        {
+            "other_name": "Gaia EDR3 2361294885296927488"
+        }
+    ],
+    "Parallaxes": [
+        {
+            "parallax": 36.81502413881978,
+            "parallax_error": 1.9565821312228078,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 38.04535612600854,
+            "parallax_error": 1.5766695737838745,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 14.595,
+            "magnitude_error": 0.062,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 15.775,
+            "magnitude_error": 0.065,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 14.036,
+            "magnitude_error": 0.051,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 20.88262939453125,
+            "magnitude_error": 0.012328390178287223,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 19.156152725219727,
+            "magnitude_error": 0.04462257598170376,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 20.801349639892578,
+            "magnitude_error": 0.011279029944847644,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 19.124263763427734,
+            "magnitude_error": 0.03371462931385038,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": 67.63940747869006,
+            "mu_ra_error": 2.2488746319407906,
+            "mu_dec": -67.35009680576596,
+            "mu_dec_error": 2.8498994825728476,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": 67.30845259572466,
+            "mu_ra_error": 1.6961661577224731,
+            "mu_dec": -67.27015082784183,
+            "mu_dec_error": 1.8355385065078735,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "mu_ra": 60.45,
             "mu_ra_error": 6.66,
             "mu_dec": -69.37,
             "mu_dec_error": 11.22,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Smar18"
         }

@@ -13,7 +13,7 @@ class Publications(Base):
     This stores reference information (DOI, bibcodes, etc) and has shortname as the primary key
     """
     __tablename__ = 'Publications'
-    name = Column(String(30), primary_key=True, nullable=False)
+    name = Column(String(30), primary_key=True, nullable=False, onupdate='cascade')
     bibcode = Column(String(100))
     doi = Column(String(100))
     description = Column(String(1000))
@@ -29,6 +29,13 @@ class Instruments(Base):
     __tablename__ = 'Instruments'
     name = Column(String(30), primary_key=True, nullable=False)
     reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'))
+
+
+class Modes(Base):
+    __tablename__ = 'Modes'
+    name = Column(String(30), primary_key=True, nullable=False)
+    instrument = Column(String(30), ForeignKey('Instruments.name', onupdate='cascade'), primary_key=True)
+    telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'), primary_key=True)
 
 
 class PhotometryFilters(Base):
@@ -48,15 +55,18 @@ class PhotometryFilters(Base):
 # Hard-coded enumerations
 
 class Regime(enum.Enum):
-    """Enumeration for spectral type regime"""
+    """Enumeration for spectral type, spectra, and photometry regimes
+    Use UCD controlled vocabulary: https://www.ivoa.net/documents/UCD1+/20200212/PEN-UCDlist-1.4-20200212.html#tth_sEcB
+    """
     gammaray = 'gammaray'
-    xray = 'xray'
-    ultraviolet = 'ultraviolet'
-    optical = 'optical'
-    nir = 'nir'
-    infrared = 'infrared'
-    millimeter = 'millimeter'
-    radio = 'radio'
+    xray = 'em.X-ray'
+    ultraviolet = 'em.UV'
+    optical = 'em.opt'
+    nir = 'em.IR.NIR'  # Near-Infrared, 1-5 microns
+    infrared = 'em.IR'  # Infrared part of the spectrum
+    mir = 'em.IR.MIR'  # Medium-Infrared, 5-30 microns
+    millimeter = 'em.mm'
+    radio = 'em.radio'
     unknown = 'unknown'
 
 
@@ -96,6 +106,7 @@ class Names(Base):
 
 
 class Photometry(Base):
+    #TODO: Constrain UCD with Regime enumeration
     __tablename__ = 'Photometry'
     source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
                     nullable=False, primary_key=True)
@@ -140,7 +151,7 @@ class ProperMotions(Base):
     mu_dec_error = Column(Float)
     adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
+    reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), primary_key=True)
 
 
 class RadialVelocities(Base):
@@ -178,3 +189,34 @@ class Gravities(Base):
     regime = Column(Enum(Regime, create_constraint=True), primary_key=True)  # restricts to a few values: Optical, Infrared
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
+
+
+class Spectra(Base):
+    # Table to store references to spectra
+    __tablename__ = 'Spectra'
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
+                    nullable=False, primary_key=True)
+
+    # Data
+    spectrum = Column(String(1000), nullable=False)  # URL of spectrum location
+    local_spectrum = Column(String(1000))  # local directory (via environment variable) of spectrum location
+
+    # Metadata
+    regime = Column(Enum(Regime, create_constraint=True), primary_key=True)  # eg, Optical, Infrared, etc
+    telescope = Column(String(30), ForeignKey(Telescopes.name))
+    instrument = Column(String(30), ForeignKey(Instruments.name))
+    mode = Column(String(30))  # eg, Prism, Echelle, etc
+    observation_date = Column(DateTime, primary_key=True)
+    wavelength_units = Column(String(20))
+    flux_units = Column(String(20))
+    wavelength_order = Column(Integer)
+
+    # Common metadata
+    comments = Column(String(1000))
+    reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
+
+    # Foreign key constraints for telescope, instrument, mode; all handled via reference to Modes table
+    __table_args__ = (ForeignKeyConstraint([telescope, instrument, mode],
+                                           [Modes.telescope, Modes.instrument, Modes.name],
+                                           onupdate="cascade"),
+                      {})

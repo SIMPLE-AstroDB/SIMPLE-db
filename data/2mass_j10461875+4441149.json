@@ -14,15 +14,134 @@
     "Names": [
         {
             "other_name": "2MASS J10461875+4441149"
+        },
+        {
+            "other_name": "Gaia DR2 781364918917080192"
+        },
+        {
+            "other_name": "Gaia EDR3 781364918917080192"
+        }
+    ],
+    "Parallaxes": [
+        {
+            "parallax": 28.056991201338466,
+            "parallax_error": 2.1772136283389676,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 28.90359220843809,
+            "parallax_error": 1.2745507955551147,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 14.656,
+            "magnitude_error": 0.058,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 15.622,
+            "magnitude_error": 0.058,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 14.13,
+            "magnitude_error": 0.053,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 20.816801071166992,
+            "magnitude_error": 0.012393229410754889,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 19.0869140625,
+            "magnitude_error": 0.04084279563393092,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 20.77117156982422,
+            "magnitude_error": 0.00828972869952809,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 19.195865631103516,
+            "magnitude_error": 0.06484435759414138,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": -160.33683987423174,
+            "mu_ra_error": 2.315662681684359,
+            "mu_dec": -101.52764526830092,
+            "mu_dec_error": 3.1440455520697577,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": -161.72883633406718,
+            "mu_ra_error": 1.1888655424118042,
+            "mu_dec": -98.17824254901689,
+            "mu_dec_error": 1.4367482662200928,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "mu_ra": -258.2,
             "mu_ra_error": 66.81,
             "mu_dec": -78.94,
             "mu_dec_error": 20.43,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Kirk10"
         }

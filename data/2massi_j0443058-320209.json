@@ -13,7 +13,111 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J04430581-3202090"
+        },
+        {
             "other_name": "2MASSI J0443058-320209"
+        },
+        {
+            "other_name": "Gaia DR2 4877448669035035520"
+        },
+        {
+            "other_name": "Gaia EDR3 4877448669035035520"
+        }
+    ],
+    "Parallaxes": [
+        {
+            "parallax": 48.31203838357312,
+            "parallax_error": 0.7428675960819568,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 48.50368768950311,
+            "parallax_error": 0.6613600254058838,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 14.35,
+            "magnitude_error": 0.056,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 15.273,
+            "magnitude_error": 0.052,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 13.877,
+            "magnitude_error": 0.063,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 20.492828369140625,
+            "magnitude_error": 0.009050088051549313,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 18.55341911315918,
+            "magnitude_error": 0.04391567794239788,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 20.459341049194336,
+            "magnitude_error": 0.006553716513746558,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 18.756959915161133,
+            "magnitude_error": 0.03594375544407734,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ],
     "ProperMotions": [
@@ -22,9 +126,27 @@
             "mu_ra_error": 15.0,
             "mu_dec": 211.0,
             "mu_dec_error": 18.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Fahe09"
+        },
+        {
+            "mu_ra": -7.119398375769151,
+            "mu_ra_error": 1.301274759986604,
+            "mu_dec": 194.40911091484867,
+            "mu_dec_error": 1.6365569381676675,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": -8.46005769111191,
+            "mu_ra_error": 0.638580322265625,
+            "mu_dec": 198.0609938872492,
+            "mu_dec_error": 0.7612754106521606,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ]
 }

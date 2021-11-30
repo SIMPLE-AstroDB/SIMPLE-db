@@ -13,6 +13,9 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J10491891-5319100"
+        },
+        {
             "other_name": "Luh 16AB"
         },
         {
@@ -31,6 +34,41 @@
             "reference": "Bedi17"
         }
     ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 9.563,
+            "magnitude_error": 0.029,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 10.733,
+            "magnitude_error": 0.026,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 8.841,
+            "magnitude_error": 0.021,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        }
+    ],
     "ProperMotions": [
         {
             "mu_ra": -2754.77,
@@ -40,6 +78,50 @@
             "adopted": true,
             "comments": null,
             "reference": "Sahl15d"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/FIRE/Luhman16A_nir.fits",
+            "local_spectrum": "$BDNYC_spectra/FIRE/Luhman16A_nir.fits",
+            "regime": "nir",
+            "telescope": "Magellan I Baade",
+            "instrument": "FIRE",
+            "mode": "Echelle",
+            "observation_date": "2013-03-28T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Fahe14"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/LUH16A+-+opt%2Bunc.txt",
+            "local_spectrum": "$BDNYC_spectra/MagE/LUH16A - opt+unc.txt",
+            "regime": "optical",
+            "telescope": "Magellan II Clay",
+            "instrument": "MagE",
+            "mode": "Echelle",
+            "observation_date": "2013-03-28T00:00:00",
+            "wavelength_units": null,
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Fahe14"
+        },
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/LUH16B+-+opt%2Bunc.txt",
+            "local_spectrum": "$BDNYC_spectra/MagE/LUH16B - opt+unc.txt",
+            "regime": "optical",
+            "telescope": "Magellan II Clay",
+            "instrument": "MagE",
+            "mode": "Echelle",
+            "observation_date": "2013-04-14T00:00:00",
+            "wavelength_units": null,
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Fahe14"
         }
     ],
     "SpectralTypes": [

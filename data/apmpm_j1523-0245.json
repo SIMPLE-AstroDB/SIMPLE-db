@@ -13,16 +13,138 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J15225932-0244530"
+        },
+        {
             "other_name": "APMPM J1523-0245"
+        },
+        {
+            "other_name": "Gaia DR2 4414065781341467776"
+        },
+        {
+            "other_name": "Gaia EDR3 4414065781341467776"
+        }
+    ],
+    "Parallaxes": [
+        {
+            "parallax": 13.167219037206413,
+            "parallax_error": 0.14571792319882845,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 13.177795192960398,
+            "parallax_error": 0.11257056891918182,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 13.804,
+            "magnitude_error": 0.029,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 14.277,
+            "magnitude_error": 0.03,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 13.458,
+            "magnitude_error": 0.047,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 17.396835327148438,
+            "magnitude_error": 0.0016541093268852695,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 16.08479881286621,
+            "magnitude_error": 0.005720030172866771,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 17.386394500732422,
+            "magnitude_error": 0.0014721333790022467,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 16.07518196105957,
+            "magnitude_error": 0.004188863536583329,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": -543.7989248013197,
+            "mu_ra_error": 0.28200608306956393,
+            "mu_dec": -315.8218613177509,
+            "mu_dec_error": 0.2387535576078019,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": -543.088288922279,
+            "mu_ra_error": 0.12468081712722778,
+            "mu_dec": -315.93539699856836,
+            "mu_dec_error": 0.10600133240222931,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "mu_ra": -524.0,
             "mu_ra_error": 12.0,
             "mu_dec": -314.0,
             "mu_dec_error": 12.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Lepi08a"
         }

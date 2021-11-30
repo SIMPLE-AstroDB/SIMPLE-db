@@ -13,16 +13,138 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J12435228+1310215"
+        },
+        {
+            "other_name": "Gaia DR2 3929151707195613824"
+        },
+        {
+            "other_name": "Gaia EDR3 3929151707195613824"
+        },
+        {
             "other_name": "SDSS J124352.25+131021.3"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 12.312379475325269,
+            "parallax_error": 0.8890830409694825,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 10.9741604422272,
+            "parallax_error": 0.6294971704483032,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 14.85,
+            "magnitude_error": 0.064,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 15.575,
+            "magnitude_error": 0.042,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 14.447,
+            "magnitude_error": 0.056,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 20.116445541381836,
+            "magnitude_error": 0.005941354269122665,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 18.42911720275879,
+            "magnitude_error": 0.019672071399113755,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 20.065418243408203,
+            "magnitude_error": 0.004287287544947923,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 18.466936111450195,
+            "magnitude_error": 0.02435156413855539,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
     "ProperMotions": [
+        {
+            "mu_ra": -89.08493287036693,
+            "mu_ra_error": 1.324883536807569,
+            "mu_dec": -20.691825959353373,
+            "mu_dec_error": 0.7003266163626372,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": -91.27474028274992,
+            "mu_ra_error": 0.6205321550369263,
+            "mu_dec": -19.151561353487928,
+            "mu_dec_error": 0.6029211282730103,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "mu_ra": -83.0,
             "mu_ra_error": 11.0,
             "mu_dec": -16.0,
             "mu_dec_error": 11.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Zhan10"
         }

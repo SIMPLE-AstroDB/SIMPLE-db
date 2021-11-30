@@ -13,16 +13,138 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J08522440+5139319"
+        },
+        {
+            "other_name": "Gaia DR2 1017131170037877248"
+        },
+        {
+            "other_name": "Gaia EDR3 1017131170037877248"
+        },
+        {
             "other_name": "WISEA J085224.36+513925.5"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 20.95826381600327,
+            "parallax_error": 0.27672934207444067,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 21.25717515037347,
+            "parallax_error": 0.20647522807121277,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 13.452,
+            "magnitude_error": 0.033,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 13.984,
+            "magnitude_error": 0.027,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 13.114,
+            "magnitude_error": 0.024,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 17.98257827758789,
+            "magnitude_error": 0.0015256560979215758,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 16.43627166748047,
+            "magnitude_error": 0.008054038856449458,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 17.981674194335938,
+            "magnitude_error": 0.0015982653451807637,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 16.455707550048828,
+            "magnitude_error": 0.005350064297888225,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
     "ProperMotions": [
+        {
+            "mu_ra": -28.89242695051351,
+            "mu_ra_error": 0.2879218800542124,
+            "mu_dec": -545.9968026722911,
+            "mu_dec_error": 0.3192271666278814,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": -28.531192574414575,
+            "mu_ra_error": 0.1581173986196518,
+            "mu_dec": -545.9383149936166,
+            "mu_dec_error": 0.15945594012737274,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "mu_ra": -26.2,
             "mu_ra_error": 9.5,
             "mu_dec": -543.5,
             "mu_dec_error": 9.5,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Kirk14"
         }

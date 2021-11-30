@@ -13,7 +13,45 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J08583467+3256275"
+        },
+        {
             "other_name": "SDSS J085834.42+325627.7"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 15.382,
+            "magnitude_error": 0.101,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 16.453,
+            "magnitude_error": 0.115,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 14.756,
+            "magnitude_error": 0.095,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
         }
     ],
     "ProperMotions": [
@@ -34,6 +72,22 @@
             "adopted": null,
             "comments": null,
             "reference": "Fahe09"
+        }
+    ],
+    "Spectra": [
+        {
+            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex-prism_SDSSJ085834.42%2B325627.7_20080109_BUR10A.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_SDSSJ085834.42+325627.7_20080109_BUR10A.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2008-01-09T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Burg10a"
         }
     ]
 }

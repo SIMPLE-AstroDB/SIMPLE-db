@@ -13,16 +13,138 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J22285440-1325178"
+        },
+        {
+            "other_name": "Gaia DR2 2601148128510120576"
+        },
+        {
+            "other_name": "Gaia EDR3 2601148128510120576"
+        },
+        {
             "other_name": "LHS 523"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 91.89487434473631,
+            "parallax_error": 0.09475526260955865,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "parallax": 91.83819699106915,
+            "parallax_error": 0.05390274524688721,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "2MASS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 10.217,
+            "magnitude_error": 0.025,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 10.768,
+            "magnitude_error": 0.023,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "2MASS.Ks",
+            "ucd": "em.IR.K",
+            "magnitude": 9.843,
+            "magnitude_error": 0.021,
+            "telescope": "2MASS",
+            "instrument": "2MASS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr03"
+        },
+        {
+            "band": "GAIA2.G",
+            "ucd": "em.opt",
+            "magnitude": 14.563017845153809,
+            "magnitude_error": 0.0007107768762117312,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA2.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 13.085942268371582,
+            "magnitude_error": 0.0034405960233146763,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "band": "GAIA3.G",
+            "ucd": "em.opt",
+            "magnitude": 14.543299674987793,
+            "magnitude_error": 0.0009796648156309117,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
+            "band": "GAIA3.Grp",
+            "ucd": "em.opt.R",
+            "magnitude": 13.090351104736328,
+            "magnitude_error": 0.001671362319533803,
+            "telescope": "Gaia",
+            "instrument": "Gaia",
+            "epoch": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
     "ProperMotions": [
+        {
+            "mu_ra": -328.101801174902,
+            "mu_ra_error": 0.16618639650400038,
+            "mu_dec": -1044.8113287523304,
+            "mu_dec_error": 0.15115024865272156,
+            "adopted": false,
+            "comments": null,
+            "reference": "GaiaDR2"
+        },
+        {
+            "mu_ra": -328.06987243565084,
+            "mu_ra_error": 0.06473297625780106,
+            "mu_dec": -1044.8714458469904,
+            "mu_dec_error": 0.06010089069604874,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
         {
             "mu_ra": -324.84,
             "mu_ra_error": 0.15,
             "mu_dec": -1032.51,
             "mu_dec_error": 0.16,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Wein16"
         }
