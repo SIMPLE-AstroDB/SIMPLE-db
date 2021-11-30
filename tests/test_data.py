@@ -56,9 +56,9 @@ def test_discovery_references(db):
 
     '''
 
-    ref = 'Schm10b'
+    ref = 'Schm10.1808'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 207, f'found {len(t)} discovery reference entries for {ref}'
+    assert len(t) == 208, f'found {len(t)} discovery reference entries for {ref}'
 
     ref = 'West08'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
@@ -171,6 +171,9 @@ def test_proper_motion_refs(db):
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 68, f'found {len(t)} proper motion reference entries for {ref}'
 
+    ref = 'Schm10.1808'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 44, f'found {len(t)} proper motion reference entries for {ref}'
 
 def test_parallax_refs(db):
     ref = 'GaiaDR2'
