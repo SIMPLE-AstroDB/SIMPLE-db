@@ -13,7 +13,7 @@ class Publications(Base):
     This stores reference information (DOI, bibcodes, etc) and has shortname as the primary key
     """
     __tablename__ = 'Publications'
-    name = Column(String(30), primary_key=True, nullable=False, onupdate='cascade')
+    name = Column(String(30), primary_key=True, nullable=False)
     bibcode = Column(String(100))
     doi = Column(String(100))
     description = Column(String(1000))
@@ -163,7 +163,7 @@ class RadialVelocities(Base):
     radial_velocity_error = Column(Float)
     adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
+    reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), primary_key=True)
 
 
 class SpectralTypes(Base):
@@ -177,7 +177,7 @@ class SpectralTypes(Base):
     regime = Column(Enum(Regime, create_constraint=True), primary_key=True)  # restricts to a few values: Optical, Infrared
     adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
+    reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), primary_key=True)
 
 
 class Gravities(Base):
@@ -188,7 +188,7 @@ class Gravities(Base):
     gravity = Column(Enum(Gravity, create_constraint=True), nullable=False)  # restricts to enumerated values
     regime = Column(Enum(Regime, create_constraint=True), primary_key=True)  # restricts to a few values: Optical, Infrared
     comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
+    reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), primary_key=True)
 
 
 class Spectra(Base):
@@ -213,7 +213,7 @@ class Spectra(Base):
 
     # Common metadata
     comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.name', ondelete='cascade'), primary_key=True)
+    reference = Column(String(30), ForeignKey('Publications.name', onupdate='cascade'), primary_key=True)
 
     # Foreign key constraints for telescope, instrument, mode; all handled via reference to Modes table
     __table_args__ = (ForeignKeyConstraint([telescope, instrument, mode],
