@@ -5,7 +5,8 @@ from astrodbkit2.astrodb import Database
 from simple.schema import *
 from astropy.table import Table
 import numpy as np
-from scripts.ingests.utils import ingest_proper_motions
+from scripts.ingests.ingest_utils import ingest_proper_motions
+from scripts.ingests.utils import load_simpledb
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.simbad import Simbad
@@ -17,13 +18,17 @@ from pathlib import Path
 import pandas as pd
 
 
-SAVE_DB = True  # save the data files in addition to modifying the .db file
+SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = False
 
 verboseprint = print if VERBOSE else lambda *a, **k: None
 
-def load_db():
+
+db = load_simpledb('SIMPLE.db', recreatedb=True)
+
+
+'''def load_db():
     # Utility function to load the database
 
     db_file = 'SIMPLE.db'
@@ -36,13 +41,13 @@ def load_db():
     if not db_file_path.exists():
         create_database(db_connection_string)  # creates empty database based on the simple schema
         db = Database(db_connection_string)  # connects to the empty database
-        db.load_database('data/')  # loads the data from the data files into the database
+        db.load_database('data/') # loads the data from the data files into the database
     else:
         db = Database(db_connection_string)  # if database already exists, connects to .db file
 
     return db
 
-db = load_db()
+db = load_db()'''
 
 # load table
 ingest_table = Table.read('scripts/ingests/UltracoolSheet-Main.csv', data_start=1)
@@ -61,5 +66,5 @@ print(df)
 
 
 #Ingesting UKIRT pm into db
-ingest_proper_motions(db, df.name, df.pmra_UKIRT, df.pmraerr_UKIRT, df.pmdec_UKIRT, df.pmdecerr_UKIRT, df.ref_plx_UKIRT, save_db=True, verbose=False )
+ingest_proper_motions(db, df.name, df.pmra_UKIRT, df.pmraerr_UKIRT, df.pmdec_UKIRT, df.pmdecerr_UKIRT, df.ref_plx_UKIRT,)
 
