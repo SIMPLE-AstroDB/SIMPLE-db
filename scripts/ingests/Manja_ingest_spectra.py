@@ -15,9 +15,11 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 # Read in CSV file as Astropy table
 data = Table.read('scripts/ingests/Manja_spectra4.csv')
 
+# Add Jaya06 to the database
 ingest_publication(db, doi='10.1086/507522')
 
-ingest_sources(db, data['Source'], data['reference'], comments=data['comments'])
+# Add the sources to the database
+ingest_sources(db, data['Source'], data['reference'])
 
 # ingest_spectra(db, data['Source'], data['Spectrum'], 'nir', 'VLT', 'ISAAC', 'SW LRes', data['observation_date'], data['reference'], comments=data['comments'])
 
