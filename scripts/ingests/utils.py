@@ -242,7 +242,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
 
 
 def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None,
-                    ignore_ads: bool = False, save_db=False):
+                    ignore_ads: bool = False):
     """
     Adds publication to the database using DOI or ADS Bibcode, including metadata found with ADS.
 
@@ -262,7 +262,6 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
     description: str, optional
         Description of the paper, typically the title of the papre [optional]
     ignore_ads: bool
-    save_db: bool
 
     See Also
     --------
@@ -391,11 +390,7 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
         logger.error(msg)
         raise SimpleError(msg)
 
-    if save_db:
-        db.save_reference_table(table='Publications', directory='data/')
-        logger.info(f"Publication added to database and saved: {name_add}")
-    else:
-        logger.info("Publication added to database: {name_add}")
+    logger.info(f"Publication added to database: {name_add}")
 
     return
 
