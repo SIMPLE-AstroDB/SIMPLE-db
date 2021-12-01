@@ -142,6 +142,8 @@ def ingest_sources(db, sources, references, ras=None, decs=None, comments=None, 
                     dec = simbad_skycoord.to_string(style='decimal').split()[1]
                     epoch = '2000'  # Default coordinates from SIMBAD are epoch 2000.
                     equinox = 'J2000'  # Default frame from SIMBAD is IRCS and J2000.
+                    msg = f"Coordinates retrieved from SIMBAD {ra}, {dec}"
+                    logger.debug(msg)
                 else:
                     n_skipped += 1
                     msg = f"{i}: Skipping: {source}. Coordinates are needed and could not be retrieved from SIMBAD. \n"

@@ -14,7 +14,9 @@ import astropy.units as u
 from astropy.table import Table, unique
 from sqlalchemy import or_, and_
 import sqlalchemy.exc
-
+from astroquery.simbad import Simbad
+from astropy.coordinates import SkyCoord
+import astropy.units as u
 
 warnings.filterwarnings("ignore", module='astroquery.simbad')
 logger = logging.getLogger('SIMPLE')
@@ -121,6 +123,21 @@ def find_source_in_db(db, source, ra=None, dec=None, search_radius=60.):
         radius = u.Quantity(search_radius, unit='arcsec')
         logger.info(f"{source}: No Simbad match, trying coord search around {location.ra.hour}, {location.dec}")
         db_name_matches = db.query_region(location, radius=radius)
+
+    # If still no matches, try to get the coords from SIMBAD
+    if len(db_name_matches) == 0:
+        simbad_result_table = Simbad.query_object(source)
+        if len(simbad_result_table) == 1:
+            simbad_coords = simbad_result_table['RA'][0] + ' ' + simbad_result_table['DEC'][0]
+            simbad_skycoord = SkyCoord(simbad_coords, unit=(u.hourangle, u.deg))
+            ra = simbad_skycoord.to_string(style='decimal').split()[0]
+            dec = simbad_skycoord.to_string(style='decimal').split()[1]
+            msg = f"Coordinates retrieved from SIMBAD {ra}, {dec}"
+            logger.debug(msg)
+            # Search database around that coordinate
+            radius = u.Quantity(search_radius, unit='arcsec')
+            db_name_matches = db.query_region(simbad_skycoord, radius=radius)
+
 
     if len(db_name_matches) == 1:
         db_names = db_name_matches['source'].tolist()
