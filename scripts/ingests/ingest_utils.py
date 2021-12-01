@@ -819,15 +819,15 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
 
         row_data = [{'source': db_name,
                      'spectrum': spectra[i],
-                     'local_spectrum': None if ma.is_masked(local_spectra[i]) else local_spectra[i],
+                     'local_spectrum': None, # if ma.is_masked(local_spectra[i]) else local_spectra[i],
                      'regime': regimes[i],
                      'telescope': telescopes[i],
                      'instrument': None if ma.is_masked(instruments[i]) else instruments[i],
                      'mode': None if ma.is_masked(modes[i]) else modes[i],
                      'observation_date': obs_date,
-                     'wavelength_units': None if ma.is_masked(wavelength_units[i]) else wavelength_units[i],
-                     'flux_units': None if ma.is_masked(flux_units[i]) else flux_units[i],
-                     'wavelength_order': None if ma.is_masked(wavelength_order[i]) else wavelength_order[i],
+                     'wavelength_units': None, # if ma.is_masked(wavelength_units[i]) else wavelength_units[i],
+                     'flux_units': None, # if ma.is_masked(flux_units[i]) else flux_units[i],
+                     'wavelength_order': None, # if ma.is_masked(wavelength_order[i]) else wavelength_order[i],
                      'comments': None if ma.is_masked(comments[i]) else comments[i],
                      'reference': references[i]}]
         logger.debug(row_data)
@@ -855,10 +855,12 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                 else:
                     msg = f'Spectrum could not be added to the database (other data exist): \n ' \
                           f"{source, instruments[i], modes[i], obs_date, references[i], spectra[i]} \n"
-                    msg2 = f"Existing Data: \n " \
-                           f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference', 'spectrum']}"
+                    msg2 = f"Existing Data: \n "
+                           # f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference', 'spectrum']}"
                     msg3 = f"Data not able to add: \n {row_data} \n "
                     logger.warning(msg + msg2)
+                    source_spec_data[ref_dupe_ind][
+                              'source', 'instrument', 'mode', 'observation_date', 'reference', 'spectrum'].pprint_all()
                     logger.debug(msg3)
                     n_skipped += 1
                     continue
