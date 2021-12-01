@@ -28,7 +28,8 @@ ch.setFormatter(LOGFORMAT)
 # To prevent duplicate handlers, only add if they haven't been set previously
 if not len(logger.handlers):
     logger.addHandler(ch)
-
+logger.setLevel(logging.INFO)
+    
 
 class SimpleError(Exception):
     pass
@@ -50,15 +51,22 @@ def load_simpledb(db_file, recreatedb=True):
     # Utility function to load the database
 
     db_file_path = Path(db_file)
-    db_connection_string = 'sqlite:///SIMPLE.db'
+    db_connection_string = 'sqlite:///' + db_file
 
     if recreatedb and db_file_path.exists():
         os.remove(db_file)  # removes the current .db file if one already exists
 
     if not db_file_path.exists():
-        create_database(db_connection_string)  # creates empty database based on the simple schema
-        db = Database(db_connection_string)  # connects to the empty database
-        db.load_database('data/')  # loads the data from the data files into the database
+        try: # Use fancy in-memory database, if supported by astrodbkit2
+            db = Database('sqlite://')  # creates and connects to a temporary in-memory database
+            db.load_database('data/')  # loads the data from the data files into the database
+            db.dump_sqlite(db_file) # dump in-memory database to file
+            db = Database(db_connection_string) # replace database object with new file version
+        except RuntimeError:
+            # use in-file database
+            create_database(db_connection_string)  # creates empty database based on the simple schema
+            db = Database(db_connection_string)  # connects to the empty database
+            db.load_database('data/')  # loads the data from the data files into the database
     else:
         db = Database(db_connection_string)  # if database already exists, connects to .db file
 
