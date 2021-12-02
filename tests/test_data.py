@@ -56,9 +56,9 @@ def test_discovery_references(db):
 
     '''
 
-    ref = 'Schm10b'
+    ref = 'Schm10.1808'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 207, f'found {len(t)} discovery reference entries for {ref}'
+    assert len(t) == 208, f'found {len(t)} discovery reference entries for {ref}'
 
     ref = 'West08'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
@@ -171,6 +171,9 @@ def test_proper_motion_refs(db):
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 68, f'found {len(t)} proper motion reference entries for {ref}'
 
+    ref = 'Schm10.1808'
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 44, f'found {len(t)} proper motion reference entries for {ref}'
 
 def test_parallax_refs(db):
     ref = 'GaiaDR2'
@@ -364,7 +367,7 @@ def test_Kirk19_ingest(db):
     # Test parallaxes 
     ref = 'Kirk19'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
-    assert len(t) == 22, f'found {len(t)} parallax entries for {ref}'
+    assert len(t) == 23, f'found {len(t)} parallax entries for {ref}'
     
     #Test proper motions added
     ref = 'Kirk19'
@@ -374,11 +377,11 @@ def test_Kirk19_ingest(db):
     #Test photometry added
     telescope = 'Spitzer'
     t = db.query(db.Photometry).filter(db.Photometry.c.telescope == telescope).astropy()
-    assert len(t) == 44, f'found {len(t)} photometry entries for {telescope}'
+    assert len(t) == 46, f'found {len(t)} photometry entries for {telescope}'
 
     ref = 'Kirk19'
     t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
-    assert len(t) == 16, f'found {len(t)} photometry entries for {ref}'
+    assert len(t) == 18, f'found {len(t)} photometry entries for {ref}'
 
     ref = 'Schn15'
     t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
