@@ -135,7 +135,7 @@ def find_source_in_db(db, source, ra=None, dec=None, search_radius=60.):
     # If still no matches, try to get the coords from SIMBAD
     if len(db_name_matches) == 0:
         simbad_result_table = Simbad.query_object(source)
-        if len(simbad_result_table) == 1:
+        if simbad_result_table is not None and len(simbad_result_table) == 1:
             simbad_coords = simbad_result_table['RA'][0] + ' ' + simbad_result_table['DEC'][0]
             simbad_skycoord = SkyCoord(simbad_coords, unit=(u.hourangle, u.deg))
             ra = simbad_skycoord.to_string(style='decimal').split()[0]
