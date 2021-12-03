@@ -146,7 +146,6 @@ def find_source_in_db(db, source, ra=None, dec=None, search_radius=60.):
             radius = u.Quantity(search_radius, unit='arcsec')
             db_name_matches = db.query_region(simbad_skycoord, radius=radius)
 
-
     if len(db_name_matches) == 1:
         db_names = db_name_matches['source'].tolist()
         logger.debug(f'One match found for {source}: {db_names[0]}')

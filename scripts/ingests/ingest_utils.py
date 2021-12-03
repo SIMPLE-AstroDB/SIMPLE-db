@@ -779,6 +779,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     n_spectra = len(spectra)
     n_skipped = 0
     n_dupes = 0
+    n_missing_instrument = 0
     n_added = 0
     n_blank = 0
 
@@ -839,13 +840,18 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
             n_added += 1
         except sqlalchemy.exc.IntegrityError:
             # TODO: add elif to check if reference is in Publications Table
+
+            # check telescope, instrument, mode exists
+            telescope = db.query(db.Telescopes).filter(db.Telescopes.c.name == row_data[0]['telescope']).table()
+            instrument = db.query(db.Instruments).filter(db.Instruments.c.name == row_data[0]['instrument']).table()
+            mode = db.query(db.Modes).filter(db.Modes.c.name == row_data[0]['mode']).table()
+
             if len(source_spec_data) > 0:  # Spectra data already exists
                 # check for duplicate measurement
                 ref_dupe_ind = source_spec_data['reference'] == references[i]
                 date_dupe_ind = source_spec_data['observation_date'] == obs_date
                 instrument_dupe_ind = source_spec_data['instrument'] == instruments[i]
                 mode_dupe_ind = source_spec_data['mode'] == modes[i]
-                file_dupe_ind = source_spec_data['spectrum'] == spectra[i]
                 if sum(ref_dupe_ind) and sum(date_dupe_ind) and sum(instrument_dupe_ind) and sum(mode_dupe_ind):
                     msg = f"Skipping suspected duplicate measurement\n{source}\n"
                     msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
@@ -854,29 +860,40 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                     logger.debug(msg2 + msg3)
                     n_dupes += 1
                     continue  # Skip duplicate measurement
-                else:
-                    msg = f'Spectrum could not be added to the database (other data exist): \n ' \
-                          f"{source, instruments[i], modes[i], obs_date, references[i], spectra[i]} \n"
-                    msg2 = f"Existing Data: \n "
-                           # f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference', 'spectrum']}"
-                    msg3 = f"Data not able to add: \n {row_data} \n "
-                    logger.warning(msg + msg2)
-                    source_spec_data[ref_dupe_ind][
-                              'source', 'instrument', 'mode', 'observation_date', 'reference', 'spectrum'].pprint_all()
-                    logger.debug(msg3)
-                    n_skipped += 1
-                    continue
+                # else:
+                #     msg = f'Spectrum could not be added to the database (other data exist): \n ' \
+                #           f"{source, instruments[i], modes[i], obs_date, references[i], spectra[i]} \n"
+                #     msg2 = f"Existing Data: \n "
+                #            # f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference', 'spectrum']}"
+                #     msg3 = f"Data not able to add: \n {row_data} \n "
+                #     logger.warning(msg + msg2)
+                #     source_spec_data[ref_dupe_ind][
+                #               'source', 'instrument', 'mode', 'observation_date', 'reference', 'spectrum'].pprint_all()
+                #     logger.debug(msg3)
+                #     n_skipped += 1
+                #     continue
+            if len(instrument) == 0 or len(mode) == 0 or len(telescope) == 0:
+                msg = f'Spectrum for {source} could not be added to the database. \n' \
+                    f' Telescope, Instrument, and/or Mode need to be added to the appropriate table. \n' \
+                    f" Trying to find telescope: {row_data[0]['telescope']}, instrument: {row_data[0]['instrument']}, " \
+                    f" mode: {row_data[0]['mode']} \n"\
+                    f" Telescope: {telescope}, Instrument: {instrument}, Mode: {mode} \n"
+                logger.error(msg)
+                n_missing_instrument += 1
+                continue
             else:
-                msg = f'Spectrum could not be added to the database: \n {row_data} \n '
+                msg = f'Spectrum for {source} could not be added to the database for unknown reason: \n {row_data} \n '
                 logger.error(msg)
                 raise SimpleError(msg)
 
-    logger.info(f"Spectra added: {n_added}")
-    logger.info(f"Spectra with blank obs_date: {n_blank}")
-    logger.info(f"Suspected duplicates skipped: {n_dupes}")
-    logger.info(f"Spectra skipped for unknown reason: {n_skipped}")
+    msg = f"SPECTRA ADDED: {n_added} \n" \
+          f" Spectra with blank obs_date: {n_blank} \n" \
+          f" Suspected duplicates skipped: {n_dupes}\n" \
+          f" Missing Telescope/Instrument/Mode: {n_missing_instrument} \n" \
+          f" Spectra skipped for unknown reason: {n_skipped} \n"
+    logger.info(msg)
 
-    if n_added + n_dupes + n_blank + n_skipped != n_spectra:
+    if n_added + n_dupes + n_blank + n_skipped + n_missing_instrument != n_spectra:
         msg = "Numbers don't add up: "
         logger.error(msg)
         raise SimpleError(msg)
