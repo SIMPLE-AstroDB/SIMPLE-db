@@ -11,19 +11,27 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 # Read in CSV file as Astropy table
 data = Table.read('scripts/ingests/Manja_spectra5.csv')
 
+
 # Add Jaya06 to the database
-#
 # ingest_publication(db, doi='10.1086/507522')
 
 # Inserting New Mode
-telescope_vlt3 = [{'name': 'ESO VLT U3'}]
-instruments_isc = [{'name': 'ISAAC'}]
-swl_mode = [{'name': 'SW LRes',
-             'instrument': 'ISAAC',
-             'telescope': 'ESO VLT U3'}]
-db.Telescopes.insert().execute(telescope_vlt3)
-db.Instruments.insert().execute(instruments_isc)
-db.Modes.insert().execute(swl_mode)
+def insert_modes():
+    telescope_vlt3 = [{'name': 'ESO VLT U3'}]
+    instruments_isc = [{'name': 'ISAAC'}]
+    swl_mode = [{'name': 'SW LRes',
+                 'instrument': 'ISAAC',
+                 'telescope': 'ESO VLT U3'}]
+
+    db.Telescopes.insert().execute(telescope_vlt3)
+    db.Instruments.insert().execute(instruments_isc)
+    db.Modes.insert().execute(swl_mode)
+
+    return
+
+
+if RECREATE_DB:
+    insert_modes()
 
 # Add the sources to the database
 ingest_sources(db, data['Source'], data['reference'])
