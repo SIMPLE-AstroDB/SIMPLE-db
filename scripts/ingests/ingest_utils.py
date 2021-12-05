@@ -946,4 +946,4 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
 #     # Make a dictionary with the inouts
 #     # But make it work such that if a mode is being ingested then all three are mandatory
 #     # but if just a telescope is being ingested then the other two are option
-#     # , and if an instrument is being ingested then the two are required.
+#     # and if an instrument is being ingested then the two are required.
