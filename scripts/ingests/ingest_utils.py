@@ -937,8 +937,9 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
 
     # Make sure a search term is provided
     if telescope is None and instrument is None and mode is None:
-        logger.error("Telescope, Instrument, and Mode must be provided")
-        return
+        msg = "Telescope, Instrument, and Mode must be provided"
+        logger.error(msg)
+        raise SimpleError(msg)
 
     msg_search = f'Searching for {telescope},{instrument},{mode} in database'
     logger.info(msg_search)
