@@ -164,7 +164,7 @@ def test_ingest_publication(db):
     # TODO - Mock environment  where ADS_TOKEN is not set. #117
 
 
-def test_ingest_telescope(db):
+def test_ingest_instrument(db):
     #  TESTS WHICH SHOULD WORK
     #  test adding just telescope
     ingest_instrument(db, telescope='test')
