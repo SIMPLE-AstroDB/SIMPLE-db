@@ -940,24 +940,47 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
         logger.error("Telescope, Instrument, and Mode must be provided")
         return
 
+    msg_search = f'Searching for {telescope},{instrument},{mode} in database'
+    logger.info(msg_search)
+
     # Search that the inputs are in the database
     telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == telescope).table()
-    # query for Instrument
-    # query for mode
+    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == instrument).table()
+    mode_db = db.query(db.Modes).filter(db.Modes.c.name == mode).table()
 
     # If they are in database then logger message of " these have already been ingested"
-    # Else
-    # Make a dictionary with the inouts
 
-    # ingest telesscope if it's not in the database
-    if len(telescope_db) == 0:
+    # Else
+    # Make a dictionary with the inputs
+    if len(telescope_db) == 1 and len(instrument_db) == 1 and len(mode_db) == 1:
+        msg_found = f'{telescope},{instrument}, and {mode} have already been ingested'
+        logger.info(msg_found)
+        return
+    elif len(telescope_db) == 0:
         telescope_add = [{'name': telescope}]
         db.Telescopes.insert().execute(telescope_add)
+        msg_telescope = f'{telescope} was successfully ingested in the database'
+        logger.info(msg_telescope)
+    elif len(instrument_db) == 0:
+        if telescope is None:
+            logger.error('Telescope must be provided to ingest an instrument')
+            return
+        else:
+            instrument_add = [{'name': telescope,
+                               'instrument': instrument}]
+            db.Instruments.insert().execute(instrument_add)
+            msg_instrument = f'{instrument} was successfully ingested in the database'
+            logger.info(msg_instrument)
+    elif len(mode_db) == 0:
+        if telescope and instrument is None or instrument is None or telescope is None:
+            logger.error('Telescope and Instrument must be provided to ingest a mode')
+            return
+        else:
+            mode_add = [{'name': telescope,
+                         'instrument': instrument,
+                         'mode': mode}]
+            db.Modes.insert().execute(mode_add)
+            msg_mode = f'{mode} was successfully ingested in the database'
+            logger.info(msg_mode)
+    return
 
-    # ingest instrument if it's not in the database
-
-    # ingest mode if it's not in the database
-
-    # But make it work such that if a mode is being ingested then all three are mandatory
-    # but if just a telescope is being ingested then the other two are option
-    # and if an instrument is being ingested then the two are required.
