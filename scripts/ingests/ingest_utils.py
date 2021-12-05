@@ -953,32 +953,35 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
     # Else
     # Make a dictionary with the inputs
     if len(telescope_db) == 1 and len(instrument_db) == 1 and len(mode_db) == 1:
-        msg_found = f'{telescope},{instrument}, and {mode} have already been ingested'
+        msg_found = f'{telescope},{instrument}, and {mode} have already been ingested.'
         logger.info(msg_found)
         return
-    elif len(telescope_db) == 0:
-        telescope_add = [{'name': telescope}]
-        db.Telescopes.insert().execute(telescope_add)
-        msg_telescope = f'{telescope} was successfully ingested in the database'
-        logger.info(msg_telescope)
-    elif len(instrument_db) == 0:
+    if len(telescope_db) == 0:
         if telescope is None:
-            logger.error('Telescope must be provided to ingest an instrument')
+            logger.error('Telescope name must be provided to ingest a telescope.')
             return
         else:
-            instrument_add = [{'name': telescope,
-                               'instrument': instrument}]
+            telescope_add = [{'name': telescope}]
+            db.Telescopes.insert().execute(telescope_add)
+            msg_telescope = f'{telescope} was successfully ingested in the database'
+            logger.info(msg_telescope)
+    if len(instrument_db) == 0:
+        if instrument is None:
+            logger.error('Instrument name must be provided to ingest an instrument.')
+            return
+        else:
+            instrument_add = [{'name': instrument}]
             db.Instruments.insert().execute(instrument_add)
-            msg_instrument = f'{instrument} was successfully ingested in the database'
+            msg_instrument = f'{instrument} was successfully ingested in the database.'
             logger.info(msg_instrument)
-    elif len(mode_db) == 0:
+    if len(mode_db) == 0:
         if telescope and instrument is None or instrument is None or telescope is None:
             logger.error('Telescope and Instrument must be provided to ingest a mode')
             return
         else:
-            mode_add = [{'name': telescope,
+            mode_add = [{'name': mode,
                          'instrument': instrument,
-                         'mode': mode}]
+                         'telescope': telescope}]
             db.Modes.insert().execute(mode_add)
             msg_mode = f'{mode} was successfully ingested in the database'
             logger.info(msg_mode)
