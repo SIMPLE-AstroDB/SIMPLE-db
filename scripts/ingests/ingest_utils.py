@@ -916,34 +916,48 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     return
 
 
-# def ingest_instrument(db, telescope, instrument, mode):
-#     """
-#     Script to ingest instrumentation
-#
-#     Parameters
-#     ----------
-#     db: astrodbkit2.astrodb.Database
-#         Database object created by astrodbkit2
-#     telescope: str or list[str]
-#     instrument: str or list[str]
-#     mode: str or list[str]
-#
-#     Returns
-#     -------
-#
-#     None
-#
-#     """
-#
-#     # Make sure a search term is provided
-#     if telescope is None and instrument is None and mode is None:
-#         logger.error("Telescope, Instrument, and Mode must be provided")
-#         return False, 0
-#
-#     # Search that the inputs are in the database
-#     # If they are in database then logger message of " these have already been ingested"
-#     # Else
-#     # Make a dictionary with the inouts
-#     # But make it work such that if a mode is being ingested then all three are mandatory
-#     # but if just a telescope is being ingested then the other two are option
-#     # and if an instrument is being ingested then the two are required.
+def ingest_instrument(db, telescope=None, instrument=None, mode=None):
+    """
+    Script to ingest instrumentation
+
+    Parameters
+    ----------
+    db: astrodbkit2.astrodb.Database
+        Database object created by astrodbkit2
+    telescope: str
+    instrument: str
+    mode: str
+
+    Returns
+    -------
+
+    None
+
+    """
+
+    # Make sure a search term is provided
+    if telescope is None and instrument is None and mode is None:
+        logger.error("Telescope, Instrument, and Mode must be provided")
+        return
+
+    # Search that the inputs are in the database
+    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == telescope).table()
+    # query for Instrument
+    # query for mode
+
+    # If they are in database then logger message of " these have already been ingested"
+    # Else
+    # Make a dictionary with the inouts
+
+    # ingest telesscope if it's not in the database
+    if len(telescope_db) == 0:
+        telescope_add = [{'name': telescope}]
+        db.Telescopes.insert().execute(telescope_add)
+
+    # ingest instrument if it's not in the database
+
+    # ingest mode if it's not in the database
+
+    # But make it work such that if a mode is being ingested then all three are mandatory
+    # but if just a telescope is being ingested then the other two are option
+    # and if an instrument is being ingested then the two are required.
