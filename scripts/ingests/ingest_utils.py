@@ -956,15 +956,23 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
         msg_found = f'{telescope},{instrument}, and {mode} have already been ingested.'
         logger.info(msg_found)
         return
+
     if len(telescope_db) == 0:
-        if telescope is None:
-            logger.error('Telescope name must be provided to ingest a telescope.')
-            return
-        else:
-            telescope_add = [{'name': telescope}]
+        telescope_add = [{'name': telescope}]
+        try:
             db.Telescopes.insert().execute(telescope_add)
             msg_telescope = f'{telescope} was successfully ingested in the database'
             logger.info(msg_telescope)
+        except sqlalchemy.exc.IntegrityError as e:
+            if telescope is None:
+                msg = 'Telescope name must be provided to ingest a telescope.'
+                logger.error(msg)
+                raise SimpleError(msg + '\n' + str(e))
+            else:
+                msg = 'Telescope could not be ingested for unknown reason.'
+                logger.error(msg)
+                raise SimpleError(msg + '\n' + str(e))
+
     if len(instrument_db) == 0:
         if instrument is None:
             logger.error('Instrument name must be provided to ingest an instrument.')
@@ -974,6 +982,7 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
             db.Instruments.insert().execute(instrument_add)
             msg_instrument = f'{instrument} was successfully ingested in the database.'
             logger.info(msg_instrument)
+
     if len(mode_db) == 0:
         if telescope and instrument is None or instrument is None or telescope is None:
             logger.error('Telescope and Instrument must be provided to ingest a mode')
@@ -985,5 +994,6 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
             db.Modes.insert().execute(mode_add)
             msg_mode = f'{mode} was successfully ingested in the database'
             logger.info(msg_mode)
+
     return
 
