@@ -21,4 +21,8 @@ ingest_sources(db, data['Source'], data['reference'])
 
 # # Add the spectra to the database
 ingest_spectra(db, data['Source'], data['Spectrum'], 'nir', 'ESO VLT U3', 'ISAAC', 'SW LRes', data['observation_date'],
-               data['reference'], comments=data['comments'])
+               'Manj14', comments=data['comments'])
+
+# WRITE THE JSON FILES
+if SAVE_DB:
+    db.save_database(directory='data/')
