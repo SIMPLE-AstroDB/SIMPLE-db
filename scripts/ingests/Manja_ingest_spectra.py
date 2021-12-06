@@ -9,7 +9,7 @@ logger.setLevel(logging.INFO)
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
 # Read in CSV file as Astropy table
-data = Table.read('scripts/ingests/Manja_spectra5.csv')
+data = Table.read('scripts/ingests/Manja_spectra6.csv')
 
 # Add Jaya06 to the database
 # ingest_publication(db, doi='10.1086/507522')
