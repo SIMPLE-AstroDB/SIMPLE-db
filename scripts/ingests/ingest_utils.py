@@ -114,7 +114,7 @@ def ingest_sources(db, sources, references, ras=None, decs=None, comments=None, 
             n_multiples += 1
             msg1 = f"{i} Skipping {source} "
             msg = f"{i} More than one match for {source}\n {name_matches}\n"
-            logger.warning(msg1+msg)
+            logger.warning(msg1 + msg)
             if raise_error:
                 raise SimpleError(msg)
             else:
@@ -164,8 +164,8 @@ def ingest_sources(db, sources, references, ras=None, decs=None, comments=None, 
                         'ra': ra,
                         'dec': dec,
                         'reference': references[i],
-                        'epoch': epoch ,
-                        'equinox': equinox ,
+                        'epoch': epoch,
+                        'equinox': equinox,
                         'comments': None if ma.is_masked(comments[i]) else comments[i]}]
         names_data = [{'source': source,
                        'other_name': source}]
@@ -226,7 +226,7 @@ def ingest_sources(db, sources, references, ras=None, decs=None, comments=None, 
                 logger.debug(msg2)
                 n_skipped += 1
                 if raise_error:
-                    raise SimpleError(msg+msg2)
+                    raise SimpleError(msg + msg2)
                 else:
                     continue
 
@@ -657,8 +657,6 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
 
     n_sources = len(sources)
 
-
-
     # Convert single element input values into lists
     input_values = [bands, reference, telescope, instrument, ucds]
     for i, input_value in enumerate(input_values):
@@ -822,15 +820,15 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
 
         row_data = [{'source': db_name,
                      'spectrum': spectra[i],
-                     'local_spectrum': None, # if ma.is_masked(local_spectra[i]) else local_spectra[i],
+                     'local_spectrum': None,  # if ma.is_masked(local_spectra[i]) else local_spectra[i],
                      'regime': regimes[i],
                      'telescope': telescopes[i],
                      'instrument': None if ma.is_masked(instruments[i]) else instruments[i],
                      'mode': None if ma.is_masked(modes[i]) else modes[i],
                      'observation_date': obs_date,
-                     'wavelength_units': None, # if ma.is_masked(wavelength_units[i]) else wavelength_units[i],
-                     'flux_units': None, # if ma.is_masked(flux_units[i]) else flux_units[i],
-                     'wavelength_order': None, # if ma.is_masked(wavelength_order[i]) else wavelength_order[i],
+                     'wavelength_units': None,  # if ma.is_masked(wavelength_units[i]) else wavelength_units[i],
+                     'flux_units': None,  # if ma.is_masked(flux_units[i]) else flux_units[i],
+                     'wavelength_order': None,  # if ma.is_masked(wavelength_order[i]) else wavelength_order[i],
                      'comments': None if ma.is_masked(comments[i]) else comments[i],
                      'reference': references[i]}]
         logger.debug(row_data)
@@ -874,10 +872,10 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                 #     continue
             if len(instrument) == 0 or len(mode) == 0 or len(telescope) == 0:
                 msg = f'Spectrum for {source} could not be added to the database. \n' \
-                    f' Telescope, Instrument, and/or Mode need to be added to the appropriate table. \n' \
-                    f" Trying to find telescope: {row_data[0]['telescope']}, instrument: {row_data[0]['instrument']}, " \
-                    f" mode: {row_data[0]['mode']} \n"\
-                    f" Telescope: {telescope}, Instrument: {instrument}, Mode: {mode} \n"
+                      f' Telescope, Instrument, and/or Mode need to be added to the appropriate table. \n' \
+                      f" Trying to find telescope: {row_data[0]['telescope']}, instrument: {row_data[0]['instrument']}, " \
+                      f" mode: {row_data[0]['mode']} \n" \
+                      f" Telescope: {telescope}, Instrument: {instrument}, Mode: {mode} \n"
                 logger.error(msg)
                 n_missing_instrument += 1
                 continue
@@ -916,3 +914,87 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     logger.info(f'Spectra in the database: \n {spec_count} \n {spec_ref_count} \n {telescope_spec_count}')
 
     return
+
+
+def ingest_instrument(db, telescope=None, instrument=None, mode=None):
+    """
+    Script to ingest instrumentation
+
+    Parameters
+    ----------
+    db: astrodbkit2.astrodb.Database
+        Database object created by astrodbkit2
+    telescope: str
+    instrument: str
+    mode: str
+
+    Returns
+    -------
+
+    None
+
+    """
+
+    # Make sure a search term is provided
+    if telescope is None and instrument is None and mode is None:
+        msg = "Telescope, Instrument, and Mode must be provided"
+        logger.error(msg)
+        raise SimpleError(msg)
+
+    msg_search = f'Searching for {telescope},{instrument},{mode} in database'
+    logger.info(msg_search)
+
+    # Search that the inputs are in the database
+    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == telescope).table()
+    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == instrument).table()
+    mode_db = db.query(db.Modes).filter(db.Modes.c.name == mode).table()
+
+    # If they are in database then logger message of " these have already been ingested"
+
+    # Else
+    # Make a dictionary with the inputs
+    if len(telescope_db) == 1 and len(instrument_db) == 1 and len(mode_db) == 1:
+        msg_found = f'{telescope},{instrument}, and {mode} have already been ingested.'
+        logger.info(msg_found)
+        return
+
+    if len(telescope_db) == 0:
+        telescope_add = [{'name': telescope}]
+        try:
+            db.Telescopes.insert().execute(telescope_add)
+            msg_telescope = f'{telescope} was successfully ingested in the database'
+            logger.info(msg_telescope)
+        except sqlalchemy.exc.IntegrityError as e:
+            if telescope is None:
+                msg = 'Telescope name must be provided to ingest a telescope.'
+                logger.error(msg)
+                raise SimpleError(msg + '\n' + str(e))
+            else:
+                msg = 'Telescope could not be ingested for unknown reason.'
+                logger.error(msg)
+                raise SimpleError(msg + '\n' + str(e))
+
+    if len(instrument_db) == 0:
+        if instrument is None:
+            logger.error('Instrument name must be provided to ingest an instrument.')
+            return
+        else:
+            instrument_add = [{'name': instrument}]
+            db.Instruments.insert().execute(instrument_add)
+            msg_instrument = f'{instrument} was successfully ingested in the database.'
+            logger.info(msg_instrument)
+
+    if len(mode_db) == 0:
+        if telescope and instrument is None or instrument is None or telescope is None:
+            logger.error('Telescope and Instrument must be provided to ingest a mode')
+            return
+        else:
+            mode_add = [{'name': mode,
+                         'instrument': instrument,
+                         'telescope': telescope}]
+            db.Modes.insert().execute(mode_add)
+            msg_mode = f'{mode} was successfully ingested in the database'
+            logger.info(msg_mode)
+
+    return
+

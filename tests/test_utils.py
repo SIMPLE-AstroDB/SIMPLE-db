@@ -164,6 +164,24 @@ def test_ingest_publication(db):
     # TODO - Mock environment  where ADS_TOKEN is not set. #117
 
 
+def test_ingest_instrument(db):
+    #  TESTS WHICH SHOULD WORK
+    #  test adding just telescope
+    ingest_instrument(db, telescope='test')
+    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == 'test').table()
+    assert len(telescope_db) == 1
+    assert telescope_db['name'][0] == 'test'
+    #  TODO: test adding telescope and instrument
+    #  TODO: test adding telescope, instrument, and mode
+
+    #  TESTS WHICH SHOULD FAIL
+    #  test with no variables passed
+    with pytest.raises(SimpleError) as error_message:
+        ingest_instrument(db)
+    assert 'Telescope, Instrument, and Mode must be provided' in str(error_message.value)
+    #  TODO: test with mode but no instrument or telescope
+
+
 # TODO: test for ingest_photometry
 
 # TODO: test for ingest_spectra
