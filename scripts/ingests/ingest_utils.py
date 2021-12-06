@@ -897,19 +897,12 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         raise SimpleError(msg)
 
     spec_count = db.query(Spectra.regime, func.count(Spectra.regime)).group_by(Spectra.regime).all()
-    # [(<Regime.mir: 'em.IR.MIR'>, 91), (<Regime.nir: 'em.IR.NIR'>, 450), (<Regime.optical: 'em.opt'>, 718)]
 
     spec_ref_count = db.query(Spectra.reference, func.count(Spectra.reference)). \
         group_by(Spectra.reference).order_by(func.count(Spectra.reference).desc()).limit(20).all()
-    # [('Reid08b', 280), ('Cruz03', 191), ('Cruz18', 186), ('Cruz07', 158), ('Bard14', 57), ('Burg10a', 46),
-    #  ('Cush06b', 30), ('Rayn09', 17), ('Kirk10', 15), ('Burg08d', 15), ('Burg04b', 15), ('PID51', 13), ('Kirk00', 11),
-    #  ('PID3136', 10), ('Fili15', 10), ('CruzUnpub', 10), ('Burg06b', 10), ('Kirk08', 9), ('Cruz09', 8), ('Sieg07', 7)]
 
     telescope_spec_count = db.query(Spectra.telescope, func.count(Spectra.telescope)). \
         group_by(Spectra.telescope).order_by(func.count(Spectra.telescope).desc()).limit(20).all()
-    # [('IRTF', 436), ('KPNO 4m', 251), ('CTIO 4m', 179), ('KPNO 2.1m', 93), ('Spitzer', 91), ('Keck I', 63),
-    #  ('CTIO 1.5m', 48), ('Gemini South', 34), ('Gemini North', 27), ('ARC 3.5m', 14), ('Magellan II Clay', 11),
-    #  ('ESO VLT U2', 7), ('Magellan I Baade', 5)]
 
     logger.info(f'Spectra in the database: \n {spec_count} \n {spec_ref_count} \n {telescope_spec_count}')
 
