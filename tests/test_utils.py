@@ -172,7 +172,24 @@ def test_ingest_instrument(db):
     assert len(telescope_db) == 1
     assert telescope_db['name'][0] == 'test'
     #  TODO: test adding telescope and instrument
+    ingest_instrument(db, telescope='test', instrument='test')
+    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == 'test').table()
+    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == 'test').table()
+    assert len(telescope_db) == 1
+    assert telescope_db['name'][0] == 'test'
+    assert len(instrument_db) == 1
+    assert instrument_db['name'][0] == 'test'
     #  TODO: test adding telescope, instrument, and mode
+    ingest_instrument(db, telescope='test', instrument='test', mode='test')
+    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == 'test').table()
+    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == 'test').table()
+    mode_db = db.query(db.Modes).filter(db.Modes.c.name == 'test').table()
+    assert len(telescope_db) == 1
+    assert telescope_db['name'][0] == 'test'
+    assert len(instrument_db) == 1
+    assert instrument_db['name'][0] == 'test'
+    assert len(mode_db) == 1
+    assert mode_db['name'][0] == 'test'
 
     #  TESTS WHICH SHOULD FAIL
     #  test with no variables passed
@@ -180,6 +197,9 @@ def test_ingest_instrument(db):
         ingest_instrument(db)
     assert 'Telescope, Instrument, and Mode must be provided' in str(error_message.value)
     #  TODO: test with mode but no instrument or telescope
+    with pytest.raises(SimpleError) as error_message:
+        ingest_instrument(db, mode='test')
+    assert 'Telescope and Instrument must be provided to ingest a Mode' in str(error_message.value)
 
 
 # TODO: test for ingest_photometry

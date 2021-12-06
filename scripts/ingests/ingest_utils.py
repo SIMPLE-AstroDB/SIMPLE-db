@@ -975,26 +975,36 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
                 raise SimpleError(msg + '\n' + str(e))
 
     if len(instrument_db) == 0:
-        if instrument is None:
-            logger.error('Instrument name must be provided to ingest an instrument.')
-            return
-        else:
-            instrument_add = [{'name': instrument}]
+        instrument_add = [{'name': instrument}]
+        try:
             db.Instruments.insert().execute(instrument_add)
             msg_instrument = f'{instrument} was successfully ingested in the database.'
             logger.info(msg_instrument)
+        except sqlalchemy.exc.IntegrityError as e:
+            if instrument is None:
+                msg = 'Instrument name must be provided to ingest an instrument.'
+                logger.error(msg)
+                raise SimpleError(msg + '\n' + str(e))
+            else:
+                msg = 'Instrument could not be ingested for unknown reason.'
+                logger.error(msg)
+                raise SimpleError(msg + '\n' + str(e))
 
     if len(mode_db) == 0:
-        if telescope and instrument is None or instrument is None or telescope is None:
-            logger.error('Telescope and Instrument must be provided to ingest a mode')
-            return
-        else:
-            mode_add = [{'name': mode,
-                         'instrument': instrument,
-                         'telescope': telescope}]
+        mode_add = [{'name': mode,
+                     'instrument': instrument,
+                     'telescope': telescope}]
+        try:
             db.Modes.insert().execute(mode_add)
             msg_mode = f'{mode} was successfully ingested in the database'
             logger.info(msg_mode)
-
+        except sqlalchemy.exc.IntegrityError as e:
+            if telescope and instrument is None or instrument is None or telescope is None:
+                msg = 'Telescope and Instrument must be provided to ingest a mode'
+                logger.error(msg)
+                raise SimpleError(msg + '\n' + str(e))
+            else:
+                msg = 'Mode could not be ingested for unknown reason.'
+                logger.error(msg)
+                raise SimpleError(msg + '\n' + str(e))
     return
-
