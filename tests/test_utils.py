@@ -166,40 +166,49 @@ def test_ingest_publication(db):
 
 def test_ingest_instrument(db):
     #  TESTS WHICH SHOULD WORK
+
     #  test adding just telescope
     ingest_instrument(db, telescope='test')
     telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == 'test').table()
     assert len(telescope_db) == 1
     assert telescope_db['name'][0] == 'test'
-    #  TODO: test adding telescope and instrument
-    ingest_instrument(db, telescope='test', instrument='test')
-    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == 'test').table()
-    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == 'test').table()
+
+    #  test adding telescope and instrument
+    tel_test = 'test2'
+    inst_test = 'test3'
+    ingest_instrument(db, telescope=tel_test, instrument=inst_test)
+    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == tel_test).table()
+    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == inst_test).table()
     assert len(telescope_db) == 1
-    assert telescope_db['name'][0] == 'test'
+    assert telescope_db['name'][0] == tel_test
     assert len(instrument_db) == 1
-    assert instrument_db['name'][0] == 'test'
-    #  TODO: test adding telescope, instrument, and mode
-    ingest_instrument(db, telescope='test', instrument='test', mode='test')
-    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == 'test').table()
-    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == 'test').table()
-    mode_db = db.query(db.Modes).filter(db.Modes.c.name == 'test').table()
+    assert instrument_db['name'][0] == inst_test
+
+    #  test adding telescope, instrument, and mode
+    tel_test = 'test4'
+    inst_test = 'test5'
+    mode_test = 'test6'
+    ingest_instrument(db, telescope=tel_test, instrument=inst_test, mode=mode_test)
+    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == tel_test).table()
+    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == inst_test).table()
+    mode_db = db.query(db.Modes).filter(db.Modes.c.name == mode_test).table()
     assert len(telescope_db) == 1
-    assert telescope_db['name'][0] == 'test'
+    assert telescope_db['name'][0] == tel_test
     assert len(instrument_db) == 1
-    assert instrument_db['name'][0] == 'test'
+    assert instrument_db['name'][0] == inst_test
     assert len(mode_db) == 1
-    assert mode_db['name'][0] == 'test'
+    assert mode_db['name'][0] == mode_test
 
     #  TESTS WHICH SHOULD FAIL
-    #  test with no variables passed
+    #  test with no variables provided
     with pytest.raises(SimpleError) as error_message:
         ingest_instrument(db)
     assert 'Telescope, Instrument, and Mode must be provided' in str(error_message.value)
-    #  TODO: test with mode but no instrument or telescope
+
+    #  test with mode but no instrument or telescope
     with pytest.raises(SimpleError) as error_message:
         ingest_instrument(db, mode='test')
-    assert 'Telescope and Instrument must be provided to ingest a Mode' in str(error_message.value)
+    assert 'Telescope and instrument must be provided to ingest a mode' in str(error_message.value)
 
 
 # TODO: test for ingest_photometry

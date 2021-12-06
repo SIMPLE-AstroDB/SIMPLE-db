@@ -919,6 +919,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
 def ingest_instrument(db, telescope=None, instrument=None, mode=None):
     """
     Script to ingest instrumentation
+    TODO: Add option to ingest references for the telescope and instruments
 
     Parameters
     ----------
@@ -935,30 +936,26 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
 
     """
 
-    # Make sure a search term is provided
+    # Make sure enough inputs are provided
     if telescope is None and instrument is None and mode is None:
         msg = "Telescope, Instrument, and Mode must be provided"
         logger.error(msg)
         raise SimpleError(msg)
 
-    msg_search = f'Searching for {telescope},{instrument},{mode} in database'
+    msg_search = f'Searching for {telescope}, {instrument}, {mode} in database'
     logger.info(msg_search)
 
-    # Search that the inputs are in the database
+    # Search for the inputs in the database
     telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == telescope).table()
     instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == instrument).table()
     mode_db = db.query(db.Modes).filter(db.Modes.c.name == mode).table()
 
-    # If they are in database then logger message of " these have already been ingested"
-
-    # Else
-    # Make a dictionary with the inputs
     if len(telescope_db) == 1 and len(instrument_db) == 1 and len(mode_db) == 1:
-        msg_found = f'{telescope},{instrument}, and {mode} have already been ingested.'
+        msg_found = f'{telescope}, {instrument}, and {mode} are already in the database.'
         logger.info(msg_found)
         return
 
-    if len(telescope_db) == 0:
+    if telescope is not None and len(telescope_db) == 0:
         telescope_add = [{'name': telescope}]
         try:
             db.Telescopes.insert().execute(telescope_add)
@@ -974,7 +971,7 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
                 logger.error(msg)
                 raise SimpleError(msg + '\n' + str(e))
 
-    if len(instrument_db) == 0:
+    if instrument is not None and len(instrument_db) == 0:
         instrument_add = [{'name': instrument}]
         try:
             db.Instruments.insert().execute(instrument_add)
@@ -990,7 +987,7 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
                 logger.error(msg)
                 raise SimpleError(msg + '\n' + str(e))
 
-    if len(mode_db) == 0:
+    if mode is not None and len(mode_db) == 0:
         mode_add = [{'name': mode,
                      'instrument': instrument,
                      'telescope': telescope}]
@@ -999,12 +996,13 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
             msg_mode = f'{mode} was successfully ingested in the database'
             logger.info(msg_mode)
         except sqlalchemy.exc.IntegrityError as e:
-            if telescope and instrument is None or instrument is None or telescope is None:
-                msg = 'Telescope and Instrument must be provided to ingest a mode'
+            if instrument is None or telescope is None:
+                msg = 'Telescope and instrument must be provided to ingest a mode'
                 logger.error(msg)
                 raise SimpleError(msg + '\n' + str(e))
             else:
                 msg = 'Mode could not be ingested for unknown reason.'
                 logger.error(msg)
                 raise SimpleError(msg + '\n' + str(e))
+
     return
