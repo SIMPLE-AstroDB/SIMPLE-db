@@ -786,6 +786,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
 
     for i, source in enumerate(sources):
         # TODO: check that spectrum can be read by astrodbkit
+        # TODO: check that spectrum URL is accessible
 
         # Get source name as it appears in the database
         db_name = find_source_in_db(db, source)
@@ -818,6 +819,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                 n_skipped += 1
                 continue
 
+        # TODO: make it possible to ingest units and order
         row_data = [{'source': db_name,
                      'spectrum': spectra[i],
                      'local_spectrum': None,  # if ma.is_masked(local_spectra[i]) else local_spectra[i],
@@ -836,8 +838,13 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         try:
             db.Spectra.insert().execute(row_data)
             n_added += 1
-        except sqlalchemy.exc.IntegrityError:
+        except sqlalchemy.exc.IntegrityError as e:
             # TODO: add elif to check if reference is in Publications Table
+
+            if "CHECK constraint failed: regime" in str(e):
+                msg = f"Regime provided is not in schema: {regimes[i]}"
+                logger.error(msg)
+                raise SimpleError(msg)
 
             # check telescope, instrument, mode exists
             telescope = db.query(db.Telescopes).filter(db.Telescopes.c.name == row_data[0]['telescope']).table()
@@ -855,7 +862,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                     msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
                     msg3 = f"{instruments[i], modes[i], obs_date, references[i], spectra[i]} \n"
                     logger.warning(msg)
-                    logger.debug(msg2 + msg3)
+                    logger.debug(msg2 + msg3 + str(e))
                     n_dupes += 1
                     continue  # Skip duplicate measurement
                 # else:
