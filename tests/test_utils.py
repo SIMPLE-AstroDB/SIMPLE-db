@@ -9,6 +9,7 @@ from scripts.ingests.ingest_utils import *
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database
 from astropy.table import Table
+from sqlalchemy import and_
 
 DB_NAME = 'temp.db'
 DB_PATH = 'data'
@@ -184,7 +185,7 @@ def test_ingest_instrument(db):
     assert len(instrument_db) == 1
     assert instrument_db['name'][0] == inst_test
 
-    #  test adding telescope, instrument, and mode
+    #  test adding new telescope, instrument, and mode
     tel_test = 'test4'
     inst_test = 'test5'
     mode_test = 'test6'
@@ -196,6 +197,17 @@ def test_ingest_instrument(db):
     assert telescope_db['name'][0] == tel_test
     assert len(instrument_db) == 1
     assert instrument_db['name'][0] == inst_test
+    assert len(mode_db) == 1
+    assert mode_db['name'][0] == mode_test
+
+    #  test adding common mode name for new telescope, instrument
+    tel_test = 'test4'
+    inst_test = 'test5'
+    mode_test = 'Prism'
+    ingest_instrument(db, telescope=tel_test, instrument=inst_test, mode=mode_test)
+    mode_db = db.query(db.Modes).filter(and_(db.Modes.c.name == mode_test,
+                                             db.Modes.c.instrument == inst_test,
+                                             db.Modes.c.telescope == tel_test)).table()
     assert len(mode_db) == 1
     assert mode_db['name'][0] == mode_test
 

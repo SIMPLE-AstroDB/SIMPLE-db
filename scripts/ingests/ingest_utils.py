@@ -941,7 +941,10 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
     # Search for the inputs in the database
     telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == telescope).table()
     instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == instrument).table()
-    mode_db = db.query(db.Modes).filter(db.Modes.c.name == mode).table()
+    if mode is not None:
+        mode_db = db.query(db.Modes).filter(and_(db.Modes.c.name == mode,
+                                             db.Modes.c.instrument == instrument,
+                                             db.Modes.c.telescope == telescope)).table()
 
     if len(telescope_db) == 1 and len(instrument_db) == 1 and len(mode_db) == 1:
         msg_found = f'{telescope}, {instrument}, and {mode} are already in the database.'
