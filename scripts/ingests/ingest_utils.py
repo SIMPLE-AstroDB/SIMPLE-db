@@ -19,11 +19,11 @@ logger = logging.getLogger('SIMPLE')
 
 
 # SOURCES
-def ingest_sources(db, sources, references, ras=None, decs=None, comments=None, epochs=None,
+def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=None, epochs=None,
                    equinoxes=None, raise_error=True):
     """
     Script to ingest sources
-
+    TODO: better support references=None
     Parameters
     ----------
     db: astrodbkit2.astrodb.Database
