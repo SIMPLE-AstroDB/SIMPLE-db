@@ -12,6 +12,7 @@ from sqlalchemy import func
 
 import dateutil
 import re
+import requests
 
 from scripts.ingests.utils import *
 
@@ -786,7 +787,6 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
 
     for i, source in enumerate(sources):
         # TODO: check that spectrum can be read by astrodbkit
-        # TODO: check that spectrum URL is accessible
 
         # Get source name as it appears in the database
         db_name = find_source_in_db(db, source)
@@ -797,11 +797,24 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         else:
             db_name = db_name[0]
 
+        # Check if spectrum file is accessible
+        request_response = requests.head(spectra[i])
+        status_code = request_response.status_code # The website is up if the status code is 200
+        if status_code != 200:
+            msg = "The spectrum location does not appear to be valid: \n" \
+                    f'spectrum: {spectra[i]} \n' \
+                    f'status code: {status_code}'
+            logger.error(msg)
+            raise SimpleError(msg)
+        else:
+            msg = f"The spectrum location appears up: {spectra[i]}"
+            logger.debug(msg)
+
         # Find what spectra already exists in database for this source
         source_spec_data = db.query(db.Spectra).filter(db.Spectra.c.source == db_name).table()
 
         # SKIP if observation date is blank
-        # TODO: try to populate obs date from meta data
+        # TODO: try to populate obs date from meta data in spectrum file
         if ma.is_masked(obs_dates[i]) or obs_dates[i] == '':
             obs_date = None
             missing_obs_msg = f"Skipping spectrum with missing observation date: {source} \n"
