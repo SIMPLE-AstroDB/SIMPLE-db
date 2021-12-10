@@ -58,3 +58,5 @@ for pub in missing_dois:
             logger.debug(msg)
 
 logger.info(f"{n_no_doi} pubs with no DOI \n {n_added_doi} DOIs added")
+
+db.save_database('data/')
