@@ -217,7 +217,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
     not_null_pub_filters = []
     if name:
         # fuzzy_query_name = '%' + name + '%'
-        not_null_pub_filters.append(db.Publications.c.name.ilike(name))
+        not_null_pub_filters.append(db.Publications.c.publication.ilike(name))
     if doi:
         not_null_pub_filters.append(db.Publications.c.doi.ilike(doi))
     if bibcode:
@@ -247,7 +247,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
         logger.debug(f'No matching publications for {name}, Trying {shorter_name}')
         fuzzy_query_shorter_name = '%' + shorter_name + '%'
         pub_search_table = db.query(db.Publications).filter(
-            db.Publications.c.name.ilike(fuzzy_query_shorter_name)).table()
+            db.Publications.c.publication.ilike(fuzzy_query_shorter_name)).table()
         n_pubs_found_short = len(pub_search_table)
         if n_pubs_found_short == 0:
             logger.warning(f'No matching publications for {shorter_name}')
@@ -403,7 +403,7 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
         bibcode_add = bibcode
         doi_add = doi
 
-    new_ref = [{'name': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
+    new_ref = [{'publication': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
 
     try:
         db.Publications.insert().execute(new_ref)
