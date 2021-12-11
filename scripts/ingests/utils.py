@@ -17,6 +17,7 @@ import sqlalchemy.exc
 from astroquery.simbad import Simbad
 from astropy.coordinates import SkyCoord
 import astropy.units as u
+import socket
 
 warnings.filterwarnings("ignore", module='astroquery.simbad')
 logger = logging.getLogger('SIMPLE')
@@ -460,4 +461,13 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
 #     return
 
 
+def check_internet_connection():
+    # get current IP address of  system
+    ipaddress = socket.gethostbyname(socket.gethostname())
+
+    # checking system IP is the same as "127.0.0.1" or not.
+    if ipaddress == "127.0.0.1": # no internet
+        return False, ipaddress
+    else:
+        return True, ipaddress
 
