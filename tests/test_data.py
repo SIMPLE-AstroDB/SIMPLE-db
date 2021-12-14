@@ -41,7 +41,7 @@ def db():
 # -----------------------------------------------------------------------------------------
 def reference_verifier(t, name, bibcode, doi):
     # Utility function to verify reference values in a table
-    ind = t['name'] == name
+    ind = t['publication'] == name
     assert t[ind]['bibcode'][0] == bibcode, f'{name} did not match bibcode'
     assert t[ind]['doi'][0] == doi, f'{name} did not match doi'
 
@@ -326,7 +326,7 @@ def test_Manj19_pub(db):
     pub = 'Manj19'
 
     # Check DOI and Bibcode values are correctly set for new publications added
-    manj19_pub = db.query(db.Publications).filter(db.Publications.c.name == pub).astropy()
+    manj19_pub = db.query(db.Publications).filter(db.Publications.c.publication == pub).astropy()
     reference_verifier(manj19_pub, 'Manj19', '2019AJ....157..101M', '10.3847/1538-3881/aaf88f')
 
 
@@ -351,7 +351,7 @@ def test_Kirk19_ingest(db):
     # Test refereces added
     ref_list = ['Tinn18', 'Pinf14', 'Mace13', 'Kirk12', 'Cush11', 'Kirk13',
                 'Schn15', 'Luhm14b', 'Tinn14', 'Tinn12', 'Cush14', 'Kirk19']
-    t = db.query(db.Publications).filter(db.Publications.c.name.in_(ref_list)).astropy()
+    t = db.query(db.Publications).filter(db.Publications.c.publication.in_(ref_list)).astropy()
 
     if len(ref_list) != len(t):
         missing_ref = list(set(ref_list)-set(t['name']))

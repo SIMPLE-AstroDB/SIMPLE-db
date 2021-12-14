@@ -218,7 +218,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
     not_null_pub_filters = []
     if name:
         # fuzzy_query_name = '%' + name + '%'
-        not_null_pub_filters.append(db.Publications.c.name.ilike(name))
+        not_null_pub_filters.append(db.Publications.c.publication.ilike(name))
     if doi:
         not_null_pub_filters.append(db.Publications.c.doi.ilike(doi))
     if bibcode:
@@ -248,7 +248,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
         logger.debug(f'No matching publications for {name}, Trying {shorter_name}')
         fuzzy_query_shorter_name = '%' + shorter_name + '%'
         pub_search_table = db.query(db.Publications).filter(
-            db.Publications.c.name.ilike(fuzzy_query_shorter_name)).table()
+            db.Publications.c.publication.ilike(fuzzy_query_shorter_name)).table()
         n_pubs_found_short = len(pub_search_table)
         if n_pubs_found_short == 0:
             logger.warning(f'No matching publications for {shorter_name}')
@@ -404,7 +404,7 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
         bibcode_add = bibcode
         doi_add = doi
 
-    new_ref = [{'name': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
+    new_ref = [{'publication': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
 
     try:
         db.Publications.insert().execute(new_ref)
@@ -419,46 +419,6 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
 
     return
 
-
-# TODO: write update_publication function
-# def update_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None,
-#                        save_db: bool = True):
-#     """
-#     Updates publications in the database, including metadata found with ADS.
-#
-#     In order to auto-populate the fields, An $ADS_TOKEN environment variable must be set.
-#     See https://ui.adsabs.harvard.edu/user/settings/token
-#
-#     Parameters
-#     ----------
-#     db
-#         Database object
-#     doi, bibcode: str
-#         The DOI or ADS Bibcode of the reference.
-#     name: str, optional
-#         The publication shortname, otherwise it will be generated [optional]
-#     description: str, optional
-#         Description of the paper, typically the title of the papre [optional]
-#     save_db: bool
-#
-#     See Also
-#     --------
-#     search_publication: Function to find publications in the database
-#     add_publication: Function to add publications to the database
-#
-#     """
-#
-#     # TODO: provide an option to add missing information
-#     #     add_doi_bibcode = db.Publications.update().where(db.Publications.c.name == 'Manj19'). \
-#     #         values(bibcode='2019AJ....157..101M', doi='10.3847/1538-3881/aaf88f',
-#     #               description='Cloud Atlas: HST nir spectral library')
-#     #     db.engine.execute(add_doi_bibcode)
-#
-#     # change_name = db.Publications.update().where(db.Publications.c.name == 'Wein12'). \
-#     #         values(name='Wein13')
-#     #     db.engine.execute(change_name)
-#
-#     return
 
 
 def check_internet_connection():
