@@ -25,15 +25,18 @@ The local_spectrum is meant to store the path to a local copy of the spectrum wi
 environment variable to define part of the path (so it can be shared among other users). 
 For example: `$ASTRODB_SPECTRA/infrared/filename.fits`
 
-Enumerations for regime include:
- - gammaray
- - xray
- - ultraviolet
- - optical
- - nir
- - infrared
- - millimeter
- - radio
+Enumerations for regime should be [UCDs](https://www.ivoa.net/documents/UCD1+/20210616/EN-UCDlist-1.4-20210616.html#tth_sEc2). 
+They currently  include:
+ - em.UV
+ - em.opt
+ - optical (*deprecated, do not use*)
+ - em.IR.NIR
+ - nir (*deprecated, do not use*)
+ - em.IR
+ - em.IR.MIR 
+ - mir (*deprecated, do not use*)
+ - em.mm
+ - em.radio 
  - unknown
  
 # Notes

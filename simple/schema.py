@@ -57,14 +57,16 @@ class PhotometryFilters(Base):
 class Regime(enum.Enum):
     """Enumeration for spectral type, spectra, and photometry regimes
     Use UCD controlled vocabulary: https://www.ivoa.net/documents/UCD1+/20200212/PEN-UCDlist-1.4-20200212.html#tth_sEcB
+    The string values are used, not the variable names.
     """
-    gammaray = 'gammaray'
-    xray = 'em.X-ray'
     ultraviolet = 'em.UV'
-    optical = 'em.opt'
-    nir = 'em.IR.NIR'  # Near-Infrared, 1-5 microns
+    optical_UCD = 'em.opt'
+    optical = 'optical'
+    nir_UCD = 'em.IR.NIR'  # Near-Infrared, 1-5 microns
+    nir = 'nir'
     infrared = 'em.IR'  # Infrared part of the spectrum
-    mir = 'em.IR.MIR'  # Medium-Infrared, 5-30 microns
+    mir_UCD = 'em.IR.MIR'  # Medium-Infrared, 5-30 microns
+    mir = 'mir'
     millimeter = 'em.mm'
     radio = 'em.radio'
     unknown = 'unknown'
@@ -202,7 +204,7 @@ class Spectra(Base):
     local_spectrum = Column(String(1000))  # local directory (via environment variable) of spectrum location
 
     # Metadata
-    regime = Column(Enum(Regime, create_constraint=True), primary_key=True)  # eg, Optical, Infrared, etc
+    regime = Column(Enum(Regime, create_constraint=True, values_callable=lambda x: [e.value for e in x]), primary_key=True)  # eg, Optical, Infrared, etc
     telescope = Column(String(30), ForeignKey(Telescopes.name))
     instrument = Column(String(30), ForeignKey(Instruments.name))
     mode = Column(String(30))  # eg, Prism, Echelle, etc

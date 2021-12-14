@@ -12,6 +12,7 @@ from sqlalchemy import func
 
 import dateutil
 import re
+import requests
 
 from scripts.ingests.utils import *
 
@@ -19,11 +20,11 @@ logger = logging.getLogger('SIMPLE')
 
 
 # SOURCES
-def ingest_sources(db, sources, references, ras=None, decs=None, comments=None, epochs=None,
+def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=None, epochs=None,
                    equinoxes=None, raise_error=True):
     """
     Script to ingest sources
-
+    TODO: better support references=None
     Parameters
     ----------
     db: astrodbkit2.astrodb.Database
@@ -733,7 +734,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
 # SPECTRA
 def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes, obs_dates, references,
                    wavelength_units=None, flux_units=None, wavelength_order=None, local_spectra=None,
-                   comments=None):
+                   comments=None, raise_error=True):
     """
 
     Parameters
@@ -763,6 +764,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     local_spectra: list[str], optional
     comments: list[str], optional
         List of strings
+    raise_error: bool
 
     """
 
@@ -796,11 +798,34 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         else:
             db_name = db_name[0]
 
+        # Check if spectrum file is accessible
+        # First check for internet
+        internet = check_internet_connection()
+        if internet:
+            request_response = requests.head(spectra[i])
+            status_code = request_response.status_code # The website is up if the status code is 200
+            if status_code != 200:
+                n_skipped += 1
+                msg = "The spectrum location does not appear to be valid: \n" \
+                        f'spectrum: {spectra[i]} \n' \
+                        f'status code: {status_code}'
+                logger.error(msg)
+                if raise_error:
+                    raise SimpleError(msg)
+                else:
+                    continue
+            else:
+                msg = f"The spectrum location appears up: {spectra[i]}"
+                logger.debug(msg)
+        else:
+            msg = "No internet connection. Internet is needed to check spectrum files."
+            raise SimpleError(msg)
+
         # Find what spectra already exists in database for this source
         source_spec_data = db.query(db.Spectra).filter(db.Spectra.c.source == db_name).table()
 
         # SKIP if observation date is blank
-        # TODO: try to populate obs date from meta data
+        # TODO: try to populate obs date from meta data in spectrum file
         if ma.is_masked(obs_dates[i]) or obs_dates[i] == '':
             obs_date = None
             missing_obs_msg = f"Skipping spectrum with missing observation date: {source} \n"
@@ -813,11 +838,17 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
             try:
                 obs_date = pd.to_datetime(obs_dates[i])  # TODO: Another method that doesn't require pandas?
             except dateutil.parser._parser.ParserError:
-                logger.warning(
-                    f"Skipping {source} Cant convert obs date to Date Time object: {obs_dates[i]}")
                 n_skipped += 1
+                if raise_error:
+                    msg = f"{source}: Can't convert obs date to Date Time object: {obs_dates[i]}"
+                    logger.error(msg)
+                    raise SimpleError
+                else:
+                    msg = f"Skipping {source} Can't convert obs date to Date Time object: {obs_dates[i]}"
+                    logger.warning(msg)
                 continue
 
+        # TODO: make it possible to ingest units and order
         row_data = [{'source': db_name,
                      'spectrum': spectra[i],
                      'local_spectrum': None,  # if ma.is_masked(local_spectra[i]) else local_spectra[i],
@@ -836,8 +867,16 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         try:
             db.Spectra.insert().execute(row_data)
             n_added += 1
-        except sqlalchemy.exc.IntegrityError:
+        except sqlalchemy.exc.IntegrityError as e:
             # TODO: add elif to check if reference is in Publications Table
+
+            if "CHECK constraint failed: regime" in str(e):
+                msg = f"Regime provided is not in schema: {regimes[i]}"
+                logger.error(msg)
+                if raise_error:
+                    raise SimpleError(msg)
+                else:
+                    continue
 
             # check telescope, instrument, mode exists
             telescope = db.query(db.Telescopes).filter(db.Telescopes.c.name == row_data[0]['telescope']).table()
@@ -855,9 +894,12 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                     msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
                     msg3 = f"{instruments[i], modes[i], obs_date, references[i], spectra[i]} \n"
                     logger.warning(msg)
-                    logger.debug(msg2 + msg3)
+                    logger.debug(msg2 + msg3 + str(e))
                     n_dupes += 1
-                    continue  # Skip duplicate measurement
+                    if raise_error:
+                        raise SimpleError
+                    else:
+                        continue  # Skip duplicate measurement
                 # else:
                 #     msg = f'Spectrum could not be added to the database (other data exist): \n ' \
                 #           f"{source, instruments[i], modes[i], obs_date, references[i], spectra[i]} \n"
@@ -878,7 +920,10 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                       f" Telescope: {telescope}, Instrument: {instrument}, Mode: {mode} \n"
                 logger.error(msg)
                 n_missing_instrument += 1
-                continue
+                if raise_error:
+                    raise SimpleError
+                else:
+                    continue
             else:
                 msg = f'Spectrum for {source} could not be added to the database for unknown reason: \n {row_data} \n '
                 logger.error(msg)
@@ -941,7 +986,10 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
     # Search for the inputs in the database
     telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == telescope).table()
     instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == instrument).table()
-    mode_db = db.query(db.Modes).filter(db.Modes.c.name == mode).table()
+    if mode is not None:
+        mode_db = db.query(db.Modes).filter(and_(db.Modes.c.name == mode,
+                                             db.Modes.c.instrument == instrument,
+                                             db.Modes.c.telescope == telescope)).table()
 
     if len(telescope_db) == 1 and len(instrument_db) == 1 and len(mode_db) == 1:
         msg_found = f'{telescope}, {instrument}, and {mode} are already in the database.'
