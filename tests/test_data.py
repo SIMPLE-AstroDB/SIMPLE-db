@@ -407,3 +407,7 @@ def test_Best2020_ingest(db):
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 348, f'found {len(t)} proper motion entries for {ref}'
 
+    #Test for Best2020a parallaxes added
+    ref = 'Best20a'
+    t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
+    assert len(t) == 348, f'found {len(t)} parallax entries for {ref}'
