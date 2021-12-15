@@ -329,9 +329,9 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, publication: st
             return
 
         if len(arxiv_matches_list) == 1:
-            logger.info(f"Publication found in ADS using arxiv id: , {arxiv_id}")
+            logger.debug(f"Publication found in ADS using arxiv id: , {arxiv_id}")
             article = arxiv_matches_list[0]
-            logger.info(f"{article.first_author}, {article.year}, {article.bibcode}, {article.title}")
+            logger.debug(f"{article.first_author}, {article.year}, {article.bibcode}, {article.title}")
             if not publication:  # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
@@ -355,9 +355,10 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, publication: st
             return
 
         if len(doi_matches_list) == 1:
-            logger.info(f"Publication found in ADS using DOI: {doi}")
+            logger.debug(f"Publication found in ADS using DOI: {doi}")
+            using = doi
             article = doi_matches_list[0]
-            logger.info(f"{article.first_author}, {article.year}, {article.bibcode}, {article.title}")
+            logger.debug(f"{article.first_author}, {article.year}, {article.bibcode}, {article.title}")
             if not publication:  # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
@@ -385,9 +386,10 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, publication: st
             raise
 
         elif len(bibcode_matches_list) == 1:
-            logger.info("Publication found in ADS using bibcode: " + str(bibcode))
+            logger.debug("Publication found in ADS using bibcode: " + str(bibcode))
+            using = str(bibcode)
             article = bibcode_matches_list[0]
-            logger.info(f"{article.first_author}, {article.year}, {article.bibcode}, {article.doi}, {article.title}")
+            logger.debug(f"{article.first_author}, {article.year}, {article.bibcode}, {article.doi}, {article.title}")
             if not publication:  # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
@@ -408,14 +410,12 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, publication: st
 
     try:
         db.Publications.insert().execute(new_ref)
-        logger.info(f'Added {name_add} to Publications table')
+        logger.info(f'Added {name_add} to Publications table using {using}')
     except sqlalchemy.exc.IntegrityError:
         msg = "It's possible that a similar publication already exists in database\n" \
               "Use search_publication function before adding a new record"
         logger.error(msg)
         raise SimpleError(msg)
-
-    logger.info(f"Publication added to database: {name_add}")
 
     return
 
