@@ -266,7 +266,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
     return
 
 
-def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None,
+def ingest_publication(db, doi: str = None, bibcode: str = None, publication: str = None, description: str = None,
                     ignore_ads: bool = False):
     """
     Adds publication to the database using DOI or ADS Bibcode, including metadata found with ADS.
@@ -280,7 +280,7 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
         Database object
     doi, bibcode: str
         The DOI or ADS Bibcode of the reference. One of these is required input.
-    name: str, optional
+    publication: str, optional
         The publication shortname, otherwise it will be generated [optional]
         Convention is the first four letters of first authors last name and two digit year (e.g., Smit21)
         For last names which are less than four letters, use '_' or first name initial(s). (e.g, Xu__21 or LiYB21)
@@ -300,7 +300,7 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
 
     ads.config.token = os.getenv('ADS_TOKEN')
 
-    if not ads.config.token and (not name and (not doi or not bibcode)):
+    if not ads.config.token and (not publication and (not doi or not bibcode)):
         logger.error("An ADS_TOKEN environment variable must be set in order to auto-populate the fields.\n"
                      "Without an ADS_TOKEN, name and bibcode or DOI must be set explicity.")
         return
@@ -332,17 +332,17 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
             logger.info(f"Publication found in ADS using arxiv id: , {arxiv_id}")
             article = arxiv_matches_list[0]
             logger.info(f"{article.first_author}, {article.year}, {article.bibcode}, {article.title}")
-            if not name:  # generate the name if it was not provided
+            if not publication:  # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
             else:
-                name_add = name
+                name_add = publication
             description = article.title[0]
             bibcode_add = article.bibcode
             doi_add = article.doi[0]
 
     elif arxiv_id:
-        name_add = name
+        name_add = publication
         bibcode_add = arxiv_id
         doi_add = doi
 
@@ -358,16 +358,16 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
             logger.info(f"Publication found in ADS using DOI: {doi}")
             article = doi_matches_list[0]
             logger.info(f"{article.first_author}, {article.year}, {article.bibcode}, {article.title}")
-            if not name:  # generate the name if it was not provided
+            if not publication:  # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
             else:
-                name_add = name
+                name_add = publication
             description = article.title[0]
             bibcode_add = article.bibcode
             doi_add = article.doi[0]
     elif doi:
-        name_add = name
+        name_add = publication
         bibcode_add = bibcode
         doi_add = doi
 
@@ -388,11 +388,11 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
             logger.info("Publication found in ADS using bibcode: " + str(bibcode))
             article = bibcode_matches_list[0]
             logger.info(f"{article.first_author}, {article.year}, {article.bibcode}, {article.doi}, {article.title}")
-            if not name:  # generate the name if it was not provided
+            if not publication:  # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
             else:
-                name_add = name
+                name_add = publication
             description = article.title[0]
             bibcode_add = article.bibcode
             if article.doi is None:
@@ -400,7 +400,7 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
             else:
                 doi_add = article.doi[0]
     elif bibcode:
-        name_add = name
+        name_add = publication
         bibcode_add = bibcode
         doi_add = doi
 
