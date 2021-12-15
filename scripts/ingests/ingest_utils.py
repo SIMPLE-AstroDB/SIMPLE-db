@@ -99,8 +99,6 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
         else:
             name_matches = None
 
-        print(name_matches)
-
         if len(name_matches) == 1 and search_db:  # Source is already in database
             n_existing += 1
             msg1 = f"{i}: Skipping {source}. Already in database. \n "
