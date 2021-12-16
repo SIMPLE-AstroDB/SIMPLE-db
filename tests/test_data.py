@@ -176,13 +176,25 @@ def test_proper_motion_refs(db):
     assert len(t) == 44, f'found {len(t)} proper motion reference entries for {ref}'
 
 def test_parallax_refs(db):
+    # Test total odopted measuruments
+    t = db.query(db.Parallaxes).filter(db.Parallaxes.c.adopted == 1).astropy()
+    assert len(t) == 1187, f'found {len(t)} adopted parallax measuruments.'
+
     ref = 'GaiaDR2'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
     assert len(t) == 1076, f'found {len(t)} parallax reference entries for {ref}'
 
+    t = db.query(db.Parallaxes).filter(and_(db.Parallaxes.c.reference == ref,
+                                            db.Parallaxes.c.adopted == 1)).astropy()
+    assert len(t) == 36, f'found {len(t)} adopted parallax reference entries for {ref}'
+
     ref = 'GaiaEDR3'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
     assert len(t) == 1133, f'found {len(t)} parallax reference entries for {ref}'
+
+    t = db.query(db.Parallaxes).filter(and_(db.Parallaxes.c.reference == ref,
+                                            db.Parallaxes.c.adopted == 1)).astropy()
+    assert len(t) == 1104, f'found {len(t)} adopted parallax reference entries for {ref}'
 
 
 def test_photometry_bands(db):
@@ -407,7 +419,11 @@ def test_Best2020_ingest(db):
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 348, f'found {len(t)} proper motion entries for {ref}'
 
-    #Test for Best2020a parallaxes added
+    # Test for Best2020a parallaxes added
     ref = 'Best20a'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
     # assert len(t) == 348, f'found {len(t)} parallax entries for {ref}'
+    # Test for number of Best20a parallaxes that are adopted
+    t = db.query(db.Parallaxes).filter(and_(db.Parallaxes.c.reference == ref,
+                                            db.Parallaxes.c.adopted == 1)).astropy()
+    # assert len(t) == ??, f'found {len(t)} adopted parallax entries for {ref}'
