@@ -26,6 +26,13 @@ ingest_publication(db, doi='10.1086/519793', publication='ODon07')
 ingest_publication(db, bibcode='2011AAS...21710304R ')
 ingest_publication(db, doi='10.1086/312458')
 ingest_publication(db, doi='10.1086/586735')
+ingest_publication(db, doi='10.1088/2041-8205/798/1/L13') # Yang15
+ingest_publication(db, doi='10.3847/1538-3881/aaa5a6') # Bill18
+# Update Buen15a to Buen15
+ingest_publication(db, doi='10.3847/2041-8205/829/2/L32') #Lew_16
+ingest_publication(db, doi='10.1088/0004-637X/768/2/121') # Apai13
+ingest_publication(db, doi='10.1088/2041-8205/760/2/L31') # Buen12
+ingest_publication(db, doi='10.3847/0004-637X/826/1/8') # Yang16
 
 ingest_sources(db, 'NAME Luhman 16A', 'Luhm13', search_db=False)
 ingest_sources(db, 'NAME Luhman 16B', 'Luhm13', search_db=False)
@@ -38,7 +45,8 @@ db.Sources.update().where(db.Sources.c.source == 'Luhman 16').values(reference='
 # Add the spectra to the database
 ingest_spectra(db, data['Source'], data['Spectrum'], 'em.IR.NIR', 'HST', 'WFC3', 'G141 grism',
                data['observation_date'],
-               'Manj19', 'micron', 'erg/cm2/s/A', comments=data['spectrum comments'])
+               'Manj19', 'micron', 'erg/cm2/s/A', comments=data['spectrum comments'],
+               other_references=data['Other specturm refs'])
 
 # WRITE THE JSON FILES
 if SAVE_DB:
