@@ -19,7 +19,8 @@ Columns marked with an asterisk (*) may not be empty.
 | flux_units        | Units for flux   | | String(20) | |
 | wavelength_order  | Wavelength order | | Integer | |
 | comments          | Free form comments |   | String(1000) |   |
-| *reference        | Reference |   | String(30) | primary and foreign: Publications.name |
+| *reference        | Primary Reference |   | String(30) | primary and foreign: Publications.name |
+| *other_reference  | Other References |   | String(30) |   |
 
 The local_spectrum is meant to store the path to a local copy of the spectrum with an 
 environment variable to define part of the path (so it can be shared among other users). 
@@ -41,4 +42,7 @@ They currently  include:
  
 # Notes
  - An accurate observation date is required for a spectrum to be ingested.
+ - Data based on data from multiple observation dates has 'Multiple observation dates' 
+   indicated in the *comments* field.
+   One of the dates should be used for the *observation_date*.
  - Spectra for companions should be associated with individual sources and not grouped with the primary source.
