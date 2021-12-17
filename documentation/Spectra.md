@@ -20,7 +20,7 @@ Columns marked with an asterisk (*) may not be empty.
 | wavelength_order  | Wavelength order | | Integer | |
 | comments          | Free form comments |   | String(1000) |   |
 | *reference        | Primary Reference |   | String(30) | primary and foreign: Publications.name |
-| *other_reference  | Other References |   | String(30) |   |
+| *other_references  | Other References |   | String(30) |   |
 
 The local_spectrum is meant to store the path to a local copy of the spectrum with an 
 environment variable to define part of the path (so it can be shared among other users). 

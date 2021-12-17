@@ -216,6 +216,7 @@ class Spectra(Base):
     # Common metadata
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.publication', onupdate='cascade'), primary_key=True)
+    other_references = Column(String(30))
 
     # Foreign key constraints for telescope, instrument, mode; all handled via reference to Modes table
     __table_args__ = (ForeignKeyConstraint([telescope, instrument, mode],
