@@ -724,7 +724,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
 # SPECTRA
 def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes, obs_dates, references,
                    wavelength_units=None, flux_units=None, wavelength_order=None, local_spectra=None,
-                   comments=None, raise_error=True):
+                   comments=None, other_references=None, raise_error=True):
     """
 
     Parameters
@@ -851,7 +851,8 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                      'flux_units': None,  # if ma.is_masked(flux_units[i]) else flux_units[i],
                      'wavelength_order': None,  # if ma.is_masked(wavelength_order[i]) else wavelength_order[i],
                      'comments': None if ma.is_masked(comments[i]) else comments[i],
-                     'reference': references[i]}]
+                     'reference': references[i],
+                     'other_references': None if ma.is_masked(other_references[i]) else other_references[i]}]
         logger.debug(row_data)
 
         try:
