@@ -9,7 +9,9 @@ logger.setLevel(logging.INFO)
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
 # Read in CSV file as Astropy table
-data = Table.read('scripts/ingests/Manja19_spectra9.csv')
+# file = 'Manja19_spectra9.csv'
+file = 'Manja19_spectra - Sheet1.csv'
+data = Table.read('scripts/ingests/' + file)
 
 # Ingest new instrumentation and telescope and mode
 
@@ -29,7 +31,9 @@ ingest_publication(db, doi='10.1086/586735')
 ingest_publication(db, doi='10.1088/2041-8205/798/1/L13') # Yang15
 ingest_publication(db, doi='10.3847/1538-3881/aaa5a6') # Bill18
 # Update Buen15a to Buen15
-ingest_publication(db, doi='10.3847/2041-8205/829/2/L32') #Lew_16
+db.Publications.update().where(db.Publications.c.publication == 'Buen15a').\
+    values(publication='Buen15').execute()
+ingest_publication(db, doi='10.3847/2041-8205/829/2/L32', publication='Lew_16') #Lew_16
 ingest_publication(db, doi='10.1088/0004-637X/768/2/121') # Apai13
 ingest_publication(db, doi='10.1088/2041-8205/760/2/L31') # Buen12
 ingest_publication(db, doi='10.3847/0004-637X/826/1/8') # Yang16
