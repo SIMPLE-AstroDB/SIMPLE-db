@@ -33,6 +33,17 @@ ingest_publication(db, doi='10.3847/2041-8205/829/2/L32') #Lew_16
 ingest_publication(db, doi='10.1088/0004-637X/768/2/121') # Apai13
 ingest_publication(db, doi='10.1088/2041-8205/760/2/L31') # Buen12
 ingest_publication(db, doi='10.3847/0004-637X/826/1/8') # Yang16
+ingest_publication(db, doi='10.3847/2041-8213/aa9ae9') # Shep17
+ingest_publication(db, doi='10.1088/0004-637X/806/2/146') # Hayn15
+ingest_publication(db, doi='10.1088/0004-637X/791/1/36', publication='Stev14.36') # Stev14.36
+ingest_publication(db, doi='10.1126/science.1256758', publication='Stev14.758') #Stev14.758
+ingest_publication(db, doi='10.1038/nature23266') # Evan17
+ingest_publication(db, doi='10.3847/1538-3881/153/1/34') # Cart17
+ingest_publication(db, doi='10.1088/0004-637X/785/2/148') # Ranj14
+ingest_publication(db, doi='10.3847/1538-3881/aa899b') # Beat17
+ingest_publication(db, doi='10.3847/0004-6256/152/6/203') # Line16
+ingest_publication(db, doi='10.3847/1538-3881/aaabbd') #Zhou18
+
 
 ingest_sources(db, 'NAME Luhman 16A', 'Luhm13', search_db=False)
 ingest_sources(db, 'NAME Luhman 16B', 'Luhm13', search_db=False)
