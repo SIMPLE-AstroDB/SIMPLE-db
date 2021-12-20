@@ -246,7 +246,7 @@ def test_spectra(db):
 
     regime = 'em.IR.NIR'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 21, f'found {len(t)} spectra in the {regime} regime'
+    assert len(t) == 98, f'found {len(t)} spectra in the {regime} regime'
 
     regime = 'em.opt'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
@@ -301,6 +301,7 @@ def test_Manj19_data(db):
     Ingest script(s):
         ingest_ATLAS_sources.py
         ingest_ATLAS_spectral_types.py
+        Manja_ingest_spectra19.py
     """
 
     pub = 'Manj19'
@@ -321,6 +322,9 @@ def test_Manj19_data(db):
                                                              db.SpectralTypes.c.reference == pub)).count()
     assert n_Manj19_Ttypes == 21, f'found {n_Manj19_Ttypes} T type dwarfs for {pub}'
 
+    # Test spectra added
+    n_Manj19_spectra = db.query(db.Spectra).filter(db.Spectra.c.reference == pub).count()
+    assert n_Manj19_spectra == 77, f'found {n_Manj19_spectra} spectra {pub}'
 
 def test_Manj19_pub(db):
     pub = 'Manj19'

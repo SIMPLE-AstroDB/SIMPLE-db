@@ -8,6 +8,7 @@
             "equinox": null,
             "shortname": "2228-4310",
             "reference": "Burg03e",
+            "other_references": null,
             "comments": null
         }
     ],
@@ -123,6 +124,21 @@
     ],
     "Spectra": [
         {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J2228-43.csv",
+            "local_spectrum": null,
+            "regime": "em.IR.NIR",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2013-07-20T00:00:00",
+            "wavelength_units": null,
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": "Multiple observation dates.",
+            "reference": "Manj19",
+            "other_references": "GO 12314 (PI Apai), GO 13176 (PI Apai), Buen12, Yang16"
+        },
+        {
             "spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSJ22282889-4310262_20030917_BUR04B.txt",
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_2MASSJ22282889-4310262_20030917_BUR04B.txt",
             "regime": "nir",
@@ -134,7 +150,8 @@
             "flux_units": null,
             "wavelength_order": null,
             "comments": null,
-            "reference": "Burg04b"
+            "reference": "Burg04b",
+            "other_references": null
         }
     ],
     "SpectralTypes": [

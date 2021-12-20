@@ -8,6 +8,7 @@
             "equinox": null,
             "shortname": "1110+0116",
             "reference": "Geba02",
+            "other_references": null,
             "comments": null
         }
     ],
@@ -102,6 +103,21 @@
     ],
     "Spectra": [
         {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/S1110.csv",
+            "local_spectrum": null,
+            "regime": "em.IR.NIR",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2016-02-10T00:00:00",
+            "wavelength_units": null,
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "GO 14241 (PI Apai)"
+        },
+        {
             "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/1110%2B0116.txt",
             "local_spectrum": "$BDNYC_spectra/IRS/1110+0116.txt",
             "regime": "mir",
@@ -113,7 +129,8 @@
             "flux_units": "Jy",
             "wavelength_order": null,
             "comments": null,
-            "reference": "PID3431"
+            "reference": "PID3431",
+            "other_references": null
         },
         {
             "spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_SDSSpJ111010.01%2B011613.1_20040311_BUR06D.txt",
@@ -127,7 +144,8 @@
             "flux_units": null,
             "wavelength_order": null,
             "comments": null,
-            "reference": "Burg06c"
+            "reference": "Burg06c",
+            "other_references": null
         }
     ],
     "SpectralTypes": [

@@ -8,6 +8,7 @@
             "equinox": null,
             "shortname": "0908+5032",
             "reference": "Cruz03",
+            "other_references": null,
             "comments": null
         }
     ],
@@ -169,6 +170,21 @@
     ],
     "Spectra": [
         {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J0908%2B50.csv",
+            "local_spectrum": null,
+            "regime": "em.IR.NIR",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2011-12-09T00:00:00",
+            "wavelength_units": null,
+            "flux_units": null,
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "SNAP 12550 (PI Apai), Buen14"
+        },
+        {
             "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/0908%2B5032.txt",
             "local_spectrum": "$BDNYC_spectra/IRS/0908+5032.txt",
             "regime": "mir",
@@ -180,7 +196,8 @@
             "flux_units": "Jy",
             "wavelength_order": null,
             "comments": null,
-            "reference": "PID3431"
+            "reference": "PID3431",
+            "other_references": null
         },
         {
             "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U10802.fits",
@@ -194,7 +211,8 @@
             "flux_units": "ergs-1cm-2A-1",
             "wavelength_order": null,
             "comments": null,
-            "reference": "Sieg07"
+            "reference": "Sieg07",
+            "other_references": null
         },
         {
             "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U10802.fits",
@@ -208,7 +226,8 @@
             "flux_units": "ergs-1cm-2A-1",
             "wavelength_order": null,
             "comments": null,
-            "reference": "Cruz07"
+            "reference": "Cruz07",
+            "other_references": null
         }
     ],
     "SpectralTypes": [
