@@ -294,8 +294,8 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, publication: st
 
     """
 
-    if not (doi or bibcode):
-        logger.error('DOI or Bibcode is required input')
+    if not (publication or doi or bibcode):
+        logger.error('Publication, DOI, or Bibcode is required input')
         return
 
     ads.config.token = os.getenv('ADS_TOKEN')
@@ -406,16 +406,20 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, publication: st
         bibcode_add = bibcode
         doi_add = doi
 
+    if publication and ~use_ads:
+        name_add = publication
+        using = 'user input'
+
     new_ref = [{'publication': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
 
     try:
         db.Publications.insert().execute(new_ref)
         logger.info(f'Added {name_add} to Publications table using {using}')
-    except sqlalchemy.exc.IntegrityError:
+    except sqlalchemy.exc.IntegrityError as error:
         msg = "It's possible that a similar publication already exists in database\n" \
               "Use search_publication function before adding a new record"
         logger.error(msg)
-        raise SimpleError(msg)
+        raise SimpleError(msg + str(error))
 
     return
 
