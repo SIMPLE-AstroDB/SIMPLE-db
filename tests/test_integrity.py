@@ -7,6 +7,7 @@ from sqlalchemy import func
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database, or_
 from astropy.table import unique
+from astropy import units as u
 from astroquery.simbad import Simbad
 from astrodbkit2.utils import _name_formatter
 
@@ -164,6 +165,7 @@ def test_names_table(db):
     assert len(blank_names) == 0, \
         'ERROR: There are entries in Names which are empty strings'
 
+
 def test_source_uniqueness2(db):
     # Verify that all Sources.source values are unique and find the duplicates
     sql_text = "SELECT Sources.source FROM Sources GROUP BY source " \
@@ -268,6 +270,7 @@ def test_propermotions(db):
         print(t)
     assert len(t) == 0
 
+
 def test_radialvelocities(db):
     # Tests against the RadialVelocities table
 
@@ -291,6 +294,7 @@ def test_radialvelocities(db):
         print("\nRadial velocity measurements with incorrect 'adopted' labels")
         print(t)
     assert len(t) == 0
+
 
 def test_spectraltypes(db):
     # Tests against the SpectralTypes table
@@ -351,7 +355,35 @@ def test_spectra(db):
         print(t)
     assert len(t) == 0
 
-    # TODO: Consider testing that units are astropy.units resolvable?
+    # Test units are astropy.unit resolvable
+    t = db.query(db.Spectra.c.wavelength_units).filter(db.Spectra.c.wavelength_units.is_not(None)).distinct().astropy()
+    wave_unit_fail = []
+    for x in t:
+        unit = x['wavelength_units']
+        try:
+            assert u.Unit(unit, parse_strict='raise')
+        except ValueError:
+            print(f'{unit} is not a recognized astropy unit')
+            counts = db.query(db.Spectra).filter(db.Spectra.c.wavelength_units == unit).count()
+            wave_unit_fail.append({unit: counts})
+    assert len(wave_unit_fail) == 0, f'Some wavelength units did not resolve: {wave_unit_fail}'
+
+    t = db.query(db.Spectra.c.flux_units).filter(db.Spectra.c.flux_units.is_not(None)).distinct().astropy()
+    flux_unit_fail = []
+    for x in t:
+        unit = x['flux_units']
+
+        # Special exception for the 'normalized' unit
+        if unit == 'normalized':
+            continue
+
+        try:
+            assert u.Unit(unit, parse_strict='raise')
+        except ValueError:
+            print(f'{unit} is not a recognized astropy unit')
+            counts = db.query(db.Spectra).filter(db.Spectra.c.flux_units == unit).count()
+            flux_unit_fail.append({unit: counts})
+    assert len(flux_unit_fail) == 0, f'Some flux units did not resolve: {flux_unit_fail}'
 
 
 def test_remove_database(db):
