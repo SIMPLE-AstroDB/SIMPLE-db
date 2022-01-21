@@ -97,7 +97,7 @@ class Sources(Base):
     equinox = Column(String(10))  # eg, J2000
     shortname = Column(String(30))  # not needed?
     reference = Column(String(30), ForeignKey('Publications.publication', onupdate='cascade'), nullable=False)
-    other_references = Column(String(30))
+    other_references = Column(String(100))
     comments = Column(String(1000))
 
 
