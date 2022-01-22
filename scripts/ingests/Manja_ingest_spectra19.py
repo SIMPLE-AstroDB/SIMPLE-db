@@ -4,7 +4,7 @@ from scripts.ingests.utils import *
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
@@ -48,7 +48,6 @@ ingest_publication(db, doi='10.3847/1538-3881/aa899b') # Beat17
 ingest_publication(db, doi='10.3847/0004-6256/152/6/203') # Line16
 ingest_publication(db, doi='10.3847/1538-3881/aaabbd') #Zhou18
 
-
 ingest_sources(db, 'NAME Luhman 16A', 'Luhm13', search_db=False)
 ingest_sources(db, 'NAME Luhman 16B', 'Luhm13', search_db=False)
 
@@ -56,6 +55,12 @@ ingest_sources(db, data['Source'], data['discovery reference'])
 
 # Fixing missing reference for Luhman 16
 db.Sources.update().where(db.Sources.c.source == 'Luhman 16').values(reference='Luhm13').execute()
+
+# Add the HST refs
+ingest_publication(db, publication='Luca10.12217', bibcode='2010hst..prop12217L')
+ingest_publication(db,
+                   publication='Apai11.12550',
+                   bibcode='2011hst..prop12550A')
 
 # Add the spectra to the database
 ingest_spectra(db, data['Source'], data['Spectrum'], 'em.IR.NIR', 'HST', 'WFC3', 'G141 grism',

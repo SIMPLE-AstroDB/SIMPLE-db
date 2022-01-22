@@ -299,6 +299,7 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, publication: st
         return
 
     ads.config.token = os.getenv('ADS_TOKEN')
+    logger.debug(f"ADS Token set to {ads.config.token}")
 
     if not ads.config.token and (not publication and (not doi or not bibcode)):
         logger.error("An ADS_TOKEN environment variable must be set in order to auto-populate the fields.\n"
@@ -309,6 +310,8 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, publication: st
         use_ads = True
     else:
         use_ads = False
+
+    logger.debug(f"Use ADS set to {use_ads}")
 
     if bibcode:
         if 'arXiv' in bibcode:
