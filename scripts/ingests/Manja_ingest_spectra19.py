@@ -58,9 +58,26 @@ db.Sources.update().where(db.Sources.c.source == 'Luhman 16').values(reference='
 
 # Add the HST refs
 ingest_publication(db, publication='Luca10.12217', bibcode='2010hst..prop12217L')
-ingest_publication(db,
-                   publication='Apai11.12550',
-                   bibcode='2011hst..prop12550A')
+ingest_publication(db, publication='Apai11.12550', bibcode='2011hst..prop12550A')
+ingest_publication(db, publication='Apai15.14241', bibcode=' 2015hst..prop14241A')
+ingest_publication(db, publication='Apai12.13176', bibcode='2012hst..prop13176A')
+ingest_publication(db, publication='Apai10.12341', bibcode='2010hst..prop12314A')
+ingest_publication(db, bibcode='2016hst..prop14051R', publication='Radi16.14051')
+ingest_publication(db, bibcode='2013hst..prop13299R', publication='Radi13.13299')
+ingest_publication(db, bibcode='2013hst..prop13467B', publication='Bean13.13467')
+ingest_publication(db, bibcode='2013hst..prop13308Z', publication='Zhao13.13308')
+ingest_publication(db, bibcode='2014hst..prop13660Z', publication='Zhao14.13660')
+ingest_publication(db, bibcode='2013hst..prop13280B', publication='Buen13.13280')
+ingest_publication(db, bibcode='2015hst..prop14188B', publication='Bill15.14188')
+ingest_publication(db, bibcode='2016hst..prop14767S', publication='Sing16.14767')
+ingest_publication(db, bibcode='2010hst..prop12230S', publication='Swai10.12230')
+ingest_publication(db, bibcode='2012hst..prop12970C', publication='Cush12.12970')
+ingest_publication(db, bibcode='2011hst..prop12544C', publication='Cush11.12544')
+ingest_publication(db, bibcode='2010hst..prop12330K', publication='Kirk10.12330')
+ingest_publication(db, bibcode='2012hst..prop13178K', publication='Kirk12.13178')
+ingest_publication(db, bibcode='2010hst..prop12181D', publication='Demi10.12181')
+ingest_publication(db, bibcode='2011hst..prop12495D', publication='Demi11.12495')
+
 
 # Add the spectra to the database
 ingest_spectra(db, data['Source'], data['Spectrum'], 'em.IR.NIR', 'HST', 'WFC3', 'G141 grism',
