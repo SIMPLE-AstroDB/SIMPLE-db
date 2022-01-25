@@ -258,7 +258,7 @@ def test_spectra(db):
 
     regime = 'em.IR.NIR'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 21, f'found {len(t)} spectra in the {regime} regime'
+    assert len(t) == 21, f'found {len(t)} spectra in the {regime} regime' # should be 98 after Manj19 ingest
 
     regime = 'em.opt'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
@@ -275,6 +275,11 @@ def test_spectra(db):
     telescope = 'IRTF'
     t = db.query(db.Spectra).filter(db.Spectra.c.telescope == telescope).astropy()
     assert len(t) == 436, f'found {len(t)} spectra from {telescope}'
+
+    telescope = 'HST'
+    instrument = 'WFC3'
+    t = db.query(db.Spectra).filter(and_(db.Spectra.c.telescope == telescope, db.Spectra.c.instrument == instrument)).astropy()
+    assert len(t) == 0, f'found {len(t)} spectra from {telescope}/{instrument}' # Should be 77
 
     ref = 'Reid08b'
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
@@ -309,13 +314,19 @@ def test_Manj19_data(db):
 
     Data file(s):
         ATLAS_table.vot
+        Manj19_spectra - Sheet1.csv
 
     Ingest script(s):
         ingest_ATLAS_sources.py
         ingest_ATLAS_spectral_types.py
+        Manja_ingest_spectra19.py
     """
 
     pub = 'Manj19'
+
+    # Check DOI and Bibcode values are correctly set for new publications added
+    manj19_pub = db.query(db.Publications).filter(db.Publications.c.publication == pub).astropy()
+    reference_verifier(manj19_pub, 'Manj19', '2019AJ....157..101M', '10.3847/1538-3881/aaf88f')
 
     # Test total spectral types added
     n_Manj19_types = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.reference == pub).count()
@@ -333,14 +344,9 @@ def test_Manj19_data(db):
                                                              db.SpectralTypes.c.reference == pub)).count()
     assert n_Manj19_Ttypes == 21, f'found {n_Manj19_Ttypes} T type dwarfs for {pub}'
 
-
-def test_Manj19_pub(db):
-    pub = 'Manj19'
-
-    # Check DOI and Bibcode values are correctly set for new publications added
-    manj19_pub = db.query(db.Publications).filter(db.Publications.c.publication == pub).astropy()
-    reference_verifier(manj19_pub, 'Manj19', '2019AJ....157..101M', '10.3847/1538-3881/aaf88f')
-
+    # Test spectra added
+    t = db.query(db.Spectra).filter(db.Spectra.c.reference == pub).astropy()
+    assert len(t) == 0, f'found {len(t)} spectra from {pub}' # should be 77
 
 def test_Kirk19_ingest(db):
     """

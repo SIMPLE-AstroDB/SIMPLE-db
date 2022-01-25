@@ -4,7 +4,7 @@ from scripts.ingests.utils import *
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
@@ -83,7 +83,7 @@ ingest_publication(db, bibcode='2011hst..prop12495D', publication='Demi11.12495'
 ingest_spectra(db, data['Source'], data['Spectrum'], 'em.IR.NIR', 'HST', 'WFC3', 'G141 grism',
                data['observation_date'],
                'Manj19', 'micron', 'erg/cm2/s/A', comments=data['spectrum comments'],
-               other_references=data['Other specturm refs'])
+               other_references=data['Other spectrum refs'])
 
 # WRITE THE JSON FILES
 if SAVE_DB:
