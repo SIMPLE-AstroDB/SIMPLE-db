@@ -21,7 +21,7 @@ logger = logging.getLogger('SIMPLE')
 
 # SOURCES
 def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=None, epochs=None,
-                   equinoxes=None, raise_error=True):
+                   equinoxes=None, raise_error=True, search_db=True):
     """
     Script to ingest sources
     TODO: better support references=None
@@ -46,6 +46,9 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
     raise_error: bool, optional
         True (default): Raise an error if a source cannot be ingested
         False: Log a warning but skip sources which cannot be ingested
+    search_db: bool, optional
+        True (default): Search database to see if source is already ingested
+        False: Ingest source without searching the database
 
     Returns
     -------
@@ -61,16 +64,19 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
     else:
         coords = True
 
-    n_sources = len(sources)
+    if isinstance(sources,str):
+        n_sources = 1
+    else:
+        n_sources = len(sources)
 
     # Convert single element input values into lists
-    input_values = [references, epochs, equinoxes, comments]
+    input_values = [sources, references, epochs, equinoxes, comments]
     for i, input_value in enumerate(input_values):
         if input_value is None:
             input_values[i] = [None] * n_sources
         elif isinstance(input_value, str):
             input_values[i] = [input_value] * n_sources
-    references, epochs, equinoxes, comments = input_values
+    sources, references, epochs, equinoxes, comments = input_values
 
     n_added = 0
     n_existing = 0
@@ -84,12 +90,16 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
     # Loop over each source and decide to ingest, skip, or add alt name
     for i, source in enumerate(sources):
         # Find out if source is already in database or not
-        if coords:
+        if coords and search_db:
             name_matches = find_source_in_db(db, source, ra=ras[i], dec=decs[i])
-        else:
+        elif search_db:
             name_matches = find_source_in_db(db, source)
+        elif not search_db:
+            name_matches = []
+        else:
+            name_matches = None
 
-        if len(name_matches) == 1:  # Source is already in database
+        if len(name_matches) == 1 and search_db:  # Source is already in database
             n_existing += 1
             msg1 = f"{i}: Skipping {source}. Already in database. \n "
             msg2 = f"{i}: Match found for {source}: {name_matches[0]}"
@@ -111,7 +121,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
                     else:
                         continue
             continue  # Source is already in database, nothing new to ingest
-        elif len(name_matches) > 1:  # Multiple source matches in the database
+        elif len(name_matches) > 1 and search_db:  # Multiple source matches in the database
             n_multiples += 1
             msg1 = f"{i} Skipping {source} "
             msg = f"{i} More than one match for {source}\n {name_matches}\n"
@@ -120,7 +130,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
                 raise SimpleError(msg)
             else:
                 continue
-        elif len(name_matches) == 0:  # No match in the database, INGEST!
+        elif len(name_matches) == 0 or not search_db:  # No match in the database, INGEST!
             if coords:  # Coordinates were provided as input
                 ra = ras[i]
                 dec = decs[i]
@@ -200,26 +210,6 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
                     raise SimpleError(msg + msg2)
                 else:
                     continue
-            # try reference without last letter e.g.Smit04 instead of Smit04a
-            # elif source_data[0]['reference'][-1] in ('a', 'b'):
-            #    source_data[0]['reference'] = references[i][:-1]
-            #    try:
-            #        db.Sources.insert().execute(source_data)
-            #        n_added += 1
-            #        msg = f"Added \n {str(source_data)}"
-            #        logger.debug(msg)
-            #    except sqlalchemy.exc.IntegrityError:
-            #        msg = f"Skipping {source} "
-            #        msg2 = f"\n {str(source_data)} " \
-            #               f"\n Discovery reference may not exist in the Publications table. " \
-            #               "(Add it with add_publication function.) \n "
-            #        logger.warning(msg)
-            #        logger.debug(msg2)
-            #        n_skipped += 1
-            #        if raise_error:
-            #            raise SimpleError(msg + msg2)
-            #        else:
-            #            continue
             else:
                 msg = f"{i}: Skipping: {source}. Not sure why."
                 msg2 = f"\n {str(source_data)} "
@@ -247,8 +237,8 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
     logger.info(f"Sources added to database: {n_added}")
     logger.info(f"Names added to database: {n_names} \n")
     logger.info(f"Sources already in database: {n_existing}")
-    logger.info(f"Alt Names added to database: {n_alt_names} \n")
-    logger.info(f"Sources NOT added to database because multiple matches: {n_multiples} \n")
+    logger.info(f"Alt Names added to database: {n_alt_names}")
+    logger.info(f"Sources NOT added to database because multiple matches: {n_multiples}")
     logger.info(f"Sources NOT added to database: {n_skipped} \n")
 
     if n_added != n_names:
@@ -734,7 +724,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
 # SPECTRA
 def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes, obs_dates, references,
                    wavelength_units=None, flux_units=None, wavelength_order=None, local_spectra=None,
-                   comments=None, raise_error=True):
+                   comments=None, other_references=None, raise_error=True):
     """
 
     Parameters
@@ -861,7 +851,8 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                      'flux_units': None,  # if ma.is_masked(flux_units[i]) else flux_units[i],
                      'wavelength_order': None,  # if ma.is_masked(wavelength_order[i]) else wavelength_order[i],
                      'comments': None if ma.is_masked(comments[i]) else comments[i],
-                     'reference': references[i]}]
+                     'reference': references[i],
+                     'other_references': None if ma.is_masked(other_references[i]) else other_references[i]}]
         logger.debug(row_data)
 
         try:

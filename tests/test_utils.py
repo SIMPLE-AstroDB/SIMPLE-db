@@ -160,7 +160,7 @@ def test_find_publication(db):
 def test_ingest_publication(db):
     # should fail if trying to add a duplicate record
     with pytest.raises(SimpleError) as error_message:
-        ingest_publication(db, name='Ref 1', bibcode='2020MNRAS.496.1922B')
+        ingest_publication(db, publication='Ref 1', bibcode='2020MNRAS.496.1922B')
     assert ' similar publication already exists' in str(error_message.value)
     # TODO - Mock environment  where ADS_TOKEN is not set. #117
 
