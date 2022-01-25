@@ -2,7 +2,7 @@ import pandas as pd
 from scripts.ingests.ingest_utils import ingest_parallaxes
 from scripts.ingests.utils import *
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 
 #alternate between info and debug
