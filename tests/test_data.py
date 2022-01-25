@@ -422,8 +422,8 @@ def test_Best2020_ingest(db):
     # Test for Best2020a parallaxes added
     ref = 'Best20a'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
-    # assert len(t) == 348, f'found {len(t)} parallax entries for {ref}'
+    assert len(t) == 348, f'found {len(t)} parallax entries for {ref}'
     # Test for number of Best20a parallaxes that are adopted
     t = db.query(db.Parallaxes).filter(and_(db.Parallaxes.c.reference == ref,
                                             db.Parallaxes.c.adopted == 1)).astropy()
-    # assert len(t) == ??, f'found {len(t)} adopted parallax entries for {ref}'
+    assert len(t) == 255, f'found {len(t)} adopted parallax entries for {ref}'
