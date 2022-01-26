@@ -723,7 +723,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
 
 # SPECTRA
 def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes, obs_dates, references,
-                   wavelength_units=None, flux_units=None, wavelength_order=None, local_spectra=None,
+                   wavelength_units=None, flux_units=None, wavelength_order=None,
                    comments=None, other_references=None, raise_error=True):
     """
 
@@ -751,8 +751,9 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     flux_units: list[str] or Quantity, optional
         List or string
     wavelength_order: list[int], optional
-    local_spectra: list[str], optional
     comments: list[str], optional
+        List of strings
+    other_references: list[str], optional
         List of strings
     raise_error: bool
 
@@ -762,8 +763,11 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     input_values = [regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references]
     for i, input_value in enumerate(input_values):
         if isinstance(input_value, str):
-            input_value = [input_value] * len(sources)
-            input_values[i] = input_value
+            print, input_value
+            input_values[i] = [input_value] * len(sources)
+        elif isinstance(input_value, type(None)):
+            print, input_value
+            input_values[i] = [None] * len(sources)
     regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references = input_values
 
     n_spectra = len(spectra)
@@ -847,9 +851,9 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                      'instrument': None if ma.is_masked(instruments[i]) else instruments[i],
                      'mode': None if ma.is_masked(modes[i]) else modes[i],
                      'observation_date': obs_date,
-                     'wavelength_units': None,  # if ma.is_masked(wavelength_units[i]) else wavelength_units[i],
-                     'flux_units': None,  # if ma.is_masked(flux_units[i]) else flux_units[i],
-                     'wavelength_order': None,  # if ma.is_masked(wavelength_order[i]) else wavelength_order[i],
+                     'wavelength_units': None if ma.is_masked(wavelength_units[i]) else wavelength_units[i],
+                     'flux_units': None if ma.is_masked(flux_units[i]) else flux_units[i],
+                     'wavelength_order': None if ma.is_masked(wavelength_order[i]) else wavelength_order[i],
                      'comments': None if ma.is_masked(comments[i]) else comments[i],
                      'reference': references[i],
                      'other_references': None if ma.is_masked(other_references[i]) else other_references[i]}]
