@@ -258,7 +258,7 @@ def test_spectra(db):
 
     regime = 'em.IR.NIR'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 21, f'found {len(t)} spectra in the {regime} regime' # should be 98 after Manj19 ingest
+    assert len(t) == 98, f'found {len(t)} spectra in the {regime} regime'
 
     regime = 'em.opt'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
@@ -279,7 +279,7 @@ def test_spectra(db):
     telescope = 'HST'
     instrument = 'WFC3'
     t = db.query(db.Spectra).filter(and_(db.Spectra.c.telescope == telescope, db.Spectra.c.instrument == instrument)).astropy()
-    assert len(t) == 0, f'found {len(t)} spectra from {telescope}/{instrument}' # Should be 77
+    assert len(t) == 77, f'found {len(t)} spectra from {telescope}/{instrument}'
 
     ref = 'Reid08b'
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
@@ -345,8 +345,8 @@ def test_Manj19_data(db):
     assert n_Manj19_Ttypes == 21, f'found {n_Manj19_Ttypes} T type dwarfs for {pub}'
 
     # Test spectra added
-    t = db.query(db.Spectra).filter(db.Spectra.c.reference == pub).astropy()
-    assert len(t) == 0, f'found {len(t)} spectra from {pub}' # should be 77
+    n_Manj19_spectra = db.query(db.Spectra).filter(db.Spectra.c.reference == pub).astropy()
+    assert len(n_Manj19_spectra) == 77, f'found {len(n_Manj19_spectra)} spectra from {pub}'
 
 def test_Kirk19_ingest(db):
     """
