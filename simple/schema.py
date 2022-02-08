@@ -97,6 +97,7 @@ class Sources(Base):
     equinox = Column(String(10))  # eg, J2000
     shortname = Column(String(30))  # not needed?
     reference = Column(String(30), ForeignKey('Publications.publication', onupdate='cascade'), nullable=False)
+    other_references = Column(String(100))
     comments = Column(String(1000))
 
 
@@ -216,6 +217,7 @@ class Spectra(Base):
     # Common metadata
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.publication', onupdate='cascade'), primary_key=True)
+    other_references = Column(String(100))
 
     # Foreign key constraints for telescope, instrument, mode; all handled via reference to Modes table
     __table_args__ = (ForeignKeyConstraint([telescope, instrument, mode],
