@@ -1,7 +1,7 @@
 from scripts.ingests.ingest_utils import *
 from scripts.ingests.utils import *
 
-SAVE_DB = True  # save the data files in addition to modifying the .db file
+SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 
 logger.setLevel(logging.INFO)
@@ -9,22 +9,17 @@ logger.setLevel(logging.INFO)
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
 # Read in CSV file as Astropy table
-data = Table.read('scripts/ingests/Manja16_spectra7.csv')
+# file = 'Manja19_spectra9.csv'
+file = 'Manja20_spectra - Sheet1.csv'
+data = Table.read('scripts/ingests/' + file)
 
-ingest_instrument(db, telescope='ESO VLT', instrument='XShooter', mode='Echelle')
-
-# Add the sources to the database
-# ingest_sources(db, data['Source'])
-
-simp = db.Sources.update()\
-         .where(db.Sources.c.source == 'SIMP J013656.5+093347.3')\
-         .values(reference='Arti06')
-db.engine.execute(simp)
+ingest_sources(db, data['Source'], data['discovery reference'])
 
 # Add the spectra to the database
-ingest_spectra(db, data['Source'], data['Spectrum'], data['regime'], 'ESO VLT', 'XShooter', 'Echelle',
+ingest_spectra(db, data['Source'], data['Spectrum'], 'em.IR.NIR', 'ESO VLT', 'XShooter', 'Echelle',
                data['observation_date'],
-               'Manj16', comments=data['spectrum comments'])
+               'Manj20', 'nm', 'erg/cm^2^/s/micron', comments=data['spectrum comments'],
+               other_references=data['Other spectrum refs'])
 
 # WRITE THE JSON FILES
 if SAVE_DB:
