@@ -8,6 +8,7 @@
             "equinox": null,
             "shortname": "0817-6155",
             "reference": "Arti10",
+            "other_references": null,
             "comments": null
         }
     ],
@@ -189,6 +190,21 @@
     ],
     "Spectra": [
         {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J0817-61.csv",
+            "local_spectrum": null,
+            "regime": "em.IR.NIR",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2011-10-09T00:00:00",
+            "wavelength_units": "micron",
+            "flux_units": "erg cm-2 s-1 A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai11.12550, Buen14"
+        },
+        {
             "spectrum": "https://s3.amazonaws.com/bdnyc/T6_DENIS_J081730.0_615520_OSIRIS_SXD.fits",
             "local_spectrum": "$BDNYC_spectra/OSIRIS/T6_DENIS_J081730.0_615520_OSIRIS_SXD.fits",
             "regime": "nir",
@@ -200,7 +216,8 @@
             "flux_units": "erg s-1 cm-2 A-1",
             "wavelength_order": null,
             "comments": null,
-            "reference": "Arti10"
+            "reference": "Arti10",
+            "other_references": null
         }
     ],
     "SpectralTypes": [

@@ -8,6 +8,7 @@
             "equinox": null,
             "shortname": "1624+0029",
             "reference": "Stra99",
+            "other_references": null,
             "comments": null
         }
     ],
@@ -129,6 +130,21 @@
     ],
     "Spectra": [
         {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J1624%2B00.csv",
+            "local_spectrum": null,
+            "regime": "em.IR.NIR",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2012-07-13T00:00:00",
+            "wavelength_units": "micron",
+            "flux_units": "erg cm-2 s-1 A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai11.12550, Buen14"
+        },
+        {
             "spectrum": "https://s3.amazonaws.com/bdnyc/SDSS1624%2B0029_SL.txt",
             "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/SDSS1624+0029_SL.txt",
             "regime": "mir",
@@ -140,7 +156,8 @@
             "flux_units": "Jy",
             "wavelength_order": null,
             "comments": null,
-            "reference": "Cush06b"
+            "reference": "Cush06b",
+            "other_references": null
         },
         {
             "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/1624%2B0029.txt",
@@ -154,7 +171,8 @@
             "flux_units": "normalized",
             "wavelength_order": null,
             "comments": null,
-            "reference": "Burg06b"
+            "reference": "Burg06b",
+            "other_references": null
         },
         {
             "spectrum": "https://s3.amazonaws.com/bdnyc/2MASSJ16241436%2B0029158_T6_LRIS_Burg00.txt",
@@ -168,7 +186,8 @@
             "flux_units": "erg s-1 cm-2 A-1",
             "wavelength_order": null,
             "comments": null,
-            "reference": "Burg00b"
+            "reference": "Burg00b",
+            "other_references": null
         }
     ],
     "SpectralTypes": [
