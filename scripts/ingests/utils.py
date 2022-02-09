@@ -266,7 +266,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
     return
 
 
-def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = None, description: str = None,
+def ingest_publication(db, doi: str = None, bibcode: str = None, publication: str = None, description: str = None,
                     ignore_ads: bool = False):
     """
     Adds publication to the database using DOI or ADS Bibcode, including metadata found with ADS.
@@ -280,7 +280,7 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
         Database object
     doi, bibcode: str
         The DOI or ADS Bibcode of the reference. One of these is required input.
-    name: str, optional
+    publication: str, optional
         The publication shortname, otherwise it will be generated [optional]
         Convention is the first four letters of first authors last name and two digit year (e.g., Smit21)
         For last names which are less than four letters, use '_' or first name initial(s). (e.g, Xu__21 or LiYB21)
@@ -294,13 +294,13 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
 
     """
 
-    if not (doi or bibcode):
-        logger.error('DOI or Bibcode is required input')
+    if not (publication or doi or bibcode):
+        logger.error('Publication, DOI, or Bibcode is required input')
         return
 
     ads.config.token = os.getenv('ADS_TOKEN')
 
-    if not ads.config.token and (not name and (not doi or not bibcode)):
+    if not ads.config.token and (not publication and (not doi or not bibcode)):
         logger.error("An ADS_TOKEN environment variable must be set in order to auto-populate the fields.\n"
                      "Without an ADS_TOKEN, name and bibcode or DOI must be set explicity.")
         return
@@ -309,6 +309,7 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
         use_ads = True
     else:
         use_ads = False
+    logger.debug(f"Use ADS set to {use_ads}")
 
     if bibcode:
         if 'arXiv' in bibcode:
@@ -329,20 +330,20 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
             return
 
         if len(arxiv_matches_list) == 1:
-            logger.info(f"Publication found in ADS using arxiv id: , {arxiv_id}")
+            logger.debug(f"Publication found in ADS using arxiv id: , {arxiv_id}")
             article = arxiv_matches_list[0]
-            logger.info(f"{article.first_author}, {article.year}, {article.bibcode}, {article.title}")
-            if not name:  # generate the name if it was not provided
+            logger.debug(f"{article.first_author}, {article.year}, {article.bibcode}, {article.title}")
+            if not publication:  # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
             else:
-                name_add = name
+                name_add = publication
             description = article.title[0]
             bibcode_add = article.bibcode
             doi_add = article.doi[0]
 
     elif arxiv_id:
-        name_add = name
+        name_add = publication
         bibcode_add = arxiv_id
         doi_add = doi
 
@@ -355,19 +356,20 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
             return
 
         if len(doi_matches_list) == 1:
-            logger.info(f"Publication found in ADS using DOI: {doi}")
+            logger.debug(f"Publication found in ADS using DOI: {doi}")
+            using = doi
             article = doi_matches_list[0]
-            logger.info(f"{article.first_author}, {article.year}, {article.bibcode}, {article.title}")
-            if not name:  # generate the name if it was not provided
+            logger.debug(f"{article.first_author}, {article.year}, {article.bibcode}, {article.title}")
+            if not publication:  # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
             else:
-                name_add = name
+                name_add = publication
             description = article.title[0]
             bibcode_add = article.bibcode
             doi_add = article.doi[0]
     elif doi:
-        name_add = name
+        name_add = publication
         bibcode_add = bibcode
         doi_add = doi
 
@@ -385,14 +387,15 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
             raise
 
         elif len(bibcode_matches_list) == 1:
-            logger.info("Publication found in ADS using bibcode: " + str(bibcode))
+            logger.debug("Publication found in ADS using bibcode: " + str(bibcode))
+            using = str(bibcode)
             article = bibcode_matches_list[0]
-            logger.info(f"{article.first_author}, {article.year}, {article.bibcode}, {article.doi}, {article.title}")
-            if not name:  # generate the name if it was not provided
+            logger.debug(f"{article.first_author}, {article.year}, {article.bibcode}, {article.doi}, {article.title}")
+            if not publication:  # generate the name if it was not provided
                 name_stub = article.first_author.replace(',', '').replace(' ', '')
                 name_add = name_stub[0:4] + article.year[-2:]
             else:
-                name_add = name
+                name_add = publication
             description = article.title[0]
             bibcode_add = article.bibcode
             if article.doi is None:
@@ -400,22 +403,24 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, name: str = Non
             else:
                 doi_add = article.doi[0]
     elif bibcode:
-        name_add = name
+        name_add = publication
         bibcode_add = bibcode
         doi_add = doi
+
+    if publication and not use_ads:
+        name_add = publication
+        using = 'user input'
 
     new_ref = [{'publication': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
 
     try:
         db.Publications.insert().execute(new_ref)
-        logger.info(f'Added {name_add} to Publications table')
-    except sqlalchemy.exc.IntegrityError:
+        logger.info(f'Added {name_add} to Publications table using {using}')
+    except sqlalchemy.exc.IntegrityError as error:
         msg = "It's possible that a similar publication already exists in database\n" \
               "Use search_publication function before adding a new record"
         logger.error(msg)
-        raise SimpleError(msg)
-
-    logger.info(f"Publication added to database: {name_add}")
+        raise SimpleError(msg + str(error))
 
     return
 

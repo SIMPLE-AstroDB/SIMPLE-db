@@ -14,6 +14,7 @@ Columns marked with an asterisk (*) may not be empty.
 | equinox   | Equinox reference frame year (eg, J2000) |  | String(10) |   |
 | shortname | Optional short designation |   | String(30) |   |
 | *reference | Reference to source |   | String(30) | foreign: Publications.name |
+| other_references  | Other References |   | String(100)  |   |
 | comments  | Free form comments |   | String(1000) |   |
 
 ## Notes
@@ -21,4 +22,4 @@ Columns marked with an asterisk (*) may not be empty.
   This date
   is most relevant for high proper option objects and
 - In the case of multiple discovery references, for example independent discovery, choose one
-reference for the `reference` column and put the rest in the `comments` column.
+reference for the `reference` column and put the rest in the `other_references` column.
