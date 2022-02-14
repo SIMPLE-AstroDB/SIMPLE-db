@@ -8,6 +8,7 @@
             "equinox": null,
             "shortname": "0047+6803",
             "reference": "Gizi12",
+            "other_references": null,
             "comments": null
         }
     ],
@@ -164,6 +165,21 @@
     ],
     "Spectra": [
         {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/WISE0047.csv",
+            "local_spectrum": null,
+            "regime": "em.IR.NIR",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2016-06-06T00:00:00",
+            "wavelength_units": "micron",
+            "flux_units": "erg cm-2 s-1 A-1",
+            "wavelength_order": null,
+            "comments": "Multiple observation dates.",
+            "reference": "Manj19",
+            "other_references": "Apai15.14241, Lew_16"
+        },
+        {
             "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1111/type/native/viewcontent",
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/Gizis-WISE0047+68_0.5prism_2011jul21.fits",
             "regime": "nir",
@@ -175,7 +191,8 @@
             "flux_units": "erg s-1 cm-2 A-1",
             "wavelength_order": null,
             "comments": null,
-            "reference": "Gizi12"
+            "reference": "Gizi12",
+            "other_references": null
         }
     ],
     "SpectralTypes": [

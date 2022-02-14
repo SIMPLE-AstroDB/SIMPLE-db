@@ -8,6 +8,7 @@
             "equinox": null,
             "shortname": "1632+1904",
             "reference": "Kirk99a",
+            "other_references": null,
             "comments": null
         }
     ],
@@ -120,6 +121,21 @@
     ],
     "Spectra": [
         {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J1632%2B19.csv",
+            "local_spectrum": null,
+            "regime": "em.IR.NIR",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2012-08-11T00:00:00",
+            "wavelength_units": "micron",
+            "flux_units": "erg cm-2 s-1 A-1",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai11.12550, Buen14"
+        },
+        {
             "spectrum": "https://s3.amazonaws.com/bdnyc/2M1632.fits",
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/2M1632_SpeX.fits",
             "regime": "nir",
@@ -131,7 +147,8 @@
             "flux_units": "erg s-1 cm-2 A-1",
             "wavelength_order": null,
             "comments": null,
-            "reference": "Burg07d"
+            "reference": "Burg07d",
+            "other_references": null
         },
         {
             "spectrum": "https://s3.amazonaws.com/bdnyc/LRIS/U50006_1632%2B1904_lris.fits",
@@ -145,7 +162,8 @@
             "flux_units": "erg s-1 cm-2 A-1",
             "wavelength_order": null,
             "comments": null,
-            "reference": "Kirk99a"
+            "reference": "Kirk99a",
+            "other_references": null
         },
         {
             "spectrum": "https://s3.amazonaws.com/bdnyc/GMOS/2M1632_GMOS.fits",
@@ -159,7 +177,8 @@
             "flux_units": "erg s-1 cm-2 A-1",
             "wavelength_order": null,
             "comments": null,
-            "reference": "CruzUnpub"
+            "reference": "CruzUnpub",
+            "other_references": null
         }
     ],
     "SpectralTypes": [
