@@ -5,8 +5,7 @@ from scripts.ingests.ingest_utils import *
 from scripts.ingests.utils import *
 # conf.server = 'simbad.harvard.edu'
 # Simbad.SIMBAD_URL='http://harvard.simbad.edu/simbad/sim-script'
-
-Simbad.URL = 'harvard.simbad.edu'
+# Simbad.URL = 'harvard.simbad.edu'
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 
@@ -20,6 +19,11 @@ file = 'Manja20_spectra - Sheet1.csv'
 data = Table.read('scripts/ingests/' + file)
 
 ingest_publication(db, bibcode='2010A&A...510A..27B ')
+ingest_publication(db, bibcode='1997MNRAS.287..180P')
+ingest_publication(db, bibcode='2012MNRAS.426.3419B')
+ingest_publication(db, bibcode='1998A&A...336..490B')
+db.Publications.delete().where(db.Publications.c.publication == 'Mart98c').execute()
+ingest_publication(db, bibcode='1998ApJ...509L.113M', publication='Mart98.775')
 ingest_sources(db, data['Source'], data['discovery reference'])
 
 
