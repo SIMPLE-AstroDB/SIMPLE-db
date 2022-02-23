@@ -24,6 +24,7 @@ ingest_publication(db, bibcode='2012MNRAS.426.3419B')
 ingest_publication(db, bibcode='1998A&A...336..490B')
 db.Publications.delete().where(db.Publications.c.publication == 'Mart98c').execute()
 ingest_publication(db, bibcode='1998ApJ...509L.113M', publication='Mart98.775')
+ingest_publication(db, bibcode='1996ApJ...469L..53R')
 ingest_sources(db, data['Source'], data['discovery reference'])
 
 
