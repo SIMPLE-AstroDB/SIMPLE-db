@@ -25,9 +25,13 @@ ingest_publication(db, bibcode='1998A&A...336..490B')
 db.Publications.delete().where(db.Publications.c.publication == 'Mart98c').execute()
 ingest_publication(db, bibcode='1998ApJ...509L.113M', publication='Mart98.775')
 ingest_publication(db, bibcode='1996ApJ...469L..53R')
+ingest_publication(db, bibcode='2003MNRAS.343.1263N')
+ingest_publication(db, bibcode='2012MNRAS.424.3178B')
+ingest_publication(db, bibcode='2006A&A...458..805B')
+ingest_publication(db, bibcode='2004AJ....127..449M')
 ingest_sources(db, data['Source'], data['discovery reference'])
 
-
+# update the name in the names table and in the sources table, the names table may be first and then the sources table
 # Add the spectra to the database
 # ingest_spectra(db, data['Source'], data['Spectrum'], 'em.IR.NIR', 'ESO VLT', 'XShooter', 'Echelle',
 #                data['observation_date'],
