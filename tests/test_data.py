@@ -305,6 +305,10 @@ def test_spectra(db):
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
     assert len(t) == 46, f'found {len(t)} spectra from {ref}'
 
+    ref = 'Manj20'
+    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
+    assert len(t) == 20, f'found {len(t)} spectra from {ref}'
+
 
 # Individual ingest tests
 # -----------------------------------------------------------------------------------------
