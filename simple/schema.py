@@ -177,7 +177,8 @@ class SpectralTypes(Base):
     spectral_type_string = Column(String(10), nullable=False)
     spectral_type_code = Column(Float, nullable=False)
     spectral_type_error = Column(Float)
-    regime = Column(Enum(Regime, create_constraint=True), primary_key=True)  # restricts to a few values: Optical, Infrared
+    regime = Column(Enum(Regime, create_constraint=True, native_enum=False),
+                    primary_key=True)  # restricts to a few values: Optical, Infrared
     adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.publication', onupdate='cascade'), primary_key=True)
@@ -188,8 +189,10 @@ class Gravities(Base):
     __tablename__ = 'Gravities'
     source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
                     nullable=False, primary_key=True)
-    gravity = Column(Enum(Gravity, create_constraint=True), nullable=False)  # restricts to enumerated values
-    regime = Column(Enum(Regime, create_constraint=True), primary_key=True)  # restricts to a few values: Optical, Infrared
+    gravity = Column(Enum(Gravity, create_constraint=True, native_enum=False),
+                     nullable=False)  # restricts to enumerated values
+    regime = Column(Enum(Regime, create_constraint=True, native_enum=False),
+                    primary_key=True)  # restricts to a few values: Optical, Infrared
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.publication', onupdate='cascade'), primary_key=True)
 
@@ -205,7 +208,9 @@ class Spectra(Base):
     local_spectrum = Column(String(1000))  # local directory (via environment variable) of spectrum location
 
     # Metadata
-    regime = Column(Enum(Regime, create_constraint=True, values_callable=lambda x: [e.value for e in x]), primary_key=True)  # eg, Optical, Infrared, etc
+    regime = Column(Enum(Regime, create_constraint=True, values_callable=lambda x: [e.value for e in x],
+                         native_enum=False),
+                    primary_key=True)  # eg, Optical, Infrared, etc
     telescope = Column(String(30), ForeignKey(Telescopes.name))
     instrument = Column(String(30), ForeignKey(Instruments.name))
     mode = Column(String(30))  # eg, Prism, Echelle, etc
