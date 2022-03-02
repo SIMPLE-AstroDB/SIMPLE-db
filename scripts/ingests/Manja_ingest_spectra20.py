@@ -8,7 +8,7 @@ from scripts.ingests.utils import *
 # Simbad.SIMBAD_URL='http://harvard.simbad.edu/simbad/sim-script'
 # Simbad.URL = 'harvard.simbad.edu'
 SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = False  # recreates the .db file from the data files
+RECREATE_DB = True  # recreates the .db file from the data files
 
 logger.setLevel(logging.DEBUG)
 
@@ -18,7 +18,9 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 # file = 'Manja19_spectra9.csv'
 file = 'Manja20_spectra - Sheet1.csv'
 data = Table.read('scripts/ingests/' + file)
-#try to skip the first source
+
+
+# try to skip the first source
 
 def ingest_pubs():
     ingest_publication(db, bibcode='2010A&A...510A..27B ')
@@ -37,9 +39,10 @@ def ingest_pubs():
     ingest_publication(db, bibcode='2004A&A...416..555L')
     ingest_publication(db, bibcode='2001AJ....121..974G')
     ingest_publication(db, bibcode='2004A&A...417..583C')
+    ingest_publication(db, bibcode='2020MNRAS.491.5925M')
 
 
-# ingest_pubs()
+ingest_pubs()
 
 ingest_sources(db, data['Source'], data['discovery reference'])
 
