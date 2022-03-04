@@ -760,7 +760,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     """
 
     # Convert single value input values to lists
-    input_values = [regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references]
+    input_values = [regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references, comments, other_references]
     for i, input_value in enumerate(input_values):
         if isinstance(input_value, str):
             print, input_value
@@ -768,7 +768,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         elif isinstance(input_value, type(None)):
             print, input_value
             input_values[i] = [None] * len(sources)
-    regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references = input_values
+    regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references, comments, other_references = input_values
 
     n_spectra = len(spectra)
     n_skipped = 0
@@ -863,7 +863,6 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
             db.Spectra.insert().execute(row_data)
             n_added += 1
         except sqlalchemy.exc.IntegrityError as e:
-            # TODO: add elif to check if reference is in Publications Table
 
             if "CHECK constraint failed: regime" in str(e):
                 msg = f"Regime provided is not in schema: {regimes[i]}"
@@ -872,8 +871,15 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                     raise SimpleError(msg)
                 else:
                     continue
-
-            # check telescope, instrument, mode exists
+            if db.query(db.Publications).filter(db.Publications.c.name == references[i]).count() == 0:
+                msg = f"Spectrum for {source} could not be added to the database because the reference {references[i]} is not in Publications table. \n" \
+                      f"(Add it with ingest_publication function.) \n "
+                logger.warning(msg)
+                if raise_error:
+                    raise SimpleError(msg)
+                else:
+                    continue
+                # check telescope, instrument, mode exists
             telescope = db.query(db.Telescopes).filter(db.Telescopes.c.name == row_data[0]['telescope']).table()
             instrument = db.query(db.Instruments).filter(db.Instruments.c.name == row_data[0]['instrument']).table()
             mode = db.query(db.Modes).filter(db.Modes.c.name == row_data[0]['mode']).table()

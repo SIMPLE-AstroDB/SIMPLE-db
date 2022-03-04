@@ -258,7 +258,7 @@ def test_spectra(db):
 
     regime = 'em.IR.NIR'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 98, f'found {len(t)} spectra in the {regime} regime'
+    assert len(t) == 118, f'found {len(t)} spectra in the {regime} regime'
 
     regime = 'em.opt'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
@@ -304,6 +304,10 @@ def test_spectra(db):
     ref = 'Burg10a'
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
     assert len(t) == 46, f'found {len(t)} spectra from {ref}'
+
+    ref = 'Manj20'
+    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
+    assert len(t) == 20, f'found {len(t)} spectra from {ref}'
 
 
 # Individual ingest tests
