@@ -863,7 +863,6 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
             db.Spectra.insert().execute(row_data)
             n_added += 1
         except sqlalchemy.exc.IntegrityError as e:
-            # TODO: add elif to check if reference is in Publications Table
 
             if "CHECK constraint failed: regime" in str(e):
                 msg = f"Regime provided is not in schema: {regimes[i]}"
