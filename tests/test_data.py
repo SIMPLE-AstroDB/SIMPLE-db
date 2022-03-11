@@ -253,7 +253,6 @@ def test_missions(db):
     result = db.session.execute(stm)
     s = result.scalars().all()
     assert len(s) == 265, f'found {len(stm)} spectra with 2MASS designation that have no 2MASS photometry'
-
     # If 2MASS photometry, 2MASS designation should be in Names
 
     # If Gaia designation in Names, Gaia phot and astrometry should exist
