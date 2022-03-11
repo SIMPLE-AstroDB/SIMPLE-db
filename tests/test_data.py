@@ -262,8 +262,12 @@ def test_missions(db):
     result = db.session.execute(stm)
     s = result.scalars().all()
     assert len(s) == 1, f'found {len(stm)} spectra with Gaia designation that have no GAIA photometry'
-
-# If Gaia photometry, Gaia designation should be in Names
+    # If Gaia photometry, Gaia designation should be in Names
+    stm = except_(select([db.Photometry.c.source]).where(db.Photometry.c.band.like("GAIA%")),
+                  select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia%")))
+    result = db.session.execute(stm)
+    s = result.scalars().all()
+    assert len(s) == 0, f'found {len(stm)} spectra with Gaia photometry and no Gaia designation in Names'
 # If Gaia pm, Gaia designation should be in Names
 # If Gaia parallax, Gaia designation should be in Names
 
