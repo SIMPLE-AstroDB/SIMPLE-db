@@ -254,10 +254,16 @@ def test_missions(db):
     s = result.scalars().all()
     assert len(s) == 265, f'found {len(stm)} spectra with 2MASS designation that have no 2MASS photometry'
 
+    # If 2MASS photometry, 2MASS designation should be in Names
 
-# If 2MASS photometry, 2MASS designation should be in Names
-# If Gaia designation in Names, Gaia phot and astrometry should exist
-# If Gaia phot, Gaia designation should be in Names
+    # If Gaia designation in Names, Gaia phot and astrometry should exist
+    stm = except_(select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia%")),
+                  select([db.Photometry.c.source]).where(db.Photometry.c.band.like("GAIA%")))
+    result = db.session.execute(stm)
+    s = result.scalars().all()
+    assert len(s) == 1, f'found {len(stm)} spectra with Gaia designation that have no GAIA photometry'
+
+# If Gaia photometry, Gaia designation should be in Names
 # If Gaia pm, Gaia designation should be in Names
 # If Gaia parallax, Gaia designation should be in Names
 
