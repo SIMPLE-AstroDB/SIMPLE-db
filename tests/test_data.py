@@ -3,6 +3,7 @@
 import os
 import pytest
 import sys
+
 sys.path.append('.')
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database
@@ -175,6 +176,7 @@ def test_proper_motion_refs(db):
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 44, f'found {len(t)} proper motion reference entries for {ref}'
 
+
 def test_parallax_refs(db):
     # Test total odopted measuruments
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.adopted == 1).astropy()
@@ -242,8 +244,17 @@ def test_photometry_bands(db):
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
     assert len(t) == 1751, f'found {len(t)} photometry measurements for {band}'
 
+
 # TODO: Tests of Gaia and 2MASS designations
-# If 2MASS designation in Names, 2MASS photometry should exist
+def test_missions(db):
+    # If 2MASS designation in Names, 2MASS photometry should exist
+    stm = except_(select([db.Names.c.source]).where(db.Names.c.other_name.like("2MASS J%")),
+                  select([db.Photometry.c.source]).where(db.Photometry.c.band.like("2MASS%")))
+    result = db.session.execute(stm)
+    s = result.scalars().all()
+    assert len(s) == 265, f'found {len(stm)} spectra with 2MASS designation that have no 2MASS photometry'
+
+
 # If 2MASS photometry, 2MASS designation should be in Names
 # If Gaia designation in Names, Gaia phot and astrometry should exist
 # If Gaia phot, Gaia designation should be in Names
@@ -278,7 +289,8 @@ def test_spectra(db):
 
     telescope = 'HST'
     instrument = 'WFC3'
-    t = db.query(db.Spectra).filter(and_(db.Spectra.c.telescope == telescope, db.Spectra.c.instrument == instrument)).astropy()
+    t = db.query(db.Spectra).filter(
+        and_(db.Spectra.c.telescope == telescope, db.Spectra.c.instrument == instrument)).astropy()
     assert len(t) == 77, f'found {len(t)} spectra from {telescope}/{instrument}'
 
     ref = 'Reid08b'
@@ -352,6 +364,7 @@ def test_Manj19_data(db):
     n_Manj19_spectra = db.query(db.Spectra).filter(db.Spectra.c.reference == pub).astropy()
     assert len(n_Manj19_spectra) == 77, f'found {len(n_Manj19_spectra)} spectra from {pub}'
 
+
 def test_Kirk19_ingest(db):
     """
     Tests for Y-dwarf data ingested from Kirkpartick+2019
@@ -376,7 +389,7 @@ def test_Kirk19_ingest(db):
     t = db.query(db.Publications).filter(db.Publications.c.publication.in_(ref_list)).astropy()
 
     if len(ref_list) != len(t):
-        missing_ref = list(set(ref_list)-set(t['name']))
+        missing_ref = list(set(ref_list) - set(t['name']))
         assert len(ref_list) == len(t), f'Missing references: {missing_ref}'
 
     # Check DOI and Bibcode values are correctly set for new references added
@@ -398,13 +411,13 @@ def test_Kirk19_ingest(db):
     ref = 'Kirk19'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
     assert len(t) == 23, f'found {len(t)} parallax entries for {ref}'
-    
-    #Test proper motions added
+
+    # Test proper motions added
     ref = 'Kirk19'
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 182, f'found {len(t)} proper motion entries for {ref}'
 
-    #Test photometry added
+    # Test photometry added
     telescope = 'Spitzer'
     t = db.query(db.Photometry).filter(db.Photometry.c.telescope == telescope).astropy()
     assert len(t) == 46, f'found {len(t)} photometry entries for {telescope}'
@@ -417,15 +430,15 @@ def test_Kirk19_ingest(db):
     t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
     assert len(t) == 28, f'found {len(t)} photometry entries for {ref}'
 
-    #Test parallaxes added for ATLAS
+    # Test parallaxes added for ATLAS
     ref = 'Mart18'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
     assert len(t) == 15, f'found {len(t)} parallax entries for {ref}'
 
 
 def test_Best2020_ingest(db):
-    #Test for Best20a proper motions added
-    ref = 'Best20a' 
+    # Test for Best20a proper motions added
+    ref = 'Best20a'
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 348, f'found {len(t)} proper motion entries for {ref}'
 
