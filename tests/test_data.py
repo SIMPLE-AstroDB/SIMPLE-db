@@ -254,8 +254,12 @@ def test_missions(db):
     s = result.scalars().all()
     assert len(s) == 265, f'found {len(stm)} spectra with 2MASS designation that have no 2MASS photometry'
     # If 2MASS photometry, 2MASS designation should be in Names
-
-    # If Gaia designation in Names, Gaia phot and astrometry should exist
+    stm = except_(select([db.Photometry.c.source]).where(db.Photometry.c.band.like("2MASS%")),
+                  select([db.Names.c.source]).where(db.Names.c.other_name.like("2MASS J%")))
+    result = db.session.execute(stm)
+    s = result.scalars().all()
+    assert len(s) == 0, f'found {len(stm)} spectra with 2MASS photometry that have no 2MASS designation '
+    # If Gaia designation in Names, Gaia photometry and astrometry should exist
     stm = except_(select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia%")),
                   select([db.Photometry.c.source]).where(db.Photometry.c.band.like("GAIA%")))
     result = db.session.execute(stm)
@@ -267,8 +271,25 @@ def test_missions(db):
     result = db.session.execute(stm)
     s = result.scalars().all()
     assert len(s) == 0, f'found {len(stm)} spectra with Gaia photometry and no Gaia designation in Names'
-# If Gaia pm, Gaia designation should be in Names
-# If Gaia parallax, Gaia designation should be in Names
+    # If Wise designation in Names, Wise phot should exist
+    stm = except_(select([db.Names.c.source]).where(db.Names.c.other_name.like("WISE%")),
+                  select([db.Photometry.c.source]).where(db.Photometry.c.band.like("WISE%")))
+    result = db.session.execute(stm)
+    s = result.scalars().all()
+    assert len(s) == 392, f'found {len(stm)} spectra with WISE designation that have no WISE photometry'
+    # If Wise photometry, Wise designation should be in Names
+    stm = except_(select([db.Photometry.c.source]).where(db.Photometry.c.band.like("WISE%")),
+                  select([db.Names.c.source]).where(db.Names.c.other_name.like("WISE%")))
+    result = db.session.execute(stm)
+    s = result.scalars().all()
+    assert len(s) == 278, f'found {len(stm)} spectra with Wise photometry and no Wise designation in Names'
+    # If Gaia pm, Gaia designation should be in Names
+    stm = except_(select([db.ProperMotions.c.source]).where(db.Photometry.c.reference.like("GaiaDR2")),
+                  select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia DR2")))
+    result = db.session.execute(stm)
+    s = result.scalars().all()
+    assert len(s) == 0, f'found {len(stm)} spectra with Gaia DR2 proper motions and no Gaia DR2 designation in Names'
+    # If Gaia parallax, Gaia designation should be in Names
 
 
 def test_spectra(db):
