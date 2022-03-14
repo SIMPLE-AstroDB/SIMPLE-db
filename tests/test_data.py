@@ -284,7 +284,7 @@ def test_missions(db):
     s = result.scalars().all()
     assert len(s) == 278, f'found {len(stm)} spectra with Wise photometry and no Wise designation in Names'
     # If Gaia pm, Gaia designation should be in Names
-    stm = except_(select([db.ProperMotions.c.source]).where(db.Photometry.c.reference.like("GaiaDR2")),
+    stm = except_(select([db.ProperMotions.c.source]).where(db.ProperMotions.c.reference.like("GaiaDR2")),
                   select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia DR2")))
     result = db.session.execute(stm)
     s = result.scalars().all()
