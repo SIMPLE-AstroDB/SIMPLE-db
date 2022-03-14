@@ -283,13 +283,30 @@ def test_missions(db):
     result = db.session.execute(stm)
     s = result.scalars().all()
     assert len(s) == 278, f'found {len(stm)} spectra with Wise photometry and no Wise designation in Names'
-    # If Gaia pm, Gaia designation should be in Names
-    stm = except_(select([db.ProperMotions.c.source]).where(db.ProperMotions.c.reference.like("GaiaDR2")),
-                  select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia DR2")))
+    # If Gaia DR2 pm, Gaia DR2 designation should be in Names
+    stm = except_(select([db.ProperMotions.c.source]).where(db.ProperMotions.c.reference.like("GaiaDR2%")),
+                  select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia DR2%")))
     result = db.session.execute(stm)
     s = result.scalars().all()
-    assert len(s) == 0, f'found {len(stm)} spectra with Gaia DR2 proper motions and no Gaia DR2 designation in Names'
-    # If Gaia parallax, Gaia designation should be in Names
+    assert len(s) == 0, f'found {len(stm)} spectra with Gaia DR2 proper motion and no Gaia DR2 designation in Names'
+    # If Gaia EDR3 pm, Gaia EDR3 designation should be in Names
+    stm = except_(select([db.ProperMotions.c.source]).where(db.ProperMotions.c.reference.like("GaiaEDR3%")),
+                  select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia EDR3%")))
+    result = db.session.execute(stm)
+    s = result.scalars().all()
+    assert len(s) == 0, f'found {len(stm)} spectra with Gaia EDR3 proper motion and no Gaia EDR3 designation in Names'
+    # If Gaia DR2 parallax, Gaia DR2 designation should be in Names
+    stm = except_(select([db.Parallaxes.c.source]).where(db.Parallaxes.c.reference.like("GaiaDR2%")),
+                  select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia DR2%")))
+    result = db.session.execute(stm)
+    s = result.scalars().all()
+    assert len(s) == 0, f'found {len(stm)} spectra with Gaia DR2 proper motion and no Gaia DR2 designation in Names'
+    # If Gaia EDR3 parallax, Gaia EDR3 designation should be in Names
+    stm = except_(select([db.Parallaxes.c.source]).where(db.Parallaxes.c.reference.like("GaiaEDR3%")),
+                  select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia EDR3%")))
+    result = db.session.execute(stm)
+    s = result.scalars().all()
+    assert len(s) == 0, f'found {len(stm)} spectra with Gaia EDR3 proper motion and no Gaia EDR3 designation in Names'
 
 
 def test_spectra(db):
