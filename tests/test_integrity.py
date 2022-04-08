@@ -82,6 +82,8 @@ def test_references(db):
         print(f'\n{len(t)} publications not referenced by {table_list}')
         print(t)
 
+def test_publications(db):
+ #     find unused references
 
 def test_coordinates(db):
     # Verify that all sources have valid coordinates
