@@ -1,9 +1,11 @@
 # Test to verify database integrity
 
 import os
+from operator import and_
+
 import pytest
 from . import REFERENCE_TABLES
-from sqlalchemy import func
+from sqlalchemy import func, select, except_
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database, or_
 from astropy.table import unique
@@ -82,8 +84,22 @@ def test_references(db):
         print(f'\n{len(t)} publications not referenced by {table_list}')
         print(t)
 
+
 def test_publications(db):
- #     find unused references
+    # Find unused references in the Sources Table
+    stm = except_(select([db.Publications.c.publication]), select([db.Sources.c.reference]))
+    result = db.session.execute(stm)
+    s = result.scalars().all()
+    assert len(s) == 720, f'found {len(s)} unused references'
+
+    # Find references with no doi or bibcode
+    t = db.query(db.Publications.c.publication).filter(
+        or_(and_(db.Publications.c.doi.is_(None), db.Publications.c.bibcode.is_(None)),
+            and_(db.Publications.c.doi.is_(''), db.Publications.c.bibcode.is_(None)),
+            and_(db.Publications.c.doi.is_(None), db.Publications.c.bibcode.is_('')),
+            and_(db.Publications.c.doi.is_(''), db.Publications.c.bibcode.is_('')))).astropy()
+    assert len(t) == 26, f'found {len(t)} publications with missing bibcode and doi'
+
 
 def test_coordinates(db):
     # Verify that all sources have valid coordinates
@@ -101,7 +117,7 @@ def test_coordinates(db):
 def test_source_names(db):
     # Verify that all sources have at least one entry in Names table
     sql_text = "SELECT Sources.source	FROM Sources LEFT JOIN Names " \
-             "ON Names.source=Sources.source WHERE Names.source IS NULL"
+               "ON Names.source=Sources.source WHERE Names.source IS NULL"
     missing_names = db.sql_query(sql_text, fmt='astropy')
     assert len(missing_names) == 0
 
@@ -129,16 +145,16 @@ def test_names_table(db):
     # Verify that all Sources contain at least one entry in the Names table
     name_list = db.query(db.Sources.c.source).astropy()
     name_list = name_list['source'].tolist()
-    source_name_counts = db.query(db.Names.c.source).\
-        filter(db.Names.c.source.in_(name_list)).\
-        distinct().\
+    source_name_counts = db.query(db.Names.c.source). \
+        filter(db.Names.c.source.in_(name_list)). \
+        distinct(). \
         count()
     assert len(name_list) == source_name_counts, 'ERROR: There are Sources without entries in the Names table'
 
     # Verify that each Source contains an entry in Names with Names.source = Names.other_source
-    valid_name_counts = db.query(db.Names.c.source).\
-        filter(db.Names.c.source == db.Names.c.other_name).\
-        distinct().\
+    valid_name_counts = db.query(db.Names.c.source). \
+        filter(db.Names.c.source == db.Names.c.other_name). \
+        distinct(). \
         count()
 
     # If the number of valid names don't match the number of sources, then there are cases that are missing
@@ -147,8 +163,8 @@ def test_names_table(db):
         # Create a temporary table that groups entries in the Names table by their source name
         # with a column containing a concatenation of all known names
         t = db.query(db.Names.c.source,
-                     func.group_concat(db.Names.c.other_name).label('names')).\
-            group_by(db.Names.c.source).\
+                     func.group_concat(db.Names.c.other_name).label('names')). \
+            group_by(db.Names.c.source). \
             astropy()
 
         # Get the list of entries whose source name are not present in the 'other_names' column
@@ -251,9 +267,9 @@ def test_propermotions(db):
     # Tests against the ProperMotions table
 
     # There should be no entries in the ProperMotions table without both mu_ra and mu_dec
-    t = db.query(db.ProperMotions.c.source).\
+    t = db.query(db.ProperMotions.c.source). \
         filter(or_(db.ProperMotions.c.mu_ra.is_(None),
-                   db.ProperMotions.c.mu_dec.is_(None))).\
+                   db.ProperMotions.c.mu_dec.is_(None))). \
         astropy()
     if len(t) > 0:
         print('\nEntries found without proper motion values')
@@ -277,8 +293,8 @@ def test_radialvelocities(db):
     # Tests against the RadialVelocities table
 
     # There should be no entries in the RadialVelocities table without rv values
-    t = db.query(db.RadialVelocities.c.source).\
-        filter(db.RadialVelocities.c.radial_velocity.is_(None)).\
+    t = db.query(db.RadialVelocities.c.source). \
+        filter(db.RadialVelocities.c.radial_velocity.is_(None)). \
         astropy()
     if len(t) > 0:
         print('\nEntries found without radial velocity values')
