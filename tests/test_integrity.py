@@ -87,10 +87,10 @@ def test_references(db):
 
 def test_publications(db):
     # Find unused references in the Sources Table
-    stm = except_(select([db.Publications.c.publication]), select([db.Sources.c.reference]))
-    result = db.session.execute(stm)
-    s = result.scalars().all()
-    assert len(s) == 720, f'found {len(s)} unused references'
+    # stm = except_(select([db.Publications.c.publication]), select([db.Sources.c.reference]))
+    # result = db.session.execute(stm)
+    # s = result.scalars().all()
+    # assert len(s) == 720, f'found {len(s)} unused references'
 
     # Find references with no doi or bibcode
     t = db.query(db.Publications.c.publication).filter(
