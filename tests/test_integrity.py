@@ -77,14 +77,10 @@ def test_references(db):
     # Confirm that all are in Publications
     t = db.query(db.Publications.c.publication).filter(db.Publications.c.publication.in_(ref_list)).astropy()
     assert len(t) == len(ref_list), 'Some references were not matched'
-    assert len(t) == 578, f'{len(t)} publications referenced'
 
     # List out publications that have not been used
     t = db.query(db.Publications.c.publication).filter(db.Publications.c.publication.notin_(ref_list)).astropy()
-    assert len(t) == 568, f'{len(t)} unused references'
-    if len(t) > 0:
-        print(f'\n{len(t)} publications not referenced by {table_list}')
-        print(t)
+    assert len(t) <= 568, f'{len(t)} unused references'
 
 
 def test_publications(db):
