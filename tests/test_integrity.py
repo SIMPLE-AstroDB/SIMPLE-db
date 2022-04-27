@@ -342,6 +342,8 @@ def test_gravities(db):
         print(t)
     assert len(t) == 0
 
+def test_sources(db):
+    # maybe a count function
 
 def test_spectra(db):
     # Tests against the Spectra table
