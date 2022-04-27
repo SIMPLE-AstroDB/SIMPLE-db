@@ -1,9 +1,11 @@
 # Test to verify database integrity
 
 import os
+from operator import and_
+
 import pytest
 from . import REFERENCE_TABLES
-from sqlalchemy import func
+from sqlalchemy import func, select, except_
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database, or_
 from astropy.table import unique
@@ -63,7 +65,7 @@ def test_references(db):
     # Verify that all data point to an existing Publication
 
     ref_list = []
-    table_list = ['Sources', 'Photometry']
+    table_list = ['Sources', 'Photometry', 'Parallaxes', 'ProperMotions', 'Spectra']
     for table in table_list:
         # Get list of unique references
         t = db.query(db.metadata.tables[table].c.reference).distinct().astropy()
@@ -78,9 +80,23 @@ def test_references(db):
 
     # List out publications that have not been used
     t = db.query(db.Publications.c.publication).filter(db.Publications.c.publication.notin_(ref_list)).astropy()
-    if len(t) > 0:
-        print(f'\n{len(t)} publications not referenced by {table_list}')
-        print(t)
+    assert len(t) <= 568, f'{len(t)} unused references'
+
+
+def test_publications(db):
+    # Find unused references in the Sources Table
+    # stm = except_(select([db.Publications.c.publication]), select([db.Sources.c.reference]))
+    # result = db.session.execute(stm)
+    # s = result.scalars().all()
+    # assert len(s) == 720, f'found {len(s)} unused references'
+
+    # Find references with no doi or bibcode
+    t = db.query(db.Publications.c.publication).filter(
+        or_(and_(db.Publications.c.doi.is_(None), db.Publications.c.bibcode.is_(None)),
+            and_(db.Publications.c.doi.is_(''), db.Publications.c.bibcode.is_(None)),
+            and_(db.Publications.c.doi.is_(None), db.Publications.c.bibcode.is_('')),
+            and_(db.Publications.c.doi.is_(''), db.Publications.c.bibcode.is_('')))).astropy()
+    assert len(t) == 26, f'found {len(t)} publications with missing bibcode and doi'
 
 
 def test_coordinates(db):
