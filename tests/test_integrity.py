@@ -99,7 +99,7 @@ def test_coordinates(db):
 def test_source_names(db):
     # Verify that all sources have at least one entry in Names table
     sql_text = "SELECT Sources.source	FROM Sources LEFT JOIN Names " \
-             "ON Names.source=Sources.source WHERE Names.source IS NULL"
+               "ON Names.source=Sources.source WHERE Names.source IS NULL"
     missing_names = db.sql_query(sql_text, fmt='astropy')
     assert len(missing_names) == 0
 
@@ -127,16 +127,16 @@ def test_names_table(db):
     # Verify that all Sources contain at least one entry in the Names table
     name_list = db.query(db.Sources.c.source).astropy()
     name_list = name_list['source'].tolist()
-    source_name_counts = db.query(db.Names.c.source).\
-        filter(db.Names.c.source.in_(name_list)).\
-        distinct().\
+    source_name_counts = db.query(db.Names.c.source). \
+        filter(db.Names.c.source.in_(name_list)). \
+        distinct(). \
         count()
     assert len(name_list) == source_name_counts, 'ERROR: There are Sources without entries in the Names table'
 
     # Verify that each Source contains an entry in Names with Names.source = Names.other_source
-    valid_name_counts = db.query(db.Names.c.source).\
-        filter(db.Names.c.source == db.Names.c.other_name).\
-        distinct().\
+    valid_name_counts = db.query(db.Names.c.source). \
+        filter(db.Names.c.source == db.Names.c.other_name). \
+        distinct(). \
         count()
 
     # If the number of valid names don't match the number of sources, then there are cases that are missing
@@ -145,8 +145,8 @@ def test_names_table(db):
         # Create a temporary table that groups entries in the Names table by their source name
         # with a column containing a concatenation of all known names
         t = db.query(db.Names.c.source,
-                     func.group_concat(db.Names.c.other_name).label('names')).\
-            group_by(db.Names.c.source).\
+                     func.group_concat(db.Names.c.other_name).label('names')). \
+            group_by(db.Names.c.source). \
             astropy()
 
         # Get the list of entries whose source name are not present in the 'other_names' column
@@ -249,9 +249,9 @@ def test_propermotions(db):
     # Tests against the ProperMotions table
 
     # There should be no entries in the ProperMotions table without both mu_ra and mu_dec
-    t = db.query(db.ProperMotions.c.source).\
+    t = db.query(db.ProperMotions.c.source). \
         filter(or_(db.ProperMotions.c.mu_ra.is_(None),
-                   db.ProperMotions.c.mu_dec.is_(None))).\
+                   db.ProperMotions.c.mu_dec.is_(None))). \
         astropy()
     if len(t) > 0:
         print('\nEntries found without proper motion values')
@@ -275,8 +275,8 @@ def test_radialvelocities(db):
     # Tests against the RadialVelocities table
 
     # There should be no entries in the RadialVelocities table without rv values
-    t = db.query(db.RadialVelocities.c.source).\
-        filter(db.RadialVelocities.c.radial_velocity.is_(None)).\
+    t = db.query(db.RadialVelocities.c.source). \
+        filter(db.RadialVelocities.c.radial_velocity.is_(None)). \
         astropy()
     if len(t) > 0:
         print('\nEntries found without radial velocity values')
@@ -342,8 +342,94 @@ def test_gravities(db):
         print(t)
     assert len(t) == 0
 
+
 def test_sources(db):
-    # maybe a count function
+    # Counting the top 20 references in the Sources Table
+    spec_ref_count = db.query(Sources.reference, func.count(Sources.reference)). \
+        group_by(Sources.reference).order_by(func.count(Sources.reference).desc()).limit(20).all()
+
+    # Top 20 References in the Sources Table
+
+    ref = 'Schm10.1808'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 208, f'found {len(t)} sources from {ref}'
+
+    ref = 'Reid08b'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 206, f'found {len(t)} sources from {ref}'
+
+    ref = 'West08'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 192, f'found {len(t)} sources from {ref}'
+
+    ref = 'Cruz03'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 165, f'found {len(t)} sources from {ref}'
+
+    ref = 'Maro15'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 113, f'found {len(t)} sources from {ref}'
+
+    ref = 'Best15'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 101, f'found {len(t)} sources from {ref}'
+
+    ref = 'Kirk11'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 98, f'found {len(t)} sources from {ref}'
+
+    ref = 'Mace13'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 93, f'found {len(t)} sources from {ref}'
+
+    ref = 'Cruz07'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 91, f'found {len(t)} sources from {ref}'
+
+    ref = 'Burn13'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 69, f'found {len(t)} sources from {ref}'
+
+    ref = 'Gagn15b'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 68, f'found {len(t)} sources from {ref}'
+
+    ref = 'Chiu06'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 62, f'found {len(t)} sources from {ref}'
+
+    ref = 'Kirk00'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 61, f'found {len(t)} sources from {ref}'
+
+    ref = 'DayJ13'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 61, f'found {len(t)} sources from {ref}'
+
+    ref = 'Kirk10'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 56, f'found {len(t)} sources from {ref}'
+
+    ref = 'Deac14b'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 52, f'found {len(t)} sources from {ref}'
+
+    ref = 'Hawl02'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 51, f'found {len(t)} sources from {ref}'
+
+    ref = 'Card15'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 45, f'found {len(t)} sources from {ref}'
+
+    ref = 'Burn10b'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 43, f'found {len(t)} sources from {ref}'
+
+    ref = 'Albe11'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 37, f'found {len(t)} sources from {ref}'
+
 
 def test_spectra(db):
     # Tests against the Spectra table
