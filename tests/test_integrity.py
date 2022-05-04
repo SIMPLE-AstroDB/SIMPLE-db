@@ -359,6 +359,94 @@ def test_gravities(db):
     assert len(t) == 0
 
 
+def test_sources(db):
+    # Counting the top 20 references in the Sources Table
+    spec_ref_count = db.query(Sources.reference, func.count(Sources.reference)). \
+        group_by(Sources.reference).order_by(func.count(Sources.reference).desc()).limit(20).all()
+
+    # Top 20 References in the Sources Table
+
+    ref = 'Schm10.1808'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 208, f'found {len(t)} sources from {ref}'
+
+    ref = 'Reid08b'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 206, f'found {len(t)} sources from {ref}'
+
+    ref = 'West08'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 192, f'found {len(t)} sources from {ref}'
+
+    ref = 'Cruz03'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 165, f'found {len(t)} sources from {ref}'
+
+    ref = 'Maro15'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 113, f'found {len(t)} sources from {ref}'
+
+    ref = 'Best15'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 101, f'found {len(t)} sources from {ref}'
+
+    ref = 'Kirk11'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 98, f'found {len(t)} sources from {ref}'
+
+    ref = 'Mace13'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 93, f'found {len(t)} sources from {ref}'
+
+    ref = 'Cruz07'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 91, f'found {len(t)} sources from {ref}'
+
+    ref = 'Burn13'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 69, f'found {len(t)} sources from {ref}'
+
+    ref = 'Gagn15b'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 68, f'found {len(t)} sources from {ref}'
+
+    ref = 'Chiu06'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 62, f'found {len(t)} sources from {ref}'
+
+    ref = 'Kirk00'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 61, f'found {len(t)} sources from {ref}'
+
+    ref = 'DayJ13'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 61, f'found {len(t)} sources from {ref}'
+
+    ref = 'Kirk10'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 56, f'found {len(t)} sources from {ref}'
+
+    ref = 'Deac14b'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 52, f'found {len(t)} sources from {ref}'
+
+    ref = 'Hawl02'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 51, f'found {len(t)} sources from {ref}'
+
+    ref = 'Card15'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 45, f'found {len(t)} sources from {ref}'
+
+    ref = 'Burn10b'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 43, f'found {len(t)} sources from {ref}'
+
+    ref = 'Albe11'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 37, f'found {len(t)} sources from {ref}'
+
+
 def test_spectra(db):
     # Tests against the Spectra table
 
