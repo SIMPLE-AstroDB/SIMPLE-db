@@ -30,7 +30,7 @@ To see more details about how this project got started and our initial discussio
 If you'd like to set up your own copy of the SIMPLE database, here's what we recommend:
 
 1. Clone or download a copy of this repo locally onto your computer.
-
+ 
 2. Set up an environment for the python code. 
 A conda environment file `environment.yml` exists for convenience. The following commands will use that file to create and activate an 
    environment called `simple-db`:
