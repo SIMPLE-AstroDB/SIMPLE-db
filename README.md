@@ -45,17 +45,27 @@ A conda environment file `environment.yml` exists for convenience. The following
     ```bash
      pip install git+https://github.com/dr-rodriguez/AstrodbKit2
      ```
+   
+4. Create to the database and import the simple schema
+      
+   ```python
+   from astrodbkit2.astrodb import create_database
+   from simple.schema import *
+   
+   connection_string = 'sqlite:///SIMPLE.db' # connection string for a SQLite database named SIMPLE.db
+   create_database(connection_string)
+   ```
 
-3. Connect to the database file `SIMPLE.db` as a Database object called `db`
+5. Connect to the database file `SIMPLE.db` as a Database object called `db`
 
-    ```python
-    from astrodbkit2.astrodb import Database
-    
-    connection_string = 'sqlite:///SIMPLE.db'  # Assumes SQLite connection to database in local folder
-    db = Database(connection_string)
-    ```
+  ```python
+  from astrodbkit2.astrodb import Database
+  
+  connection_string = 'sqlite://SIMPLE.db'  #SQLite connection string
+  db = Database(connection_string)
+  ```
 
-4. Use `astrodbkit2` to [explore](https://astrodbkit2.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit2.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit2.readthedocs.io/en/latest/#modifying-data) the database.
+6. Use `astrodbkit2` to [explore](https://astrodbkit2.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit2.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit2.readthedocs.io/en/latest/#modifying-data) the database.
 For example:
     - Find all objects in the database with "0141" in the name
         ```
