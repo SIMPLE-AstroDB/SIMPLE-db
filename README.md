@@ -46,25 +46,22 @@ A conda environment file `environment.yml` exists for convenience. The following
      pip install git+https://github.com/dr-rodriguez/AstrodbKit2
      ```
    
-4. Create an empty database and import the SIMPLE schema
+4. Create an empty database and import the SIMPLE schema, and connect the database file `SIMPLE.db` as a Database object called `db
       
    ```python
-   from astrodbkit2.astrodb import create_database
+   from astrodbkit2.astrodb import create_database,Database
    from simple.schema import *
    
    connection_string = 'sqlite:///SIMPLE.db' # connection string for a SQLite database named SIMPLE.db
    create_database(connection_string)
+   db = Database(connection_string)
    ```
+5. Load in the database by reading in the directory where the JSON files are located
 
-5. Connect to the database file `SIMPLE.db` as a Database object called `db`
-
-  ```python
-  from astrodbkit2.astrodb import Database
-  
-  connection_string = 'sqlite://SIMPLE.db'  #SQLite connection string
-  db = Database(connection_string)
-  ```
-
+   ```python
+   db_dir = 'data'
+   db.load_database(db_dir)
+   ```
 6. Use `astrodbkit2` to [explore](https://astrodbkit2.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit2.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit2.readthedocs.io/en/latest/#modifying-data) the database.
 For example:
     - Find all objects in the database with "0141" in the name
