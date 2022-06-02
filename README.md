@@ -46,7 +46,7 @@ A conda environment file `environment.yml` exists for convenience. The following
      pip install git+https://github.com/dr-rodriguez/AstrodbKit2
      ```
    
-4. Create to the database and import the simple schema
+4. Create an empty database and import the SIMPLE schema
       
    ```python
    from astrodbkit2.astrodb import create_database
