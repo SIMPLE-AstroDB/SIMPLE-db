@@ -59,8 +59,7 @@ A conda environment file `environment.yml` exists for convenience. The following
 5. Load in the database by reading in the directory where the JSON files are located
 
    ```python
-   db_dir = 'data'
-   db.load_database(db_dir)
+   db.load_database('data/')
    ```
 6. Use `astrodbkit2` to [explore](https://astrodbkit2.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit2.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit2.readthedocs.io/en/latest/#modifying-data) the database.
 For example:
