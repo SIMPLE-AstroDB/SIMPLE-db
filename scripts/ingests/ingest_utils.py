@@ -333,13 +333,22 @@ def convert_spt_string_to_code(spectral_types):
 
     spectral_type_codes = []
     for spt in spectral_types:
-        logger.debug(f"Trying to convert:, {spt}")
+        logger.debug(f"Trying to convert: `{spt}`")
         spt_code = np.nan
 
         if spt == "":
             spectral_type_codes.append(spt_code)
             logger.debug("Appended NAN")
             continue
+
+        if spt == "null":
+            spectral_type_codes.append(spt_code)
+            logger.debug("Appended Null")
+            continue
+        # if spt is None:
+        #     spectral_type_codes.append(spt_code)
+        #     logger.debug("Appended Null")
+        #     continue
 
         # identify main spectral class, loop over any prefix text to identify MLTY
         for i, item in enumerate(spt):
@@ -358,8 +367,10 @@ def convert_spt_string_to_code(spectral_types):
         else:  # only trigger if not MLTY
             i = 0
         # find integer or decimal subclass and add to spt_code
-
-        spt_code += float(re.findall('\d*\.?\d+', spt[i + 1:])[0])
+        if re.findall('\d*\.?\d+', spt[i + 1:])[0] is None and re.findall('\d*\.?',spt[i+1:])[0] :
+            spt_code += spt_code
+        else:
+            spt_code += float(re.findall('\d*\.?\d+', spt[i + 1:])[0])
         spectral_type_codes.append(spt_code)
         logger.debug(f"{spt}, {spt_code}")
     return spectral_type_codes
@@ -760,7 +771,8 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     """
 
     # Convert single value input values to lists
-    input_values = [regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references, comments, other_references]
+    input_values = [regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references,
+                    comments, other_references]
     for i, input_value in enumerate(input_values):
         if isinstance(input_value, str):
             print, input_value
@@ -797,12 +809,12 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         internet = check_internet_connection()
         if internet:
             request_response = requests.head(spectra[i])
-            status_code = request_response.status_code # The website is up if the status code is 200
+            status_code = request_response.status_code  # The website is up if the status code is 200
             if status_code != 200:
                 n_skipped += 1
                 msg = "The spectrum location does not appear to be valid: \n" \
-                        f'spectrum: {spectra[i]} \n' \
-                        f'status code: {status_code}'
+                      f'spectrum: {spectra[i]} \n' \
+                      f'status code: {status_code}'
                 logger.error(msg)
                 if raise_error:
                     raise SimpleError(msg)
@@ -989,8 +1001,8 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
     instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == instrument).table()
     if mode is not None:
         mode_db = db.query(db.Modes).filter(and_(db.Modes.c.name == mode,
-                                             db.Modes.c.instrument == instrument,
-                                             db.Modes.c.telescope == telescope)).table()
+                                                 db.Modes.c.instrument == instrument,
+                                                 db.Modes.c.telescope == telescope)).table()
 
     if len(telescope_db) == 1 and len(instrument_db) == 1 and len(mode_db) == 1:
         msg_found = f'{telescope}, {instrument}, and {mode} are already in the database.'
