@@ -27,9 +27,9 @@ spt_refs = data['ref_spt_opt']
 # print(names)
 # sources names in database Names table
 
-missing_sources_indexes, existing_sources_indexes, all_sources = sort_sources(db, names)
-missing_sources = names[missing_sources_indexes]
-existing_sources = names[existing_sources_indexes]
+# missing_sources_indexes, existing_sources_indexes, all_sources = sort_sources(db, names)
+# missing_sources = names[missing_sources_indexes]
+# existing_sources = names[existing_sources_indexes]
 # There is one missing source that is not ingested in the database
 
 # db_names = []

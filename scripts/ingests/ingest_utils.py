@@ -367,8 +367,8 @@ def convert_spt_string_to_code(spectral_types):
         else:  # only trigger if not MLTY
             i = 0
         # find integer or decimal subclass and add to spt_code
-        if re.findall('\d*\.?\d+', spt[i + 1:])[0] is None and re.findall('\d*\.?',spt[i+1:])[0] :
-            spt_code += spt_code
+        if re.findall('\d*\.?\d+', spt[i + 1:])[0] is IndexError:
+            spt_code += float(re.findall('\d*\.?\d+?'), spt[i])
         else:
             spt_code += float(re.findall('\d*\.?\d+', spt[i + 1:])[0])
         spectral_type_codes.append(spt_code)
