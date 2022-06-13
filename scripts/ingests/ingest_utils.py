@@ -64,7 +64,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
     else:
         coords = True
 
-    if isinstance(sources,str):
+    if isinstance(sources, str):
         n_sources = 1
     else:
         n_sources = len(sources)
@@ -760,7 +760,8 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     """
 
     # Convert single value input values to lists
-    input_values = [regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references, comments, other_references]
+    input_values = [regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references,
+                    comments, other_references]
     for i, input_value in enumerate(input_values):
         if isinstance(input_value, str):
             print, input_value
@@ -797,12 +798,12 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         internet = check_internet_connection()
         if internet:
             request_response = requests.head(spectra[i])
-            status_code = request_response.status_code # The website is up if the status code is 200
+            status_code = request_response.status_code  # The website is up if the status code is 200
             if status_code != 200:
                 n_skipped += 1
                 msg = "The spectrum location does not appear to be valid: \n" \
-                        f'spectrum: {spectra[i]} \n' \
-                        f'status code: {status_code}'
+                      f'spectrum: {spectra[i]} \n' \
+                      f'status code: {status_code}'
                 logger.error(msg)
                 if raise_error:
                     raise SimpleError(msg)
@@ -989,8 +990,8 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
     instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == instrument).table()
     if mode is not None:
         mode_db = db.query(db.Modes).filter(and_(db.Modes.c.name == mode,
-                                             db.Modes.c.instrument == instrument,
-                                             db.Modes.c.telescope == telescope)).table()
+                                                 db.Modes.c.instrument == instrument,
+                                                 db.Modes.c.telescope == telescope)).table()
 
     if len(telescope_db) == 1 and len(instrument_db) == 1 and len(mode_db) == 1:
         msg_found = f'{telescope}, {instrument}, and {mode} are already in the database.'
@@ -1046,5 +1047,125 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
                 msg = 'Mode could not be ingested for unknown reason.'
                 logger.error(msg)
                 raise SimpleError(msg + '\n' + str(e))
+
+    return
+
+
+# radial velocities
+
+def ingest_radial_velocities(db, sources, rvs, rv_errs, rv_refs):
+    """
+
+    Parameters
+    ----------
+    db: astrodbkit2.astrodb.Database
+        Database object
+    sources: list[str]
+        list of source names
+    rvs: float or list[float]
+        list of radial velocities corresponding to the sources
+    rv_errs: float or list[float]
+        list of radial velocity uncertainties
+    rv_refs: str or list[str]
+        list of references for the radial velocity data
+
+    Examples
+    ----------
+    > ingest_radial_velocities(db, my_sources, my_rvs, my_rvs_unc, my_rvs_refs, verbose = True)
+
+    """
+    n_sources = len(sources)
+
+    # Convert single element input value to list
+    if isinstance(rv_refs, str):
+        rv_refs = [rv_refs] * n_sources
+
+    input_float_values = [rvs, rv_errs]
+    for i, input_value in enumerate(input_float_values):
+        if isinstance(input_value, float):
+            input_value = [input_value] * n_sources
+            input_float_values[i] = input_value
+    rvs, rv_errs = input_float_values
+
+    n_added = 0
+    for i, source in enumerate(sources):  # loop through sources with radial velocity data to ingest
+        db_name = find_source_in_db(db, source)
+
+        if len(db_name) != 1:
+            msg = f"No unique source match for {source} in the database"
+            raise SimpleError(msg)
+        else:
+            db_name = db_name[0]
+
+        # Search for existing radial velocity data and determine if this is the best
+        # If no previous measurement exists, set the new one to the Adopted measurement
+        adopted = None
+        source_rv_data: Table = db.query(db.RadialVelocities).filter(db.RadialVelocities.c.source == db_name).table()
+
+        if source_rv_data is None or len(source_rv_data) == 0:
+            # if there's no other measurements in the database, set new data Adopted = True
+            adopted = True
+            # old_adopted = None  # not used
+            logger.debug("No other measurement")
+        elif len(source_rv_data) > 0:  # Radial Velocity data already exists
+            # check for duplicate measurement
+            dupe_ind = source_rv_data['reference'] == rv_refs[i]
+            if sum(dupe_ind):
+                logger.debug(f"Duplicate measurement\n, {source_rv_data[dupe_ind]}")
+                continue
+            else:
+                logger.debug("!!! Another Radial Velocity measurement exists,")
+                if logger.level == 10:
+                    source_rv_data.pprint_all()
+
+            # check for previous adopted measurement and find new adopted
+            adopted_ind = source_rv_data['adopted'] == 1
+            if sum(adopted_ind):
+                old_adopted = source_rv_data[adopted_ind]
+                # if errors of new data are less than other measurements, set Adopted = True.
+                if rv_errs[i] < min(source_rv_data['radial_velocity_error']):
+                    adopted = True
+
+                    # unset old adopted
+                    if old_adopted:
+                        db.RadialVelocities.update().where(
+                            and_(db.RadialVelocities.c.source == old_adopted['source'][0],
+                                 db.RadialVelocities.c.reference == old_adopted['reference'][0])). \
+                            values(adopted=False).execute()
+                        # check that adopted flag is successfully changed
+                        old_adopted_data = db.query(db.RadialVelocities).filter(
+                            and_(db.RadialVelocities.c.source == old_adopted['source'][0],
+                                 db.RadialVelocities.c.reference == old_adopted['reference'][0])).table()
+                        logger.debug("Old adopted measurement unset")
+                        if logger.level == 10:
+                            old_adopted_data.pprint_all()
+
+                logger.debug(f"The new measurement's adopted flag is:, {adopted}")
+        else:
+            msg = 'Unexpected state'
+            logger.error(msg)
+            raise RuntimeError(msg)
+
+        # Construct data to be added
+        radial_velocity_data = [{'source': db_name,
+                                 'radial_velocity': rvs[i],
+                                 'radial_velocity_error': rv_errs[i],
+                                 'reference': rv_refs[i],
+                                 'adopted': adopted}]
+
+        logger.debug(f"{radial_velocity_data}")
+
+        try:
+            db.RadialVelocities.insert().execute(radial_velocity_data)
+            n_added += 1
+        except sqlalchemy.exc.IntegrityError:
+            msg = "The source may not exist in Sources table.\n" \
+                  "The Radial Velocity reference may not exist in Publications table. " \
+                  "Add it with add_publication function. \n" \
+                  "The radial velocity measurement may be a duplicate."
+            logger.error(msg)
+            raise SimpleError(msg)
+
+    logger.info(f"Radial Velocities added to database: {n_added}")
 
     return
