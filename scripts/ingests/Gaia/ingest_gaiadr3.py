@@ -10,28 +10,22 @@ import numpy as np
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = False
-DATE_SUFFIX = 'Sep2021'
-
+DATE_SUFFIX = 'Jun2022'
 # LOAD THE DATABASE
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
 logger.setLevel(logging.DEBUG)
 
+
 # input_table = 'radial_velocity'
 
 # Functions
-# USE DR2 DESIGNATIONS TO GET DR3 DESIGNATIONS
-# gaiadr3_names = query_gaia_dr3(dr2_desig_file_string)
-dr3_desig_file_string = 'scripts/ingests/Gaia/gaia_dr3_designations_' + DATE_SUFFIX + '.xml'
-# gaiadr3_names.write(dr3_desig_file_string, format='votable', overwrite=True)
-gaiadr3_names = Table.read(dr3_desig_file_string, format='votable')
-
 
 def query_gaia_dr3(input_table):
     print('Gaia DR3 query started')
     gaia_query_string = "SELECT *,upload_table.db_names FROM gaiadr3.gaia_source" \
                         "INNER JOIN tap_upload.upload_table ON " \
-                        "gaiadr3.gaia_source.designation = tap_upload.upload_table.designation"
+                        "gaiadr3.gaia_source.source_id = tap_upload.upload_table.dr3_source_id "
     job_gaia_query = Gaia.launch_job(gaia_query_string, upload_resource=input_table,
                                      upload_table_name="upload_table", verbose=VERBOSE)
 
@@ -59,4 +53,14 @@ update_ref_tables()
 #     return
 
 
-# add_gaia_rvs(gaiadr3_names, 'GaiaDR3')
+# add_gaia_rvs(gaia_dr3_names, 'GaiaDR3')
+
+dr3_desig_file_string = 'scripts/ingests/Gaia/gaia_dr3_designations_' + 'Sep2021' + '.xml'
+# gaia_dr3_names = Table.read(dr3_desig_file_string, format='votable')
+
+# Querying the GAIA DR3 Data
+gaia_dr3_data = query_gaia_dr3(dr3_desig_file_string)
+
+dr3_data_file_string = 'scripts/ingests/Gaia/gaia_dr3_data_' + DATE_SUFFIX + '.xml'
+gaia_dr3_data.write(dr3_data_file_string, format='votable')
+gaia_dr3_data = Table.read(dr3_data_file_string, format='votable')
