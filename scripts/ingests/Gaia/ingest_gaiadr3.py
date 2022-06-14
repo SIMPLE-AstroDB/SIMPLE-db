@@ -20,7 +20,7 @@ logger.setLevel(logging.DEBUG)
 
 
 # Functions
-
+# Querying GaiaDR3
 def query_gaia_dr3(input_table):
     print('Gaia DR3 query started')
     gaia_query_string = "SELECT *,upload_table.db_names FROM gaiadr3.gaia_source " \
@@ -36,6 +36,7 @@ def query_gaia_dr3(input_table):
     return gaia_data
 
 
+# Ingesting the GAIADR3 publication
 def update_ref_tables():
     ingest_publication(db, doi='10.1051/0004-6361/202243940', publication='GaiaDR3',
                        description='Gaia Data Release 3.Summary of the content and survey properties', ignore_ads=True)
@@ -59,10 +60,10 @@ pd_gaia_dr3_names = gaia_dr3_names.to_pandas
 # Querying the GAIA DR3 Data
 # gaia_dr3_data = query_gaia_dr3(gaia_dr3_names)
 
+# making the data file and then converting the string into an astropy table
 dr3_data_file_string = 'scripts/ingests/Gaia/gaia_dr3_data_' + DATE_SUFFIX + '.xml'
 # gaia_dr3_data.write(dr3_data_file_string, format='votable')
 gaia_dr3_data = Table.read(dr3_data_file_string, format='votable')
-
 
 # ingest_sources(db, gaia_dr3_data['designation'], 'GaiaDR3')
 
