@@ -1,4 +1,4 @@
-from scripts.ingests.ingest_utils import ingest_radial_velocities, ingest_sources
+from scripts.ingests.ingest_utils import *
 from scripts.ingests.utils import *
 from astroquery.gaia import Gaia
 from astropy.table import Table, setdiff
@@ -8,7 +8,6 @@ import numpy as np
 import pandas as pd
 
 # GLOBAL VARIABLES
-from scripts.ingests.utils_deprecated import add_names
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
@@ -19,8 +18,6 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
 logger.setLevel(logging.DEBUG)
 
-
-# input_table = 'radial_velocity'
 
 # Functions
 
@@ -47,12 +44,11 @@ def update_ref_tables():
 update_ref_tables()
 
 
-def add_gaia_rvs(gaia_data, ref):
-    unmasked_rvs = np.logical_not(gaia_data['radial_velocity'].mask).nonzero
-    rvs = gaia_data[unmasked_rvs]['gaiadr3_names', 'radial_velocity', 'radial_velocity_error']
+def add_gaia_rvs(data, ref):
+    unmasked_rvs = np.logical_not(data['radial_velocity'].mask).nonzero()
+    rvs = data[unmasked_rvs]['db_names', 'radial_velocity', 'radial_velocity_error']
     refs = [ref] * len(rvs)
-    ingest_radial_velocities(db, rvs['db_names'], rvs['radial_velocity'], rvs['radial_velocity_error'], refs,
-                             verbose=VERBOSE)
+    ingest_radial_velocities(db, rvs['db_names'], rvs['radial_velocity'], rvs['radial_velocity_error'], refs)
     return
 
 
@@ -61,13 +57,13 @@ gaia_dr3_names = Table.read(dr3_desig_file_string, format='votable')
 pd_gaia_dr3_names = gaia_dr3_names.to_pandas
 
 # Querying the GAIA DR3 Data
-gaia_dr3_data = query_gaia_dr3(gaia_dr3_names)
+# gaia_dr3_data = query_gaia_dr3(gaia_dr3_names)
 
 dr3_data_file_string = 'scripts/ingests/Gaia/gaia_dr3_data_' + DATE_SUFFIX + '.xml'
 # gaia_dr3_data.write(dr3_data_file_string, format='votable')
 gaia_dr3_data = Table.read(dr3_data_file_string, format='votable')
 
 
-add_names(db, sources=gaia_dr3_data['db_names'], other_names=gaia_dr3_data['designation'])
+# ingest_sources(db, gaia_dr3_data['designation'], 'GaiaDR3')
 
 add_gaia_rvs(gaia_dr3_data, 'GaiaDR3')
