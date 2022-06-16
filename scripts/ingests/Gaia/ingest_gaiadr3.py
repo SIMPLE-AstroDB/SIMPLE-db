@@ -9,7 +9,7 @@ import pandas as pd
 
 # GLOBAL VARIABLES
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = False
 DATE_SUFFIX = 'Jun2022'
@@ -68,3 +68,7 @@ gaia_dr3_data = Table.read(dr3_data_file_string, format='votable')
 # ingest_sources(db, gaia_dr3_data['designation'], 'GaiaDR3')
 
 add_gaia_rvs(gaia_dr3_data, 'GaiaDR3')
+
+# WRITE THE JSON FILES
+if SAVE_DB:
+    db.save_database(directory='data/')
