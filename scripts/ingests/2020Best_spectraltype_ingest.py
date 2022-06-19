@@ -16,60 +16,53 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 # Read in CSV file as Astropy table
 # file = 'Manja19_spectra9.csv'
 file = 'UltracoolSheet-Main.csv'
-data = Table.read('scripts/ingests/' + file, data_start=2)
+data = Table.read('scripts/ingests/' + file)
 # Ingest Optical Spectral Types First
+# use the hashtag to comment it out
 
 names = data['name']
 n_sources = len(names)
-regime = ['optical'] * n_sources  # all source have IR spectral classifications
+regime = ['optical'] * n_sources
 spectral_types = data['spt_opt']
 spt_refs = data['ref_spt_opt']
-# print(names)
+
+
 # sources names in database Names table
 
-
-ingest_sources(db, 'BRI 0021-0214', 'Irwi91')
-ingest_sources(db, 'LHS 1070', 'McCa64c')
-ingest_sources(db, 'WISE J003110.04+574936.3', 'Thom13')
-ingest_sources(db, 'DENIS-P J0041353-562112', 'Phan01')
-ingest_sources(db, 'DENIS J020529.0-115925', 'Delf97')
-ingest_sources(db, 'LP 261-75B', 'Kirk00')
-ingest_sources(db, 'LHS 292', 'Dahn86')
-# ingest_sources(db, 'SDSS J154705.62-162630.8', 'Gagn15c')
-ingest_sources(db, '2MASS J15470557-1626303B', 'Gagn15c', '236.773', '-16.4419')
+def ingest_source_pub():
+    ingest_sources(db, 'BRI 0021-0214', 'Irwi91')
+    ingest_sources(db, 'LHS 1070', 'McCa64c')
+    ingest_sources(db, 'WISE J003110.04+574936.3', 'Thom13')
+    ingest_sources(db, 'DENIS-P J0041353-562112', 'Phan01')
+    ingest_sources(db, 'DENIS J020529.0-115925', 'Delf97')
+    ingest_sources(db, 'LP 261-75B', 'Kirk00')
+    ingest_sources(db, 'LHS 292', 'Dahn86')
 
 
-# missing_sources_indexes, existing_sources_indexes, all_sources = sort_sources(db, names)
-# missing_sources = names[missing_sources_indexes]
-# existing_sources = names[existing_sources_indexes]
-# There is one missing source that is not ingested in the database
-# db_name = db.search_object('2MASS J02284243+1639329', output_table='Sources', table_names={'Names': ['other_name']})[0]
-# print(db_name)
+
+ingest_source_pub()
 db_names = []
 for name in names:
-    print(name)
     db_name = db.search_object(name, output_table='Sources', table_names={'Names': ['other_name']})[0]
-    print(db_name)
+    db_names.append(db_name['source'])
 
-
-# BRI 0021-0214
 # Convert SpT string to code
-# spectral_type_codes = convert_spt_string_to_code(spectral_types)
+spectral_type_codes = convert_spt_string_to_code(spectral_types, verbose=True)
 
-# add new references to Publications table
-# ref_list = spt_refs.tolist()
-# included_ref = db.query(db.Publications.c.name).filter(db.Publications.c.name.in_(ref_list)).all()
-# included_ref = [s[0] for s in included_ref]
-# new_ref = list(set(ref_list) - set(included_ref))
-# new_ref = [{'name': s} for s in new_ref]
-#
-# if len(new_ref) > 0:
-#     db.Publications.insert().execute(new_ref)
-#
-# # # # Make astropy table with all relevant columns and add to SpectralTypes Table
-# SpT_table = Table([db_names['source'], spectral_types, spectral_type_codes, regime, spt_refs],
-#                   names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference'))
-# db.add_table_data(SpT_table, table='SpectralTypes', fmt='astropy')
+ref_list = spt_refs.tolist()
+included_ref = db.query(db.Publications.c.publication).filter(db.Publications.c.publication.in_(ref_list)).all()
+included_ref = [s[0] for s in included_ref]
+new_ref = list(set(ref_list) - set(included_ref))
+new_ref = [{'publication': s} for s in new_ref]
+
+if len(new_ref) > 0:
+    db.Publications.insert().execute(new_ref)
+
+# Make astropy table with all relevant columns and add to SpectralTypes Table
+SpT_table = Table([db_names, spectral_types, spectral_type_codes, regime, spt_refs], names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference'))
+
+
+db.add_table_data(SpT_table, table='SpectralTypes', fmt='astropy')
 
 # WRITE THE JSON FILES
 if SAVE_DB:
