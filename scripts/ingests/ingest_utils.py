@@ -8,7 +8,7 @@ import astropy.units as u
 import numpy as np
 import numpy.ma as ma
 import pandas as pd
-from sqlalchemy import func
+from sqlalchemy import func, null
 
 import dateutil
 import re
@@ -335,21 +335,15 @@ def convert_spt_string_to_code(spectral_types):
     for spt in spectral_types:
         logger.debug(f"Trying to convert: `{spt}`")
         spt_code = np.nan
-
         if spt == "":
             spectral_type_codes.append(spt_code)
             logger.debug("Appended NAN")
             continue
-
         if spt == "null":
+            spt_code = 0
             spectral_type_codes.append(spt_code)
             logger.debug("Appended Null")
             continue
-        # if spt is None:
-        #     spectral_type_codes.append(spt_code)
-        #     logger.debug("Appended Null")
-        #     continue
-
         # identify main spectral class, loop over any prefix text to identify MLTY
         for i, item in enumerate(spt):
             if item == 'M':
@@ -364,13 +358,14 @@ def convert_spt_string_to_code(spectral_types):
             elif item == 'Y':
                 spt_code = 90
                 break
-        else:  # only trigger if not MLTY
-            i = 0
+            else:  # only trigger if not MLTY
+                i = 0
         # find integer or decimal subclass and add to spt_code
         if re.search('\d*\.?\d+', spt[i+1:]) is None:
             spt_code = spt_code
         else:
             spt_code += float(re.findall('\d*\.?\d+', spt[i + 1:])[0])
+
         spectral_type_codes.append(spt_code)
         logger.debug(f"{spt}, {spt_code}")
     return spectral_type_codes

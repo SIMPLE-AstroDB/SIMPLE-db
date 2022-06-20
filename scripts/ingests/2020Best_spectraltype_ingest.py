@@ -27,8 +27,6 @@ spectral_types = data['spt_opt']
 spt_refs = data['ref_spt_opt']
 
 
-# sources names in database Names table
-
 def ingest_source_pub():
     ingest_sources(db, 'BRI 0021-0214', 'Irwi91')
     ingest_sources(db, 'LHS 1070', 'McCa64c')
@@ -39,15 +37,16 @@ def ingest_source_pub():
     ingest_sources(db, 'LHS 292', 'Dahn86')
 
 
-
 ingest_source_pub()
+
+# Source names in database Names table
 db_names = []
 for name in names:
     db_name = db.search_object(name, output_table='Sources', table_names={'Names': ['other_name']})[0]
     db_names.append(db_name['source'])
 
 # Convert SpT string to code
-spectral_type_codes = convert_spt_string_to_code(spectral_types, verbose=True)
+spectral_type_codes = convert_spt_string_to_code(spectral_types)
 
 ref_list = spt_refs.tolist()
 included_ref = db.query(db.Publications.c.publication).filter(db.Publications.c.publication.in_(ref_list)).all()
@@ -59,9 +58,9 @@ if len(new_ref) > 0:
     db.Publications.insert().execute(new_ref)
 
 # Make astropy table with all relevant columns and add to SpectralTypes Table
-SpT_table = Table([db_names, spectral_types, spectral_type_codes, regime, spt_refs], names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference'))
-
-
+SpT_table = Table([db_names, spectral_types, spectral_type_codes, regime, spt_refs],
+                  names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference'))
+# print(SpT_table['spectral_type_code'])
 db.add_table_data(SpT_table, table='SpectralTypes', fmt='astropy')
 
 # WRITE THE JSON FILES
