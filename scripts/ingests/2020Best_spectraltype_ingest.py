@@ -23,17 +23,17 @@ data = Table.read('scripts/ingests/' + file)
 # Optical Spectral Types
 filter_opt_data = data[data['spt_opt'] != 'null']
 opt_names = filter_opt_data['name']
-n_sources = len(opt_names)
-opt_regime = ['optical'] * n_sources
+n_sources_opt = len(opt_names)
+opt_regime = ['optical'] * n_sources_opt
 spt_refs_opt = filter_opt_data['ref_spt_opt']
 spectral_types_opt = filter_opt_data['spt_opt']
 # IR Spectral Types
 filter_ir_data = data[data['spt_ir'] != 'null']
 ir_names = filter_ir_data['name']
-n_sources = len(ir_names)
-ir_regime = ['infrared'] * n_sources
-spt_refs_ir = filter_opt_data['ref_spt_ir']
-spectral_types_ir = filter_opt_data['spt_ir']
+n_sources_ir = len(ir_names)
+ir_regime = ['nir_UCD'] * n_sources_ir
+spt_refs_ir = filter_ir_data['ref_spt_ir']
+spectral_types_ir = filter_ir_data['spt_ir']
 
 
 def ingest_source_pub():
@@ -80,14 +80,35 @@ new_ref_ir = list(set(ref_list_ir) - set(included_ref_ir))
 new_ref_ir = [{'publication': s} for s in new_ref_ir]
 if len(new_ref_ir) > 0:
     db.Publications.insert().execute(new_ref_ir)
+
 # # Make astropy table with all relevant columns and add to SpectralTypes Table
 SpT_Opt_table = Table([db_opt_names, spectral_types_opt, spectral_type_codes_opt, opt_regime, spt_refs_opt],
                       names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference'))
-SpT_Ir_table = Table([db_ir_names, spectral_types_ir, spectral_type_codes_ir, ir_regime, spt_refs_ir],
-                     names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference'))
+
+
+input_values = [ir_names, ir_regime, spt_refs_ir, spectral_types_ir]
+for i, input_value in enumerate(input_values):
+    if isinstance(input_value, str):
+        print, input_value
+        input_values[i] = [input_value] * n_sources_ir
+    elif isinstance(input_value, type(None)):
+        print, input_value
+        input_values[i] = [None] * n_sources_ir
+ir_names, ir_regime, spt_refs_ir, spectral_types_ir = input_values
+
+for i, source in enumerate(db_ir_names):
+    SptT_Ir_data = [{'source': db_ir_names[i],
+                     'spectral_type_string': spectral_types_ir[i],
+                     'spectral_type_code': spectral_type_codes_ir[i],
+                     'regime': ir_regime[i],
+                     'reference': spt_refs_ir[i]}]
+    try:
+        db.SpectralTypes.insert().execute(SptT_Ir_data)
+    except sqlalchemy.exc.IntegrityError as e:
+        continue
 
 db.add_table_data(SpT_Opt_table, table='SpectralTypes', fmt='astropy')
-db.add_table_data(SpT_Ir_table, table='SpectralTypes', fmt='astropy')
+
 # # WRITE THE JSON FILES
 # if SAVE_DB:
 #     db.save_database(directory='data/')
