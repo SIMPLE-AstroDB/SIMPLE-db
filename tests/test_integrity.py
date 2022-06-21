@@ -80,7 +80,7 @@ def test_references(db):
 
     # List out publications that have not been used
     t = db.query(db.Publications.c.publication).filter(db.Publications.c.publication.notin_(ref_list)).astropy()
-    assert len(t) <= 568, f'{len(t)} unused references'
+    assert len(t) <= 606, f'{len(t)} unused references'
 
 
 def test_publications(db):
@@ -96,7 +96,7 @@ def test_publications(db):
             and_(db.Publications.c.doi.is_(''), db.Publications.c.bibcode.is_(None)),
             and_(db.Publications.c.doi.is_(None), db.Publications.c.bibcode.is_('')),
             and_(db.Publications.c.doi.is_(''), db.Publications.c.bibcode.is_('')))).astropy()
-    assert len(t) == 26, f'found {len(t)} publications with missing bibcode and doi'
+    assert len(t) == 64, f'found {len(t)} publications with missing bibcode and doi'
 
 
 def test_coordinates(db):
