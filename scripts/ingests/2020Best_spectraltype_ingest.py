@@ -20,11 +20,20 @@ data = Table.read('scripts/ingests/' + file)
 # Ingest Optical Spectral Types First
 # use the hashtag to comment it out
 
-names = data['name']
-n_sources = len(names)
-regime = ['optical'] * n_sources
-spectral_types = data['spt_opt']
-spt_refs = data['ref_spt_opt']
+# Optical Spectral Types
+filter_opt_data = data[data['spt_opt'] != 'null']
+opt_names = filter_opt_data['name']
+n_sources = len(opt_names)
+opt_regime = ['optical'] * n_sources
+spt_refs_opt = filter_opt_data['ref_spt_opt']
+spectral_types_opt = filter_opt_data['spt_opt']
+# IR Spectral Types
+filter_ir_data = data[data['spt_ir'] != 'null']
+ir_names = filter_ir_data['name']
+n_sources = len(ir_names)
+ir_regime = ['infrared'] * n_sources
+spt_refs_ir = filter_opt_data['ref_spt_ir']
+spectral_types_ir = filter_opt_data['spt_ir']
 
 
 def ingest_source_pub():
@@ -40,29 +49,45 @@ def ingest_source_pub():
 ingest_source_pub()
 
 # Source names in database Names table
-db_names = []
-for name in names:
-    db_name = db.search_object(name, output_table='Sources', table_names={'Names': ['other_name']})[0]
-    db_names.append(db_name['source'])
+db_opt_names = []
+db_ir_names = []
+for name in opt_names:
+    db_opt_name = db.search_object(name, output_table='Sources', table_names={'Names': ['other_name']})[0]
+    db_opt_names.append(db_opt_name['source'])
 
-# Convert SpT string to code
-spectral_type_codes = convert_spt_string_to_code(spectral_types)
+for name in ir_names:
+    db_ir_name = db.search_object(name, output_table='Sources', table_names={'Names': ['other_name']})[0]
+    db_ir_names.append(db_ir_name['source'])
 
-ref_list = spt_refs.tolist()
-included_ref = db.query(db.Publications.c.publication).filter(db.Publications.c.publication.in_(ref_list)).all()
-included_ref = [s[0] for s in included_ref]
-new_ref = list(set(ref_list) - set(included_ref))
-new_ref = [{'publication': s} for s in new_ref]
+# # Convert SpT string to code
+spectral_type_codes_opt = convert_spt_string_to_code(spectral_types_opt)
+spectral_type_codes_ir = convert_spt_string_to_code(spectral_types_ir)
 
-if len(new_ref) > 0:
-    db.Publications.insert().execute(new_ref)
+# Adding References for Optical
+ref_list_opt = spt_refs_opt.tolist()
+included_ref_opt = db.query(db.Publications.c.publication).filter(db.Publications.c.publication.in_(ref_list_opt)).all()
+included_ref_opt = [s[0] for s in included_ref_opt]
+new_ref_opt = list(set(ref_list_opt) - set(included_ref_opt))
+new_ref_opt = [{'publication': s} for s in new_ref_opt]
+if len(new_ref_opt) > 0:
+    db.Publications.insert().execute(new_ref_opt)
 
-# Make astropy table with all relevant columns and add to SpectralTypes Table
-SpT_table = Table([db_names, spectral_types, spectral_type_codes, regime, spt_refs],
-                  names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference'))
-# print(SpT_table['spectral_type_code'])
-db.add_table_data(SpT_table, table='SpectralTypes', fmt='astropy')
+# Adding References for Infrared
+ref_list_ir = spt_refs_ir.tolist()
+included_ref_ir = db.query(db.Publications.c.publication).filter(db.Publications.c.publication.in_(ref_list_ir)).all()
+included_ref_ir = [s[0] for s in included_ref_ir]
+new_ref_ir = list(set(ref_list_ir) - set(included_ref_ir))
+new_ref_ir = [{'publication': s} for s in new_ref_ir]
+if len(new_ref_ir) > 0:
+    db.Publications.insert().execute(new_ref_ir)
+# # Make astropy table with all relevant columns and add to SpectralTypes Table
+SpT_Opt_table = Table([db_opt_names, spectral_types_opt, spectral_type_codes_opt, opt_regime, spt_refs_opt],
+                      names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference'))
+SpT_Ir_table = Table([db_ir_names, spectral_types_ir, spectral_type_codes_ir, ir_regime, spt_refs_ir],
+                     names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference'))
 
-# WRITE THE JSON FILES
-if SAVE_DB:
-    db.save_database(directory='data/')
+db.add_table_data(SpT_Opt_table, table='SpectralTypes', fmt='astropy')
+db.add_table_data(SpT_Ir_table, table='SpectralTypes', fmt='astropy')
+# # WRITE THE JSON FILES
+# if SAVE_DB:
+#     db.save_database(directory='data/')
