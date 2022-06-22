@@ -64,7 +64,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
     else:
         coords = True
 
-    if isinstance(sources,str):
+    if isinstance(sources, str):
         n_sources = 1
     else:
         n_sources = len(sources)
@@ -321,6 +321,38 @@ def find_survey_name_in_simbad(sources, desig_prefix, source_id_index=None):
 
 
 # SPECTRAL TYPES
+def ingest_spectral_types(db, sources, spectral_types, regimes=None, spectral_type_errors=None, comments=None,
+                          spt_ref=None, raise_error=True):
+    """
+    Script to ingest sources
+    Parameters
+    ----------
+    db: astrodbkit2.astrodb.Database
+        Database object created by astrodbkit2
+    sources: list[str]
+        Names of sources
+    spectral_types: str or list[strings]
+        Spectral Types of sources
+    spectral_type_errors: str or list[strings], optional
+        Spectral Type Errors of sources
+    regimes: str or list[str], optional
+        List or string
+    comments: list[strings], optional
+        Comments
+    spt_ref: str or list[strings], optional
+        Reference of the Spectral Type
+    raise_error: bool, optional
+        True (default): Raise an error if a spectral type cannot be ingested
+        False: Log a warning but skip sources which cannot be ingested
+
+    Returns
+    -------
+
+    None
+
+    """
+
+
 def convert_spt_string_to_code(spectral_types):
     """
     # TODO: Could be part of future ingest_spectral_types function
@@ -760,7 +792,8 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     """
 
     # Convert single value input values to lists
-    input_values = [regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references, comments, other_references]
+    input_values = [regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references,
+                    comments, other_references]
     for i, input_value in enumerate(input_values):
         if isinstance(input_value, str):
             print, input_value
@@ -797,12 +830,12 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         internet = check_internet_connection()
         if internet:
             request_response = requests.head(spectra[i])
-            status_code = request_response.status_code # The website is up if the status code is 200
+            status_code = request_response.status_code  # The website is up if the status code is 200
             if status_code != 200:
                 n_skipped += 1
                 msg = "The spectrum location does not appear to be valid: \n" \
-                        f'spectrum: {spectra[i]} \n' \
-                        f'status code: {status_code}'
+                      f'spectrum: {spectra[i]} \n' \
+                      f'status code: {status_code}'
                 logger.error(msg)
                 if raise_error:
                     raise SimpleError(msg)
@@ -989,8 +1022,8 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
     instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == instrument).table()
     if mode is not None:
         mode_db = db.query(db.Modes).filter(and_(db.Modes.c.name == mode,
-                                             db.Modes.c.instrument == instrument,
-                                             db.Modes.c.telescope == telescope)).table()
+                                                 db.Modes.c.instrument == instrument,
+                                                 db.Modes.c.telescope == telescope)).table()
 
     if len(telescope_db) == 1 and len(instrument_db) == 1 and len(mode_db) == 1:
         msg_found = f'{telescope}, {instrument}, and {mode} are already in the database.'
