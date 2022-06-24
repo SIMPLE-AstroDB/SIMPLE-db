@@ -48,6 +48,16 @@ def t_plx():
 
 # Create fake astropy Table of data to load
 @pytest.fixture(scope="module")
+def t_rv():
+    t_rv = Table([{'source': 'Fake 1', 'rv': 113., 'rv_err': 0.3, 'rv_ref': 'Ref 1'},
+                  {'source': 'Fake 2', 'rv': 145., 'rv_err': 0.5, 'rv_ref': 'Ref 1'},
+                  {'source': 'Fake 3', 'rv': 155., 'rv_err': 0.6, 'rv_ref': 'Ref 2'},
+                  ])
+    return t_rv
+
+
+# Create fake astropy Table of data to load
+@pytest.fixture(scope="module")
 def t_pm():
     t_pm = Table(
         [{'source': 'Fake 1', 'mu_ra': 113., 'mu_ra_err': 0.3, 'mu_dec': 113., 'mu_dec_err': 0.3, 'reference': 'Ref 1'},
@@ -79,7 +89,6 @@ def test_ingest_sources(db):
                           {'source': 'Fake 7', 'ra': 11.0673755, 'dec': 18.352889, 'reference': 'Ref 1'}])
     source_data5 = Table([{'source': 'Fake 5', 'ra': 9.06799, 'dec': 18.352889, 'reference': ''}])
     source_data8 = Table([{'source': 'Fake 8', 'ra': 9.06799, 'dec': 18.352889, 'reference': 'Ref 4'}])
-
 
     ingest_sources(db, source_data1['source'], ras=source_data1['ra'], decs=source_data1['dec'],
                    references=source_data1['reference'], raise_error=True)
@@ -127,6 +136,18 @@ def test_ingest_parallaxes(db, t_plx):
     assert results['source'][0] == 'Fake 3'
     assert results['parallax'][0] == 155
     assert results['parallax_error'][0] == 0.6
+
+
+def test_ingest_radial_velocities(db, t_rv):
+    ingest_radial_velocities(db, t_rv['source'], t_rv['rv'], t_rv['rv_err'], t_rv['rv_ref'])
+
+    results = db.query(db.RadialVelocities).filter(db.RadialVelocities == 'Ref1').table()
+    assert len(results) == 2
+    results = db.query(db.RadialVelocities).filter(db.RadialVelocities.c.reference == 'Ref 2').table()
+    assert len(results) == 1
+    assert results['source'][0] == 'Fake 3'
+    assert results['radial_velocity'][0] == 155
+    assert results['radial_velocity_error'][0] == 0.6
 
 
 def test_ingest_proper_motions(db, t_pm):
@@ -222,10 +243,6 @@ def test_ingest_instrument(db):
         ingest_instrument(db, mode='test')
     assert 'Telescope and instrument must be provided to ingest a mode' in str(error_message.value)
 
-
 # TODO: test for ingest_photometry
 
 # TODO: test for ingest_spectra
-
-
-
