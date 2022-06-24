@@ -42,7 +42,7 @@ def update_ref_tables():
                        description='Gaia Data Release 3.Summary of the content and survey properties', ignore_ads=True)
 
 
-update_ref_tables()
+# update_ref_tables()
 
 
 def add_gaia_rvs(data, ref):
