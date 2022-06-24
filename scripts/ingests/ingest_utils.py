@@ -1105,7 +1105,6 @@ def ingest_radial_velocities(db, sources, rvs, rv_errs, rv_refs):
         if source_rv_data is None or len(source_rv_data) == 0:
             # if there's no other measurements in the database, set new data Adopted = True
             adopted = True
-            # old_adopted = None  # not used
             logger.debug("No other measurement")
         elif len(source_rv_data) > 0:  # Radial Velocity data already exists
             # check for duplicate measurement
