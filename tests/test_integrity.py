@@ -311,6 +311,9 @@ def test_radialvelocities(db):
         print(t)
     assert len(t) == 0
 
+    stm = db.query(db.RadialVelocities).filter(db.RadialVelocites.c.source).astropy()
+    assert len(stm) == 22, f'found {len(stm)} sources in the Radial Velocities Table'
+
 
 def test_spectraltypes(db):
     # Tests against the SpectralTypes table
