@@ -3,6 +3,7 @@ Utils functions for use in ingests
 """
 from astroquery.simbad import Simbad
 from astropy.coordinates import SkyCoord
+from unicodedata import normalize
 import astropy.units as u
 
 import numpy as np
@@ -89,6 +90,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
 
     # Loop over each source and decide to ingest, skip, or add alt name
     for i, source in enumerate(sources):
+        source = normalize('NFKC', source)
         # Find out if source is already in database or not
         if coords and search_db:
             name_matches = find_source_in_db(db, source, ra=ras[i], dec=decs[i])
