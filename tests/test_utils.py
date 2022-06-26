@@ -140,8 +140,7 @@ def test_ingest_parallaxes(db, t_plx):
 
 def test_ingest_radial_velocities(db, t_rv):
     ingest_radial_velocities(db, t_rv['source'], t_rv['rv'], t_rv['rv_err'], t_rv['rv_ref'])
-
-    results = db.query(db.RadialVelocities).filter(db.RadialVelocities == 'Ref1').table()
+    results = db.query(db.RadialVelocities).filter(db.RadialVelocities.c.reference == 'Ref 1').table()
     assert len(results) == 2
     results = db.query(db.RadialVelocities).filter(db.RadialVelocities.c.reference == 'Ref 2').table()
     assert len(results) == 1
