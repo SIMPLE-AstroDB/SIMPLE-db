@@ -115,6 +115,7 @@ def test_convert_spt_string_to_code():
     assert convert_spt_string_to_code(['Y2pec']) == [92]
 
 
+@pytest.fixture(scope="module")
 def t_spt():
     t_spt = Table([{'source': 'Fake 1', 'spectral_type_string': 'M5.6', 'reference': 'Ref 1'},
                    {'source': 'Fake 2', 'spectral_type_string': 'T0.1', 'reference': 'Ref 1'},
