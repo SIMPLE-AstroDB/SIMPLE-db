@@ -321,7 +321,7 @@ def find_survey_name_in_simbad(sources, desig_prefix, source_id_index=None):
 
 
 # SPECTRAL TYPES
-def ingest_spectral_types(db, sources, spectral_types, references, regimes, spectral_type_errors=None, comments=None,):
+def ingest_spectral_types(db, sources, spectral_types, references, regimes=None, spectral_type_errors=None, comments=None,):
     """
     Script to ingest spectral types
     Parameters
@@ -338,7 +338,7 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes, spec
         List or string
     comments: list[strings], optional
         Comments
-    references: str or list[strings], optional
+    references: str or list[strings]
         Reference of the Spectral Type
     Returns
     -------
