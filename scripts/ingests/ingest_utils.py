@@ -351,88 +351,154 @@ def ingest_spectral_types(db, sources, spectral_types, regimes=None, spectral_ty
 
     """
 
-    input_values = [sources, spectral_types, spectral_type_errors, regimes, comments, spt_refs]
-    n_sources = len(sources)
+    if isinstance(sources, str):
+        n_sources = 1
+    else:
+        n_sources = len(sources)
 
+    input_values = [sources, spectral_types, spectral_type_errors, regimes, comments, spt_refs]
     for i, input_value in enumerate(input_values):
-        if isinstance(input_value, str):
+        if input_value is None:
+            input_values[i] = [None] * n_sources
+        elif isinstance(input_value, str):
             print, input_value
             input_values[i] = [input_value] * n_sources
-        elif isinstance(input_value, type(None)):
-            print, input_value
-            input_values[i] = [None] * n_sources
     sources, spectral_types, spectral_type_errors, regimes, comments, spt_refs = input_values
+
     n_added = 0
-    db_name_existing = 0
+    n_existing = 0
     n_skipped = 0
     n_alt_names = 0
+    n_multiples = 0
+    n_names = 0
     logger.info(f"Trying to add {n_sources} spectral types")
 
     for i, source in enumerate(sources):
+        # Spectral Type data is in the database
         if db.query(db.SpectralTypes).filter(db.SpectralTypes.c.source == source).count() == 1:
             msg = f'Spectral Type information for {source} exists already'
+            msg1 = f"Skipping {source}"
+            logger.debug(msg + msg1)
         else:
-            db_name = db.search_object(source, output_table='Sources', table_names={'Names': ['other_name']})
-            if len(db_name) == 1:  # Source Name is already in database
-                db_name_existing += 1
-                db_name = db.search_object(source, output_table='Sources', table_names={'Names': ['other_name']})[0]
-                source = db_name['source']
-                msg1 = f"{i}: db_name found for {source}"
-                logger.debug(msg1)
-            if len(db_name) == 0:
-                msg1 = f"Source name cannot be found in the database"
-                msg2 = f"Trying to ingest source name"
-                logger.debug(msg1 + msg2)
-                try:
-                    ingest_sources(db, source, spt_refs[i])
-                    logger.debug(f"{i}: Name added to database: {source}\n")
-                    n_alt_names += 1
-                    db_name = db.search_object(source, output_table='Sources', table_names={'Names': ['other_name']})[0]
-                    source = db_name['source']
-                except sqlalchemy.exc.IntegrityError as e:
-                    msg = f"{i}: Could not add {source} to database"
+            name_matches = find_source_in_db(db, source)
+            if len(name_matches) == 1:  # Source Name is already in database
+                n_existing += 1
+                msg = f"{i}: Match found for {source}: {name_matches[0]}"
+                logger.debug(msg)
+
+                # Determine if the ingest name is an alternate name and add it to the db
+                db_matches = db.search_object(source, output_table='Sources', fuzzy_search=False)
+                if len(db_matches) == 0:
+                    alt_names_data = [{'source': name_matches[0], 'other_name': source}]
+                    try:
+                        db.Names.insert().execute(alt_names_data)
+                        logger.debug(f"{i}: Name added to database: {alt_names_data}\n")
+                        n_alt_names += 1
+                    except sqlalchemy.exc.IntegrityError as e:
+                        msg = f"{i}: Could not add {alt_names_data} to database"
+                        logger.warning(msg)
+                        if raise_error:
+                            raise SimpleError(msg + '\n' + str(e))
+                        else:
+                            continue
+                continue
+            elif len(name_matches) > 1:
+                n_multiples += 1
+                msg = f"{i} skipping {source}"
+                msg1 = f"{i} More than one match for {source}\n {name_matches}\n"
+                logger.warning(msg + msg1)
+                if raise_error:
+                    raise SimpleError(msg1)
+                else:
+                    continue
+            elif len(name_matches) == 0:
+                msg = f" Searching SIMBAD for {source} "
+                simbad_result_table = Simbad.query_object(source)
+                logger.debug(msg)
+                if simbad_result_table is None:
+                    n_skipped += 1
+                    msg = f"{i}: Skipping: {source}. Coordinates are needed and could not be retrieved from SIMBAD. \n"
                     logger.warning(msg)
                     if raise_error:
-                        raise SimpleError(msg + '\n' + str(e))
+                        raise SimpleError(msg)
                     else:
                         continue
-            continue
-        # Convert the spectral type string to code
-        spectral_type_code = convert_spt_string_to_code(spectral_types[i])
-        # Check to see if reference exists in database
-        if db.query(db.Publications.c.publication).filter(db.Publications.c.publication == spt_refs[i]).count() == 1:
-            continue
-        else:
-            msg = f"{i} has reference that is not in the database"
-            new_ref = [{'publication': spt_refs}]
-            logger.debug(msg)
-        try:
-            db.Publications.insert().execute(new_ref)
-            logger.debug(f"{new_ref}: Publication added to database")
-        except sqlalchemy.exc.IntegrityError as e:
-            msg = f"{i}: Could not add {new_ref} to database"
-            logger.warning(msg)
-            if raise_error:
-                raise SimpleError(msg + '\n' + str(e))
+                elif len(simbad_result_table) == 1:
+                    msg = f"Coordinates could be retrieved from SIMBAD"
+                    msg1 = f"Ingest source to the database before ingesting the spectral type"
+                    logger.debug(msg + msg1)
+                else:
+                    n_skipped += 1
+                    msg = f"{i}: Skipping: {source}. Ingestion of this source is neccessary and its data could not be retrieved from SIMBAD. \n"
+                    logger.warning(msg)
+                    if raise_error:
+                        raise SimpleError(msg)
+                    else:
+                        continue
+
+                logger.debug(f"{i}: Ingesting spectral type data for {source}. Not already in database.")
             else:
-                continue
-        spt_data = [{'source': source,
-                     'spectral_type_string': spectral_types[i],
-                     'spectral_type_code': spectral_type_code,
-                     'regime': regimes[i],
-                     'comments': comments[i],
-                     'reference': spt_refs[i]}]
-        try:
-            db.SpectralTypes.insert().execute(spt_data)
-            n_added +=1
-        except sqlalchemy.exc.IntegrityError as e:
-            msg = f"Spectral Type info couldn't be added for some reason"
-            logger.debug(msg)
-            if raise_error:
-                raise SimpleError(msg + '\n' + str(e))
-            else:
-                n_skipped +=1
-                continue
+                msg = f"{i}: unexpected condition encountered ingesting {source}"
+                logger.error(msg)
+                raise SimpleError(msg)
+            # Convert the spectral type string to code
+            spectral_type_code = convert_spt_string_to_code(spectral_types[i])
+            # Construct the data to be added
+            spt_data = [{'source': source,
+                         'spectral_type_string': spectral_types[i],
+                         'spectral_type_code': spectral_type_code,
+                         'regime': regimes[i],
+                         'comments': None if ma.is_masked(comments[i]) else comments[i],
+                         'reference': spt_refs[i]}]
+            names_data = [{'source': source,
+                           'other_name': source}]
+            try:
+                db.SpectralTypes.insert().execute(spt_data)
+                n_added += 1
+                msg = f"Added {str(spt_data)}"
+                logger.debug(msg)
+            except sqlalchemy.exc.IntegrityError as e:
+                if ma.is_masked(spt_data[0]['reference']):  # check if reference is blank
+                    msg = f"{i}: Skipping: {source}. Spectral reference is blank. \n"
+                    msg2 = f"\n {str(spt_data)}\n"
+                    logger.warning(msg)
+                    logger.debug(msg2)
+                    n_skipped += 1
+                    if raise_error:
+                        raise SimpleError(msg + msg2)
+                    else:
+                        continue
+                elif db.query(db.Publications).filter(db.Publications.c.publication == spt_refs[i]).count() == 0:
+                    # check if reference is in Publications table
+                    msg = f"{i}: Skipping: {source}. Spectral Type reference {spt_refs[i]} is not in Publications table. \n" \
+                          f"(Add it with ingest_publication function.) \n "
+                    msg2 = f"\n {str(spt_data)}\n"
+                    logger.warning(msg)
+                    logger.debug(msg2)
+                    n_skipped += 1
+                    if raise_error:
+                        raise SimpleError(msg + msg2)
+                    else:
+                        continue
+
+            try:
+                db.Names.insert().execute(names_data)
+                logger.debug(f"Name added to database: {names_data}\n")
+                n_names += 1
+            except sqlalchemy.exc.IntegrityError:
+                msg = f"{i}: Could not add {names_data} to database"
+                logger.warning(msg)
+                if raise_error:
+                    raise SimpleError(msg)
+                else:
+                    continue
+
+    logger.info(f"Spectral Types added to database: {n_added}")
+    logger.info(f"Names added to database: {n_names} \n")
+    logger.info(f"Sources with already existing spectral type data in database: {n_existing}")
+    logger.info(f"Alt Names added to database: {n_alt_names}")
+    logger.info(f"Sources NOT added to database because multiple matches: {n_multiples}")
+    logger.info(f"Sources NOT added to database: {n_skipped} \n")
 
 
 def convert_spt_string_to_code(spectral_types):
