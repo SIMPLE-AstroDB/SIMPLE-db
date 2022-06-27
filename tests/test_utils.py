@@ -80,7 +80,6 @@ def test_ingest_sources(db):
     source_data5 = Table([{'source': 'Fake 5', 'ra': 9.06799, 'dec': 18.352889, 'reference': ''}])
     source_data8 = Table([{'source': 'Fake 8', 'ra': 9.06799, 'dec': 18.352889, 'reference': 'Ref 4'}])
 
-
     ingest_sources(db, source_data1['source'], ras=source_data1['ra'], decs=source_data1['dec'],
                    references=source_data1['reference'], raise_error=True)
 
@@ -116,6 +115,14 @@ def test_convert_spt_string_to_code():
     assert convert_spt_string_to_code(['Y2pec']) == [92]
 
 
+def t_spt():
+    t_spt = Table([{'source': 'Fake 1', 'spectral_type_string': 'M5.6', 'reference': 'Ref 1'},
+                   {'source': 'Fake 2', 'spectral_type_string': 'T0.1', 'reference': 'Ref 1'},
+                   {'source': 'Fake 3', 'spectral_type_string': 'Y2pec', 'reference': 'Ref 2'},
+                   ])
+    return t_spt
+
+
 def test_ingest_parallaxes(db, t_plx):
     # Test ingest of parallax data
     ingest_parallaxes(db, t_plx['source'], t_plx['plx'], t_plx['plx_err'], t_plx['plx_ref'])
@@ -138,6 +145,16 @@ def test_ingest_proper_motions(db, t_pm):
     assert results['source'][0] == 'Fake 3'
     assert results['mu_ra'][0] == 55
     assert results['mu_ra_error'][0] == 0.23
+
+
+def test_ingest_spectral_types(db, t_spt):
+    ingest_spectral_types(db, t_spt['source'], t_spt['spectral_type_string'], t_spt['reference'])
+    assert db.query(db.SpectralTypes).filter(db.SpectralTypes.c.reference == 'Ref 1').count() == 2
+    results = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.spectral_type_code == 'Ref 2').table()
+    assert len(results) == 1
+    assert results['source'][0] == 'Fake 3'
+    assert results['spectral_type_string'] == 'Y2pec'
+    assert results['spectral_type_code'] == [92]
 
 
 def test_find_publication(db):
@@ -222,10 +239,6 @@ def test_ingest_instrument(db):
         ingest_instrument(db, mode='test')
     assert 'Telescope and instrument must be provided to ingest a mode' in str(error_message.value)
 
-
 # TODO: test for ingest_photometry
 
 # TODO: test for ingest_spectra
-
-
-
