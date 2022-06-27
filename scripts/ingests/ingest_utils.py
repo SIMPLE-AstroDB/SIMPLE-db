@@ -321,10 +321,9 @@ def find_survey_name_in_simbad(sources, desig_prefix, source_id_index=None):
 
 
 # SPECTRAL TYPES
-def ingest_spectral_types(db, sources, spectral_types, regimes=None, spectral_type_errors=None, comments=None,
-                          references=None):
+def ingest_spectral_types(db, sources, spectral_types, references, regimes, spectral_type_errors=None, comments=None,):
     """
-    Script to ingest sources
+    Script to ingest spectral types
     Parameters
     ----------
     db: astrodbkit2.astrodb.Database
@@ -376,7 +375,7 @@ def ingest_spectral_types(db, sources, spectral_types, regimes=None, spectral_ty
             db_name = db_name[0]
 
         adopted = None
-        source_spt_data: Table = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.source == db_name)
+        source_spt_data: Table = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.source == db_name).table()
 
         if source_spt_data is None or len(source_spt_data) == 0:
             adopted: True
@@ -424,6 +423,7 @@ def ingest_spectral_types(db, sources, spectral_types, regimes=None, spectral_ty
                      'spectral_type_code': spectral_type_code,
                      'regime': regimes[i],
                      'spectral_type_errors': spectral_type_errors[i],
+                     'adopted': adopted,
                      'comments': None if ma.is_masked(comments[i]) else comments[i],
                      'reference': references[i]}]
         try:
@@ -432,6 +432,7 @@ def ingest_spectral_types(db, sources, spectral_types, regimes=None, spectral_ty
             msg = f"Added {str(spt_data)}"
             logger.debug(msg)
         except sqlalchemy.exc.IntegrityError:
+
             msg = "The source may not exist in Sources table.\n" \
                   "The spectral type reference may not exist in Publications table. " \
                   "Add it with ingest_publication function. \n" \
