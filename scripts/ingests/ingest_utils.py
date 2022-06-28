@@ -352,13 +352,16 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
     else:
         n_sources = len(sources)
 
+    # Convert single element input value to list
+
     input_values = [sources, spectral_types, spectral_type_errors, regimes, comments, references]
     for i, input_value in enumerate(input_values):
         if input_value is None:
             input_values[i] = [None] * n_sources
         elif isinstance(input_value, str):
             print, input_value
-            input_values[i] = [input_value] * n_sources
+            input_values[i] = [input_value]
+        # Convert single element input value to list
     sources, spectral_types, spectral_type_errors, regimes, comments, references = input_values
 
     n_added = 0
@@ -379,12 +382,11 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
 
         if source_spt_data is None or len(source_spt_data) == 0:
             adopted: True
-            logger.debug("No other measurement")
+            logger.debug("No Spectral Type data for this source in the database")
         elif len(source_spt_data) > 0:
             dupe_ind = source_spt_data['reference'] == references[i]
             if sum(dupe_ind):
                 logger.debug(f"Duplicate measurement\n, {source_spt_data[dupe_ind]}")
-                continue
             else:
                 logger.debug("Another Spectral Type exists,")
                 if logger.level == 10:
@@ -416,13 +418,16 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
             raise RuntimeError
 
         # Convert the spectral type string to code
-        spectral_type_code = convert_spt_string_to_code(spectral_types[i])
+        spectral_type_code = convert_spt_string_to_code(spectral_types)
+        msg = f"Converted {spectral_types[i]} to {spectral_type_code[i]}"
+        logger.debug(msg)
+
         # Construct the data to be added
         spt_data = [{'source': source,
                      'spectral_type_string': spectral_types[i],
-                     'spectral_type_code': spectral_type_code,
-                     'regime': regimes[i],
-                     'spectral_type_errors': spectral_type_errors[i],
+                     'spectral_type_code': spectral_type_code[i],
+                     'regime': None if ma.is_masked(regimes[i]) else regimes[i],
+                     'spectral_type_errors': None if ma.is_masked(spectral_types[i]) else regimes[i],
                      'adopted': adopted,
                      'comments': None if ma.is_masked(comments[i]) else comments[i],
                      'reference': references[i]}]
