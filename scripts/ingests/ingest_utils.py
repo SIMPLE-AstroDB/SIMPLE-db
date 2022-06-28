@@ -321,20 +321,20 @@ def find_survey_name_in_simbad(sources, desig_prefix, source_id_index=None):
 
 
 # SPECTRAL TYPES
-def ingest_spectral_types(db, sources, spectral_types, references, regimes=None, spectral_type_error=None, comments=None,):
+def ingest_spectral_types(db, sources, spectral_types, references,regimes=None, spectral_type_error=None, comments=None):
     """
     Script to ingest spectral types
     Parameters
     ----------
     db: astrodbkit2.astrodb.Database
         Database object created by astrodbkit2
-    sources: list[str]
+    sources: str or list[str]
         Names of sources
     spectral_types: str or list[strings]
         Spectral Types of sources
     spectral_type_error: str or list[strings], optional
         Spectral Type Errors of sources
-    regimes: str or list[str], optional
+    regimes: str or list[str]
         List or string
     comments: list[strings], optional
         Comments
@@ -347,20 +347,15 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
 
     """
 
-    if isinstance(sources, str):
-        n_sources = 1
-    else:
-        n_sources = len(sources)
+    n_sources = len(sources)
 
     # Convert single element input value to list
-
     input_values = [sources, spectral_types, spectral_type_error, regimes, comments, references]
     for i, input_value in enumerate(input_values):
         if input_value is None:
             input_values[i] = [None] * n_sources
         elif isinstance(input_value, str):
-            print, input_value
-            input_values[i] = [input_value]
+            input_values[i] = [input_value] * n_sources
         # Convert single element input value to list
     sources, spectral_types, spectral_type_error, regimes, comments, references = input_values
 
@@ -371,6 +366,7 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
     for i, source in enumerate(sources):
         db_name = find_source_in_db(db, source)
         # Spectral Type data is in the database
+
         if len(db_name) != 1:
             msg = f"No unique source match for {source} in the database"
             raise SimpleError(msg)
@@ -378,12 +374,13 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
             db_name = db_name[0]
 
         adopted = None
-        source_spt_data: Table = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.source == db_name).table()
+        source_spt_data = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.source == db_name).table()
 
         if source_spt_data is None or len(source_spt_data) == 0:
             adopted: True
             logger.debug("No Spectral Type data for this source in the database")
         elif len(source_spt_data) > 0:
+            # Spectral Type Data already exists
             dupe_ind = source_spt_data['reference'] == references[i]
             if sum(dupe_ind):
                 logger.debug(f"Duplicate measurement\n, {source_spt_data[dupe_ind]}")
@@ -418,32 +415,42 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
             raise RuntimeError
 
         # Convert the spectral type string to code
-        spectral_type_code = convert_spt_string_to_code(spectral_types)
-        msg = f"Converted {spectral_types[i]} to {spectral_type_code[i]}"
+        msg = f"Starting to convert {spectral_types[i]} string to code"
+        logger.debug(msg)
+        spectral_type_code = convert_spt_string_to_code(spectral_types[i])[0]
+        msg = f"Converted {spectral_types[i]} to {spectral_type_code}"
         logger.debug(msg)
 
         # Construct the data to be added
-        spt_data = [{'source': source,
+        spt_data = [{'source': db_name,
                      'spectral_type_string': spectral_types[i],
-                     'spectral_type_code': spectral_type_code[i],
-                     'regime': None if ma.is_masked(regimes[i]) else regimes[i],
-                     'spectral_type_error': None if ma.is_masked(spectral_types[i]) else regimes[i],
+                     'spectral_type_code': spectral_type_code,
+                     'spectral_type_error': spectral_type_error[i],
+                     'regime': regimes[i],
                      'adopted': adopted,
-                     'comments': None if ma.is_masked(comments[i]) else comments[i],
+                     'comments': comments[i],
                      'reference': references[i]}]
+
+        logger.debug(f"Trying to insert {spt_data} into Spectral Types table ")
         try:
             db.SpectralTypes.insert().execute(spt_data)
             n_added += 1
             msg = f"Added {str(spt_data)}"
             logger.debug(msg)
-        except sqlalchemy.exc.IntegrityError:
-
-            msg = "The source may not exist in Sources table.\n" \
-                  "The spectral type reference may not exist in Publications table. " \
-                  "Add it with ingest_publication function. \n" \
-                  "The spectral type may be a duplicate."
-            logger.error(msg)
-            raise SimpleError(msg)
+        except sqlalchemy.exc.IntegrityError as e:
+            if db.query(db.Publications).filter(db.Publications.c.publication == references[i]).count() == 0:
+                msg = f"The publication does not exist in the database"
+                msg1 = f"Add it with ingest_publication function."
+                logger.debug(msg + msg1)
+                raise SimpleError(msg)
+            elif "NOT NULL constraint failed: SpectralTypes.regime" in str(e):
+                msg = f"The regime was not provided for {source}"
+                logger.error(msg)
+                raise SimpleError(msg)
+            else:
+                msg = "Other error\n"
+                logger.error(msg)
+                raise SimpleError(msg)
 
 
 def convert_spt_string_to_code(spectral_types):
@@ -455,6 +462,8 @@ def convert_spt_string_to_code(spectral_types):
     :param spectral_types:
     :return:
     """
+    if isinstance(spectral_types, str):
+        spectral_types = [spectral_types]
 
     spectral_type_codes = []
     for spt in spectral_types:
