@@ -57,6 +57,14 @@ def t_pm():
     return t_pm
 
 
+@pytest.fixture(scope="module")
+def t_spt():
+    t_spt = Table([{'source': 'Fake 1', 'spectral_type': 'M5.6', 'reference': 'Ref 1'},
+                   {'source': 'Fake 2', 'spectral_type': 'T0.1', 'reference': 'Ref 1'},
+                   {'source': 'Fake 3', 'spectral_type': 'Y2pec', 'reference': 'Ref 2'}])
+    return t_spt
+
+
 def test_setup_db(db):
     # Some setup tasks to ensure some data exists in the database first
     ref_data = [{'publication': 'Ref 1', 'doi': '10.1093/mnras/staa1522', 'bibcode': '2020MNRAS.496.1922B'},
@@ -139,11 +147,7 @@ def test_ingest_proper_motions(db, t_pm):
     assert results['mu_ra_error'][0] == 0.23
 
 
-def test_ingest_spectral_types(db):
-    t_spt = Table([{'source': 'Fake 1', 'spectral_type': 'M5.6', 'reference': 'Ref 1'},
-                   {'source': 'Fake 2', 'spectral_type': 'T0.1', 'reference': 'Ref 1'},
-                   {'source': 'Fake 3', 'spectral_type': 'Y2pec', 'reference': 'Ref 2'}])
-
+def test_ingest_spectral_types(db, t_spt):
     ingest_spectral_types(db, t_spt['source'], t_spt['spectral_type'], t_spt['reference'])
     assert db.query(db.SpectralTypes).filter(db.SpectralTypes.c.reference == 'Ref 1').count() == 2
     # results = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.reference == 'Ref 2').table()
