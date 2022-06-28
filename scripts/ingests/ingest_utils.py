@@ -321,7 +321,7 @@ def find_survey_name_in_simbad(sources, desig_prefix, source_id_index=None):
 
 
 # SPECTRAL TYPES
-def ingest_spectral_types(db, sources, spectral_types, references, regimes=None, spectral_type_errors=None, comments=None,):
+def ingest_spectral_types(db, sources, spectral_types, references, regimes=None, spectral_type_error=None, comments=None,):
     """
     Script to ingest spectral types
     Parameters
@@ -332,7 +332,7 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
         Names of sources
     spectral_types: str or list[strings]
         Spectral Types of sources
-    spectral_type_errors: str or list[strings], optional
+    spectral_type_error: str or list[strings], optional
         Spectral Type Errors of sources
     regimes: str or list[str], optional
         List or string
@@ -354,7 +354,7 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
 
     # Convert single element input value to list
 
-    input_values = [sources, spectral_types, spectral_type_errors, regimes, comments, references]
+    input_values = [sources, spectral_types, spectral_type_error, regimes, comments, references]
     for i, input_value in enumerate(input_values):
         if input_value is None:
             input_values[i] = [None] * n_sources
@@ -362,7 +362,7 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
             print, input_value
             input_values[i] = [input_value]
         # Convert single element input value to list
-    sources, spectral_types, spectral_type_errors, regimes, comments, references = input_values
+    sources, spectral_types, spectral_type_error, regimes, comments, references = input_values
 
     n_added = 0
 
@@ -395,7 +395,7 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
             adopted_ind = source_spt_data['adopted'] == 1
             if sum(adopted_ind):
                 old_adopted = source_spt_data[adopted_ind]
-                if spectral_type_errors[i] < min(source_spt_data['spectral_type_error']):
+                if spectral_type_error[i] < min(source_spt_data['spectral_type_error']):
                     adopted = True
 
                     if old_adopted:
