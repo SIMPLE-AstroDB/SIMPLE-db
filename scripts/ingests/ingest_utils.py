@@ -427,7 +427,7 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
                      'spectral_type_string': spectral_types[i],
                      'spectral_type_code': spectral_type_code[i],
                      'regime': None if ma.is_masked(regimes[i]) else regimes[i],
-                     'spectral_type_errors': None if ma.is_masked(spectral_types[i]) else regimes[i],
+                     'spectral_type_error': None if ma.is_masked(spectral_types[i]) else regimes[i],
                      'adopted': adopted,
                      'comments': None if ma.is_masked(comments[i]) else comments[i],
                      'reference': references[i]}]
