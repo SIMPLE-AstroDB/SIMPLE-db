@@ -161,11 +161,11 @@ def test_ingest_spectral_types(db):
     assert results['source'][0] == 'Fake 3'
     assert results['spectral_type_string'][0] == 'Y2pec'
     assert results['spectral_type_code'][0] == [92]
-
+    # testing for regime error
     with pytest.raises(SimpleError) as error_message:
         ingest_spectral_types(db, data2['source'], data2['spectral_type'], references=data2['reference'])
         assert 'The regime was not provided for' in str(error_message.value)
-
+    # testing for publication error
     with pytest.raises(SimpleError) as error_message:
         ingest_spectral_types(db, data3['source'], data3['spectral_type'], data3['regime'], data3['reference'])
         assert 'The publication does not exist in the database' in str(error_message.value)
