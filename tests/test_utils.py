@@ -80,7 +80,6 @@ def test_ingest_sources(db):
     source_data5 = Table([{'source': 'Fake 5', 'ra': 9.06799, 'dec': 18.352889, 'reference': ''}])
     source_data8 = Table([{'source': 'Fake 8', 'ra': 9.06799, 'dec': 18.352889, 'reference': 'Ref 4'}])
 
-
     ingest_sources(db, source_data1['source'], ras=source_data1['ra'], decs=source_data1['dec'],
                    references=source_data1['reference'], raise_error=True)
 
@@ -138,6 +137,38 @@ def test_ingest_proper_motions(db, t_pm):
     assert results['source'][0] == 'Fake 3'
     assert results['mu_ra'][0] == 55
     assert results['mu_ra_error'][0] == 0.23
+
+
+def test_ingest_spectral_types(db):
+    data1 = Table([{'source': 'Fake 1', 'spectral_type': 'M5.6', 'regime': 'nir', 'reference': 'Ref 1'},
+                   {'source': 'Fake 2', 'spectral_type': 'T0.1', 'regime': 'nir', 'reference': 'Ref 1'},
+                   {'source': 'Fake 3', 'spectral_type': 'Y2pec', 'regime': 'nir', 'reference': 'Ref 2'},
+                   ])
+
+    data2 = Table([{'source': 'Fake 1', 'spectral_type': 'M5.6', 'reference': 'Ref 1'},
+                   {'source': 'Fake 2', 'spectral_type': 'T0.1', 'reference': 'Ref 1'},
+                   {'source': 'Fake 3', 'spectral_type': 'Y2pec', 'reference': 'Ref 2'},
+                   ])
+
+    data3 = Table([{'source': 'Fake 1', 'spectral_type': 'M5.6', 'regime': 'nir', 'reference': 'Ref 1'},
+                   {'source': 'Fake 2', 'spectral_type': 'T0.1', 'regime': 'nir', 'reference': 'Ref 1'},
+                   {'source': 'Fake 3', 'spectral_type': 'Y2pec', 'regime': 'nir', 'reference': 'Ref 4'},
+                   ])
+    ingest_spectral_types(db, data1['source'], data1['spectral_type'], data1['reference'], data1['regime'])
+    assert db.query(db.SpectralTypes).filter(db.SpectralTypes.c.reference == 'Ref 1').count() == 2
+    results = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.reference == 'Ref 2').table()
+    assert len(results) == 1
+    assert results['source'][0] == 'Fake 3'
+    assert results['spectral_type_string'][0] == 'Y2pec'
+    assert results['spectral_type_code'][0] == [92]
+    # testing for regime error
+    with pytest.raises(SimpleError) as error_message:
+        ingest_spectral_types(db, data2['source'], data2['spectral_type'], references=data2['reference'])
+        assert 'The regime was not provided for' in str(error_message.value)
+    # testing for publication error
+    with pytest.raises(SimpleError) as error_message:
+        ingest_spectral_types(db, data3['source'], data3['spectral_type'], data3['regime'], data3['reference'])
+        assert 'The publication does not exist in the database' in str(error_message.value)
 
 
 def test_find_publication(db):
@@ -222,10 +253,6 @@ def test_ingest_instrument(db):
         ingest_instrument(db, mode='test')
     assert 'Telescope and instrument must be provided to ingest a mode' in str(error_message.value)
 
-
 # TODO: test for ingest_photometry
 
 # TODO: test for ingest_spectra
-
-
-
