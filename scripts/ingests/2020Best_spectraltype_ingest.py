@@ -2,9 +2,6 @@ import logging
 # from astroquery.simbad import conf
 from scripts.ingests.ingest_utils import *
 from scripts.ingests.utils import *
-# from scripts.ingests.utils_deprecated import sort_sources
-from scripts.ingests.utils_deprecated import sort_sources
-import re
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
@@ -84,7 +81,6 @@ if len(new_ref_ir) > 0:
 # # Make astropy table with all relevant columns and add to SpectralTypes Table
 SpT_Opt_table = Table([db_opt_names, spectral_types_opt, spectral_type_codes_opt, opt_regime, spt_refs_opt],
                       names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference'))
-
 
 input_values = [ir_names, ir_regime, spt_refs_ir, spectral_types_ir]
 for i, input_value in enumerate(input_values):
