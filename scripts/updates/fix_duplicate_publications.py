@@ -23,7 +23,7 @@ for bibcode in t['bibcode']:
 
 # This transformation dictionary contains the references that are to be converted
 # Additional entries can be added
-to_transform = {'Gold99': 'Eros99c',
+to_transform = {'Gold99': 'Eros99',
                 'Luhm06a': 'Luhm09',
                 'Geli11a': 'Geli11',
                 'MeHi06': 'Metc06',

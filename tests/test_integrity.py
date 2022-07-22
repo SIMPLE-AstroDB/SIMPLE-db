@@ -490,6 +490,29 @@ def test_spectra(db):
     assert len(flux_unit_fail) == 0, f'Some flux units did not resolve: {flux_unit_fail}'
 
 
+def test_special_characters(db):
+    # This test asserts that no special unicode characters are in the database
+    # This can be expanded with additional characters we want to avoid
+    bad_characters = ['\u2013', '\u00f3', '\u00e9', '\u00ed', '\u00e1', '\u00fa']
+    for char in bad_characters:
+        data = db.search_string(char)
+        # Check tables individually, want to make sure primary/foreign keys are verified but not comments/descriptions
+        if len(data) > 0:
+            for table_name in data.keys():
+                if table_name == 'Publications':
+                    check = [char not in data[table_name]['publication']]
+                    assert all(check), f'{char} in {table_name}'
+                elif table_name == 'Spectra':
+                    check = [char not in data[table_name]['spectrum']]
+                    assert all(check), f'{char} in {table_name}'
+                elif table_name == 'Names':
+                    check = [char not in data[table_name]['other_name']]
+                    assert all(check), f'{char} in {table_name}'
+                else:
+                    check = [char not in data[table_name]['source']]
+                    assert all(check), f'{char} in {table_name}'
+
+
 def test_remove_database(db):
     # Clean up temporary database
     db.session.close()

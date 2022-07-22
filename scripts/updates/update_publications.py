@@ -16,6 +16,7 @@ db.Publications.update().where(db.Publications.c.publication == 'Card12').values
 db.Publications.update().where(db.Publications.c.publication == 'Gold99').values(bibcode='1999A&A...351L...5E').execute()
 db.Parallaxes.update().where(db.Parallaxes.c.reference == 'Liu16').values(reference='Liu_16').execute()
 db.Publications.delete().where(db.Publications.c.publication == 'Liu16').execute()
+db.Publications.update().where(db.Publications.c.publication == 'Eros99c').values(publication='Eros99').execute()
 
 # Removing accents
 db.Publications.update().where(db.Publications.c.publication == 'Góme01').values(publication='Gome01').execute()
