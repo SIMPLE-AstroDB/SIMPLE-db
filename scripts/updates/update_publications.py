@@ -19,7 +19,7 @@ db.Publications.delete().where(db.Publications.c.publication == 'Liu16').execute
 
 # Removing accents
 db.Publications.update().where(db.Publications.c.publication == 'Góme01').values(publication='Gome01').execute()
-db.Publications.update().where(db.Publications.c.publication == 'Lópe04').values(publication='Lópe04').execute()
+db.Publications.update().where(db.Publications.c.publication == 'Lópe04').values(publication='Lope04').execute()
 
 # Find publications missig DOIs that have Bibcodes
 missing_dois = db.query(db.Publications).filter(or_(db.Publications.c.doi == None, db.Publications.c.doi == ''),
