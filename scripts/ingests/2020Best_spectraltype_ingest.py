@@ -9,14 +9,11 @@ RECREATE_DB = True  # recreates the .db file from the data files
 # logger.setLevel(logging.WARNING)
 logger.setLevel(logging.DEBUG)
 
-db = load_simpledb('SIMPLE.db', recreatedb=False)
+db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
 # Read in CSV file as Astropy table
-# file = 'Manja19_spectra9.csv'
 file = 'UltracoolSheet-Main.csv'
 data = Table.read('scripts/ingests/' + file)
-# Ingest Optical Spectral Types First
-# use the hashtag to comment it out
 
 # Optical Spectral Types
 filter_opt_data = data[data['spt_opt'] != 'null']
@@ -39,26 +36,34 @@ ref_file = 'UltracoolSheet-References.csv'
 ref_data = Table.read('scripts/ingests/' + ref_file)
 
 # Check references against database and ensure they have the correct names
-for pub in set(spt_refs_opt.tolist() + spt_refs_ir.tolist()):
+publication_transform = {}
+for pub in set(spt_refs_opt.tolist() + spt_refs_ir.tolist() + ['Kuzu11', 'Bowl14', 'Schn15', 'Cush16']):
+    # Reject invalid references
+    if ';' in pub:
+        print(f'Invalid reference name: {pub}; skipping')
+        continue
     # Match against reference information
     ind = ref_data['code_ref'] == pub
     if ind.sum() != 1:
-        print(f'Reference {pub} not match; skipping')
+        print(f'Reference {pub} not matched against input list; skipping')
         continue
     bibcode = ref_data[ind]['ADSkey_ref'][0]
 
     check, counts = find_publication(db, bibcode=bibcode)
     if not check:
         print(f'Not matched: {pub} ({bibcode}) not in DB. {counts} matches were returned.')
-        # TODO: Mark for insertion
     else:
         # Check name is consistent between DB and input file
-        # TODO: implement this
-        pass
+        db_result = db.query(db.Publications.c.publication).filter(db.Publications.c.bibcode == bibcode).astropy()
+        db_name = db_result['publication'][0]
+        if pub != db_name:
+            print(f'{pub} does not match name: {db_name} in database for that bibcode')
+            publication_transform[pub] = db_name
 
-# Ingest missing publications
+# Convert publications to their proper names
+# TODO: Use publication_transform for this
 
-# Ingest missing sources
+# Ingest missing sources, if any
 
 # Ingest Optical Spectral Types
 ingest_spectral_types(db, opt_names, spectral_types_opt, spt_refs_opt, regimes=opt_regime, spectral_type_error=None)
