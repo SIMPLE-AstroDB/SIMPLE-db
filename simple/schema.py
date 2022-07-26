@@ -205,6 +205,7 @@ class Spectra(Base):
 
     # Data
     spectrum = Column(String(1000), nullable=False)  # URL of spectrum location
+    original_spectrum = Column(String(1000)) # URL of original spectrum location, if applicable
     local_spectrum = Column(String(1000))  # local directory (via environment variable) of spectrum location
 
     # Metadata

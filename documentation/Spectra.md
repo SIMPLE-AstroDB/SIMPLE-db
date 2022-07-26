@@ -9,6 +9,7 @@ Columns marked with an asterisk (*) may not be empty.
 |---|---|---|--------------|---|
 | *source           | Unique identifier for the source |   | String(100)  | primary and foreign: Sources.source   |
 | *spectrum         | URL of spectrum location |   | String(1000) | primary |
+| original_spectrum | URL of original spectrum location, if applicable |   | String(1000) |  |
 | local_spectrum    | Local path of spectrum   |   | String(1000) |  |
 | *regime           | Regime of the spectrum, eg Optical, Infrared, etc |  | Enumeration  | primary |
 | *telescope        | Name of telescope |  | String(30)   | foreign: Telescopes.name |
@@ -21,6 +22,9 @@ Columns marked with an asterisk (*) may not be empty.
 | comments          | Free form comments |   | String(1000) |   |
 | *reference        | Primary Reference |   | String(30)   | primary and foreign: Publications.name |
 | other_references  | Other References |   | String(100)  |   |
+
+If the spectrum provided has been modified from the author-provided one, 
+a link to the original spectrum can be provided in the `original_spectrum` column.
 
 The local_spectrum is meant to store the path to a local copy of the spectrum with an 
 environment variable to define part of the path (so it can be shared among other users). 
