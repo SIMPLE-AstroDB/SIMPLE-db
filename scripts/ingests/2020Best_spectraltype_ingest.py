@@ -67,12 +67,18 @@ spt_refs_opt = Column(new_ref)
 new_ref = list(map(lambda x: publication_transform.get(x.split(';')[0], 'Missing'), spt_refs_ir))
 spt_refs_ir = Column(new_ref)
 
-# Ingest missing sources, if any
+# Ingest missing sources
+# '2MASS J15470557-1626303B'
+# scripts.ingests.utils.SimpleError: No unique source match for 2MASS J15470557-1626303B in the database (with SpT: M5:: from Gagn15b)
+db.ingest_sources(db, '2MASS J15470557-1626303B', references='Gagn15b', ras=None, decs=None)
+# TODO: look up RA/Dec
+# 236.7734,-16.4419
 
 # Ingest Optical Spectral Types
 ingest_spectral_types(db, opt_names, spectral_types_opt, spt_refs_opt, regimes=opt_regime, spectral_type_error=None)
 
 # Ingest Infrared Spectral Types
+logger.setLevel(logging.DEBUG)
 ingest_spectral_types(db, ir_names, spectral_types_ir, spt_refs_ir, regimes=ir_regime, spectral_type_error=None)
 
 # def ingest_source_pub():

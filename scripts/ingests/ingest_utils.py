@@ -321,7 +321,7 @@ def find_survey_name_in_simbad(sources, desig_prefix, source_id_index=None):
 
 
 # SPECTRAL TYPES
-def ingest_spectral_types(db, sources, spectral_types, references, regimes=None, spectral_type_error=None,
+def ingest_spectral_types(db, sources, spectral_types, references, regimes, spectral_type_error=None,
                           comments=None):
     """
     Script to ingest spectral types
@@ -369,7 +369,8 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
         # Spectral Type data is in the database
 
         if len(db_name) != 1:
-            msg = f"No unique source match for {source} in the database"
+            msg = f"No unique source match for {source} in the database " \
+                  f"(with SpT: {spectral_types[i]} from {references[i]})"
             raise SimpleError(msg)
         else:
             db_name = db_name[0]
@@ -416,8 +417,6 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
             raise RuntimeError
 
         # Convert the spectral type string to code
-        msg = f"Starting to convert {spectral_types[i]} string to code"
-        logger.debug(msg)
         spectral_type_code = convert_spt_string_to_code(spectral_types[i])[0]
         msg = f"Converted {spectral_types[i]} to {spectral_type_code}"
         logger.debug(msg)
@@ -431,6 +430,14 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
                      'adopted': adopted,
                      'comments': comments[i],
                      'reference': references[i]}]
+
+        # Check if the entry already exists; if so: skip adding it
+        check = db.query(db.SpectralTypes.c.source).filter(and_(db.SpectralTypes.c.source == db_name,
+                                                                db.SpectralTypes.c.regime == regimes[i],
+                                                                db.SpectralTypes.c.reference == references[i])).count()
+        if check == 1:
+            logger.debug(f'{db_name} already in the database: skipping insert')
+            continue
 
         logger.debug(f"Trying to insert {spt_data} into Spectral Types table ")
         try:
@@ -456,7 +463,6 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
 
 def convert_spt_string_to_code(spectral_types):
     """
-    # TODO: Could be part of future ingest_spectral_types function
     normal tests: M0, M5.5, L0, L3.5, T0, T3, T4.5, Y0, Y5, Y9.
     weird TESTS: sdM4, ≥Y4, T5pec, L2:, L0blue, Lpec, >L9, >M10, >L, T, Y
     digits are needed in current implementation.
@@ -502,7 +508,6 @@ def convert_spt_string_to_code(spectral_types):
             spt_code += float(re.findall('\d*\.?\d+', spt[i + 1:])[0])
 
         spectral_type_codes.append(spt_code)
-        logger.debug(f"{spt}, {spt_code}")
     return spectral_type_codes
 
 
