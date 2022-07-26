@@ -1,13 +1,13 @@
 import logging
-from astropy.table import Table
+from astropy.table import Table, Column
 from scripts.ingests.ingest_utils import ingest_spectral_types
 from scripts.ingests.utils import find_publication, load_simpledb, logger
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 
-# logger.setLevel(logging.WARNING)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARNING)
+# logger.setLevel(logging.DEBUG)
 
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
@@ -56,12 +56,16 @@ for pub in set(spt_refs_opt.tolist() + spt_refs_ir.tolist() + ['Kuzu11', 'Bowl14
         # Check name is consistent between DB and input file
         db_result = db.query(db.Publications.c.publication).filter(db.Publications.c.bibcode == bibcode).astropy()
         db_name = db_result['publication'][0]
+        publication_transform[pub] = db_name
         if pub != db_name:
             print(f'{pub} does not match name: {db_name} in database for that bibcode')
-            publication_transform[pub] = db_name
 
 # Convert publications to their proper names
-# TODO: Use publication_transform for this
+# The split(';') forces the first publication in a list to be used
+new_ref = list(map(lambda x: publication_transform.get(x.split(';')[0], 'Missing'), spt_refs_opt))
+spt_refs_opt = Column(new_ref)
+new_ref = list(map(lambda x: publication_transform.get(x.split(';')[0], 'Missing'), spt_refs_ir))
+spt_refs_ir = Column(new_ref)
 
 # Ingest missing sources, if any
 
@@ -69,6 +73,7 @@ for pub in set(spt_refs_opt.tolist() + spt_refs_ir.tolist() + ['Kuzu11', 'Bowl14
 ingest_spectral_types(db, opt_names, spectral_types_opt, spt_refs_opt, regimes=opt_regime, spectral_type_error=None)
 
 # Ingest Infrared Spectral Types
+ingest_spectral_types(db, ir_names, spectral_types_ir, spt_refs_ir, regimes=ir_regime, spectral_type_error=None)
 
 # def ingest_source_pub():
 #     ingest_sources(db, 'BRI 0021-0214', 'Irwi91')
