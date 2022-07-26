@@ -1,6 +1,6 @@
 import logging
 from astropy.table import Table, Column
-from scripts.ingests.ingest_utils import ingest_spectral_types
+from scripts.ingests.ingest_utils import ingest_spectral_types, ingest_sources
 from scripts.ingests.utils import find_publication, load_simpledb, logger
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
@@ -27,7 +27,7 @@ spectral_types_opt = filter_opt_data['spt_opt']
 filter_ir_data = data[data['spt_ir'] != 'null']
 ir_names = filter_ir_data['name']
 n_sources_ir = len(ir_names)
-ir_regime = ['nir_UCD'] * n_sources_ir
+ir_regime = Column(['nir_UCD'] * n_sources_ir)
 spt_refs_ir = filter_ir_data['ref_spt_ir']
 spectral_types_ir = filter_ir_data['spt_ir']
 
@@ -68,90 +68,17 @@ new_ref = list(map(lambda x: publication_transform.get(x.split(';')[0], 'Missing
 spt_refs_ir = Column(new_ref)
 
 # Ingest missing sources
-# '2MASS J15470557-1626303B'
-# scripts.ingests.utils.SimpleError: No unique source match for 2MASS J15470557-1626303B in the database (with SpT: M5:: from Gagn15b)
-db.ingest_sources(db, '2MASS J15470557-1626303B', references='Gagn15b', ras=None, decs=None)
-# TODO: look up RA/Dec
-# 236.7734,-16.4419
+# ind = data['name'] == '2MASS J15470557-1626303B'  # Just to verify and get RA/Dec
+ingest_sources(db, '2MASS J15470557-1626303B', references='Gagn15b', ras=[236.7734], decs=[-16.4419])
 
 # Ingest Optical Spectral Types
 ingest_spectral_types(db, opt_names, spectral_types_opt, spt_refs_opt, regimes=opt_regime, spectral_type_error=None)
 
 # Ingest Infrared Spectral Types
-logger.setLevel(logging.DEBUG)
-ingest_spectral_types(db, ir_names, spectral_types_ir, spt_refs_ir, regimes=ir_regime, spectral_type_error=None)
-
-# def ingest_source_pub():
-#     ingest_sources(db, 'BRI 0021-0214', 'Irwi91')
-#     ingest_sources(db, 'LHS 1070', 'McCa64c')
-#     ingest_sources(db, 'WISE J003110.04+574936.3', 'Thom13')
-#     ingest_sources(db, 'DENIS-P J0041353-562112', 'Phan01')
-#     ingest_sources(db, 'DENIS J020529.0-115925', 'Delf97')
-#     ingest_sources(db, 'LP 261-75B', 'Kirk00')
-#     ingest_sources(db, 'LHS 292', 'Dahn86')
-#
-#
-# ingest_source_pub()
-#
-# # Source names in database Names table
-# db_opt_names = []
-# db_ir_names = []
-# for name in opt_names:
-#     db_opt_name = db.search_object(name, output_table='Sources', table_names={'Names': ['other_name']})[0]
-#     db_opt_names.append(db_opt_name['source'])
-#
-# for name in ir_names:
-#     db_ir_name = db.search_object(name, output_table='Sources', table_names={'Names': ['other_name']})[0]
-#     db_ir_names.append(db_ir_name['source'])
-#
-# # # Convert SpT string to code
-# spectral_type_codes_opt = convert_spt_string_to_code(spectral_types_opt)
-# spectral_type_codes_ir = convert_spt_string_to_code(spectral_types_ir)
-
-# Adding References for Optical
-# ref_list_opt = spt_refs_opt.tolist()
-# included_ref_opt = db.query(db.Publications.c.publication).filter(db.Publications.c.publication.in_(ref_list_opt)).all()
-# included_ref_opt = [s[0] for s in included_ref_opt]
-# new_ref_opt = list(set(ref_list_opt) - set(included_ref_opt))
-# new_ref_opt = [{'publication': s} for s in new_ref_opt]
-# if len(new_ref_opt) > 0:
-#     db.Publications.insert().execute(new_ref_opt)
-#
-# # Adding References for Infrared
-# ref_list_ir = spt_refs_ir.tolist()
-# included_ref_ir = db.query(db.Publications.c.publication).filter(db.Publications.c.publication.in_(ref_list_ir)).all()
-# included_ref_ir = [s[0] for s in included_ref_ir]
-# new_ref_ir = list(set(ref_list_ir) - set(included_ref_ir))
-# new_ref_ir = [{'publication': s} for s in new_ref_ir]
-# if len(new_ref_ir) > 0:
-#     db.Publications.insert().execute(new_ref_ir)
-
-# # Make astropy table with all relevant columns and add to SpectralTypes Table
-# SpT_Opt_table = Table([db_opt_names, spectral_types_opt, spectral_type_codes_opt, opt_regime, spt_refs_opt],
-#                       names=('source', 'spectral_type_string', 'spectral_type_code', 'regime', 'reference'))
-#
-# input_values = [ir_names, ir_regime, spt_refs_ir, spectral_types_ir]
-# for i, input_value in enumerate(input_values):
-#     if isinstance(input_value, str):
-#         print, input_value
-#         input_values[i] = [input_value] * n_sources_ir
-#     elif isinstance(input_value, type(None)):
-#         print, input_value
-#         input_values[i] = [None] * n_sources_ir
-# ir_names, ir_regime, spt_refs_ir, spectral_types_ir = input_values
-#
-# for i, source in enumerate(db_ir_names):
-#     SptT_Ir_data = [{'source': db_ir_names[i],
-#                      'spectral_type_string': spectral_types_ir[i],
-#                      'spectral_type_code': spectral_type_codes_ir[i],
-#                      'regime': ir_regime[i],
-#                      'reference': spt_refs_ir[i]}]
-#     try:
-#         db.SpectralTypes.insert().execute(SptT_Ir_data)
-#     except sqlalchemy.exc.IntegrityError as e:
-#         continue
-#
-# db.add_table_data(SpT_Opt_table, table='SpectralTypes', fmt='astropy')
+# Removing some incorrect spectral types
+ind = spectral_types_ir != 'extremely red'
+ingest_spectral_types(db, ir_names[ind], spectral_types_ir[ind], spt_refs_ir[ind], regimes=ir_regime[ind],
+                      spectral_type_error=None)
 
 # # WRITE THE JSON FILES
 # if SAVE_DB:
