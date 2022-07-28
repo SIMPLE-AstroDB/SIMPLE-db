@@ -279,7 +279,7 @@ def test_missions(db):
                   select([db.Photometry.c.source]).where(db.Photometry.c.band.like("WISE%")))
     result = db.session.execute(stm)
     s = result.scalars().all()
-    assert len(s) == 393, f'found {len(s)} sources with WISE designation that have no WISE photometry'
+    assert len(s) == 392, f'found {len(s)} sources with WISE designation that have no WISE photometry'
 
     # If Wise photometry, Wise designation should be in Names
     stm = except_(select([db.Photometry.c.source]).where(db.Photometry.c.band.like("WISE%")),
