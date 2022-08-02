@@ -363,6 +363,37 @@ def test_spectra(db):
     assert len(t) == 20, f'found {len(t)} spectra from {ref}'
 
 
+def test_spectral_types(db):
+    # Test to verify existing counts of spectral types grouped by regime
+    regime = 'optical'
+    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
+    assert len(t) == 1494, f'found {len(t)} spectral types in the {regime} regime'
+
+    regime = 'optical_UCD'
+    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
+    assert len(t) == 0, f'found {len(t)} spectral types in the {regime} regime'
+
+    regime = 'nir'
+    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
+    assert len(t) == 41, f'found {len(t)} spectral types in the {regime} regime'
+
+    regime = 'nir_UCD'
+    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
+    assert len(t) == 2081, f'found {len(t)} spectral types in the {regime} regime'
+
+    regime = 'mir'
+    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
+    assert len(t) == 0, f'found {len(t)} spectral types in the {regime} regime'
+
+    regime = 'mir_UCD'
+    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
+    assert len(t) == 0, f'found {len(t)} spectral types in the {regime} regime'
+
+    regime = 'unknown'
+    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
+    assert len(t) == 10, f'found {len(t)} spectral types in the {regime} regime'
+
+
 # Individual ingest tests
 # -----------------------------------------------------------------------------------------
 def test_Manj19_data(db):
