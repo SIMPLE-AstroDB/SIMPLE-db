@@ -7,7 +7,7 @@ import sys
 sys.path.append('.')
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database
-from sqlalchemy import *
+from sqlalchemy import except_, select, and_
 from . import REFERENCE_TABLES
 
 DB_NAME = 'temp.db'
@@ -200,6 +200,12 @@ def test_parallax_refs(db):
 
 
 def test_photometry_bands(db):
+    # To refresh these counts:
+    # from sqlalchemy import func
+    # db.query(db.Photometry.c.band, func.count(db.Photometry.c.band).label('count')).\
+    #     group_by(db.Photometry.c.band).\
+    #     astropy()
+
     band = 'GAIA2.G'
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
     assert len(t) == 1266, f'found {len(t)} photometry measurements for {band}'
@@ -218,31 +224,31 @@ def test_photometry_bands(db):
 
     band = 'WISE.W1'
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 349, f'found {len(t)} photometry measurements for {band}'
+    assert len(t) == 459, f'found {len(t)} photometry measurements for {band}'
 
     band = 'WISE.W2'
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 349, f'found {len(t)} photometry measurements for {band}'
+    assert len(t) == 459, f'found {len(t)} photometry measurements for {band}'
 
     band = 'WISE.W3'
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 347, f'found {len(t)} photometry measurements for {band}'
+    assert len(t) == 457, f'found {len(t)} photometry measurements for {band}'
 
     band = 'WISE.W4'
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 340, f'found {len(t)} photometry measurements for {band}'
+    assert len(t) == 450, f'found {len(t)} photometry measurements for {band}'
 
     band = '2MASS.J'
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1789, f'found {len(t)} photometry measurements for {band}'
+    assert len(t) == 1802, f'found {len(t)} photometry measurements for {band}'
 
     band = '2MASS.H'
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1778, f'found {len(t)} photometry measurements for {band}'
+    assert len(t) == 1791, f'found {len(t)} photometry measurements for {band}'
 
     band = '2MASS.Ks'
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1751, f'found {len(t)} photometry measurements for {band}'
+    assert len(t) == 1762, f'found {len(t)} photometry measurements for {band}'
 
 
 def test_missions(db):
@@ -251,14 +257,14 @@ def test_missions(db):
                   select([db.Photometry.c.source]).where(db.Photometry.c.band.like("2MASS%")))
     result = db.session.execute(stm)
     s = result.scalars().all()
-    assert len(s) == 265, f'found {len(s)} sources with 2MASS designation that have no 2MASS photometry'
+    assert len(s) == 254, f'found {len(s)} sources with 2MASS designation that have no 2MASS photometry'
 
     # If 2MASS photometry, 2MASS designation should be in Names
     stm = except_(select([db.Photometry.c.source]).where(db.Photometry.c.band.like("2MASS%")),
                   select([db.Names.c.source]).where(db.Names.c.other_name.like("2MASS J%")))
     result = db.session.execute(stm)
     s = result.scalars().all()
-    assert len(s) == 0, f'found {len(s)} sources with 2MASS photometry that have no 2MASS designation '
+    assert len(s) == 2, f'found {len(s)} sources with 2MASS photometry that have no 2MASS designation '
 
     # If Gaia designation in Names, Gaia photometry and astrometry should exist
     stm = except_(select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia%")),
@@ -286,7 +292,7 @@ def test_missions(db):
                   select([db.Names.c.source]).where(db.Names.c.other_name.like("WISE%")))
     result = db.session.execute(stm)
     s = result.scalars().all()
-    assert len(s) == 278, f'found {len(s)} sources with WISE photometry and no Wise designation in Names'
+    assert len(s) == 388, f'found {len(s)} sources with WISE photometry and no Wise designation in Names'
 
     # If Gaia EDR3 pm, Gaia EDR3 designation should be in Names
     stm = except_(select([db.ProperMotions.c.source]).where(db.ProperMotions.c.reference.like("GaiaEDR3%")),
@@ -492,7 +498,7 @@ def test_Kirk19_ingest(db):
     # Test photometry added
     telescope = 'Spitzer'
     t = db.query(db.Photometry).filter(db.Photometry.c.telescope == telescope).astropy()
-    assert len(t) == 46, f'found {len(t)} photometry entries for {telescope}'
+    assert len(t) == 350, f'found {len(t)} photometry entries for {telescope}'
 
     ref = 'Kirk19'
     t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
