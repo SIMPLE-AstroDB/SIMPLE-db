@@ -2,6 +2,8 @@
 
 from astrodbkit2.astrodb import Database, and_
 from sqlalchemy import types  # for BDNYC column overrides
+from datetime import datetime
+from astropy.table import Table
 
 verbose = True
 
@@ -11,6 +13,29 @@ def fix_band(band):
     # Fix the band name to what we want in SIMPLE
     band = band.replace('_', '.')
     return band
+
+
+def fix_epoch(epoch):
+    # Fix epoch; it's expected to be a decimal year
+
+    def dt_to_dec(dt):
+        """Convert a datetime to decimal year.
+        See: https://stackoverflow.com/questions/29851357/python-datetime-to-decimal-year-one-day-off-where-is-the-bug
+        """
+        year_start = datetime(dt.year, 1, 1)
+        year_end = year_start.replace(year=dt.year + 1)
+        return dt.year + ((dt - year_start).total_seconds() /  # seconds so far
+                          float((year_end - year_start).total_seconds()))  # seconds in year
+
+    decimal_year = None
+    if epoch is not None:
+        try:
+            d = datetime.fromisoformat(epoch)
+            decimal_year = dt_to_dec(d)
+        except:
+            pass
+
+    return decimal_year
 
 
 def get_telescope(band):
@@ -78,6 +103,9 @@ db.load_database('data', verbose=False)
 
 # Considering all bands rather than specifying only a few
 
+# These bands have issues and will be skipped:
+band_skip = ["MKO_M'"]  # has duplicate values in BDNYC with no epoch to distinguish
+
 # # Which BDNYC bands to consider
 # band_list = ['WISE_W1', 'WISE_W2', 'WISE_W3', 'WISE_W4']
 #
@@ -111,9 +139,11 @@ for i, row in sources.iterrows():
                                     table_names={'sources': ['designation', 'names']},
                                     fmt='pandas')
     if len(bd_source) != 1:
-        print(f"ERROR matching {row['source']}")
+        # print(f"ERROR matching {row['source']}")
+        continue
     else:
         source_dict[row['source']] = int(bd_source['id'].values[0])
+print(f'{len(source_dict)} sources matched between databases')
 
 # Grab only photometry in the band list that has version flags and publications
 for source, bdnyc_id in source_dict.items():
@@ -122,6 +152,7 @@ for source, bdnyc_id in source_dict.items():
         filter(and_(bdnyc.photometry.c.source_id == bdnyc_id,
                     bdnyc.photometry.c.publication_shortname.isnot(None),
                     bdnyc.photometry.c.version <= 2,
+                    bdnyc.photometry.c.band.notin_(band_skip)
                     # bdnyc.photometry.c.band.in_(band_list)
                     )).\
         pandas()
@@ -152,20 +183,46 @@ for source, bdnyc_id in source_dict.items():
 
         # Fetch correct reference
         ref = fetch_reference(db, bdnyc, row['publication_shortname'])
+        if ref is None:
+            # Missing reference- manually insert
+            t = bdnyc.query(bdnyc.publications). \
+                filter(bdnyc.publications.c.shortname == row['publication_shortname']). \
+                table()
+            try:
+                new_pub = [{'publication': t['shortname'][0],
+                            'bibcode': t['bibcode'][0],
+                            'doi': t['DOI'][0],
+                            'description': t['description'][0]}]
+                db.Publications.insert().execute(new_pub)
+                ref = t['shortname'][0]
+            except Exception as e:
+                # If the publication can't be added- skip this photometry data point
+                print(f'Unable to add new publication: {e}')
+                continue
 
+        # Fix some values
         band = fix_band(row['band'])
+        epoch = fix_epoch(row['epoch'])
+
         datum = {'source': source,
                 'band': band,
                 'magnitude': row['magnitude'],
                 'magnitude_error': row['magnitude_unc'],
                 'telescope': tel,
                 'reference': ref,
-                'epoch': row['epoch'],
+                'epoch': epoch,
                 'comments': row['comments']}
         new_data.append(datum)
+
     if new_data is not None and len(new_data) > 0:
         print(f"{source} : Ingesting new data: {new_data}")
-        db.Photometry.insert().execute(new_data)
+        try:
+            db.Photometry.insert().execute(new_data)
+        except Exception as e:
+            # Print out some diagnositics (the new data to be inserted and the original) to spot the issue
+            print(Table(new_data))
+            print(Table(bdnyc.inventory(bdnyc_id)['photometry']))
+            raise e
 
 
 # --------------------------------------------------------------------------------------
