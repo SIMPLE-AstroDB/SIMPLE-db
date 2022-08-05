@@ -5,6 +5,52 @@ from sqlalchemy import types  # for BDNYC column overrides
 
 verbose = True
 
+
+# Helper functions
+def fix_band(band):
+    # Fix the band name to what we want in SIMPLE
+    band = band.replace('_', '.')
+    return band
+
+
+def get_telescope(band):
+    # Fetch the correct telescope name
+    tel = None
+    if 'WISE' in band:
+        tel = 'WISE'
+    elif 'SDSS' in band:
+        tel = 'SDSS'
+    elif 'IRAC' in band or 'MIPS' in band:
+        tel = 'Spitzer'
+    elif 'Gaia' in band:
+        tel = 'Gaia'
+    elif 'HST' in band:
+        tel = 'HST'
+    elif 'GALEX' in band:
+        tel = 'GALEX'
+    elif '2MASS' in band:
+        tel = '2MASS'
+
+    return tel
+
+
+def fetch_reference(db, bdnyc, pub_name):
+    # Fetch the correct reference to use
+    # This is good practice, but for BDNYC-SIMPLE it may be the same
+    bibcode = None
+    ref = None
+    t = bdnyc.query(bdnyc.publications). \
+        filter(bdnyc.publications.c.shortname == pub_name). \
+        table()
+    if len(t) == 1:
+        bibcode = t['bibcode'][0]
+    if bibcode is not None:
+        t = db.query(db.Publications).filter(db.Publications.c.bibcode == bibcode).table()
+        if len(t) == 1:
+            ref = t['publication'][0]
+
+    return ref
+
 # --------------------------------------------------------------------------------------
 # Establish connection to databases
 
@@ -30,17 +76,33 @@ db.load_database('data', verbose=False)
 # --------------------------------------------------------------------------------------
 # For each source in SIMPLE, search in BDNYC and grab specified photometry
 
-# Will be only grabbing WISE data for now
-telescope = 'WISE'
-band_list = ['WISE_W1', 'WISE_W2', 'WISE_W3', 'WISE_W4']
+# Considering all bands rather than specifying only a few
 
-# Don't include sources that already have photometry in these bands
-temp = db.query(db.Photometry.c.source).filter(db.Photometry.c.band.in_(band_list)).distinct().all()
-sources_with_photometry = [s[0] for s in temp]
+# # Which BDNYC bands to consider
+# band_list = ['WISE_W1', 'WISE_W2', 'WISE_W3', 'WISE_W4']
+#
+# # Don't include sources that already have photometry in these bands
+# temp = db.query(db.Photometry.c.source).filter(db.Photometry.c.band.in_(band_list)).distinct().all()
+# sources_with_photometry = [s[0] for s in temp]
+#
+# sources = db.query(db.Sources).\
+#     filter(db.Sources.c.source.notin_(sources_with_photometry)).\
+#     pandas()
 
-sources = db.query(db.Sources).\
-    filter(db.Sources.c.source.notin_(sources_with_photometry)).\
-    pandas()
+sources = db.query(db.Sources).pandas()
+
+# Check and add any missing telescopes
+tel_list = ['HST', 'WISE', 'GALEX', 'CFHT', 'Keck II', 'Gemini South', 'CTIO 1.5m',
+            'Pan-STARRS 1', 'Spitzer', 'UKIRT', '2MASS', 'SDSS']
+tel_list_db = db.query(db.Telescopes.c.name).table()['name'].tolist()
+new_tel = []
+for tel in tel_list:
+    if tel not in tel_list_db:
+        datum = {'name': tel}
+        new_tel.append(datum)
+if len(new_tel) > 0:
+    print(f'Inserting: {new_tel}')
+    db.Telescopes.insert().execute(new_tel)
 
 # Get the BDNYC source_id values for our SIMPLE sources
 source_dict = {}
@@ -60,7 +122,8 @@ for source, bdnyc_id in source_dict.items():
         filter(and_(bdnyc.photometry.c.source_id == bdnyc_id,
                     bdnyc.photometry.c.publication_shortname.isnot(None),
                     bdnyc.photometry.c.version <= 2,
-                    bdnyc.photometry.c.band.in_(band_list))).\
+                    # bdnyc.photometry.c.band.in_(band_list)
+                    )).\
         pandas()
 
     if len(bd_data) == 0:
@@ -71,23 +134,36 @@ for source, bdnyc_id in source_dict.items():
     for i, row in bd_data.iterrows():
         old_data = db.query(db.Photometry).filter(db.Photometry.c.source == source).pandas()
         if len(old_data) > 0:
-            if (row['band'], row['publication_shortname']) in zip(old_data['band'].tolist(),
-                                                                  old_data['reference'].tolist()):
+            if (fix_band(row['band']), row['publication_shortname']) in zip(old_data['band'].tolist(),
+                                                                            old_data['reference'].tolist()):
                 if verbose:
                     print(f"{source}: {row['band']} already in database for reference {row['publication_shortname']}")
-                new_data = None
                 continue
 
+        # Fetch the correct telescope to use
+        tel = None
+        t = bdnyc.query(bdnyc.telescopes).\
+            filter(bdnyc.telescopes.c.id == row['telescope_id']).\
+            table()
+        if len(t) == 1:
+            tel = t['name'][0]
+        else:
+            tel = get_telescope(row['band'])
+
+        # Fetch correct reference
+        ref = fetch_reference(db, bdnyc, row['publication_shortname'])
+
+        band = fix_band(row['band'])
         datum = {'source': source,
-                'band': row['band'],
+                'band': band,
                 'magnitude': row['magnitude'],
                 'magnitude_error': row['magnitude_unc'],
-                'telescope': 'WISE',
-                'reference': row['publication_shortname'],
+                'telescope': tel,
+                'reference': ref,
                 'epoch': row['epoch'],
                 'comments': row['comments']}
         new_data.append(datum)
-    if new_data is not None:
+    if new_data is not None and len(new_data) > 0:
         print(f"{source} : Ingesting new data: {new_data}")
         db.Photometry.insert().execute(new_data)
 
