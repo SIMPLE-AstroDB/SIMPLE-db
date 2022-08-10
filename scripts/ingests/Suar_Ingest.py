@@ -2,7 +2,7 @@ from scripts.ingests.ingest_utils import *
 from scripts.ingests.utils import *
 
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 
 logger.setLevel(logging.DEBUG)
@@ -19,3 +19,7 @@ ingest_sources(db, data['Source'], data['discovery reference'])
 ingest_spectra(db, data['Source'], data['Spectrum'], 'mir', 'Spitzer', 'IRS', 'SL',
                data['observation_date'],
                'Suár22', wavelength_units='um', flux_units='Jy', comments=data['spectrum comments'])
+
+# WRITE THE JSON FILES
+if SAVE_DB:
+    db.save_database(directory='data/')
