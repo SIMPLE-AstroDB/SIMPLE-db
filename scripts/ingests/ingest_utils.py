@@ -991,7 +991,8 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
 
         # TODO: make it possible to ingest units and order
         row_data = [{'source': db_name,
-                     'spectrum': spectra[i],
+                     'spectrum': None,
+                     'original_spectrum': spectra[i],
                      'local_spectrum': None,  # if ma.is_masked(local_spectra[i]) else local_spectra[i],
                      'regime': regimes[i],
                      'telescope': telescopes[i],
