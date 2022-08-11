@@ -868,7 +868,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
 
 
 # SPECTRA
-def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes, obs_dates, references,
+def ingest_spectra(db, sources, original_spectra, regimes, telescopes, instruments, modes, obs_dates, references, spectra=None,
                    wavelength_units=None, flux_units=None, wavelength_order=None,
                    comments=None, other_references=None, raise_error=True):
     """
@@ -878,8 +878,8 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     db: astrodbkit2.astrodb.Database
     sources: list[str]
         List of source names
-    spectra: list[str]
-        List of filenames corresponding to spectra files
+    original_spectra: list[str]
+        List of filenames corresponding to original spectra files
     regimes: str or list[str]
         List or string
     telescopes: str or list[str]
@@ -892,6 +892,8 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         List of strings or datetime objects
     references: list[str]
         List or string
+    spectra: list[str]
+        List of filenames corresponding to spectra files
     wavelength_units: list[str] or Quantity, optional
         List or string
     flux_units: list[str] or Quantity, optional
@@ -917,6 +919,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
             input_values[i] = [None] * len(sources)
     regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references, comments, other_references = input_values
 
+    n_original_spectra = len(original_spectra)
     n_spectra = len(spectra)
     n_skipped = 0
     n_dupes = 0
@@ -924,7 +927,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     n_added = 0
     n_blank = 0
 
-    msg = f'Trying to add {n_spectra} spectra'
+    msg = f'Trying to add {n_original_spectra} spectra'
     logger.info(msg)
 
     for i, source in enumerate(sources):
@@ -943,13 +946,28 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         # First check for internet
         internet = check_internet_connection()
         if internet:
-            request_response = requests.head(spectra[i])
+            request_response = requests.head(original_spectra[i])
+            request_response1 = requests.head(spectra[i])
             status_code = request_response.status_code  # The website is up if the status code is 200
+            status_code1 = request_response1.status_code
             if status_code != 200:
                 n_skipped += 1
                 msg = "The spectrum location does not appear to be valid: \n" \
-                      f'spectrum: {spectra[i]} \n' \
+                      f'spectrum: {original_spectra[i]} \n' \
                       f'status code: {status_code}'
+                logger.error(msg)
+                if raise_error:
+                    raise SimpleError(msg)
+                else:
+                    continue
+            else:
+                msg = f"The spectrum location appears up: {original_spectra[i]}"
+                logger.debug(msg)
+            if status_code1 != 200:
+                n_skipped += 1
+                msg = "The spectrum location does not appear to be valid: \n" \
+                      f'spectrum: {spectra[i]} \n' \
+                      f'status code: {status_code1}'
                 logger.error(msg)
                 if raise_error:
                     raise SimpleError(msg)
@@ -991,8 +1009,8 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
 
         # TODO: make it possible to ingest units and order
         row_data = [{'source': db_name,
-                     'spectrum': None,
-                     'original_spectrum': spectra[i],
+                     'spectrum': None if ma.is_masked(spectra[i]) else spectra[i],
+                     'original_spectrum': original_spectra[i],
                      'local_spectrum': None,  # if ma.is_masked(local_spectra[i]) else local_spectra[i],
                      'regime': regimes[i],
                      'telescope': telescopes[i],
@@ -1041,7 +1059,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                 if sum(ref_dupe_ind) and sum(date_dupe_ind) and sum(instrument_dupe_ind) and sum(mode_dupe_ind):
                     msg = f"Skipping suspected duplicate measurement\n{source}\n"
                     msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
-                    msg3 = f"{instruments[i], modes[i], obs_date, references[i], spectra[i]} \n"
+                    msg3 = f"{instruments[i], modes[i], obs_date, references[i], original_spectra[i]} \n"
                     logger.warning(msg)
                     logger.debug(msg2 + msg3 + str(e))
                     n_dupes += 1
@@ -1079,13 +1097,13 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                 raise SimpleError(msg)
 
     msg = f"SPECTRA ADDED: {n_added} \n" \
-          f" Spectra with blank obs_date: {n_blank} \n" \
+          f" Original Spectra with blank obs_date: {n_blank} \n" \
           f" Suspected duplicates skipped: {n_dupes}\n" \
           f" Missing Telescope/Instrument/Mode: {n_missing_instrument} \n" \
           f" Spectra skipped for unknown reason: {n_skipped} \n"
     logger.info(msg)
 
-    if n_added + n_dupes + n_blank + n_skipped + n_missing_instrument != n_spectra:
+    if n_added + n_dupes + n_blank + n_skipped + n_missing_instrument != n_original_spectra:
         msg = "Numbers don't add up: "
         logger.error(msg)
         raise SimpleError(msg)
