@@ -531,12 +531,13 @@ def test_Best2020_ingest(db):
 
 
 def test_suar22_ingest(db):
+    ref_list = ['Suar22']
     ref = 'Suar22'
 
-    t = db.query(db.Publications).filter(db.Publications.c.publication.in_(ref)).astropy()
-    if len(ref) != len(t):
-        missing_ref = list(set(ref) - set(t['name']))
-        assert len(ref) == len(t), f'Missing references: {missing_ref}'
+    t = db.query(db.Publications).filter(db.Publications.c.publication.in_(ref_list)).astropy()
+    if len(ref_list) != len(t):
+        missing_ref = list(set(ref_list) - set(t['name']))
+        assert len(ref_list) == len(t), f'Missing references: {missing_ref}'
 
     # Check DOI and Bibcode values are correctly set for new references added
     reference_verifier(t, 'Suar22', '2022MNRAS.513.5701S', '10.1093/mnras/stac1205')
