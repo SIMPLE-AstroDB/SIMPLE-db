@@ -528,3 +528,10 @@ def test_Best2020_ingest(db):
     t = db.query(db.Parallaxes).filter(and_(db.Parallaxes.c.reference == ref,
                                             db.Parallaxes.c.adopted == 1)).astropy()
     assert len(t) == 255, f'found {len(t)} adopted parallax entries for {ref}'
+
+
+def test_suar22_ingest(db):
+    # Test for Suar22 spectra added
+    ref = 'Suar22'
+    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
+    assert len(t) == 113, f'found {len(t)} spectra entries for {ref}'
