@@ -531,7 +531,16 @@ def test_Best2020_ingest(db):
 
 
 def test_suar22_ingest(db):
-    # Test for Suar22 spectra added
     ref = 'Suar22'
+
+    t = db.query(db.Publications).filter(db.Publications.c.publication.in_(ref)).astropy()
+    if len(ref) != len(t):
+        missing_ref = list(set(ref) - set(t['name']))
+        assert len(ref) == len(t), f'Missing references: {missing_ref}'
+
+    # Check DOI and Bibcode values are correctly set for new references added
+    reference_verifier(t, 'Suar22', '2022MNRAS.513.5701S', '10.1093/mnras/stac1205')
+
+    # Test for Suar22 spectra added
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
     assert len(t) == 113, f'found {len(t)} spectra entries for {ref}'
