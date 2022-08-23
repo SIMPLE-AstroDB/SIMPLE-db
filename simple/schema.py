@@ -51,6 +51,18 @@ class PhotometryFilters(Base):
     width = Column(Float)
 
 
+class Versions(Base):
+    """
+    ORM for Versions table
+    This stores the version numbers for the database
+    """
+    __tablename__ = 'Versions'
+    version = Column(String(30), primary_key=True, nullable=False)
+    start_date = Column(DateTime)
+    end_date = Column(DateTime)
+    description = Column(String(1000))
+
+
 # -------------------------------------------------------------------------------------------------------------------
 # Hard-coded enumerations
 
