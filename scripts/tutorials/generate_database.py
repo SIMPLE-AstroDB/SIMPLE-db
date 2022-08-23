@@ -4,7 +4,6 @@
 import argparse
 import sys
 import os
-from astrodbkit2 import REFERENCE_TABLES
 from astrodbkit2.astrodb import create_database, Database
 sys.path.append(os.getcwd())  # hack to be able to discover simple
 from simple.schema import *
@@ -14,7 +13,7 @@ DB_PATH = 'data'
 DB_NAME = 'SIMPLE.db'
 
 # Used to overwrite AstrodbKit2 reference tables defaults
-REFERENCE_TABLES = REFERENCE_TABLES + ['Versions']
+REFERENCE_TABLES = ['Publications', 'Telescopes', 'Instruments', 'Modes', 'PhotometryFilters', 'Versions']
 
 
 def load_postgres(connection_string):
