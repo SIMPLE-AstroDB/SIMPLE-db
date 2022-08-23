@@ -198,7 +198,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
                     raise SimpleError(msg + msg2)
                 else:
                     continue
-            elif db.query(db.Publications).filter(db.Publications.c.name == references[i]).count() == 0:
+            elif db.query(db.Publications).filter(db.Publications.c.publication == references[i]).count() == 0:
                 # check if reference is in Publications table
                 msg = f"{i}: Skipping: {source}. Discovery reference {references[i]} is not in Publications table. \n" \
                       f"(Add it with add_publication function.) \n "
@@ -1018,7 +1018,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                     raise SimpleError(msg)
                 else:
                     continue
-            if db.query(db.Publications).filter(db.Publications.c.name == references[i]).count() == 0:
+            if db.query(db.Publications).filter(db.Publications.c.publication == references[i]).count() == 0:
                 msg = f"Spectrum for {source} could not be added to the database because the reference {references[i]} is not in Publications table. \n" \
                       f"(Add it with ingest_publication function.) \n "
                 logger.warning(msg)
