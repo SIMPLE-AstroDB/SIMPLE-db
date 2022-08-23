@@ -2,7 +2,6 @@
 
 import logging
 from astrodbkit2 import REFERENCE_TABLES
-from datetime import datetime
 from scripts.ingests.utils import logger, load_simpledb
 
 logger.setLevel(logging.INFO)
@@ -13,8 +12,9 @@ db = load_simpledb('SIMPLE.db', recreatedb=True, reference_tables=REFERENCE_TABL
 print(db.query(db.Versions).table())
 
 # Add new version, add new entries as appropriate
-data = [{'version': '2022.1', 'start_date': datetime(2020, 6, 22), 'end_date': datetime(2022, 8, 23),
-         'description': 'Initial release'}]
+# Note that start_date and end_date are strings of the date in format YYYY-MM-DD
+data = [{'version': '2022.1', 'start_date': '2020-06-22',
+         'end_date': '2022-08-23', 'description': 'Initial release'}]
 db.Versions.insert().execute(data)
 
 # Fetch data of latest release
@@ -28,7 +28,7 @@ if latest == 0:
     db.Versions.insert().execute(data)
 else:
     # Update if present
-    db.Versions.update().where(db.Versions.c.version == 'latest').values(start_date='latest_date').execute()
+    db.Versions.update().where(db.Versions.c.version == 'latest').values(start_date=latest_date).execute()
 
 # Save the database
 db.save_database('data/')

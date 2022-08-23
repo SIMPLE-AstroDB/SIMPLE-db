@@ -58,8 +58,8 @@ class Versions(Base):
     """
     __tablename__ = 'Versions'
     version = Column(String(30), primary_key=True, nullable=False)
-    start_date = Column(DateTime)
-    end_date = Column(DateTime)
+    start_date = Column(String(30))
+    end_date = Column(String(30))
     description = Column(String(1000))
 
 
