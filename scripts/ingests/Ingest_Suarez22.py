@@ -15,10 +15,10 @@ data = Table.read('scripts/ingests/' + file)
 
 # Ingesting missing publications
 ingest_publication(db, bibcode='2022MNRAS.513.5701S', publication='Suar22')
-ingest_publication(db, bibcode='1952ApJ...115..582L')
+# ingest_publication(db, bibcode='1952ApJ...115..582L')
 
 # Ingesting the sources along with the necessary discovery reference
-ingest_sources(db, data['Source'], data['discovery reference'])
+# ingest_sources(db, data['Source'], data['discovery reference'])
 
 # Used new parameter for ingest spectra to add original spectrum
 ingest_spectra(db, data['Source'], data['spectrum'], 'mir', 'Spitzer', 'IRS', 'SL',
