@@ -13,7 +13,7 @@ from sqlalchemy import and_
 
 DB_NAME = 'temp.db'
 DB_PATH = 'data'
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 # Load the database for use in individual tests
