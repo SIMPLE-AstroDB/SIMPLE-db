@@ -257,7 +257,7 @@ def test_missions(db):
                   select([db.Photometry.c.source]).where(db.Photometry.c.band.like("2MASS%")))
     result = db.session.execute(stm)
     s = result.scalars().all()
-    assert len(s) == 255, f'found {len(s)} sources with 2MASS designation that have no 2MASS photometry'
+    assert len(s) == 254, f'found {len(s)} sources with 2MASS designation that have no 2MASS photometry'
 
     # If 2MASS photometry, 2MASS designation should be in Names
     stm = except_(select([db.Photometry.c.source]).where(db.Photometry.c.band.like("2MASS%")),
@@ -328,7 +328,7 @@ def test_spectra(db):
 
     regime = 'mir'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 204, f'found {len(t)} spectra in the {regime} regime'
+    assert len(t) == 203, f'found {len(t)} spectra in the {regime} regime'
 
     telescope = 'IRTF'
     t = db.query(db.Spectra).filter(db.Spectra.c.telescope == telescope).astropy()
@@ -544,4 +544,4 @@ def test_suar22_ingest(db):
 
     # Test for Suar22 spectra added
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
-    assert len(t) == 113, f'found {len(t)} spectra entries for {ref}'
+    assert len(t) == 112, f'found {len(t)} spectra entries for {ref}'
