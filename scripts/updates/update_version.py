@@ -1,12 +1,11 @@
 # Script to show how to update the version number
 
 import logging
-from astrodbkit2 import REFERENCE_TABLES
 from scripts.ingests.utils import logger, load_simpledb
 
 logger.setLevel(logging.INFO)
 
-db = load_simpledb('SIMPLE.db', recreatedb=True, reference_tables=REFERENCE_TABLES+['Versions'])
+db = load_simpledb('SIMPLE.db', recreatedb=True)
 
 # Check all versions
 print(db.query(db.Versions).table())
