@@ -13,25 +13,21 @@ warnings.filterwarnings('ignore')
 def convert_to_fits(spectrum_info_all):
     object_name = unquote(spectrum_info_all['object_name'])
     spectrum_info_all['object_name'] = object_name
-    print(object_name)
+    # print(object_name) # TODO: change to Logger.info
 
     spectrum_path = spectrum_info_all['file_path']
     file = os.path.basename(spectrum_path)
 
-    history1 = ascii(f'Original file: {file}')  # gives original name of file
-    history2 = spectrum_info_all['generated_history']  # shows where file came from
-    spectrum_info_all['history'] = (history1 + ', ' + history2)
+    spectrum_info_all['history1'] = ascii(f'Original file: {file}')  # gives original name of file
+    spectrum_info_all['history2'] = spectrum_info_all['generated_history']  # shows where file came from
 
     loader_function = spectrum_info_all['loader_function']
     spectrum_table = loader_function(spectrum_path)
 
-    # add units to spectral data - SHOULD BE DONE BY loader_function.
-    # wavelength_data = spectrum_table['wavelength'] * spectrum_info_all['wavelength_unit']
     wavelength_data = spectrum_table['wavelength']
-    # flux_data = spectrum_table['flux'] * spectrum_info_all['flux_unit']
     flux_data = spectrum_table['flux']
     # flux_unc = StdDevUncertainty(spectrum_table['flux_uncertainty'] * spectrum_info_all['flux_unit'])
-    flux_unc = spectrum_table['flux_uncertainty']
+    flux_unc = spectrum_table['flux_uncertainty']  # TODO: Understand StdDevUncertainty
 
     spectrum_data_out = Table({'wavelength': wavelength_data, 'flux': flux_data, 'flux_uncertainty': flux_unc})
 
@@ -50,9 +46,9 @@ def convert_to_fits(spectrum_info_all):
     file_root = os.path.splitext(file)[0]  # split the path name into a pair root and ext so the root is just the ext [0] is the name of the file wihtout the .csv
     fits_filename = spectrum_info_all['fits_data_dir'] + file_root + '.fits'  # turns into fits files by putting it in new folder that we defined at begining and adding name of file then .fits
     try:
-        spectrum_mef.writeto(fits_filename, overwrite=True)
+        spectrum_mef.writeto(fits_filename, overwrite=False)
         # SHOULD BE: spectrum.write(fits_filename, format='tabular-fits', overwrite=True, update_header=True)
-        #logger.info(f'Wrote {fits_filename}')
+        # TODO: logger.info(f'Wrote {fits_filename}')
     except:
         raise ValueError
 
@@ -131,22 +127,29 @@ def compile_header(wavelength_data, **spectra_data_info):
     except KeyError:
         instrument = None
 
+    # Wavelength info
+    w_units = wavelength_data.unit
+    w_min = min(wavelength_data)
+    w_max = max(wavelength_data)
+    width = w_max - w_min
+    w_mid = (w_max + w_min)/2
+
     try:
         header.set('SPECBAND', spectra_data_info['bandpass'], 'SED.bandpass')
     except KeyError:
         pass
 
     try:
-        header.set('SPEC_VAL', , '[angstrom] Characteristic spec coord')
+        header.set('SPEC_VAL', w_mid, f"[{w_units}] Characteristic spec coord")
     except KeyError:
         pass
 
-    try:
-        f"[{wavelength_data.unit:FITS}]"
-        header.set('SPEC_BW', header_dict['width'], f"[{header_dict['wavelength_units']}] Width of spectrum")
+    header.set('SPEC_BW', width, f"[{w_units}] Width of spectrum")
+    header.set('TDMIN1', w_min, f"[{w_units}] Starting wavelength")
+    header.set('TDMAX1', w_max, f"[{w_units}] Ending wavelength")
 
     try:
-        header.set('APERTURE', spectra_data_info['aperture'], '[arcsec]slit width')
+        header.set('APERTURE', spectra_data_info['aperture'], '[arcsec] slit width')
     except KeyError:
         pass
 
@@ -189,31 +192,15 @@ def compile_header(wavelength_data, **spectra_data_info):
         comment = None
 
     try:
-        header.set('HISTORY', spectra_data_info['history'])
+        header.set('HISTORY', spectra_data_info['history1'])
     except KeyError:
         pass
 
-    # Put header information into a dictionary
-    header_dict = {
+    try:
+        header.set('HISTORY', spectra_data_info['history2'])
+    except KeyError:
+        pass
 
-            'wavelength_units': ,
-            'width': (max(wavelength_data) - min(wavelength_data)),
-            'min_wave': min(wavelength_data),
-            'max_wave': max(wavelength_data),
-            'comment': comment,
-            'obs_location': obs_location
-        }
-
-
-    if header_dict['width'] != None:
-
-    if header_dict['min_wave'] != None:
-        header.set('TDMIN1', header_dict['min_wave'], f"[{header_dict['wavelength_units']}] starting wavelength")
-    if header_dict['min_wave'] != None:
-        header.set('TDMAX1', header_dict['max_wave'], f"[{header_dict['wavelength_units']}] ending wavelength")
-    if header_dict['aperture'] != None:
-
-
-    header.set('DATE', date.today().strftime("%Y-%m-%d"), 'date of file creation')
+    header.set('DATE', date.today().strftime("%Y-%m-%d"), 'Date of file creation')
 
     return header
