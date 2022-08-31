@@ -328,7 +328,7 @@ def test_spectra(db):
 
     regime = 'mir'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 91, f'found {len(t)} spectra in the {regime} regime'
+    assert len(t) == 203, f'found {len(t)} spectra in the {regime} regime'
 
     telescope = 'IRTF'
     t = db.query(db.Spectra).filter(db.Spectra.c.telescope == telescope).astropy()
@@ -528,3 +528,20 @@ def test_Best2020_ingest(db):
     t = db.query(db.Parallaxes).filter(and_(db.Parallaxes.c.reference == ref,
                                             db.Parallaxes.c.adopted == 1)).astropy()
     assert len(t) == 255, f'found {len(t)} adopted parallax entries for {ref}'
+
+
+def test_suar22_ingest(db):
+    ref_list = ['Suar22']
+    ref = 'Suar22'
+
+    t = db.query(db.Publications).filter(db.Publications.c.publication.in_(ref_list)).astropy()
+    if len(ref_list) != len(t):
+        missing_ref = list(set(ref_list) - set(t['name']))
+        assert len(ref_list) == len(t), f'Missing references: {missing_ref}'
+
+    # Check DOI and Bibcode values are correctly set for new references added
+    reference_verifier(t, 'Suar22', '2022MNRAS.513.5701S', '10.1093/mnras/stac1205')
+
+    # Test for Suar22 spectra added
+    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
+    assert len(t) == 112, f'found {len(t)} spectra entries for {ref}'
