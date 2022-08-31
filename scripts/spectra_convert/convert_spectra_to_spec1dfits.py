@@ -46,7 +46,8 @@ def convert_to_fits(spectrum_info_all):
     file_root = os.path.splitext(file)[0]  # split the path name into a pair root and ext so the root is just the ext [0] is the name of the file wihtout the .csv
     fits_filename = spectrum_info_all['fits_data_dir'] + file_root + '.fits'  # turns into fits files by putting it in new folder that we defined at begining and adding name of file then .fits
     try:
-        spectrum_mef.writeto(fits_filename, overwrite=False)
+        spectrum_mef.writeto(fits_filename, overwrite=True)
+        # TODO: think about overwrite
         # SHOULD BE: spectrum.write(fits_filename, format='tabular-fits', overwrite=True, update_header=True)
         # TODO: logger.info(f'Wrote {fits_filename}')
     except:
@@ -57,6 +58,8 @@ def convert_to_fits(spectrum_info_all):
 
 def compile_header(wavelength_data, **spectra_data_info):
     """Creates a header from a dictionary of values. """
+    #  TODO: Generate errors when REQUIRED keywords are missing
+    #  TODO: Generate logger warnings when recommended keywords are missing
 
     header = fits.Header()
     header.set('EXTNAME', 'PRIMARY', 'name of this extension')
@@ -161,7 +164,10 @@ def compile_header(wavelength_data, **spectra_data_info):
 
     # Publication Information
     try:
-        header.set('TITLE', spectra_data_info['title'], 'Data set title')
+        # TODO: make title shorter so header wraps right
+        title = (spectra_data_info['title'])[0:20]
+        print, title
+        header.set('TITLE', title, 'Data set title')
     except KeyError:
         pass
 
