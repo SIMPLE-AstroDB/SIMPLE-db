@@ -198,7 +198,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
                     raise SimpleError(msg + msg2)
                 else:
                     continue
-            elif db.query(db.Publications).filter(db.Publications.c.name == references[i]).count() == 0:
+            elif db.query(db.Publications).filter(db.Publications.c.publication == references[i]).count() == 0:
                 # check if reference is in Publications table
                 msg = f"{i}: Skipping: {source}. Discovery reference {references[i]} is not in Publications table. \n" \
                       f"(Add it with add_publication function.) \n "
@@ -868,7 +868,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
 
 
 # SPECTRA
-def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes, obs_dates, references,
+def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes, obs_dates, references,original_spectra=None,
                    wavelength_units=None, flux_units=None, wavelength_order=None,
                    comments=None, other_references=None, raise_error=True):
     """
@@ -892,6 +892,8 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         List of strings or datetime objects
     references: list[str]
         List or string
+    original_spectra: list[str]
+        List of filenames corresponding to original spectra files
     wavelength_units: list[str] or Quantity, optional
         List or string
     flux_units: list[str] or Quantity, optional
@@ -958,6 +960,22 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
             else:
                 msg = f"The spectrum location appears up: {spectra[i]}"
                 logger.debug(msg)
+            if original_spectra:
+                request_response1 = requests.head(original_spectra[i])
+                status_code1 = request_response1.status_code
+                if status_code1 != 200:
+                    n_skipped += 1
+                    msg = "The spectrum location does not appear to be valid: \n" \
+                          f'spectrum: {original_spectra[i]} \n' \
+                          f'status code: {status_code1}'
+                    logger.error(msg)
+                    if raise_error:
+                        raise SimpleError(msg)
+                    else:
+                        continue
+            else:
+                msg = f"The spectrum location appears up: {original_spectra[i]}"
+                logger.debug(msg)
         else:
             msg = "No internet connection. Internet is needed to check spectrum files."
             raise SimpleError(msg)
@@ -992,6 +1010,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         # TODO: make it possible to ingest units and order
         row_data = [{'source': db_name,
                      'spectrum': spectra[i],
+                     'original_spectrum':None if ma.is_masked(original_spectra[i]) else original_spectra[i],
                      'local_spectrum': None,  # if ma.is_masked(local_spectra[i]) else local_spectra[i],
                      'regime': regimes[i],
                      'telescope': telescopes[i],
@@ -1018,7 +1037,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                     raise SimpleError(msg)
                 else:
                     continue
-            if db.query(db.Publications).filter(db.Publications.c.name == references[i]).count() == 0:
+            if db.query(db.Publications).filter(db.Publications.c.publication == references[i]).count() == 0:
                 msg = f"Spectrum for {source} could not be added to the database because the reference {references[i]} is not in Publications table. \n" \
                       f"(Add it with ingest_publication function.) \n "
                 logger.warning(msg)
