@@ -15,14 +15,14 @@ def spectrum_loader(spectrum_path):
 
 # outside of loop. Same for every spectrum.
 dataset_info = {
-    'loader_function': spectrum_loader, # Function which loads the spectrum into an Astropy Table
-    'fits_data_dir': '/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/VHS1256b', # Path of FITS output
+    'loader_function': spectrum_loader,  # Function which loads the spectrum into an Astropy Table
+    'fits_data_dir': '/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/VHS1256b/',  # Path of FITS output
 
     # Information about the publications the data come from
     'title': 'Methane in Analogs of Young Directly Imaged Exoplanets',  # Title of Paper
-    'author': 'Miles et al.', # Authors of paper
+    'author': 'Miles et al.',  # Authors of paper
     'bibcode': '2018ApJ...869...18M',  # Bibcode of paper
-    'doi': '10.3847/1538-4357/aae6cd', # DOI of paper
+    'doi': '10.3847/1538-4357/aae6cd',  # DOI of paper
     # 'dataset_comments': None,  # Any comments about the data provenance
 
     # Information about new spectra
@@ -32,8 +32,8 @@ dataset_info = {
 
     # Information that is true for all data
     'object_name': "VHS 1256-1257b",
-    'RA': 194.007636,  # decimal degrees. TODO: String or float?
-    'dec': -12.957692,  # decimal degrees TODO: String or float?
+    'RA': 194.007636,  # float, decimal degrees
+    'dec': -12.957692,  # float, decimal degrees
 }
 
 # Start loop over spectra here if more than one.
@@ -41,8 +41,8 @@ dataset_info = {
 # First spectrum - NIRSPEC
 NIRSPEC_spectrum_info = {
     'bandpass': 'nir',
-    'aperture': '0.380', # [arcseconds]
-    "observatory": 'Keck', # From https://github.com/astropy/astropy-data/blob/gh-pages/coordinates/sites.json
+    'aperture': '0.380',  # [arcseconds]
+    "observatory": 'Keck',  # From https://github.com/astropy/astropy-data/blob/gh-pages/coordinates/sites.json
     'telescope': 'Keck II',
     'instrument': 'NIRSPEC',
     'file_path': "/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/vhs1256b_spectra_Figure8_Miles2018.txt",
@@ -76,7 +76,7 @@ spectrum_info_all = {**dataset_info, **optical_spectrum_info}
 
 # END LOOP
 
-# Plot the newly converted files
+# Plot the newly converted files using specutils
 from glob import glob
 from astropy.io import fits
 from matplotlib import pyplot as plt

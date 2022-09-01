@@ -1,7 +1,6 @@
 import os
 from pandas import to_datetime
 from astropy.time import Time
-from astropy.nddata import StdDevUncertainty
 from urllib.parse import unquote
 from datetime import date
 import astropy.io.fits as fits
@@ -26,8 +25,7 @@ def convert_to_fits(spectrum_info_all):
 
     wavelength_data = spectrum_table['wavelength']
     flux_data = spectrum_table['flux']
-    # flux_unc = StdDevUncertainty(spectrum_table['flux_uncertainty'] * spectrum_info_all['flux_unit'])
-    flux_unc = spectrum_table['flux_uncertainty']  # TODO: Understand StdDevUncertainty
+    flux_unc = spectrum_table['flux_uncertainty']
 
     spectrum_data_out = Table({'wavelength': wavelength_data, 'flux': flux_data, 'flux_uncertainty': flux_unc})
 
@@ -51,7 +49,7 @@ def convert_to_fits(spectrum_info_all):
         # SHOULD BE: spectrum.write(fits_filename, format='tabular-fits', overwrite=True, update_header=True)
         # TODO: logger.info(f'Wrote {fits_filename}')
     except:
-        raise ValueError
+        raise
 
     return
 
@@ -164,9 +162,7 @@ def compile_header(wavelength_data, **spectra_data_info):
 
     # Publication Information
     try:
-        # TODO: make title shorter so header wraps right
-        title = (spectra_data_info['title'])[0:20]
-        print, title
+        title = (spectra_data_info['title'])[0:20]  # trim so header wraps nicely
         header.set('TITLE', title, 'Data set title')
     except KeyError:
         pass
