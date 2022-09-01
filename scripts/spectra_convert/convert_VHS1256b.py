@@ -16,7 +16,7 @@ def spectrum_loader(spectrum_path):
 # outside of loop. Same for every spectrum.
 dataset_info = {
     'loader_function': spectrum_loader, # Function which loads the spectrum into an Astropy Table
-    'fits_data_dir': '/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/', # Path of FITS output
+    'fits_data_dir': '/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/VHS1256b', # Path of FITS output
 
     # Information about the publications the data come from
     'title': 'Methane in Analogs of Young Directly Imaged Exoplanets',  # Title of Paper
@@ -55,10 +55,9 @@ NIRSPEC_spectrum_info = {
 
 spectrum_info_all = {**dataset_info, **NIRSPEC_spectrum_info}
 
-convert_to_fits(spectrum_info_all)
+# convert_to_fits(spectrum_info_all)
 
 # Second spectrum - Optical
-
 optical_spectrum_info = {
     'bandpass': 'nir',
     'aperture': '0.380',  # [arcseconds]
@@ -72,10 +71,32 @@ optical_spectrum_info = {
     'observation_date': '2016-06-19' ,  # YYYY-MM-DD
     # 'spectrum_comments':
 }
-
 spectrum_info_all = {**dataset_info, **optical_spectrum_info}
-
 # convert_to_fits(spectrum_info_all)
 
 # END LOOP
 
+# Plot the newly converted files
+from glob import glob
+from astropy.io import fits
+from matplotlib import pyplot as plt
+from specutils import Spectrum1D
+
+files = glob(spectrum_info_all['fits_data_dir'] + '*.fits')
+
+for fits_file in files:
+    spec1d = Spectrum1D.read(fits_file, format='tabular-fits')
+    fits = fits.open(fits_file)
+    header = fits[0].header
+    name = header['OBJECT']
+
+
+    ax = plt.subplots()[1]
+    # ax.plot(spec1d.spectral_axis, spec1d.flux)
+    ax.errorbar(spec1d.spectral_axis.value, spec1d.flux.value, yerr=spec1d.uncertainty.array, fmt='o')
+    ax.set_xlabel(f"Dispersion ({spec1d.spectral_axis.unit})")
+    ax.set_ylabel(f"Flux ({spec1d.flux.unit})")  #try to get from header
+    plt.xlim([2.8,4.0])
+    plt.ylim([0,max(spec1d.flux[0:400]).value*1.50])
+    plt.title(name)
+    plt.show()
