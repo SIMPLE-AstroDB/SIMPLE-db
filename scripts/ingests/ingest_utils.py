@@ -1195,3 +1195,44 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
                 raise SimpleError(msg + '\n' + str(e))
 
     return
+
+def ingest_gaia_photometry(db, gaia_data,ref):
+    unmasked_gphot = np.logical_not(gaia_data['phot_g_mean_mag'].mask).nonzero()
+    gaia_g_phot = gaia_data[unmasked_gphot]['db_names', 'phot_g_mean_flux', 'phot_g_mean_flux_error',
+                                            'phot_g_mean_mag']
+
+    unmased_rpphot = np.logical_not(gaia_data['phot_rp_mean_mag'].mask).nonzero()
+    gaia_rp_phot = gaia_data[unmased_rpphot]['db_names', 'phot_rp_mean_flux', 'phot_rp_mean_flux_error',
+                                             'phot_rp_mean_mag']
+
+    # e_Gmag=abs(-2.5/ln(10)*e_FG/FG) from Vizier Note 37 on Gaia DR2 (I/345/gaia2)
+    gaia_g_phot['g_unc'] = np.abs(
+        -2.5 / np.log(10) * gaia_g_phot['phot_g_mean_flux_error'] / gaia_g_phot['phot_g_mean_flux'])
+    gaia_rp_phot['rp_unc'] = np.abs(
+        -2.5 / np.log(10) * gaia_rp_phot['phot_rp_mean_flux_error'] / gaia_rp_phot['phot_rp_mean_flux'])
+
+    if ref == 'GaiaDR2':
+        g_band_name = 'GAIA2.G'
+        rp_band_name = 'GAIA2.Grp'
+    elif ref == 'GaiaEDR3' or ref == 'GaiaDR3':
+        g_band_name = 'GAIA3.G'
+        rp_band_name = 'GAIA3.Grp'
+    else:
+        raise Exception
+
+    ingest_photometry(db, gaia_g_phot['db_names'], g_band_name, gaia_g_phot['phot_g_mean_mag'], gaia_g_phot['g_unc'],
+                      ref, ucds='em.opt', telescope='Gaia', instrument='Gaia')
+
+    ingest_photometry(db, gaia_rp_phot['db_names'], rp_band_name, gaia_rp_phot['phot_rp_mean_mag'],
+                      gaia_rp_phot['rp_unc'], ref, ucds='em.opt.R', telescope='Gaia', instrument='Gaia')
+
+    return
+
+
+def ingest_gaia_parallaxes(db, gaia_data, ref):
+    unmasked_pi = np.logical_not(gaia_data['parallax'].mask).nonzero()
+    gaia_parallaxes = gaia_data[unmasked_pi]['db_names', 'parallax', 'parallax_error']
+    refs = [ref] * len(gaia_parallaxes)
+
+    ingest_parallaxes(db, gaia_parallaxes['db_names'], gaia_parallaxes['parallax'],
+                      gaia_parallaxes['parallax_error'], refs)
