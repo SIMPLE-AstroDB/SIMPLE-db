@@ -1196,7 +1196,7 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
 
     return
 
-def ingest_gaia_photometry(db, gaia_data,ref):
+def ingest_gaia_photometry(db, gaia_data, ref):
     unmasked_gphot = np.logical_not(gaia_data['phot_g_mean_mag'].mask).nonzero()
     gaia_g_phot = gaia_data[unmasked_gphot]['db_names', 'phot_g_mean_flux', 'phot_g_mean_flux_error',
                                             'phot_g_mean_mag']
@@ -1232,7 +1232,6 @@ def ingest_gaia_photometry(db, gaia_data,ref):
 def ingest_gaia_parallaxes(db, gaia_data, ref):
     unmasked_pi = np.logical_not(gaia_data['parallax'].mask).nonzero()
     gaia_parallaxes = gaia_data[unmasked_pi]['db_names', 'parallax', 'parallax_error']
-    refs = [ref] * len(gaia_parallaxes)
 
     ingest_parallaxes(db, gaia_parallaxes['db_names'], gaia_parallaxes['parallax'],
-                      gaia_parallaxes['parallax_error'], refs)
+                      gaia_parallaxes['parallax_error'], ref)
