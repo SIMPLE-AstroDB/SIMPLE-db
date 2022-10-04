@@ -69,7 +69,7 @@ class Versions(Base):
 class Regime(enum.Enum):
     """Enumeration for spectral type, spectra, and photometry regimes
     Use UCD controlled vocabulary: https://www.ivoa.net/documents/UCD1+/20200212/PEN-UCDlist-1.4-20200212.html#tth_sEcB
-    The string values are used, not the variable names.
+    The variable name is stored and used in the database; the string value should match it
     """
     ultraviolet = 'em.UV'
     optical_UCD = 'em.opt'
@@ -86,6 +86,7 @@ class Regime(enum.Enum):
 
 class Gravity(enum.Enum):
     """Enumeration for gravity"""
+    # TODO: Fix enumerations; the variable name is what's used throughout the database
     a = 'alpha'
     b = 'beta'
     g = 'gamma'
@@ -95,6 +96,16 @@ class Gravity(enum.Enum):
     vlg = 'vl-g'
     intg = 'int-g'
     fldg = 'fld-g'
+
+
+class Parameter(enum.Enum):
+    """Enumeration for derived/inferred parameters"""
+    mass = 'mass'
+    radius = 'radius'
+    log_g = 'log_g'
+    T_eff = 'T_eff'
+    metallicity = 'metallicity'  # Z
+    CO = 'CO'  # C/O
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -242,3 +253,16 @@ class Spectra(Base):
                                            [Modes.telescope, Modes.instrument, Modes.name],
                                            onupdate="cascade"),
                       {})
+
+
+class ModeledParameters(Base):
+    # Table to store derived/inferred paramaters from models
+    __tablename__ = 'ModeledParameters'
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
+                    nullable=False, primary_key=True)
+
+    parameter = Column(Enum(Parameter, create_constraint=True, native_enum=False),
+                       primary_key=True)  # restricts to enumerated values
+    value = Column(Float, nullable=False)
+    comments = Column(String(1000))
+    reference = Column(String(30), ForeignKey('Publications.publication', onupdate='cascade'), primary_key=True)
