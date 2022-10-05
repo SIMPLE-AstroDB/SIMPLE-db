@@ -1,5 +1,6 @@
 from scripts.ingests.ingest_utils import *
 from scripts.ingests.utils import *
+from astropy.time import Time
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
@@ -14,95 +15,151 @@ source = '2MASS J12560183-1257276'
 other_name_data = [{'source': source, 'other_name': 'VHS 1256-1257b'}]
 db.Names.insert().execute(other_name_data)
 
-# TODO: add Gaia and WISE designations as other names.
+wise_name = [{'source': source, 'other_name': 'WISEA J125601.66-125728.7'}]
+db.Names.insert().execute(wise_name)
 
 # Ingesting missing publications
-ingest_publication(db, bibcode='2018ApJ...869...18M')
+# ingest_publication(db, bibcode='2018ApJ...869...18M') # Miles 2018
+ingest_publication(db, bibcode='2008SPIE.7014E..6XB', publication='ACAM')
+ingest_publication(db, bibcode='2004SPIE.5489..638M', publication='VISTA')
+ingest_publication(db, bibcode='2006SPIE.6269E..0XD', publication='VIRCAM')
 
 # Ingest spectral type
-ingest_spectral_types(db,
-                      source=source,
-                      spectral_type_string = "L7 VL-G",
-                      spectral_types=77,
-                      spectral_type_error=1.5,
-                      references='Gauz15')
+# Already ingested
+# ingest_spectral_types(db,
+#                       source=source,
+#                       spectral_type_string = "L7 VL-G",
+#                       spectral_types=77,
+#                       spectral_type_error=1.5,
+#                       references='Gauz15')
 
 # Ingest spectra
-#ingest_spectra(db, source, data['spectrum'], 'mir', 'Spitzer', 'IRS', 'SL',
+# ingest_spectra(db, source, data['spectrum'], 'mir', 'Spitzer', 'IRS', 'SL',
 #               data['observation_date'],
-#               'Suar22', original_spectra=data['original_spectrum'], wavelength_units='um', flux_units='Jy', comments=data['spectrum comments'])
+#               'Suar22', original_spectra=data['original_spectrum'], wavelength_units='um', flux_units='Jy',
+#               comments=data['spectrum comments'])
 
 # ingest Gauz15 spectrum
 # ingest Miles18 spectrum
 # ingest Miles18 version of Gauz15 data
 
-# TODO: ingest SDSS photometry
-#add SDSS.i and SDSS.z bands to PhotometryFilters table
-SDSS_i = [{'band': 'SDSS.i',
+# ingest SDSS photometry
+# add SDSS.i and SDSS.z bands to PhotometryFilters table
+sdss_i = [{'band': 'SDSS.i',
           'effective_wavelength': '7458',
-           'instrument': 'Sloan',
-           'telescope': 'Sloan',
+           'instrument': 'SDSS',
+           'telescope': 'SDSS',
            'width': '1103'}]
 
-SDSS_z = [{'band': 'SDSS.z',
+sdss_z = [{'band': 'SDSS.z',
            'effective_wavelength': '8923',
-           'instrument': 'Sloan',
-           'telescope': 'Sloan',
+           'instrument': 'SDSS',
+           'telescope': 'SDSS',
            'width': '1164'}]
 
-# add filters to PhotometryFilters table
+sdss_instrument = [{'name': 'SDSS'}]
+db.Instruments.insert().execute(sdss_instrument)
 
-bands = ['SDSS.i', 'SDSS.z']
+db.PhotometryFilters.insert().execute(sdss_i)
+db.PhotometryFilters.insert().execute(sdss_z)
+
+wht_i = [{'band': 'ACAM.i',
+          'effective_wavelength': '7458',
+          'instrument': 'ACAM',
+          'telescope': 'WHT',
+          'width': '1103'}]
+
+wht_z = [{'band': 'ACAM.z',
+          'effective_wavelength': '8923',
+          'instrument': 'ACAM',
+          'telescope': 'WHT',
+          'width': '1164'}]
+
+acam_instrument = [{'name': 'ACAM',
+                    'reference': 'ACAM'}]
+db.Instruments.insert().execute(acam_instrument)
+wht_telescope = [{'name': 'WHT'}]
+db.Telescopes.insert().execute(wht_telescope)
+
+db.PhotometryFilters.insert().execute(wht_i)
+db.PhotometryFilters.insert().execute(wht_z)
+
+bands = ['ACAM.i', 'ACAM.z']
 magnitudes = [22.494, 20.095]
 magnitude_errors = [0.315, 0.090]
+sources = [source] * 2
 
-ingest_photometry(db, source, bands, magnitudes, magnitude_errors, 'Gauz15',
-                      telescope='WHT', instrument='ACAM', epoch='2014-17-07')
+acam_epoch = Time('2014-07-17')
+acam_epoch.format = 'decimalyear'
 
-# TODO: ingest WISE photometry: WISEA J125601.66-125728.7
+ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, 'Gauz15',
+                  telescope='WHT', instrument='ACAM', epoch=acam_epoch.value.astype(np.float32))
+
+# ingest WISE photometry: WISEA J125601.66-125728.7
 wise_bands = ['WISE.W1', 'WISE.W2']
 wise_mags = [13.6, 12.8]
 wise_mag_erros = [0.5, 0.5]
 
-# TODO: ingest VISTA photometry
-vista_y = [{'band': '',
-           'effective_wavelength': '',
-           'instrument': '',
-           'telescope': '',
-           'width': ''}]
+ingest_photometry(db, sources, wise_bands, wise_mags, wise_mag_erros, 'Gauz15',
+                  telescope='WISE')
 
-vista_j = [{'band': '',
-           'effective_wavelength': '',
-           'instrument': '',
-           'telescope': '',
-           'width': ''}]
+# ingest VISTA photometry
+vircam_instrument = [{'name': 'VIRCAM',
+                      'reference': 'VIRCAM'}]
+db.Instruments.insert().execute(vircam_instrument)
 
-vista_h = [{'band': '',
-           'effective_wavelength': '',
-           'instrument': '',
-           'telescope': '',
-           'width': ''}]
+vista_telescope = [{'name': 'VISTA', 'reference': 'VISTA'}]
+db.Telescopes.insert().execute(vista_telescope)
 
-vista_k = [{'band': '',
-           'effective_wavelength': '',
-           'instrument': '',
-           'telescope': '',
-           'width': ''}]
+vista_y = [{'band': 'VISTA.Y',
+            'effective_wavelength': '10196.43',
+            'instrument': 'VIRCAM',
+            'telescope': 'VISTA',
+            'width': '870.63'}]
 
-vista_bands = []
+vista_j = [{'band': 'VISTA.J',
+            'effective_wavelength': '12481.00',
+            'instrument': 'VIRCAM',
+            'telescope': 'VISTA',
+            'width': '1542.53'}]
+
+vista_h = [{'band': 'VISTA.H',
+            'effective_wavelength': '16348.19',
+            'instrument': 'VIRCAM',
+            'telescope': 'VISTA',
+            'width': '2674.02'}]
+
+vista_k = [{'band': 'VISTA.Ks',
+            'effective_wavelength': '21435.46',
+            'instrument': 'VIRCAM',
+            'telescope': 'VISTA',
+            'width': '2793.85'}]
+
+# add filters
+db.PhotometryFilters.insert().execute(vista_y)
+db.PhotometryFilters.insert().execute(vista_j)
+db.PhotometryFilters.insert().execute(vista_h)
+db.PhotometryFilters.insert().execute(vista_k)
+
+sources = [source] * 4
+vista_bands = ['VISTA.Y', 'VISTA.J', 'VISTA.H', 'VISTA.Ks']
 vista_magnitudes = [18.558, 17.136, 15.777, 14.665]
 vista_mag_unc = [0.051, 0.020, 0.015, 0.010]
+vista_epoch = Time('2011-07-01')
+vista_epoch.format = 'decimalyear'
 
-ingest_photometry(db, source, vista_bands, vista_magnitudes, vista_mag_unc, 'Gauz15',
-                      telescope='VISTA', instrument='VIRCAM', epoch='2001-1-07')
+ingest_photometry(db, sources, vista_bands, vista_magnitudes, vista_mag_unc, 'Gauz15',
+                  telescope='VISTA', instrument='VIRCAM', epoch=vista_epoch.value.astype(np.float32))
 
 
 # ingest 2MASS photometry 2MASS J12560183-1257276
 twomass_bands = ['2MASS.J', '2MASS.H', '2MASS.Ks']
 twomass_magnitudes = [16.662, 15.595, 14.568]
 twomass_magnitude_errors = [0.287, 0.209, 0.121]
-ingest_photometry(db, source, twomass_bands, twomass_magnitudes, twomass_magnitude_errors, 'Gauz15',
-                      telescope='2MASS', instrument='2MASS')
+sources = [source] * 3
+
+ingest_photometry(db, sources, twomass_bands, twomass_magnitudes, twomass_magnitude_errors, 'Gauz15',
+                  telescope='2MASS', instrument='2MASS')
 
 
 # Gaia parallax already ingested
