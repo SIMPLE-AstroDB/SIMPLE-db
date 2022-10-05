@@ -519,7 +519,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
     ----------
     db: astrodbkit2.astrodb.Database
         Database object
-    sources: list[str]
+    sources: str or list[str]
         list of source names
     plxs: float or list[float]
         list of parallaxes corresponding to the sources
