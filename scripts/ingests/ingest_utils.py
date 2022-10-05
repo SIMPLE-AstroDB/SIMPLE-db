@@ -534,7 +534,11 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
 
     """
 
-    n_sources = len(sources)
+    if isinstance(sources, str):
+        n_sources = 1
+        sources = [sources]
+    else:
+        n_sources = len(sources)
 
     # Convert single element input value to list
     if isinstance(plx_refs, str):
@@ -792,14 +796,21 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
 
     """
 
-    n_sources = len(sources)
+    if isinstance(sources, str):
+        n_sources = 1
+        sources = [sources]
+    else:
+        n_sources = len(sources)
 
     # Convert single element input values into lists
     input_values = [bands, reference, telescope, instrument, ucds]
     for i, input_value in enumerate(input_values):
         if isinstance(input_value, str):
             input_value = [input_value] * n_sources
-            input_values[i] = input_value
+        elif isinstance(input_value, type(None)):
+            input_value = [None] * n_sources
+        input_values[i] = input_value
+
     bands, reference, telescope, instrument, ucds = input_values
 
     input_float_values = [magnitudes, magnitude_errors]
@@ -810,8 +821,8 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
     magnitudes, magnitude_errors = input_float_values
 
     if n_sources != len(magnitudes) or n_sources != len(magnitude_errors):
-        msg = f"N Sources:, {len(sources)}," \
-              f" N Magnitudes, {len(magnitudes)}, N Mag errors:, {len(magnitude_errors)}," \
+        msg = f"N Sources: {len(sources)}, " \
+              f"N Magnitudes: {len(magnitudes)}, N Mag errors: {len(magnitude_errors)}," \
               f"\nSources, magnitudes, and magnitude error lists should all be same length"
         logger.error(msg)
         raise RuntimeError(msg)
