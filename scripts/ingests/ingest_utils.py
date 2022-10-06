@@ -513,7 +513,7 @@ def convert_spt_string_to_code(spectral_types):
 
 
 # PARALLAXES
-def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
+def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
     """
 
     Parameters
@@ -528,10 +528,11 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
         list of parallaxes uncertainties
     plx_refs: str or list[str]
         list of references for the parallax data
+    comments: str or list[str]
 
     Examples
     ----------
-    > ingest_parallaxes(db, my_sources, my_plx, my_plx_unc, my_plx_refs, verbose = True)
+    > ingest_parallaxes(db, my_sources, my_plx, my_plx_unc, my_plx_refs)
 
     """
 
@@ -544,6 +545,9 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
     # Convert single element input value to list
     if isinstance(plx_refs, str):
         plx_refs = [plx_refs] * n_sources
+
+    if isinstance(comments, str):
+        comments = [comments] * n_sources
 
     input_float_values = [plxs, plx_errs]
     for i, input_value in enumerate(input_float_values):
@@ -616,7 +620,8 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
                           'parallax': plxs[i],
                           'parallax_error': plx_errs[i],
                           'reference': plx_refs[i],
-                          'adopted': adopted}]
+                          'adopted': adopted,
+                          'comments': comments[i]}]
 
         logger.debug(f"{parallax_data}")
 
