@@ -548,6 +548,8 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
 
     if isinstance(comments, str):
         comments = [comments] * n_sources
+    elif isinstance(comments, type(None)):
+        comments = [None] * n_sources
 
     input_float_values = [plxs, plx_errs]
     for i, input_value in enumerate(input_float_values):
@@ -584,7 +586,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
                 logger.debug(f"Duplicate measurement\n, {source_plx_data[dupe_ind]}")
                 continue
             else:
-                logger.debug("!!! Another Proper motion measurement exists,")
+                logger.debug("!!! Another parallax measurement exists,")
                 if logger.level == 10:
                     source_plx_data.pprint_all()
 
@@ -608,7 +610,8 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
                         logger.debug("Old adopted measurement unset")
                         if logger.level == 10:
                             old_adopted_data.pprint_all()
-
+                else:
+                    adopted = False
                 logger.debug(f"The new measurement's adopted flag is:, {adopted}")
         else:
             msg = 'Unexpected state'
@@ -1254,10 +1257,10 @@ def ingest_gaia_parallaxes(db, sources, gaia_data, ref):
                       gaia_parallaxes['parallax_error'], ref)
 
 
-def get_gaiadr3(gaia_id):
+def get_gaiadr3(gaia_id, verbose=True):
     gaia_query_string = f"SELECT parallax, parallax_error FROM gaiadr3.gaia_source WHERE " \
                         f"gaiadr3.gaia_source.source_id = '{gaia_id}'"
-    job_gaia_query = Gaia.launch_job(gaia_query_string, verbose=True)
+    job_gaia_query = Gaia.launch_job(gaia_query_string, verbose=verbose)
 
     gaia_data = job_gaia_query.get_results()
     print(gaia_data)
