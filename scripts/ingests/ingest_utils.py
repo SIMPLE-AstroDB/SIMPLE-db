@@ -4,6 +4,7 @@ Utils functions for use in ingests
 from astroquery.simbad import Simbad
 from astropy.coordinates import SkyCoord
 import astropy.units as u
+from astroquery.gaia import Gaia
 
 import numpy as np
 import numpy.ma as ma
@@ -1240,9 +1241,20 @@ def ingest_gaia_photometry(db, gaia_data, ref):
     return
 
 
-def ingest_gaia_parallaxes(db, gaia_data, ref):
+def ingest_gaia_parallaxes(db, sources, gaia_data, ref):
     unmasked_pi = np.logical_not(gaia_data['parallax'].mask).nonzero()
-    gaia_parallaxes = gaia_data[unmasked_pi]['db_names', 'parallax', 'parallax_error']
-
-    ingest_parallaxes(db, gaia_parallaxes['db_names'], gaia_parallaxes['parallax'],
+    gaia_parallaxes = gaia_data[unmasked_pi]['parallax', 'parallax_error']
+    print(gaia_parallaxes)
+    ingest_parallaxes(db, sources, gaia_parallaxes['parallax'],
                       gaia_parallaxes['parallax_error'], ref)
+
+
+def get_gaiadr3(gaia_id):
+    gaia_query_string = f"SELECT parallax, parallax_error FROM gaiadr3.gaia_source WHERE " \
+                        f"gaiadr3.gaia_source.source_id = '{gaia_id}'"
+    job_gaia_query = Gaia.launch_job(gaia_query_string, verbose=True)
+
+    gaia_data = job_gaia_query.get_results()
+    print(gaia_data)
+
+    return gaia_data

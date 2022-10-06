@@ -151,18 +151,11 @@ vista_epoch.format = 'decimalyear'
 ingest_photometry(db, sources, vista_bands, vista_magnitudes, vista_mag_unc, 'Gauz15',
                   telescope='VISTA', instrument='VIRCAM', epoch=vista_epoch.value.astype(np.float32))
 
+# Ingest Gaia parallax from primary 2MASS J12560215-1257217, Gaia DR3 3526198184723289472
+gaia_data = get_gaiadr3('3526198184723289472')
+print(f"gaia_data:  {gaia_data}")
+ingest_gaia_parallaxes(db, source, gaia_data, 'GaiaDR3')
 
-# ingest 2MASS photometry 2MASS J12560183-1257276
-twomass_bands = ['2MASS.J', '2MASS.H', '2MASS.Ks']
-twomass_magnitudes = [16.662, 15.595, 14.568]
-twomass_magnitude_errors = [0.287, 0.209, 0.121]
-sources = [source] * 3
-
-ingest_photometry(db, sources, twomass_bands, twomass_magnitudes, twomass_magnitude_errors, 'Gauz15',
-                  telescope='2MASS', instrument='2MASS')
-
-
-# Gaia parallax already ingested
 # ingest Gauz15 parallax
 ingest_parallaxes(db, source, 78.8, 6.4, 'Gauz15')
 
