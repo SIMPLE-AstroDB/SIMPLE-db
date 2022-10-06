@@ -23,29 +23,38 @@ db.Names.insert().execute(wise_name)
 ingest_publication(db, bibcode='2008SPIE.7014E..6XB', publication='ACAM')
 ingest_publication(db, bibcode='2004SPIE.5489..638M', publication='VISTA')
 ingest_publication(db, bibcode='2006SPIE.6269E..0XD', publication='VIRCAM')
-ingest_publication(db, doi='https://doi.org/10.1051/0004-6361/202243940', publication='GaiaDR3', ignore_ads=True)
+ingest_publication(db, doi='10.1051/0004-6361/202243940', publication='GaiaDR3',
+                   ignore_ads=True,
+                   description='Gaia Data Release 3: Summary of the contents and survey properties')
 
-# Ingest spectral type
-# Already ingested
-# ingest_spectral_types(db,
-#                       source=source,
-#                       spectral_type_string = "L7 VL-G",
-#                       spectral_types=77,
-#                       spectral_type_error=1.5,
-#                       references='Gauz15')
+# Spectral type already ingested, updated adopted and uncertanties
+stmt = db.SpectralTypes.update()\
+    .where(db.SpectralTypes.c.source == source)\
+    .where(db.SpectralTypes.c.spectral_type_code == 77.0)\
+    .values(adopted=True, spectral_type_error=1.5)
+db.engine.execute(stmt)
 
-# Ingest spectra
+stmt = db.SpectralTypes.update()\
+    .where(db.SpectralTypes.c.source == source)\
+    .where(db.SpectralTypes.c.spectral_type_code == 78.0)\
+    .values(adopted=False, spectral_type_error=2)
+db.engine.execute(stmt)
+
+# TODO: Ingest spectra
 # ingest_spectra(db, source, data['spectrum'], 'mir', 'Spitzer', 'IRS', 'SL',
 #               data['observation_date'],
 #               'Suar22', original_spectra=data['original_spectrum'], wavelength_units='um', flux_units='Jy',
 #               comments=data['spectrum comments'])
-
 # ingest Gauz15 spectrum
 # ingest Miles18 spectrum
 # ingest Miles18 version of Gauz15 data
 
 # ingest SDSS photometry
 # add SDSS.i and SDSS.z bands to PhotometryFilters table
+# not used here, but will be useful for the future
+sdss_instrument = [{'name': 'SDSS'}]
+db.Instruments.insert().execute(sdss_instrument)
+
 sdss_i = [{'band': 'SDSS.i',
           'effective_wavelength': '7458',
            'instrument': 'SDSS',
@@ -58,11 +67,16 @@ sdss_z = [{'band': 'SDSS.z',
            'telescope': 'SDSS',
            'width': '1164'}]
 
-sdss_instrument = [{'name': 'SDSS'}]
-db.Instruments.insert().execute(sdss_instrument)
-
 db.PhotometryFilters.insert().execute(sdss_i)
 db.PhotometryFilters.insert().execute(sdss_z)
+
+#ingest WHT/ACAM SDSS i and z photometry
+acam_instrument = [{'name': 'ACAM',
+                    'reference': 'ACAM'}]
+db.Instruments.insert().execute(acam_instrument)
+
+wht_telescope = [{'name': 'WHT'}]
+db.Telescopes.insert().execute(wht_telescope)
 
 wht_i = [{'band': 'ACAM.i',
           'effective_wavelength': '7458',
@@ -75,12 +89,6 @@ wht_z = [{'band': 'ACAM.z',
           'instrument': 'ACAM',
           'telescope': 'WHT',
           'width': '1164'}]
-
-acam_instrument = [{'name': 'ACAM',
-                    'reference': 'ACAM'}]
-db.Instruments.insert().execute(acam_instrument)
-wht_telescope = [{'name': 'WHT'}]
-db.Telescopes.insert().execute(wht_telescope)
 
 db.PhotometryFilters.insert().execute(wht_i)
 db.PhotometryFilters.insert().execute(wht_z)
@@ -99,9 +107,9 @@ ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, 'Gauz15',
 # ingest WISE photometry: WISEA J125601.66-125728.7
 wise_bands = ['WISE.W1', 'WISE.W2']
 wise_mags = [13.6, 12.8]
-wise_mag_erros = [0.5, 0.5]
+wise_mag_errors = [0.5, 0.5]
 
-ingest_photometry(db, sources, wise_bands, wise_mags, wise_mag_erros, 'Gauz15',
+ingest_photometry(db, sources, wise_bands, wise_mags, wise_mag_errors, 'Gauz15',
                   telescope='WISE')
 
 # ingest VISTA photometry
@@ -136,7 +144,6 @@ vista_k = [{'band': 'VISTA.Ks',
             'telescope': 'VISTA',
             'width': '2793.85'}]
 
-# add filters
 db.PhotometryFilters.insert().execute(vista_y)
 db.PhotometryFilters.insert().execute(vista_j)
 db.PhotometryFilters.insert().execute(vista_h)
