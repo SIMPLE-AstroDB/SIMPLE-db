@@ -31,7 +31,8 @@ ingest_publication(db, doi='10.1051/0004-6361/202243940', publication='GaiaDR3',
 stmt = db.SpectralTypes.update()\
     .where(db.SpectralTypes.c.source == source)\
     .where(db.SpectralTypes.c.spectral_type_code == 77.0)\
-    .values(adopted=True, spectral_type_error=1.5)
+    .values(adopted=True, spectral_type_error=1.5,
+            spectral_type_string='L7 VL-G', regime='nir')
 db.engine.execute(stmt)
 
 stmt = db.SpectralTypes.update()\
@@ -70,7 +71,7 @@ sdss_z = [{'band': 'SDSS.z',
 db.PhotometryFilters.insert().execute(sdss_i)
 db.PhotometryFilters.insert().execute(sdss_z)
 
-#ingest WHT/ACAM SDSS i and z photometry
+# ingest WHT/ACAM SDSS i and z photometry
 acam_instrument = [{'name': 'ACAM',
                     'reference': 'ACAM'}]
 db.Instruments.insert().execute(acam_instrument)
