@@ -23,6 +23,7 @@ db.Names.insert().execute(wise_name)
 ingest_publication(db, bibcode='2008SPIE.7014E..6XB', publication='ACAM')
 ingest_publication(db, bibcode='2004SPIE.5489..638M', publication='VISTA')
 ingest_publication(db, bibcode='2006SPIE.6269E..0XD', publication='VIRCAM')
+ingest_publication(db, doi='https://doi.org/10.1051/0004-6361/202243940', publication='GaiaDR3', ignore_ads=True)
 
 # Ingest spectral type
 # Already ingested
@@ -152,8 +153,10 @@ ingest_photometry(db, sources, vista_bands, vista_magnitudes, vista_mag_unc, 'Ga
                   telescope='VISTA', instrument='VIRCAM', epoch=vista_epoch.value.astype(np.float32))
 
 # Ingest Gaia parallax from primary 2MASS J12560215-1257217, Gaia DR3 3526198184723289472
-gaia_data = get_gaiadr3('3526198184723289472')
+gaia_data = get_gaiadr3('3526198184723289472', verbose=False)
 print(f"gaia_data:  {gaia_data}")
+ingest_parallaxes(db, source, gaia_data['parallax'], gaia_data['parallax_error'], 'GaiaDR3',
+                  comments='adopted from primary VHS J1256-1257')
 ingest_gaia_parallaxes(db, source, gaia_data, 'GaiaDR3')
 
 # ingest Gauz15 parallax
