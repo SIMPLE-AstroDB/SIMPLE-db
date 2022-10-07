@@ -1254,6 +1254,7 @@ def get_gaiadr3(gaia_id, verbose=True):
 
 
 def ingest_gaia_photometry(db, sources, gaia_data, ref):
+    # TODO write some tests
     unmasked_gphot = np.logical_not(gaia_data['phot_g_mean_mag'].mask).nonzero()
     gaia_g_phot = gaia_data[unmasked_gphot]['phot_g_mean_flux', 'phot_g_mean_flux_error',
                                             'phot_g_mean_mag']
@@ -1287,6 +1288,7 @@ def ingest_gaia_photometry(db, sources, gaia_data, ref):
 
 
 def ingest_gaia_parallaxes(db, sources, gaia_data, ref):
+    # TODO write some tests
     unmasked_pi = np.logical_not(gaia_data['parallax'].mask).nonzero()
     gaia_parallaxes = gaia_data[unmasked_pi]['parallax', 'parallax_error']
 
@@ -1295,6 +1297,7 @@ def ingest_gaia_parallaxes(db, sources, gaia_data, ref):
 
 
 def ingest_gaia_pms(db, sources, gaia_data, ref):
+    # TODO write some tests
     unmasked_pms = np.logical_not(gaia_data['pmra'].mask).nonzero()
     pms = gaia_data[unmasked_pms]['pmra', 'pmra_error', 'pmdec', 'pmdec_error']
     refs = [ref] * len(pms)

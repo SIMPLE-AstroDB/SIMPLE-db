@@ -162,7 +162,6 @@ ingest_photometry(db, sources, vista_bands, vista_magnitudes, vista_mag_unc, 'Ga
 
 # Ingest Gaia parallax from primary 2MASS J12560215-1257217, Gaia DR3 3526198184723289472
 gaia_data = get_gaiadr3('3526198184723289472', verbose=False)
-print(f"gaia_data:  {gaia_data}")
 ingest_parallaxes(db, source, gaia_data['parallax'], gaia_data['parallax_error'], 'GaiaDR3',
                   comments='adopted from primary VHS J1256-1257')
 ingest_gaia_parallaxes(db, source, gaia_data, 'GaiaDR3')
