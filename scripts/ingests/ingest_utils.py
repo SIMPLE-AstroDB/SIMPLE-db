@@ -816,7 +816,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
     for i, input_value in enumerate(input_values):
         if isinstance(input_value, str):
             input_value = [input_value] * n_sources
-        elif isinstance(input_value, type(None)):
+        elif input_value is None:
             input_value = [None] * n_sources
         input_values[i] = input_value
 
