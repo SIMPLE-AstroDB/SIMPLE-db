@@ -548,7 +548,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
 
     if isinstance(comments, str):
         comments = [comments] * n_sources
-    elif isinstance(comments, type(None)):
+    elif comments is None:
         comments = [None] * n_sources
 
     input_float_values = [plxs, plx_errs]
