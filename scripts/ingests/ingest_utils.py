@@ -1236,7 +1236,7 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
     return
 
 
-def get_gaiadr3(gaia_id, verbose=True):
+def get_gaiadr3(gaia_id: int, verbose=True):
     # Currently setup just to query one source
     # TODO: add some debug and info messages
     gaia_query_string = f"SELECT " \
