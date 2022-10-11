@@ -4,7 +4,8 @@ Utils functions for use in ingests
 from astroquery.simbad import Simbad
 from astropy.coordinates import SkyCoord
 import astropy.units as u
-
+from astroquery.gaia import Gaia
+from typing import List, Union, Optional
 import numpy as np
 import numpy.ma as ma
 import pandas as pd
@@ -512,14 +513,14 @@ def convert_spt_string_to_code(spectral_types):
 
 
 # PARALLAXES
-def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
+def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
     """
 
     Parameters
     ----------
     db: astrodbkit2.astrodb.Database
         Database object
-    sources: list[str]
+    sources: str or list[str]
         list of source names
     plxs: float or list[float]
         list of parallaxes corresponding to the sources
@@ -527,18 +528,28 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
         list of parallaxes uncertainties
     plx_refs: str or list[str]
         list of references for the parallax data
+    comments: Optional[Union[List[str], str]]
 
     Examples
     ----------
-    > ingest_parallaxes(db, my_sources, my_plx, my_plx_unc, my_plx_refs, verbose = True)
+    > ingest_parallaxes(db, my_sources, my_plx, my_plx_unc, my_plx_refs)
 
     """
 
-    n_sources = len(sources)
+    if isinstance(sources, str):
+        n_sources = 1
+        sources = [sources]
+    else:
+        n_sources = len(sources)
 
     # Convert single element input value to list
     if isinstance(plx_refs, str):
         plx_refs = [plx_refs] * n_sources
+
+    if isinstance(comments, str):
+        comments = [comments] * n_sources
+    elif comments is None:
+        comments = [None] * n_sources
 
     input_float_values = [plxs, plx_errs]
     for i, input_value in enumerate(input_float_values):
@@ -575,7 +586,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
                 logger.debug(f"Duplicate measurement\n, {source_plx_data[dupe_ind]}")
                 continue
             else:
-                logger.debug("!!! Another Proper motion measurement exists,")
+                logger.debug("!!! Another parallax measurement exists,")
                 if logger.level == 10:
                     source_plx_data.pprint_all()
 
@@ -599,7 +610,8 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
                         logger.debug("Old adopted measurement unset")
                         if logger.level == 10:
                             old_adopted_data.pprint_all()
-
+                else:
+                    adopted = False
                 logger.debug(f"The new measurement's adopted flag is:, {adopted}")
         else:
             msg = 'Unexpected state'
@@ -611,7 +623,8 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs):
                           'parallax': plxs[i],
                           'parallax_error': plx_errs[i],
                           'reference': plx_refs[i],
-                          'adopted': adopted}]
+                          'adopted': adopted,
+                          'comments': comments[i]}]
 
         logger.debug(f"{parallax_data}")
 
@@ -792,14 +805,21 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
 
     """
 
-    n_sources = len(sources)
+    if isinstance(sources, str):
+        n_sources = 1
+        sources = [sources]
+    else:
+        n_sources = len(sources)
 
     # Convert single element input values into lists
     input_values = [bands, reference, telescope, instrument, ucds]
     for i, input_value in enumerate(input_values):
         if isinstance(input_value, str):
             input_value = [input_value] * n_sources
-            input_values[i] = input_value
+        elif input_value is None:
+            input_value = [None] * n_sources
+        input_values[i] = input_value
+
     bands, reference, telescope, instrument, ucds = input_values
 
     input_float_values = [magnitudes, magnitude_errors]
@@ -810,8 +830,8 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
     magnitudes, magnitude_errors = input_float_values
 
     if n_sources != len(magnitudes) or n_sources != len(magnitude_errors):
-        msg = f"N Sources:, {len(sources)}," \
-              f" N Magnitudes, {len(magnitudes)}, N Mag errors:, {len(magnitude_errors)}," \
+        msg = f"N Sources: {len(sources)}, " \
+              f"N Magnitudes: {len(magnitudes)}, N Mag errors: {len(magnitude_errors)}," \
               f"\nSources, magnitudes, and magnitude error lists should all be same length"
         logger.error(msg)
         raise RuntimeError(msg)
@@ -1214,3 +1234,76 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
                 raise SimpleError(msg + '\n' + str(e))
 
     return
+
+
+def get_gaiadr3(gaia_id: int, verbose=True):
+    # Currently setup just to query one source
+    # TODO: add some debug and info messages
+    gaia_query_string = f"SELECT " \
+                        f"parallax, parallax_error, " \
+                        f"pmra, pmra_error, pmdec, pmdec_error " \
+                        f"phot_g_mean_flux, phot_g_mean_flux_error, phot_g_mean_mag," \
+                        f"phot_rp_mean_flux, phot_rp_mean_flux_error, phot_rp_mean_mag" \
+                        f"FROM gaiadr3.gaia_source WHERE " \
+                        f"gaiadr3.gaia_source.source_id = '{gaia_id}'"
+    job_gaia_query = Gaia.launch_job(gaia_query_string, verbose=verbose)
+
+    gaia_data = job_gaia_query.get_results()
+
+    return gaia_data
+
+
+def ingest_gaia_photometry(db, sources, gaia_data, ref):
+    # TODO write some tests
+    unmasked_gphot = np.logical_not(gaia_data['phot_g_mean_mag'].mask).nonzero()
+    gaia_g_phot = gaia_data[unmasked_gphot]['phot_g_mean_flux', 'phot_g_mean_flux_error',
+                                            'phot_g_mean_mag']
+
+    unmased_rpphot = np.logical_not(gaia_data['phot_rp_mean_mag'].mask).nonzero()
+    gaia_rp_phot = gaia_data[unmased_rpphot]['phot_rp_mean_flux', 'phot_rp_mean_flux_error',
+                                             'phot_rp_mean_mag']
+
+    # e_Gmag=abs(-2.5/ln(10)*e_FG/FG) from Vizier Note 37 on Gaia DR2 (I/345/gaia2)
+    gaia_g_phot['g_unc'] = np.abs(
+        -2.5 / np.log(10) * gaia_g_phot['phot_g_mean_flux_error'] / gaia_g_phot['phot_g_mean_flux'])
+    gaia_rp_phot['rp_unc'] = np.abs(
+        -2.5 / np.log(10) * gaia_rp_phot['phot_rp_mean_flux_error'] / gaia_rp_phot['phot_rp_mean_flux'])
+
+    if ref == 'GaiaDR2':
+        g_band_name = 'GAIA2.G'
+        rp_band_name = 'GAIA2.Grp'
+    elif ref == 'GaiaEDR3' or ref == 'GaiaDR3':
+        g_band_name = 'GAIA3.G'
+        rp_band_name = 'GAIA3.Grp'
+    else:
+        raise Exception
+
+    ingest_photometry(db, sources, g_band_name, gaia_g_phot['phot_g_mean_mag'], gaia_g_phot['g_unc'],
+                      ref, ucds='em.opt', telescope='Gaia', instrument='Gaia')
+
+    ingest_photometry(db, sources, rp_band_name, gaia_rp_phot['phot_rp_mean_mag'],
+                      gaia_rp_phot['rp_unc'], ref, ucds='em.opt.R', telescope='Gaia', instrument='Gaia')
+
+    return
+
+
+def ingest_gaia_parallaxes(db, sources, gaia_data, ref):
+    # TODO write some tests
+    unmasked_pi = np.logical_not(gaia_data['parallax'].mask).nonzero()
+    gaia_parallaxes = gaia_data[unmasked_pi]['parallax', 'parallax_error']
+
+    ingest_parallaxes(db, sources, gaia_parallaxes['parallax'],
+                      gaia_parallaxes['parallax_error'], ref)
+
+
+def ingest_gaia_pms(db, sources, gaia_data, ref):
+    # TODO write some tests
+    unmasked_pms = np.logical_not(gaia_data['pmra'].mask).nonzero()
+    pms = gaia_data[unmasked_pms]['pmra', 'pmra_error', 'pmdec', 'pmdec_error']
+    refs = [ref] * len(pms)
+
+    ingest_proper_motions(db, sources,
+                          pms['pmra'], pms['pmra_error'],
+                          pms['pmdec'], pms['pmdec_error'],
+                          refs)
+
