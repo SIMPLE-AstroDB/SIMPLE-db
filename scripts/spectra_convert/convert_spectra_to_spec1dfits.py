@@ -1,4 +1,5 @@
 import os
+import logging
 from pandas import to_datetime
 from astropy.time import Time
 from urllib.parse import unquote
@@ -7,6 +8,7 @@ import astropy.io.fits as fits
 from astropy.table import Table
 import warnings
 
+logger = logging.getLogger('SIMPLE')
 warnings.filterwarnings('ignore')
 
 def convert_to_fits(spectrum_info_all):
@@ -16,6 +18,7 @@ def convert_to_fits(spectrum_info_all):
 
     spectrum_path = spectrum_info_all['file_path']
     file = os.path.basename(spectrum_path)
+    logger.info(f'Trying to convert {object_name}: {file}')
 
     spectrum_info_all['history1'] = ascii(f'Original file: {file}')  # gives original name of file
     spectrum_info_all['history2'] = spectrum_info_all['generated_history']  # shows where file came from
@@ -27,7 +30,13 @@ def convert_to_fits(spectrum_info_all):
     flux_data = spectrum_table['flux']
     flux_unc = spectrum_table['flux_uncertainty']
 
+    logger.debug(wavelength_data.info())
+    logger.debug(min(wavelength_data), max(wavelength_data))
+    logger.debug(flux_data)
+    logger.debug(flux_unc)
+
     spectrum_data_out = Table({'wavelength': wavelength_data, 'flux': flux_data, 'flux_uncertainty': flux_unc})
+    logger.debug(spectrum_data_out.info())
 
     hdu1 = fits.BinTableHDU(data=spectrum_data_out)
 
