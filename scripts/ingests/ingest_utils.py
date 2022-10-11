@@ -5,7 +5,7 @@ from astroquery.simbad import Simbad
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.gaia import Gaia
-
+from typing import List, Union, Optional
 import numpy as np
 import numpy.ma as ma
 import pandas as pd
