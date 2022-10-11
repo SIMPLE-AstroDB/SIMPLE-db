@@ -528,7 +528,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
         list of parallaxes uncertainties
     plx_refs: str or list[str]
         list of references for the parallax data
-    comments: str or list[str]
+    comments: Optional[Union[List[str], str]]
 
     Examples
     ----------
