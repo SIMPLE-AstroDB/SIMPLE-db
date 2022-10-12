@@ -74,7 +74,11 @@ osiris_spectrum_info = {
     # "stop_time": # [MJD]
     # "exposure_time": , # [seconds]
     'observation_date': '2014-06-03' ,  # YYYY-MM-DD
-    'spectrum_comments': 'R300 grating, R~130'
+    'spectrum_comments': 'R300 grating, R~130',
+    'title': 'Discovery of a Young Planetary Mass Companion to the Nearby M Dwarf VHS J125601.92-125723.9',  # Title of Paper
+    'author': 'Gauza et al.',  # Authors of paper
+    'bibcode': '2015ApJ...804...96G',  # Bibcode of paper
+    'doi': '10.1088/0004-637X/804/2/96'  # DOI of paper
 }
 osiris_spectrum_info_all = {**dataset_info, **osiris_spectrum_info}
 convert_to_fits(osiris_spectrum_info_all)
@@ -92,7 +96,11 @@ sofi_spectrum_info = {
     # "stop_time": # [MJD]
     # "exposure_time": , # [seconds]
     'observation_date': '2014-03-12' ,  # YYYY-MM-DD
-    'spectrum_comments': 'blue and red grisms, covering 950-2520 nm'
+    'spectrum_comments': 'blue and red grisms, covering 950-2520 nm',
+    'title': 'Discovery of a Young Planetary Mass Companion to the Nearby M Dwarf VHS J125601.92-125723.9',  # Title of Paper
+    'author': 'Gauza et al.',  # Authors of paper
+    'bibcode': '2015ApJ...804...96G',  # Bibcode of paper
+    'doi': '10.1088/0004-637X/804/2/96'  # DOI of paper
 }
 sofi_spectrum_info_all = {**dataset_info, **sofi_spectrum_info}
 convert_to_fits(sofi_spectrum_info_all)
