@@ -928,14 +928,18 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     """
 
     # Convert single value input values to lists
+    if isinstance(sources, str):
+        sources = [sources]
+
+    if isinstance(spectra, str):
+        spectra = [spectra]
+
     input_values = [regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references,
                     comments, other_references]
     for i, input_value in enumerate(input_values):
         if isinstance(input_value, str):
-            print, input_value
             input_values[i] = [input_value] * len(sources)
         elif isinstance(input_value, type(None)):
-            print, input_value
             input_values[i] = [None] * len(sources)
     regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references, comments, other_references = input_values
 
