@@ -1,23 +1,21 @@
 from convert_spectra_to_spec1dfits import *
 from astropy.table import Table
 import astropy.units as u
-import logging
 
-
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 # Function for reading in the VHS 1256b files from Miles 2018
 def nirspec_spectrum_loader(spectrum_path):
-    print(spectrum_path)
     spectrum_table = Table.read(spectrum_path, format='ascii',
                                 names=['wavelength', 'flux', 'flux_uncertainty'],
                                 units=[u.micron, u.watt/u.cm/u.cm/u.micron, u.watt/u.cm/u.cm/u.micron ])
-    return spectrum_table
+    good_data = spectrum_table['wavelength'] < 4.0
+
+    return spectrum_table[good_data]
 
 
 def osiris_spectrum_loader(spectrum_path):
-    print(spectrum_path)
     spectrum_table = Table.read(spectrum_path, format='ascii',
                                 names=['wavelength', 'flux', 'flux_uncertainty'],
                                 units=[u.angstrom, u.watt/u.cm/u.cm/u.angstrom, u.watt/u.cm/u.cm/u.angstrom ])
@@ -62,7 +60,7 @@ NIRSPEC_spectrum_info = {
 }
 
 nirspec_spectrum_info_all = {**dataset_info, **NIRSPEC_spectrum_info}
-# convert_to_fits(nirspec_spectrum_info_all)
+convert_to_fits(nirspec_spectrum_info_all)
 
 # Optical OSIRIS spectrum
 osiris_spectrum_info = {
@@ -110,21 +108,18 @@ files = [
     f"{osiris_spectrum_info_all['fits_data_dir']}vhs1256b_spectra_Figure8_Miles2018.fits",
     f"{osiris_spectrum_info_all['fits_data_dir']}vhs1256b_opt_Osiris.fits",
     f"{sofi_spectrum_info_all['fits_data_dir']}vhs1256b_nir_SOFI.fits",
-
     ]
 
 for fits_file in files:
-    print(fits_file)
     spec1d = Spectrum1D.read(fits_file, format='tabular-fits')
     name = spec1d.meta['SPECTRUM']
-
+    header = fits.getheader(fits_file)
+    logger.info(f'Plotting spectrum of {name} stored in {fits_file}')
 
     ax = plt.subplots()[1]
     # ax.plot(spec1d.spectral_axis, spec1d.flux)
     ax.errorbar(spec1d.spectral_axis.value, spec1d.flux.value, yerr=spec1d.uncertainty.array, fmt='-')
     ax.set_xlabel(f"Dispersion ({spec1d.spectral_axis.unit})")
     ax.set_ylabel(f"Flux ({spec1d.flux.unit})")
-    # plt.xlim([min(spec1d.spectral_axis.value),max(spec1d.spectral_axis.value)])
-    # plt.ylim([0,max(spec1d.flux[0:400]).value*1.50])
     plt.title(name)
     plt.show()
