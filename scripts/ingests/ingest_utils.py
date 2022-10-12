@@ -10,7 +10,7 @@ import numpy as np
 import numpy.ma as ma
 import pandas as pd
 from sqlalchemy import func, null
-
+from astropy.io import fits
 import dateutil
 import re
 import requests
@@ -631,6 +631,8 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
         try:
             db.Parallaxes.insert().execute(parallax_data)
             n_added += 1
+            logger.info(f"Parallax added to database: \n "
+                        f"{parallax_data}")
         except sqlalchemy.exc.IntegrityError:
             msg = "The source may not exist in Sources table.\n" \
                   "The parallax reference may not exist in Publications table. " \
@@ -639,7 +641,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
             logger.error(msg)
             raise SimpleError(msg)
 
-    logger.info(f"Parallaxes added to database: {n_added}")
+    logger.info(f"Total Parallaxes added to database: {n_added} \n")
 
     return
 
@@ -874,6 +876,8 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
         try:
             db.Photometry.insert().execute(photometry_data)
             n_added += 1
+            logger.info(f"Photometry measurement added: \n"
+                        f"{photometry_data}")
         except sqlalchemy.exc.IntegrityError:
             msg = "The source may not exist in Sources table.\n" \
                   "The reference may not exist in the Publications table. " \
@@ -882,7 +886,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
             logger.error(msg)
             raise SimpleError(msg)
 
-    logger.info(f"Photometry measurements added to database: {n_added}")
+    logger.info(f"Total photometry measurements added to database: {n_added} \n")
 
     return
 
@@ -914,9 +918,9 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         List or string
     original_spectra: list[str]
         List of filenames corresponding to original spectra files
-    wavelength_units: list[str] or Quantity, optional
+    wavelength_units: str or list[str] or Quantity, optional
         List or string
-    flux_units: list[str] or Quantity, optional
+    flux_units: str or list[str] or Quantity, optional
         List or string
     wavelength_order: list[int], optional
     comments: list[str], optional
@@ -1245,9 +1249,9 @@ def get_gaiadr3(gaia_id: int, verbose=True):
     # TODO: add some debug and info messages
     gaia_query_string = f"SELECT " \
                         f"parallax, parallax_error, " \
-                        f"pmra, pmra_error, pmdec, pmdec_error " \
-                        f"phot_g_mean_flux, phot_g_mean_flux_error, phot_g_mean_mag," \
-                        f"phot_rp_mean_flux, phot_rp_mean_flux_error, phot_rp_mean_mag" \
+                        f"pmra, pmra_error, pmdec, pmdec_error, " \
+                        f"phot_g_mean_flux, phot_g_mean_flux_error, phot_g_mean_mag, " \
+                        f"phot_rp_mean_flux, phot_rp_mean_flux_error, phot_rp_mean_mag " \
                         f"FROM gaiadr3.gaia_source WHERE " \
                         f"gaiadr3.gaia_source.source_id = '{gaia_id}'"
     job_gaia_query = Gaia.launch_job(gaia_query_string, verbose=verbose)
@@ -1311,3 +1315,34 @@ def ingest_gaia_pms(db, sources, gaia_data, ref):
                           pms['pmdec'], pms['pmdec_error'],
                           refs)
 
+
+def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
+    """
+    Ingests spectrum using data found in the header
+
+    Parameters
+    ----------
+    db
+    source
+    spectrum_fits_file
+
+    """
+    header = fits.getheader(spectrum_fits_file)
+    regime = header['SPECBAND']
+    telescope = header['TELESCOP']
+    instrument = header['INSTRUME']
+    try:
+        mode = header['MODE']
+    except KeyError:
+        mode = None
+    obs_date = header['DATE-OBS']
+    doi = header['REFERENC']
+    data_header = fits.getheader(spectrum_fits_file, 1)
+    w_unit = data_header['TUNIT1']
+    flux_unit = data_header['TUNIT2']
+
+    reference_match = db.query(db.Publications.c.publication).filter(db.Publications.c.doi == doi).table()
+    reference = reference_match['publication'][0]
+
+    # ingest_spectra(db, source, spectrum_fits_file, regime, telescope, instrument, None, obs_date, reference,
+    #               wavelength_units=w_unit, flux_units=flux_unit)
