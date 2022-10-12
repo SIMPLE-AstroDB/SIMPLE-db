@@ -2,10 +2,7 @@ from convert_spectra_to_spec1dfits import *
 from astropy.table import Table
 import astropy.units as u
 
-
-logger = logging.getLogger('SIMPLE')
 logger.setLevel(logging.INFO)
-
 
 # Function for reading in the VHS 1256b files from Miles 2018
 def nirspec_spectrum_loader(spectrum_path):

@@ -25,6 +25,8 @@ logger.setLevel(logging.INFO)
 
 
 def convert_to_fits(spectrum_info_all):
+    # TODO: add docstring with expected keywords
+    # TODO: add error handling for expected keywords
     object_name = unquote(spectrum_info_all['object_name'])
     spectrum_info_all['object_name'] = object_name
 
@@ -34,7 +36,6 @@ def convert_to_fits(spectrum_info_all):
 
     spectrum_info_all['history1'] = ascii(f'Original file: {file}')  # gives original name of file
     spectrum_info_all['history2'] = spectrum_info_all['generated_history']  # shows where file came from
-
 
     loader_function = spectrum_info_all['loader_function']
     spectrum_table = loader_function(spectrum_path)
@@ -48,6 +49,7 @@ def convert_to_fits(spectrum_info_all):
     spectrum_data_out = Table({'wavelength': wavelength, 'flux': flux, 'flux_uncertainty': flux_unc})
     # logger.debug(spectrum_data_out.info())
 
+    # NOT USING THIS. Writing out HDUs instead
     # Make the Spectrum1D object
     # wavelength_quantity = wavelength.data*wavelength.unit
     # flux_quantity = flux.data*flux.unit
@@ -72,6 +74,7 @@ def convert_to_fits(spectrum_info_all):
     except:
         raise
 
+    # NOT USING. Writing out FITS file instead.
     # fits1d_filename = f"{spectrum_info_all['fits_data_dir']}{file_root}_1d.fits"
     # try:
     #     spectrum.write(fits1d_filename, format='tabular-fits', overwrite=True, update_header=True)
