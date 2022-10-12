@@ -6,7 +6,7 @@ from astropy.io import fits
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
@@ -42,32 +42,18 @@ stmt = db.SpectralTypes.update()\
     .values(adopted=False, spectral_type_error=2)
 db.engine.execute(stmt)
 
+# ingest Gauz15 nir SofI spectrum
 nir_spectrum_file = '/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/vhs1256b/vhs1256b_nir_SOFI.fits'
-
-def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
-    header = fits.getheader(spectrum_fits_file)
-    regime = header['SPECBAND']
-    telescope = header['TELESCOP']
-    instrument = header['INSTRUME']
-    obs_date = header['DATE-OBS']
-    doi = header['REFERENC']
-    # w_unit = header['TUNIT1']
-    # flux_unit = header['TUNIT2']
-
-    reference_match = db.query(db.Publications.c.publication).filter(db.Publications.c.doi == doi).table()
-    reference = reference_match['publication'][0]
-
-    ingest_spectra(db, source, spectrum_fits_file, regime, telescope, instrument, None, obs_date, 'Gauz15')
-
 ingest_spectrum_from_fits(db, source, nir_spectrum_file)
 
-# ingest_spectra(db, source, data['spectrum'], 'mir', 'Spitzer', 'IRS', 'SL',
-#               data['observation_date'],
-#               'Suar22', original_spectra=data['original_spectrum'], wavelength_units='um', flux_units='Jy',
-#               comments=data['spectrum comments'])
-# ingest Gauz15 spectrum
-# ingest Miles18 spectrum
-# ingest Miles18 version of Gauz15 data
+# ingest Gauz15 optical OSIRIS spectrum
+optical_spectrum_file = '/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/vhs1256b/vhs1256b_opt_Osiris.fits'
+ingest_spectrum_from_fits(db, source, optical_spectrum_file)
+
+# ingest Miles18 Keck/NIRSPEC spectrum
+keck_nir_spectrum_file = \
+    '/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/vhs1256b/vhs1256b_spectra_Figure8_Miles2018.fits'
+ingest_spectrum_from_fits(db, source, keck_nir_spectrum_file)
 
 # ingest SDSS photometry
 # add SDSS.i and SDSS.z bands to PhotometryFilters table
@@ -183,7 +169,6 @@ ingest_photometry(db, sources, vista_bands, vista_magnitudes, vista_mag_unc, 'Ga
 gaia_data = get_gaiadr3('3526198184723289472', verbose=False)
 ingest_parallaxes(db, source, gaia_data['parallax'], gaia_data['parallax_error'], 'GaiaDR3',
                   comments='adopted from primary VHS J1256-1257')
-ingest_gaia_parallaxes(db, source, gaia_data, 'GaiaDR3')
 
 # ingest Gauz15 parallax
 ingest_parallaxes(db, source, 78.8, 6.4, 'Gauz15')
