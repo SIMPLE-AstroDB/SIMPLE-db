@@ -50,8 +50,12 @@ def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
     telescope = header['TELESCOP']
     instrument = header['INSTRUME']
     obs_date = header['DATE-OBS']
+    doi = header['REFERENC']
     # w_unit = header['TUNIT1']
     # flux_unit = header['TUNIT2']
+
+    reference_match = db.query(db.Publications.c.publication).filter(db.Publications.c.doi == doi).table()
+    reference = reference_match['publication'][0]
 
     ingest_spectra(db, source, spectrum_fits_file, regime, telescope, instrument, None, obs_date, 'Gauz15')
 
