@@ -1,6 +1,7 @@
 from scripts.ingests.ingest_utils import *
 from scripts.ingests.utils import *
 from astropy.time import Time
+from astropy.io import fits
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
@@ -19,7 +20,7 @@ wise_name = [{'source': source, 'other_name': 'WISEA J125601.66-125728.7'}]
 db.Names.insert().execute(wise_name)
 
 # Ingesting missing publications
-# ingest_publication(db, bibcode='2018ApJ...869...18M') # Miles 2018
+ingest_publication(db, bibcode='2018ApJ...869...18M') # Miles 2018
 ingest_publication(db, bibcode='2008SPIE.7014E..6XB', publication='ACAM')
 ingest_publication(db, bibcode='2004SPIE.5489..638M', publication='VISTA')
 ingest_publication(db, bibcode='2006SPIE.6269E..0XD', publication='VIRCAM')
@@ -41,7 +42,21 @@ stmt = db.SpectralTypes.update()\
     .values(adopted=False, spectral_type_error=2)
 db.engine.execute(stmt)
 
-# TODO: Ingest spectra
+nir_spectrum_file = '/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/vhs1256b/vhs1256b_nir_SOFI.fits'
+
+def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
+    header = fits.getheader(spectrum_fits_file)
+    regime = header['SPECBAND']
+    telescope = header['TELESCOP']
+    instrument = header['INSTRUME']
+    obs_date = header['DATE-OBS']
+    # w_unit = header['TUNIT1']
+    # flux_unit = header['TUNIT2']
+
+    ingest_spectra(db, source, spectrum_fits_file, regime, telescope, instrument, None, obs_date, 'Gauz15')
+
+ingest_spectrum_from_fits(db, source, nir_spectrum_file)
+
 # ingest_spectra(db, source, data['spectrum'], 'mir', 'Spitzer', 'IRS', 'SL',
 #               data['observation_date'],
 #               'Suar22', original_spectra=data['original_spectrum'], wavelength_units='um', flux_units='Jy',
