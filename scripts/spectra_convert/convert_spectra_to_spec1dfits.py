@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 from pandas import to_datetime
 from astropy.time import Time
@@ -7,9 +8,20 @@ from datetime import date
 import astropy.io.fits as fits
 from astropy.table import Table
 import numpy as np
-from scripts.ingests.utils import *
+from matplotlib import pyplot as plt
+from specutils import Spectrum1D
 
 logger = logging.getLogger('SIMPLE')
+
+# Logger setup
+logger.propagate = False  # prevents duplicated logging messages
+LOGFORMAT = logging.Formatter('%(asctime)s %(levelname)s: %(message)s', datefmt='%m/%d/%Y %I:%M:%S%p')
+ch = logging.StreamHandler(stream=sys.stdout)
+ch.setFormatter(LOGFORMAT)
+# To prevent duplicate handlers, only add if they haven't been set previously
+if not len(logger.handlers):
+    logger.addHandler(ch)
+logger.setLevel(logging.INFO)
 
 
 def convert_to_fits(spectrum_info_all):
@@ -23,37 +35,63 @@ def convert_to_fits(spectrum_info_all):
     spectrum_info_all['history1'] = ascii(f'Original file: {file}')  # gives original name of file
     spectrum_info_all['history2'] = spectrum_info_all['generated_history']  # shows where file came from
 
+
     loader_function = spectrum_info_all['loader_function']
     spectrum_table = loader_function(spectrum_path)
 
-    wavelength_data = spectrum_table['wavelength']
-    flux_data = spectrum_table['flux']
+    wavelength = spectrum_table['wavelength']
+    flux = spectrum_table['flux']
     flux_unc = spectrum_table['flux_uncertainty']
 
-    spectrum_data_out = Table({'wavelength': wavelength_data, 'flux': flux_data, 'flux_uncertainty': flux_unc})
+    header = compile_header(wavelength, **spectrum_info_all)
+
+    spectrum_data_out = Table({'wavelength': wavelength, 'flux': flux, 'flux_uncertainty': flux_unc})
     # logger.debug(spectrum_data_out.info())
 
+    # Make the Spectrum1D object
+    # wavelength_quantity = wavelength.data*wavelength.unit
+    # flux_quantity = flux.data*flux.unit
+    # flux_unc_quantity = flux_unc.data*flux_unc.unit
+    # spectrum = Spectrum1D(spectral_axis=wavelength_quantity, flux=flux_quantity, meta=header)
+
+    # Make the HDUs
     hdu1 = fits.BinTableHDU(data=spectrum_data_out)
-
-    # Write the headers
     hdu1.header['EXTNAME'] = 'SPECTRUM'
-    hdu1.header.set('Spectrum', object_name, 'Object Name')
-
-    header = compile_header(wavelength_data, **spectrum_info_all)
+    hdu1.header.set('OBJECT', object_name, 'Object Name')
     hdu0 = fits.PrimaryHDU(header=header)
 
     # Write the MEF with the header and the data
     spectrum_mef = fits.HDUList([hdu0, hdu1])  # hdu0 is header and hdu1 is data
 
-    file_root = os.path.splitext(file)[0]  # split the path name into a pair root and ext so the root is just the ext [0] is the name of the file wihtout the .csv
-    fits_filename = spectrum_info_all['fits_data_dir'] + file_root + '.fits'  # turns into fits files by putting it in new folder that we defined at begining and adding name of file then .fits
+    file_root = os.path.splitext(file)[0]
+    fits_filename = spectrum_info_all['fits_data_dir'] + file_root + '.fits'
     try:
         spectrum_mef.writeto(fits_filename, overwrite=True, output_verify="exception")
         # TODO: think about overwrite
-        # SHOULD BE: spectrum.write(fits_filename, format='tabular-fits', overwrite=True, update_header=True)
         logger.info(f'Wrote {fits_filename}')
     except:
         raise
+
+    # fits1d_filename = f"{spectrum_info_all['fits_data_dir']}{file_root}_1d.fits"
+    # try:
+    #     spectrum.write(fits1d_filename, format='tabular-fits', overwrite=True, update_header=True)
+    # except:
+    #    raise
+
+    # Read spectrum back in and plot
+    # TODO: Make plotting optional
+    spec1d = Spectrum1D.read(fits_filename, format='tabular-fits')
+    header = fits.getheader(fits_filename)
+    name = header['OBJECT']
+    logger.info(f'Plotting spectrum of {name} stored in {fits_filename}')
+
+    ax = plt.subplots()[1]
+    # ax.plot(spec1d.spectral_axis, spec1d.flux)
+    ax.errorbar(spec1d.spectral_axis.value, spec1d.flux.value, yerr=spec1d.uncertainty.array, fmt='-')
+    ax.set_xlabel(f"Dispersion ({spec1d.spectral_axis.unit})")
+    ax.set_ylabel(f"Flux ({spec1d.flux.unit})")
+    plt.title(f"{name} {header['TELESCOP']} {header['INSTRUME']}")
+    plt.show()
 
     return
 
@@ -138,8 +176,6 @@ def compile_header(wavelength_data, **spectra_data_info):
     w_max = max(wavelength_data).astype(np.single)
     width = (w_max - w_min).astype(np.single)
     w_mid = ((w_max + w_min)/2).astype(np.single)
-
-    print(w_min.dtype, w_mid.dtype)
 
     try:
         header.set('SPECBAND', spectra_data_info['bandpass'], 'SED.bandpass')

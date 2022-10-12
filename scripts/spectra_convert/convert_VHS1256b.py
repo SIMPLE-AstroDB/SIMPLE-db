@@ -2,6 +2,7 @@ from convert_spectra_to_spec1dfits import *
 from astropy.table import Table
 import astropy.units as u
 
+
 logger = logging.getLogger('SIMPLE')
 logger.setLevel(logging.INFO)
 
@@ -98,29 +99,3 @@ sofi_spectrum_info = {
 }
 sofi_spectrum_info_all = {**dataset_info, **sofi_spectrum_info}
 convert_to_fits(sofi_spectrum_info_all)
-
-
-# Plot the newly converted files using specutils
-from astropy.io import fits
-from matplotlib import pyplot as plt
-from specutils import Spectrum1D
-
-files = [
-    f"{osiris_spectrum_info_all['fits_data_dir']}vhs1256b_spectra_Figure8_Miles2018.fits",
-    f"{osiris_spectrum_info_all['fits_data_dir']}vhs1256b_opt_Osiris.fits",
-    f"{sofi_spectrum_info_all['fits_data_dir']}vhs1256b_nir_SOFI.fits",
-    ]
-
-for fits_file in files:
-    spec1d = Spectrum1D.read(fits_file, format='tabular-fits')
-    name = spec1d.meta['SPECTRUM']
-    header = fits.getheader(fits_file)
-    logger.info(f'Plotting spectrum of {name} stored in {fits_file}')
-
-    ax = plt.subplots()[1]
-    # ax.plot(spec1d.spectral_axis, spec1d.flux)
-    ax.errorbar(spec1d.spectral_axis.value, spec1d.flux.value, yerr=spec1d.uncertainty.array, fmt='-')
-    ax.set_xlabel(f"Dispersion ({spec1d.spectral_axis.unit})")
-    ax.set_ylabel(f"Flux ({spec1d.flux.unit})")
-    plt.title(name)
-    plt.show()
