@@ -6,15 +6,13 @@ from urllib.parse import unquote
 from datetime import date
 import astropy.io.fits as fits
 from astropy.table import Table
-import warnings
 
 logger = logging.getLogger('SIMPLE')
-warnings.filterwarnings('ignore')
+
 
 def convert_to_fits(spectrum_info_all):
     object_name = unquote(spectrum_info_all['object_name'])
     spectrum_info_all['object_name'] = object_name
-    # print(object_name) # TODO: change to Logger.info
 
     spectrum_path = spectrum_info_all['file_path']
     file = os.path.basename(spectrum_path)
@@ -30,13 +28,8 @@ def convert_to_fits(spectrum_info_all):
     flux_data = spectrum_table['flux']
     flux_unc = spectrum_table['flux_uncertainty']
 
-    logger.debug(wavelength_data.info())
-    logger.debug(min(wavelength_data), max(wavelength_data))
-    logger.debug(flux_data)
-    logger.debug(flux_unc)
-
     spectrum_data_out = Table({'wavelength': wavelength_data, 'flux': flux_data, 'flux_uncertainty': flux_unc})
-    logger.debug(spectrum_data_out.info())
+    # logger.debug(spectrum_data_out.info())
 
     hdu1 = fits.BinTableHDU(data=spectrum_data_out)
 
@@ -53,10 +46,10 @@ def convert_to_fits(spectrum_info_all):
     file_root = os.path.splitext(file)[0]  # split the path name into a pair root and ext so the root is just the ext [0] is the name of the file wihtout the .csv
     fits_filename = spectrum_info_all['fits_data_dir'] + file_root + '.fits'  # turns into fits files by putting it in new folder that we defined at begining and adding name of file then .fits
     try:
-        spectrum_mef.writeto(fits_filename, overwrite=True)
+        spectrum_mef.writeto(fits_filename, overwrite=True, output_verify="exception")
         # TODO: think about overwrite
         # SHOULD BE: spectrum.write(fits_filename, format='tabular-fits', overwrite=True, update_header=True)
-        # TODO: logger.info(f'Wrote {fits_filename}')
+        logger.info(f'Wrote {fits_filename}')
     except:
         raise
 
