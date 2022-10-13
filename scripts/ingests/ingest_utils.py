@@ -1137,7 +1137,12 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
           f" Suspected duplicates skipped: {n_dupes}\n" \
           f" Missing Telescope/Instrument/Mode: {n_missing_instrument} \n" \
           f" Spectra skipped for unknown reason: {n_skipped} \n"
-    logger.info(msg)
+    if n_spectra == 1:
+        logger.info(f"Added {source} : \n"
+                    f"{row_data}")
+    else:
+        logger.info(msg)
+
 
     if n_added + n_dupes + n_blank + n_skipped + n_missing_instrument != n_spectra:
         msg = "Numbers don't add up: "
@@ -1152,7 +1157,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     telescope_spec_count = db.query(Spectra.telescope, func.count(Spectra.telescope)). \
         group_by(Spectra.telescope).order_by(func.count(Spectra.telescope).desc()).limit(20).all()
 
-    logger.info(f'Spectra in the database: \n {spec_count} \n {spec_ref_count} \n {telescope_spec_count}')
+    # logger.info(f'Spectra in the database: \n {spec_count} \n {spec_ref_count} \n {telescope_spec_count}')
 
     return
 
