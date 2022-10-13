@@ -180,7 +180,11 @@ def test_proper_motion_refs(db):
 def test_parallax_refs(db):
     # Test total odopted measuruments
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.adopted == 1).astropy()
-    assert len(t) == 1441, f'found {len(t)} adopted parallax measuruments.'
+    assert len(t) == 1442, f'found {len(t)} adopted parallax measuruments.'
+
+    ref = 'GaiaDR3'
+    t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
+    assert len(t) == 1, f'found {len(t)} parallax reference entries for {ref}'
 
     ref = 'GaiaDR2'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
@@ -224,11 +228,11 @@ def test_photometry_bands(db):
 
     band = 'WISE.W1'
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 459, f'found {len(t)} photometry measurements for {band}'
+    assert len(t) == 460, f'found {len(t)} photometry measurements for {band}'
 
     band = 'WISE.W2'
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 459, f'found {len(t)} photometry measurements for {band}'
+    assert len(t) == 460, f'found {len(t)} photometry measurements for {band}'
 
     band = 'WISE.W3'
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
@@ -312,7 +316,7 @@ def test_missions(db):
 def test_spectra(db):
     regime = 'optical'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 718, f'found {len(t)} spectra in the {regime} regime'
+    assert len(t) == 719, f'found {len(t)} spectra in the {regime} regime'
 
     regime = 'em.IR.NIR'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
@@ -324,7 +328,7 @@ def test_spectra(db):
 
     regime = 'nir'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 456, f'found {len(t)} spectra in the {regime} regime'
+    assert len(t) == 458, f'found {len(t)} spectra in the {regime} regime'
 
     regime = 'mir'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
@@ -381,11 +385,11 @@ def test_spectral_types(db):
 
     regime = 'nir'
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 41, f'found {len(t)} spectral types in the {regime} regime'
+    assert len(t) == 42, f'found {len(t)} spectral types in the {regime} regime'
 
     regime = 'nir_UCD'
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 2081, f'found {len(t)} spectral types in the {regime} regime'
+    assert len(t) == 2080, f'found {len(t)} spectral types in the {regime} regime'
 
     regime = 'mir'
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
