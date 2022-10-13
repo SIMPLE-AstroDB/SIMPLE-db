@@ -17,10 +17,32 @@
             "other_name": "2MASS J12560183-1257276"
         },
         {
+            "other_name": "VHS 1256-1257b"
+        },
+        {
             "other_name": "VHS J125601.92-125723.9 b"
         },
         {
             "other_name": "VHS J125601.92-125723.9b"
+        },
+        {
+            "other_name": "WISEA J125601.66-125728.7"
+        }
+    ],
+    "Parallaxes": [
+        {
+            "parallax": 47.2733194934019,
+            "parallax_error": 0.47309374809265137,
+            "adopted": true,
+            "comments": "adopted from primary VHS J1256-1257",
+            "reference": "GaiaDR3"
+        },
+        {
+            "parallax": 78.8,
+            "parallax_error": 6.4,
+            "adopted": false,
+            "comments": null,
+            "reference": "Gauz15"
         }
     ],
     "Photometry": [
@@ -56,6 +78,94 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "ACAM.i",
+            "ucd": null,
+            "magnitude": 22.494,
+            "magnitude_error": 0.315,
+            "telescope": "WHT",
+            "instrument": "ACAM",
+            "epoch": 2014.5396728515625,
+            "comments": null,
+            "reference": "Gauz15"
+        },
+        {
+            "band": "ACAM.z",
+            "ucd": null,
+            "magnitude": 20.095,
+            "magnitude_error": 0.09,
+            "telescope": "WHT",
+            "instrument": "ACAM",
+            "epoch": 2014.5396728515625,
+            "comments": null,
+            "reference": "Gauz15"
+        },
+        {
+            "band": "VISTA.H",
+            "ucd": null,
+            "magnitude": 15.777,
+            "magnitude_error": 0.015,
+            "telescope": "VISTA",
+            "instrument": "VIRCAM",
+            "epoch": 2011.495849609375,
+            "comments": null,
+            "reference": "Gauz15"
+        },
+        {
+            "band": "VISTA.J",
+            "ucd": null,
+            "magnitude": 17.136,
+            "magnitude_error": 0.02,
+            "telescope": "VISTA",
+            "instrument": "VIRCAM",
+            "epoch": 2011.495849609375,
+            "comments": null,
+            "reference": "Gauz15"
+        },
+        {
+            "band": "VISTA.Ks",
+            "ucd": null,
+            "magnitude": 14.665,
+            "magnitude_error": 0.01,
+            "telescope": "VISTA",
+            "instrument": "VIRCAM",
+            "epoch": 2011.495849609375,
+            "comments": null,
+            "reference": "Gauz15"
+        },
+        {
+            "band": "VISTA.Y",
+            "ucd": null,
+            "magnitude": 18.558,
+            "magnitude_error": 0.051,
+            "telescope": "VISTA",
+            "instrument": "VIRCAM",
+            "epoch": 2011.495849609375,
+            "comments": null,
+            "reference": "Gauz15"
+        },
+        {
+            "band": "WISE.W1",
+            "ucd": null,
+            "magnitude": 13.6,
+            "magnitude_error": 0.5,
+            "telescope": "WISE",
+            "instrument": null,
+            "epoch": null,
+            "comments": null,
+            "reference": "Gauz15"
+        },
+        {
+            "band": "WISE.W2",
+            "ucd": null,
+            "magnitude": 12.8,
+            "magnitude_error": 0.5,
+            "telescope": "WISE",
+            "instrument": null,
+            "epoch": null,
+            "comments": null,
+            "reference": "Gauz15"
         }
     ],
     "ProperMotions": [
@@ -69,22 +179,72 @@
             "reference": "Dupu20"
         }
     ],
+    "Spectra": [
+        {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/nir_spectra/vhs1256b_nir_SOFI.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "NTT",
+            "instrument": "SofI",
+            "mode": null,
+            "observation_date": "2014-03-12T00:00:00",
+            "wavelength_units": "Angstrom",
+            "flux_units": "Angstrom-1 cm-2 W",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Gauz15",
+            "other_references": null
+        },
+        {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/nir_spectra/vhs1256b_spectra_Figure8_Miles2018.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "Keck II",
+            "instrument": "NIRSPEC",
+            "mode": null,
+            "observation_date": "2016-06-19T00:00:00",
+            "wavelength_units": "um",
+            "flux_units": "cm-2 um-1 W",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Mile18",
+            "other_references": null
+        },
+        {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/optical_spectra/vhs1256b_opt_Osiris.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "optical",
+            "telescope": "GTC",
+            "instrument": "OSIRIS",
+            "mode": null,
+            "observation_date": "2014-06-03T00:00:00",
+            "wavelength_units": "Angstrom",
+            "flux_units": "Angstrom-1 cm-2 W",
+            "wavelength_order": null,
+            "comments": null,
+            "reference": "Gauz15",
+            "other_references": null
+        }
+    ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L7:: VL-G",
+            "spectral_type_string": "L7 VL-G",
             "spectral_type_code": 77.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
+            "spectral_type_error": 1.5,
+            "regime": "nir",
+            "adopted": true,
             "comments": null,
             "reference": "Gauz15"
         },
         {
             "spectral_type_string": "L8::",
             "spectral_type_code": 78.0,
-            "spectral_type_error": null,
+            "spectral_type_error": 2.0,
             "regime": "optical",
-            "adopted": null,
+            "adopted": false,
             "comments": null,
             "reference": "Gauz15"
         }
