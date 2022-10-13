@@ -938,14 +938,15 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     if isinstance(spectra, str):
         spectra = [spectra]
 
-    input_values = [regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references,
-                    comments, other_references]
+    input_values = [regimes, telescopes, instruments, modes, obs_dates, wavelength_order, wavelength_units, flux_units,
+                    references,comments, other_references]
     for i, input_value in enumerate(input_values):
         if isinstance(input_value, str):
             input_values[i] = [input_value] * len(sources)
         elif isinstance(input_value, type(None)):
             input_values[i] = [None] * len(sources)
-    regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references, comments, other_references = input_values
+    regimes, telescopes, instruments, modes, obs_dates, wavelength_order, wavelength_units, flux_units, \
+    references, comments, other_references = input_values
 
     n_spectra = len(spectra)
     n_skipped = 0
@@ -1001,9 +1002,9 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                         raise SimpleError(msg)
                     else:
                         continue
-            else:
-                msg = f"The spectrum location appears up: {original_spectra[i]}"
-                logger.debug(msg)
+                else:
+                    msg = f"The spectrum location appears up: {original_spectra[i]}"
+                    logger.debug(msg)
         else:
             msg = "No internet connection. Internet is needed to check spectrum files."
             raise SimpleError(msg)
@@ -1024,6 +1025,12 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         else:
             try:
                 obs_date = pd.to_datetime(obs_dates[i])  # TODO: Another method that doesn't require pandas?
+            except ValueError:
+                n_skipped += 1
+                if raise_error:
+                    msg = f"{source}: Can't convert obs date to Date Time object: {obs_dates[i]}"
+                    logger.error(msg)
+                    raise SimpleError
             except dateutil.parser._parser.ParserError:
                 n_skipped += 1
                 if raise_error:
@@ -1038,7 +1045,8 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         # TODO: make it possible to ingest units and order
         row_data = [{'source': db_name,
                      'spectrum': spectra[i],
-                     'original_spectrum':None if ma.is_masked(original_spectra[i]) else original_spectra[i],
+                     'original_spectrum': None,  # if ma.is_masked(original_spectra[i]) or isinstance(original_spectra,None)
+                                               # else original_spectra[i],
                      'local_spectrum': None,  # if ma.is_masked(local_spectra[i]) else local_spectra[i],
                      'regime': regimes[i],
                      'telescope': telescopes[i],
@@ -1244,9 +1252,21 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
     return
 
 
-def get_gaiadr3(gaia_id: int, verbose=True):
-    # Currently setup just to query one source
-    # TODO: add some debug and info messages
+def get_gaiadr3(gaia_id, verbose=True):
+    """
+    Currently setup just to query one source
+    TODO: add some debug and info messages
+
+    Parameters
+    ----------
+    gaia_id: str or int
+    verbose
+
+    Returns
+    -------
+    Table of Gaia data
+
+    """
     gaia_query_string = f"SELECT " \
                         f"parallax, parallax_error, " \
                         f"pmra, pmra_error, pmdec, pmdec_error, " \
@@ -1329,6 +1349,8 @@ def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
     """
     header = fits.getheader(spectrum_fits_file)
     regime = header['SPECBAND']
+    if regime == 'opt':
+        regime = 'optical'
     telescope = header['TELESCOP']
     instrument = header['INSTRUME']
     try:
@@ -1344,5 +1366,5 @@ def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
     reference_match = db.query(db.Publications.c.publication).filter(db.Publications.c.doi == doi).table()
     reference = reference_match['publication'][0]
 
-    # ingest_spectra(db, source, spectrum_fits_file, regime, telescope, instrument, None, obs_date, reference,
-    #               wavelength_units=w_unit, flux_units=flux_unit)
+    ingest_spectra(db, source, spectrum_fits_file, regime, telescope, instrument, None, obs_date, reference,
+                   wavelength_units=w_unit, flux_units=flux_unit)
