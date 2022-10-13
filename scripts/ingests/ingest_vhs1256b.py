@@ -1,7 +1,6 @@
 from scripts.ingests.ingest_utils import *
 from scripts.ingests.utils import *
 from astropy.time import Time
-from astropy.io import fits
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
@@ -42,17 +41,32 @@ stmt = db.SpectralTypes.update()\
     .values(adopted=False, spectral_type_error=2)
 db.engine.execute(stmt)
 
+# TODO: add original spectra
+
 # ingest Gauz15 nir SofI spectrum
-nir_spectrum_file = '/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/vhs1256b/vhs1256b_nir_SOFI.fits'
+sofi_instrument = [{'name': 'SofI',
+                    'reference': None}]
+db.Instruments.insert().execute(sofi_instrument)
+ntt_telescope = [{'name': 'NTT'}]
+db.Telescopes.insert().execute(ntt_telescope)
+# nir_spectrum_file = '/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/vhs1256b/vhs1256b_nir_SOFI.fits'
+nir_spectrum_file = 'https://bdnyc.s3.amazonaws.com/nir_spectra/vhs1256b_nir_SOFI.fits'
 ingest_spectrum_from_fits(db, source, nir_spectrum_file)
 
 # ingest Gauz15 optical OSIRIS spectrum
-optical_spectrum_file = '/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/vhs1256b/vhs1256b_opt_Osiris.fits'
+gtc_telescope = [{'name': 'GTC'}]
+db.Telescopes.insert().execute(gtc_telescope)
+# optical_spectrum_file = '/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/vhs1256b/vhs1256b_opt_Osiris.fits'
+optical_spectrum_file = 'https://bdnyc.s3.amazonaws.com/optical_spectra/vhs1256b_opt_Osiris.fits'
 ingest_spectrum_from_fits(db, source, optical_spectrum_file)
 
 # ingest Miles18 Keck/NIRSPEC spectrum
-keck_nir_spectrum_file = \
-    '/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/vhs1256b/vhs1256b_spectra_Figure8_Miles2018.fits'
+nirspec_instrument = [{'name': 'NIRSPEC',
+                    'reference': None}]
+db.Instruments.insert().execute(nirspec_instrument)
+# keck_nir_spectrum_file = \
+#    '/Users/kelle/Dropbox (Personal)/Mac (3)/Downloads/vhs1256b/vhs1256b_spectra_Figure8_Miles2018.fits'
+keck_nir_spectrum_file = 'https://bdnyc.s3.amazonaws.com/nir_spectra/vhs1256b_spectra_Figure8_Miles2018.fits'
 ingest_spectrum_from_fits(db, source, keck_nir_spectrum_file)
 
 # ingest SDSS photometry
