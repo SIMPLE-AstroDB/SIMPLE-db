@@ -3,31 +3,38 @@
 import logging
 from scripts.ingests.utils import logger, load_simpledb
 
+SAVE_DB = True  # save the data files in addition to modifying the .db file
+RECREATE_DB = True  # recreates the .db file from the data files
+
 logger.setLevel(logging.INFO)
 
-db = load_simpledb('SIMPLE.db', recreatedb=True)
+db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
 # Check all versions
 print(db.query(db.Versions).table())
 
 # Add new version, add new entries as appropriate
 # Note that start_date and end_date are strings of the date in format YYYY-MM-DD
-data = [{'version': '2022.1', 'start_date': '2020-06-22',
-         'end_date': '2022-08-23', 'description': 'Initial release'}]
+data = [{'version': '2022.3',
+         'start_date': '2022-10-11',
+         'end_date': '2022-10-13',
+         'description': 'Added VHS 1256b data'}]
 db.Versions.insert().execute(data)
 
 # Fetch data of latest release
 latest_date = db.query(db.Versions.c.end_date).order_by(db.Versions.c.end_date.desc()).limit(1).table()
-latest_date = latest_date['end_date'].value[0]
+latest_date = latest_date['end_date'][0]
 
 latest = db.query(db.Versions).filter(db.Versions.c.version == 'latest').count()
-if latest == 0:
-    # Add latest if not present
-    data = [{'version': 'latest', 'start_date': latest_date, 'description': 'Version in development'}]
-    db.Versions.insert().execute(data)
-else:
-    # Update if present
-    db.Versions.update().where(db.Versions.c.version == 'latest').values(start_date=latest_date).execute()
+if latest == 1:
+    db.Versions.delete().where(db.Versions.c.version == 'latest').execute()
+
+# Add latest
+data = [{'version': 'latest', 'start_date': latest_date, 'description': 'Version in development'}]
+db.Versions.insert().execute(data)
+
+print(db.query(db.Versions).table())
 
 # Save the database
-db.save_database('data/')
+if SAVE_DB:
+    db.save_database(directory='data/')
