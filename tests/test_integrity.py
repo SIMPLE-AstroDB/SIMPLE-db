@@ -245,6 +245,13 @@ def test_photometry(db):
     assert len(t) == 0
 
 
+def test_photometry_filters(db):
+    bands_in_use = db.query(db.Photometry.c.band).distinct().astropy()
+    for band_in_use in bands_in_use['band']:
+        check = db.query(db.PhotometryFilters).filter(db.PhotometryFilters.c.band == band_in_use).astropy()
+        assert len(check) == 1, f'{band_in_use} not in PhotometryFilters'
+
+
 def test_parallaxes(db):
     # Tests against the Parallaxes table
 
@@ -519,11 +526,3 @@ def test_remove_database(db):
     db.engine.dispose()
     if os.path.exists(DB_NAME):
         os.remove(DB_NAME)
-
-def test_photometry_filters(db):
-    bands_in_use = db.query(db.Photometry.c.band).distinct().astropy()
-    for band_in_use in bands_in_use['band']:
-        check = db.query(db.PhotometryFilters).filter(db.PhotometryFilters.c.band == band_in_use).astropy()
-        # assert len(check) == 1, f'{band_in_use} not in PhotometryFilters'
-        if len(check) != 1:
-            print(f'{band_in_use} not in PhotometryFilters')
