@@ -8,15 +8,11 @@ logger.setLevel(logging.INFO)
 
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
-# Cousins.I not in PhotometryFilters
-# Cousins.R not in PhotometryFilters
-# Johnson.V not in PhotometryFilters
-
 # TODO in data files
 # TODO: change MKO to UFTI for Leggett and Knapp data
-# TODO: change Cousins to SMARTS for Diet14 data
-# TODO: change some SDSS filters to use Sloan as the telscope
-# TODO: What is MKO.Y?
+# TODO: change Johnson.V and Cousins.I and R to SMARTS for Diet14 data
+
+# add UCDs
 
 # TODO in PhotometryFilters
 # TODO: Add references
@@ -67,9 +63,42 @@ filters.add_row(('NICMOS1.F090M', 9006.59, 'NICMOS1', 'HST'))
 
 filters.add_row(('GALEX.FUV', 1549.02, 'GALEX', 'GALEX'))
 filters.add_row(('GALEX.NUV', 2304.74, 'GALEX', 'GALEX'))
+filters.add_row(('MIPS.24mu', 232096.04, 'MIPS', 'Spitzer'))
 
-instruments = ['DENIS', 'SOI', 'SMARTS', 'UFTI','NICMOS1', 'GALEX']
-telescopes = ['Sloan', 'DENIS', 'Soar', 'CTIO']
+filters.add_row(('WFCAM.Y', 10305.00, 'WFCAM', 'UKIRT'))
+filters.add_row(('WFCAM.J', 12483.00, 'WFCAM', 'UKIRT'))
+filters.add_row(('WFCAM.H', 16313.00, 'WFCAM', 'UKIRT'))
+filters.add_row(('WFCAM.K', 22010.00, 'WFCAM', 'UKIRT'))
+
+filters.add_row(('UKIDSS.Z', 8817.00, 'UKIDSS', 'UKIRT'))
+filters.add_row(('UKIDSS.Y', 10305.00, 'UKIDSS', 'UKIRT'))
+filters.add_row(('UKIDSS.J', 12483.00, 'UKIDSS', 'UKIRT'))
+filters.add_row(('UKIDSS.H', 16313.00, 'UKIDSS', 'UKIRT'))
+filters.add_row(('UKIDSS.K', 22010.00, 'UKIDSS', 'UKIRT'))
+
+filters.add_row(('PS1.g', 4810.88, 'PS1', 'Pan-STARRS'))
+filters.add_row(('PS1.r', 6156.36, 'PS1', 'Pan-STARRS'))
+filters.add_row(('PS1.i', 7503.68, 'PS1', 'Pan-STARRS'))
+filters.add_row(('PS1.z', 8668.56, 'PS1', 'Pan-STARRS'))
+filters.add_row(('PS1.y', 9613.45, 'PS1', 'Pan-STARRS'))
+
+filters.add_row(('Johnson.U', 3656.0, 'Unknown', 'Unknown'))
+filters.add_row(('Johnson.B', 4353.0, 'Unknown', 'Unknown'))
+filters.add_row(('Johnson.V', 5477.0, 'Unknown', 'Unknown'))
+filters.add_row(('Cousins.R', 6349.0, 'Unknown', 'Unknown'))
+filters.add_row(('Cousins.I', 8797.0, 'Unknown', 'Unknown'))
+
+filters.add_row(("MKO.Y", 10170.58, 'Unknown', 'Unknown'))
+filters.add_row(("MKO.J", 12419.0, 'Unknown', 'Unknown'))
+filters.add_row(("MKO.H", 16206.0, 'Unknown', 'Unknown'))
+filters.add_row(("MKO.K", 21875.0, 'Unknown', 'Unknown'))
+filters.add_row(("MKO.L'", 37301.73, 'Unknown', 'Unknown'))
+
+
+instruments = ['DENIS', 'SOI', 'SMARTS', 'UFTI', 'NICMOS1', 'GALEX',
+               'MIPS', 'WFCAM', 'PS1', 'UKIDSS', 'Unknown']
+
+telescopes = ['Sloan', 'DENIS', 'Soar', 'CTIO', 'Pan-STARRS', 'Unknown']
 
 # ingest new Instruments
 for instrument in instruments:
@@ -94,8 +123,94 @@ for filter in filters:
 
 db.Photometry.update().\
     where(db.Photometry.c.band == 'HST.F110W').\
-    values(band='NICMOS1.F110').execute()
+    values(band='NICMOS1.F110W', ucd='em.opt.J').execute()
 
 db.Photometry.update().\
     where(db.Photometry.c.band == 'HST.F090M').\
-    values(band='NICMOS1.F090M').execute()
+    values(band='NICMOS1.F090M', ucd='em.opt.I').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'MIPS.ch1').\
+    values(band='MIPS.24mu', ucd='em.IR.15-30um').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'y').\
+    values(band='PS1.y', ucd='em.IR.I').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'Z').\
+    values(band='UKIDSS.Z', ucd='em.IR.I').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'MKO.Y').\
+    where(db.Photometry.c.reference == 'Lawr07').\
+    values(band='UKIDSS.Y', ucd='em.opt.I').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'MKO.J').\
+    where(db.Photometry.c.reference == 'Lawr07').\
+    values(band='UKIDSS.J', ucd='em.IR.J').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'MKO.H').\
+    where(db.Photometry.c.reference == 'Lawr07').\
+    values(band='UKIDSS.H', ucd='em.IR.H').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'MKO.K').\
+    where(db.Photometry.c.reference == 'Lawr07').\
+    values(band='UKIDSS.K', ucd='em.IR.K').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'MKO.K').\
+    where(db.Photometry.c.reference == 'Liu_13b').\
+    values(band='WFCAM.K', ucd='em.IR.J').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'MKO.J').\
+    where(db.Photometry.c.reference == 'Liu_13b').\
+    values(band='WFCAM.J', ucd='em.IR.J').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'MKO.H').\
+    where(db.Photometry.c.reference == 'Liu_13b').\
+    values(band='WFCAM.H', ucd='em.IR.H').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'MKO.Y').\
+    where(db.Photometry.c.reference == 'Liu_13b').\
+    values(band='WFCAM.Y', ucd='em.opt.I').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'SDSS.g').\
+    where(db.Photometry.c.reference == 'Liu_13b').\
+    values(band='PS1.g',ucd='em.opt.B').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'SDSS.i').\
+    where(db.Photometry.c.reference == 'Liu_13b').\
+    values(band='PS1.i', ucd='em.opt.I').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'SDSS.r').\
+    where(db.Photometry.c.reference == 'Liu_13b').\
+    values(band='PS1.r', ucd='em.opt.R').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.band == 'SDSS.z').\
+    where(db.Photometry.c.reference == 'Liu_13b').\
+    values(band='PS1.z', ucd='em.opt.I').execute()
+
+db.PhotometryFilters.update().\
+    where(db.PhotometryFilters.c.telescope == 'SDSS').\
+    values(telescope='Sloan').execute()
+
+db.Photometry.update().\
+    where(db.Photometry.c.telescope == 'SDSS').\
+    values(telescope='Sloan').execute()
+
+db.Telescopes.delete().where(db.Telescopes.c.name == 'SDSS').execute()
+
+# WRITE THE JSON FILES
+if SAVE_DB:
+    db.save_database(directory='data/')
