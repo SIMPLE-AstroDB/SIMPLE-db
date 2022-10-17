@@ -8,6 +8,7 @@ on:
   # More details on trigger events: https://docs.github.com/en/actions/reference/events-that-trigger-workflows
   workflow_dispatch:  # manual execution
   release:
+    types: [published]
     branches: [main]
 
 jobs:
