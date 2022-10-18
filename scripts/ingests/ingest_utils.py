@@ -10,7 +10,7 @@ import numpy as np
 import numpy.ma as ma
 import pandas as pd
 from sqlalchemy import func, null
-
+from astropy.io import fits
 import dateutil
 import re
 import requests
@@ -631,6 +631,8 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
         try:
             db.Parallaxes.insert().execute(parallax_data)
             n_added += 1
+            logger.info(f"Parallax added to database: \n "
+                        f"{parallax_data}")
         except sqlalchemy.exc.IntegrityError:
             msg = "The source may not exist in Sources table.\n" \
                   "The parallax reference may not exist in Publications table. " \
@@ -639,7 +641,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
             logger.error(msg)
             raise SimpleError(msg)
 
-    logger.info(f"Parallaxes added to database: {n_added}")
+    logger.info(f"Total Parallaxes added to database: {n_added} \n")
 
     return
 
@@ -874,6 +876,8 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
         try:
             db.Photometry.insert().execute(photometry_data)
             n_added += 1
+            logger.info(f"Photometry measurement added: \n"
+                        f"{photometry_data}")
         except sqlalchemy.exc.IntegrityError:
             msg = "The source may not exist in Sources table.\n" \
                   "The reference may not exist in the Publications table. " \
@@ -882,7 +886,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
             logger.error(msg)
             raise SimpleError(msg)
 
-    logger.info(f"Photometry measurements added to database: {n_added}")
+    logger.info(f"Total photometry measurements added to database: {n_added} \n")
 
     return
 
@@ -914,9 +918,9 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         List or string
     original_spectra: list[str]
         List of filenames corresponding to original spectra files
-    wavelength_units: list[str] or Quantity, optional
+    wavelength_units: str or list[str] or Quantity, optional
         List or string
-    flux_units: list[str] or Quantity, optional
+    flux_units: str or list[str] or Quantity, optional
         List or string
     wavelength_order: list[int], optional
     comments: list[str], optional
@@ -928,16 +932,21 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     """
 
     # Convert single value input values to lists
-    input_values = [regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references,
-                    comments, other_references]
+    if isinstance(sources, str):
+        sources = [sources]
+
+    if isinstance(spectra, str):
+        spectra = [spectra]
+
+    input_values = [regimes, telescopes, instruments, modes, obs_dates, wavelength_order, wavelength_units, flux_units,
+                    references,comments, other_references]
     for i, input_value in enumerate(input_values):
         if isinstance(input_value, str):
-            print, input_value
             input_values[i] = [input_value] * len(sources)
         elif isinstance(input_value, type(None)):
-            print, input_value
             input_values[i] = [None] * len(sources)
-    regimes, telescopes, instruments, modes, wavelength_order, wavelength_units, flux_units, references, comments, other_references = input_values
+    regimes, telescopes, instruments, modes, obs_dates, wavelength_order, wavelength_units, flux_units, \
+    references, comments, other_references = input_values
 
     n_spectra = len(spectra)
     n_skipped = 0
@@ -993,9 +1002,9 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
                         raise SimpleError(msg)
                     else:
                         continue
-            else:
-                msg = f"The spectrum location appears up: {original_spectra[i]}"
-                logger.debug(msg)
+                else:
+                    msg = f"The spectrum location appears up: {original_spectra[i]}"
+                    logger.debug(msg)
         else:
             msg = "No internet connection. Internet is needed to check spectrum files."
             raise SimpleError(msg)
@@ -1016,6 +1025,12 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         else:
             try:
                 obs_date = pd.to_datetime(obs_dates[i])  # TODO: Another method that doesn't require pandas?
+            except ValueError:
+                n_skipped += 1
+                if raise_error:
+                    msg = f"{source}: Can't convert obs date to Date Time object: {obs_dates[i]}"
+                    logger.error(msg)
+                    raise SimpleError
             except dateutil.parser._parser.ParserError:
                 n_skipped += 1
                 if raise_error:
@@ -1030,7 +1045,8 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         # TODO: make it possible to ingest units and order
         row_data = [{'source': db_name,
                      'spectrum': spectra[i],
-                     'original_spectrum':None if ma.is_masked(original_spectra[i]) else original_spectra[i],
+                     'original_spectrum': None,  # if ma.is_masked(original_spectra[i]) or isinstance(original_spectra,None)
+                                               # else original_spectra[i],
                      'local_spectrum': None,  # if ma.is_masked(local_spectra[i]) else local_spectra[i],
                      'regime': regimes[i],
                      'telescope': telescopes[i],
@@ -1121,7 +1137,12 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
           f" Suspected duplicates skipped: {n_dupes}\n" \
           f" Missing Telescope/Instrument/Mode: {n_missing_instrument} \n" \
           f" Spectra skipped for unknown reason: {n_skipped} \n"
-    logger.info(msg)
+    if n_spectra == 1:
+        logger.info(f"Added {source} : \n"
+                    f"{row_data}")
+    else:
+        logger.info(msg)
+
 
     if n_added + n_dupes + n_blank + n_skipped + n_missing_instrument != n_spectra:
         msg = "Numbers don't add up: "
@@ -1136,7 +1157,7 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
     telescope_spec_count = db.query(Spectra.telescope, func.count(Spectra.telescope)). \
         group_by(Spectra.telescope).order_by(func.count(Spectra.telescope).desc()).limit(20).all()
 
-    logger.info(f'Spectra in the database: \n {spec_count} \n {spec_ref_count} \n {telescope_spec_count}')
+    # logger.info(f'Spectra in the database: \n {spec_count} \n {spec_ref_count} \n {telescope_spec_count}')
 
     return
 
@@ -1236,14 +1257,26 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
     return
 
 
-def get_gaiadr3(gaia_id: int, verbose=True):
-    # Currently setup just to query one source
-    # TODO: add some debug and info messages
+def get_gaiadr3(gaia_id, verbose=True):
+    """
+    Currently setup just to query one source
+    TODO: add some debug and info messages
+
+    Parameters
+    ----------
+    gaia_id: str or int
+    verbose
+
+    Returns
+    -------
+    Table of Gaia data
+
+    """
     gaia_query_string = f"SELECT " \
                         f"parallax, parallax_error, " \
-                        f"pmra, pmra_error, pmdec, pmdec_error " \
-                        f"phot_g_mean_flux, phot_g_mean_flux_error, phot_g_mean_mag," \
-                        f"phot_rp_mean_flux, phot_rp_mean_flux_error, phot_rp_mean_mag" \
+                        f"pmra, pmra_error, pmdec, pmdec_error, " \
+                        f"phot_g_mean_flux, phot_g_mean_flux_error, phot_g_mean_mag, " \
+                        f"phot_rp_mean_flux, phot_rp_mean_flux_error, phot_rp_mean_mag " \
                         f"FROM gaiadr3.gaia_source WHERE " \
                         f"gaiadr3.gaia_source.source_id = '{gaia_id}'"
     job_gaia_query = Gaia.launch_job(gaia_query_string, verbose=verbose)
@@ -1307,3 +1340,36 @@ def ingest_gaia_pms(db, sources, gaia_data, ref):
                           pms['pmdec'], pms['pmdec_error'],
                           refs)
 
+
+def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
+    """
+    Ingests spectrum using data found in the header
+
+    Parameters
+    ----------
+    db
+    source
+    spectrum_fits_file
+
+    """
+    header = fits.getheader(spectrum_fits_file)
+    regime = header['SPECBAND']
+    if regime == 'opt':
+        regime = 'optical'
+    telescope = header['TELESCOP']
+    instrument = header['INSTRUME']
+    try:
+        mode = header['MODE']
+    except KeyError:
+        mode = None
+    obs_date = header['DATE-OBS']
+    doi = header['REFERENC']
+    data_header = fits.getheader(spectrum_fits_file, 1)
+    w_unit = data_header['TUNIT1']
+    flux_unit = data_header['TUNIT2']
+
+    reference_match = db.query(db.Publications.c.publication).filter(db.Publications.c.doi == doi).table()
+    reference = reference_match['publication'][0]
+
+    ingest_spectra(db, source, spectrum_fits_file, regime, telescope, instrument, None, obs_date, reference,
+                   wavelength_units=w_unit, flux_units=flux_unit)

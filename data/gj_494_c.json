@@ -46,7 +46,7 @@
     ],
     "Photometry": [
         {
-            "band": "IRAC.ch1",
+            "band": "IRAC.I1",
             "ucd": null,
             "magnitude": 15.365,
             "magnitude_error": 0.01,
@@ -57,7 +57,7 @@
             "reference": "Grif12"
         },
         {
-            "band": "IRAC.ch2",
+            "band": "IRAC.I2",
             "ucd": null,
             "magnitude": 13.85,
             "magnitude_error": 0.004,
@@ -68,55 +68,11 @@
             "reference": "Grif12"
         },
         {
-            "band": "MKO.H",
-            "ucd": null,
-            "magnitude": 17.014,
-            "magnitude_error": 0.038,
-            "telescope": null,
-            "instrument": null,
-            "epoch": null,
-            "comments": null,
-            "reference": "Lawr07"
-        },
-        {
-            "band": "MKO.J",
-            "ucd": null,
-            "magnitude": 16.687,
-            "magnitude_error": 0.015,
-            "telescope": null,
-            "instrument": null,
-            "epoch": null,
-            "comments": null,
-            "reference": "Lawr07"
-        },
-        {
-            "band": "MKO.K",
-            "ucd": null,
-            "magnitude": 16.903,
-            "magnitude_error": 0.057,
-            "telescope": null,
-            "instrument": null,
-            "epoch": null,
-            "comments": null,
-            "reference": "Lawr07"
-        },
-        {
-            "band": "MKO.Y",
-            "ucd": null,
-            "magnitude": 17.715,
-            "magnitude_error": 0.025,
-            "telescope": null,
-            "instrument": null,
-            "epoch": null,
-            "comments": null,
-            "reference": "Lawr07"
-        },
-        {
             "band": "SDSS.g",
             "ucd": null,
             "magnitude": 24.14,
             "magnitude_error": 0.551,
-            "telescope": "SDSS",
+            "telescope": "Sloan",
             "instrument": null,
             "epoch": null,
             "comments": null,
@@ -127,7 +83,7 @@
             "ucd": null,
             "magnitude": 23.276,
             "magnitude_error": 0.57,
-            "telescope": "SDSS",
+            "telescope": "Sloan",
             "instrument": null,
             "epoch": null,
             "comments": null,
@@ -138,7 +94,7 @@
             "ucd": null,
             "magnitude": 24.783,
             "magnitude_error": 0.891,
-            "telescope": "SDSS",
+            "telescope": "Sloan",
             "instrument": null,
             "epoch": null,
             "comments": null,
@@ -149,7 +105,7 @@
             "ucd": null,
             "magnitude": 25.473,
             "magnitude_error": 1.046,
-            "telescope": "SDSS",
+            "telescope": "Sloan",
             "instrument": null,
             "epoch": null,
             "comments": null,
@@ -160,11 +116,55 @@
             "ucd": null,
             "magnitude": 20.036,
             "magnitude_error": 0.161,
-            "telescope": "SDSS",
+            "telescope": "Sloan",
             "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Ahn_12"
+        },
+        {
+            "band": "UKIDSS.H",
+            "ucd": "em.IR.H",
+            "magnitude": 17.014,
+            "magnitude_error": 0.038,
+            "telescope": null,
+            "instrument": null,
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr07"
+        },
+        {
+            "band": "UKIDSS.J",
+            "ucd": "em.IR.J",
+            "magnitude": 16.687,
+            "magnitude_error": 0.015,
+            "telescope": null,
+            "instrument": null,
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr07"
+        },
+        {
+            "band": "UKIDSS.K",
+            "ucd": "em.IR.K",
+            "magnitude": 16.903,
+            "magnitude_error": 0.057,
+            "telescope": null,
+            "instrument": null,
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr07"
+        },
+        {
+            "band": "UKIDSS.Y",
+            "ucd": "em.opt.I",
+            "magnitude": 17.715,
+            "magnitude_error": 0.025,
+            "telescope": null,
+            "instrument": null,
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr07"
         },
         {
             "band": "WISE.W1",
