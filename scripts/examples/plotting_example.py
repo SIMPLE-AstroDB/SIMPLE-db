@@ -11,7 +11,18 @@ from astrodbkit2.spectra import load_spectrum
 plt.interactive(False)
 logger.setLevel(logging.INFO)
 
+INCLUDE_VERSION = True
+
 db = load_simpledb('SIMPLE.db', recreatedb=False)
+
+# ===============================================================================================
+# Get version number
+t = db.query(db.Versions.c.version). \
+    filter(db.Versions.c.end_date != None). \
+    order_by(db.Versions.c.end_date.desc()). \
+    limit(1). \
+    astropy()
+version = t['version'][0]
 
 # ===============================================================================================
 # Counts of spectral types
@@ -33,11 +44,13 @@ plt.bar(index, t['counts'], bar_width, alpha=0.8)
 plt.xlabel('Spectral Type')
 plt.ylabel('Counts')
 plt.xticks(index, t['spectral_type'])
+if INCLUDE_VERSION:
+    plt.title(f'SIMPLE Spectral Types; Version {version}')
 # plt.yscale('log')
 ax.set_xticklabels(ax.xaxis.get_majorticklabels(), rotation=90)
 plt.tight_layout()
 # plt.show()
-plt.savefig('plots/sptypes_counts.png')
+plt.savefig('documentation/figures/sptypes_counts.png')
 
 # ===============================================================================================
 # Representative spectra (1 per spectral type)
@@ -97,6 +110,8 @@ for k, v in spectra_dict.items():
 plt.legend()
 plt.xlabel('Wavelength')
 plt.ylabel('Flux')
+if INCLUDE_VERSION:
+    plt.title(f'SIMPLE Spectra; Version {version}')
 plt.tight_layout()
 # plt.show()
-plt.savefig('plots/spectra_sample.png')
+plt.savefig('documentation/figures/spectra_sample.png')
