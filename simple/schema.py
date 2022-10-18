@@ -38,6 +38,13 @@ class Modes(Base):
     telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'), primary_key=True)
 
 
+class Parameters(Base):
+    """Table for storing possible parameters for the ModeledParameters table"""
+    __tablename__ = 'Parameters'
+    parameter = Column(String(30), primary_key=True, nullable=False)
+    description = Column(String(1000))
+
+
 class PhotometryFilters(Base):
     """
     ORM for filter table.
@@ -96,16 +103,6 @@ class Gravity(enum.Enum):
     vlg = 'vl-g'
     intg = 'int-g'
     fldg = 'fld-g'
-
-
-class Parameter(enum.Enum):
-    """Enumeration for derived/inferred parameters"""
-    mass = 'mass'
-    radius = 'radius'
-    log_g = 'log_g'
-    T_eff = 'T_eff'
-    metallicity = 'metallicity'  # Z
-    CO = 'CO'  # C/O
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -261,8 +258,7 @@ class ModeledParameters(Base):
     source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
                     nullable=False, primary_key=True)
 
-    parameter = Column(Enum(Parameter, create_constraint=True, native_enum=False),
-                       primary_key=True)  # restricts to enumerated values
+    parameter = Column(String(30), ForeignKey('Parameters.parameter', onupdate='cascade'), primary_key=True)
     value = Column(Float, nullable=False)
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.publication', onupdate='cascade'), primary_key=True)
