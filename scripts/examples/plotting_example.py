@@ -46,7 +46,7 @@ plt.ylabel('Counts')
 plt.xticks(index, t['spectral_type'])
 if INCLUDE_VERSION:
     plt.title(f'SIMPLE Spectral Types; Version {version}')
-# plt.yscale('log')
+plt.yscale('linear')
 ax.set_xticklabels(ax.xaxis.get_majorticklabels(), rotation=90)
 plt.tight_layout()
 # plt.show()
@@ -169,3 +169,29 @@ ax.set_xticklabels(ax.xaxis.get_majorticklabels(), rotation=90)
 plt.tight_layout()
 # plt.show()
 plt.savefig('documentation/figures/spectra_ins_counts.png')
+
+# ===============================================================================================
+# Counts of photometry grouped by band
+
+# Query for counts grouped by telescope/instrument
+t = db.query(db.Photometry.c.band,
+             func.count(db.Photometry.c.source).label('counts')). \
+        group_by(db.Photometry.c.band). \
+        astropy()
+t.sort('counts', reverse=True)
+
+fig, ax = plt.subplots(figsize=(8, 6))
+index = np.arange(len(t))
+bar_width = 0.85
+plt.bar(index, t['counts'], bar_width, alpha=0.8)
+plt.xlabel('Photometry')
+plt.ylabel('Counts')
+plt.yscale('log')
+plt.xticks(index, t['band'])
+if INCLUDE_VERSION:
+    plt.title(f'SIMPLE Photometry; Version {version}')
+plt.yscale('log')
+ax.set_xticklabels(ax.xaxis.get_majorticklabels(), rotation=90)
+plt.tight_layout()
+# plt.show()
+plt.savefig('documentation/figures/photometry_counts.png')
