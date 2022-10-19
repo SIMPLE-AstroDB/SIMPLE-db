@@ -109,7 +109,7 @@ for k, v in spectra_dict.items():
 
 plt.legend()
 plt.xlabel('Wavelength')
-plt.ylabel('Flux')
+plt.ylabel('Nomalized Flux')
 if INCLUDE_VERSION:
     plt.title(f'SIMPLE Spectra; Version {version}')
 plt.tight_layout()
@@ -195,3 +195,60 @@ ax.set_xticklabels(ax.xaxis.get_majorticklabels(), rotation=90)
 plt.tight_layout()
 # plt.show()
 plt.savefig('documentation/figures/photometry_counts.png')
+
+# ===============================================================================================
+# Color/magnitude diagrams
+
+# Note using pandas for easier table manipulation
+t = db.query(db.Photometry.c.source, db.Photometry.c.band, db.Photometry.c.magnitude,
+             db.SpectralTypes.c.spectral_type_code). \
+        join(db.SpectralTypes, db.SpectralTypes.c.source == db.Photometry.c.source). \
+        filter(db.Photometry.c.band.in_(['2MASS.J', '2MASS.H', '2MASS.Ks'])). \
+        pandas()
+
+# Pivoting and handling table
+t_pivoted = t.pivot_table(index="source", columns="band", values="magnitude")
+df = t[['source', 'spectral_type_code']].merge(t_pivoted, left_on='source', right_on='source')
+df = df.drop_duplicates(['source', 'spectral_type_code'])  # multiple values of spectral types result in duplicate rows
+
+fig, ax = plt.subplots(figsize=(8, 6))
+plt.scatter(df['spectral_type_code'], df['2MASS.J'] - df['2MASS.Ks'], alpha=0.8)
+plt.xlabel('Spectral Type')
+plt.ylabel('J-Ks (mag)')
+# Custom tick labels for spectral type
+ax.set_xticks([65, 70, 75, 80, 85, 90])
+ax.set_xticklabels(['M5', 'L0', 'L5', 'T0', 'T5', 'Y0'])
+plt.tight_layout()
+# plt.show()
+plt.savefig('documentation/figures/color_spectra_counts.png')
+
+# ---------------------------------------------------------------------
+# Color-magnitude with parallax
+
+t = db.query(db.Photometry.c.source, db.Photometry.c.band, db.Photometry.c.magnitude,
+             db.Parallaxes.c.parallax, db.SpectralTypes.c.spectral_type_code). \
+        join(db.Parallaxes, db.Parallaxes.c.source == db.Photometry.c.source). \
+        join(db.SpectralTypes, db.SpectralTypes.c.source == db.Photometry.c.source). \
+        filter(db.Photometry.c.band.in_(['2MASS.J', '2MASS.H', '2MASS.Ks'])). \
+        filter(db.Parallaxes.c.adopted == 1). \
+        pandas()
+
+# Pivoting and creating helper columns
+t_pivoted = t.pivot_table(index="source", columns="band", values="magnitude")
+df = t[['source', 'parallax', 'spectral_type_code']].merge(t_pivoted, left_on='source', right_on='source')
+df = df.drop_duplicates(['source', 'spectral_type_code'])
+df['distance'] = 1000./df['parallax']
+df['dm'] = 5 * np.log10(df['distance'] / 10)  # distance modulus
+
+fig, ax = plt.subplots(figsize=(8, 6))
+plt.scatter(df['2MASS.J'] - df['2MASS.Ks'], df['2MASS.Ks'] - df['dm'], c=df['spectral_type_code'], alpha=0.8)
+plt.xlabel('J-Ks (mag)')
+plt.ylabel('Absolute Ks (mag)')
+ax.invert_yaxis()
+cbar = plt.colorbar()
+cbar.set_label('Spectral Type')
+cbar.set_ticks([65, 70, 75, 80, 85, 90])
+cbar.set_ticklabels(['M5', 'L0', 'L5', 'T0', 'T5', 'Y0'])
+plt.tight_layout()
+# plt.show()
+plt.savefig('documentation/figures/colormag_counts.png')
