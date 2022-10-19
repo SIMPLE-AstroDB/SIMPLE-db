@@ -115,3 +115,57 @@ if INCLUDE_VERSION:
 plt.tight_layout()
 # plt.show()
 plt.savefig('documentation/figures/spectra_sample.png')
+
+# ===============================================================================================
+# Counts of spectra grouped by telescope/instrument
+
+# Query for counts grouped by telescope/instrument
+t = db.query(db.Spectra.c.telescope, db.Spectra.c.instrument,
+             func.count(db.Spectra.c.source).label('counts')). \
+        group_by(db.Spectra.c.telescope, db.Spectra.c.instrument). \
+        filter(db.Spectra.c.instrument.is_not(None)). \
+        astropy()
+
+t['telins'] = [f"{row['telescope']}/{row['instrument']}" for row in t]
+t.sort('counts', reverse=True)
+
+# Bar chart of counts
+fig, ax = plt.subplots(figsize=(8, 6))
+index = np.arange(len(t))
+bar_width = 0.95
+plt.bar(index, t['counts'], bar_width, alpha=0.8)
+plt.xlabel('Telescope/Instrument')
+plt.ylabel('Counts')
+plt.xticks(index, t['telins'])
+if INCLUDE_VERSION:
+    plt.title(f'SIMPLE Spectra; Version {version}')
+# plt.yscale('log')
+ax.set_xticklabels(ax.xaxis.get_majorticklabels(), rotation=90)
+plt.tight_layout()
+# plt.show()
+plt.savefig('documentation/figures/spectra_telins_counts.png')
+
+# Only by instrument
+t = db.query(db.Spectra.c.instrument,
+             func.count(db.Spectra.c.source).label('counts')). \
+        group_by(db.Spectra.c.instrument). \
+        filter(db.Spectra.c.instrument.is_not(None)). \
+        astropy()
+
+t.sort('counts', reverse=True)
+
+# Bar chart of counts
+fig, ax = plt.subplots(figsize=(8, 6))
+index = np.arange(len(t))
+bar_width = 0.95
+plt.bar(index, t['counts'], bar_width, alpha=0.8)
+plt.xlabel('Instrument')
+plt.ylabel('Counts')
+plt.xticks(index, t['instrument'])
+if INCLUDE_VERSION:
+    plt.title(f'SIMPLE Spectra; Version {version}')
+# plt.yscale('log')
+ax.set_xticklabels(ax.xaxis.get_majorticklabels(), rotation=90)
+plt.tight_layout()
+# plt.show()
+plt.savefig('documentation/figures/spectra_ins_counts.png')
