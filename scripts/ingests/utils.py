@@ -4,6 +4,7 @@ Utils functions for use in ingests
 import logging
 import os
 import sys
+import re
 import warnings
 from pathlib import Path
 from astrodbkit2.astrodb import create_database, Database
@@ -180,7 +181,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
 
     Returns
     -------
-    True, 1: if only one match
+    True, string: if only one match
     False, 0: No matches
     False, N_matches: Multiple matches
 
@@ -234,7 +235,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
                     f' {name} or {doi} or {bibcode}')
         if logger.level <= 20:  # info
             pub_search_table.pprint_all()
-        return True, 1
+        return True, pub_search_table['publication']
 
     if n_pubs_found > 1:
         logger.warning(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
@@ -245,7 +246,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
     # If no matches found, search using first four characters of input name
     if n_pubs_found == 0 and name:
         shorter_name = name[:4]
-        logger.debug(f'No matching publications for {name}, Trying {shorter_name}')
+        logger.warning(f'No matching publications for {name}, Trying {shorter_name}.')
         fuzzy_query_shorter_name = '%' + shorter_name + '%'
         pub_search_table = db.query(db.Publications).filter(
             db.Publications.c.publication.ilike(fuzzy_query_shorter_name)).table()
@@ -259,7 +260,45 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
             logger.warning(f'Found {n_pubs_found_short} matching publications for {shorter_name}')
             if logger.level == 20:  # info:
                 pub_search_table.pprint_all()
-            return False, n_pubs_found_short
+
+            #  Try to find numbers in the reference which might be a date
+            dates = re.findall(r'\d+', name)
+            # try to find a two digit date
+            if len(dates) == 0:
+                logger.info(f'Could not find a date in {name}')
+                two_digit_date = None
+            elif len(dates) == 1:
+                if len(dates[0]) == 4:
+                    two_digit_date = dates[0][2:]
+                elif len(dates[0]) == 2:
+                    two_digit_date = dates[0]
+                else:
+                    logger.info(f'Could not find a two digit date using {dates}')
+                    two_digit_date = None
+            else:
+                logger.info(f'Could not find a two digit date using {dates}')
+                two_digit_date = None
+
+            if two_digit_date:
+                logger.warning(f'Trying to limit using {two_digit_date}')
+                n_pubs_found_short_date = 0
+                pubs_found_short_date = []
+                for pub in pub_search_table['publication']:
+                    if pub.find(two_digit_date) != -1:
+                        n_pubs_found_short_date += 1
+                        pubs_found_short_date.append(pub)
+                if n_pubs_found_short_date == 1:
+                    logger.info(f'Found {n_pubs_found_short_date} matching publications for '
+                                f'{name} using {shorter_name} and {two_digit_date}')
+                    logger.info(f'{pubs_found_short_date}')
+                    return True, pub
+                else:
+                    logger.warning(f'Found {n_pubs_found_short_date} matching publications for '
+                                   f'{name} using {shorter_name} and {two_digit_date}')
+                    logger.info(f'{pubs_found_short_date}')
+                    return False, n_pubs_found_short_date
+            else:
+                return False, n_pubs_found_short
     else:
         return False, n_pubs_found
 
