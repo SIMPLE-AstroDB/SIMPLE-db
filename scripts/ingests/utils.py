@@ -446,7 +446,7 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, publication: st
         bibcode_add = bibcode
         doi_add = doi
 
-    if publication and not use_ads:
+    if publication and not bibcode and not doi:
         name_add = publication
         using = 'user input'
 
