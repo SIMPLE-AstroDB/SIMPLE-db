@@ -104,7 +104,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
         if len(name_matches) == 1 and search_db:  # Source is already in database
             n_existing += 1
             msg1 = f"{i}: Skipping {source}. Already in database as {name_matches[0]}. \n "
-            logger.info(msg1)
+            logger.debug(msg1)
 
             # Figure out if ingest name is an alternate name and add
             db_matches = db.search_object(source, output_table='Sources', fuzzy_search=False)
@@ -112,7 +112,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
                 alt_names_data = [{'source': name_matches[0], 'other_name': source}]
                 try:
                     db.Names.insert().execute(alt_names_data)
-                    logger.info(f"{i}: Name added to database: {alt_names_data}\n")
+                    logger.debug(f"{i}: Name added to database: {alt_names_data}\n")
                     n_alt_names += 1
                 except sqlalchemy.exc.IntegrityError as e:
                     msg = f"{i}: Could not add {alt_names_data} to database"
@@ -188,7 +188,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
             db.Sources.insert().execute(source_data)
             n_added += 1
             msg = f"Added {str(source_data)}"
-            logger.info(msg)
+            logger.debug(msg)
         except sqlalchemy.exc.IntegrityError:
             if ma.is_masked(source_data[0]['reference']):  # check if reference is blank
                 msg = f"{i}: Skipping: {source}. Discovery reference is blank. \n"
@@ -364,6 +364,7 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
     sources, spectral_types, spectral_type_error, regimes, comments, references = input_values
 
     n_added = 0
+    n_skipped = 0
 
     logger.info(f"Trying to add {n_sources} spectral types")
 
@@ -439,7 +440,9 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
                                                                 db.SpectralTypes.c.regime == regimes[i],
                                                                 db.SpectralTypes.c.reference == references[i])).count()
         if check == 1:
-            logger.debug(f'{db_name} already in the database: skipping insert')
+            n_skipped += 1
+            logger.info(f'Spectral type for {db_name} already in the database: skipping insert '
+                         f'{spt_data}')
             continue
 
         logger.debug(f"Trying to insert {spt_data} into Spectral Types table ")
@@ -462,6 +465,10 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes=None,
                 msg = "Other error\n"
                 logger.error(msg)
                 raise SimpleError(msg)
+
+    msg = f"Spectral types added: {n_added} \n" \
+          f"Spectral Types skipped: {n_skipped}"
+    logger.info(msg)
 
 
 def convert_spt_string_to_code(spectral_types):

@@ -291,7 +291,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
                     logger.debug(f'Found {n_pubs_found_short_date} matching publications for '
                                 f'{name} using {shorter_name} and {two_digit_date}')
                     logger.debug(f'{pubs_found_short_date}')
-                    return True, pub
+                    return True, pubs_found_short_date[0]
                 else:
                     logger.warning(f'Found {n_pubs_found_short_date} matching publications for '
                                    f'{name} using {shorter_name} and {two_digit_date}')
