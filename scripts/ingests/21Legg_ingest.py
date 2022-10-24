@@ -1,10 +1,11 @@
 import logging
-
 from astropy.io import ascii
 from scripts.ingests.utils import *
 from scripts.ingests.ingest_utils import *
 from astropy.utils.exceptions import AstropyWarning
 
+# TODO: Figure out binaries
+# TODO: figure out Burgasser10 duplicate
 
 warnings.simplefilter('ignore', category=AstropyWarning)
 
@@ -12,7 +13,7 @@ SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
-logger.setLevel(logging.WARNING)
+logger.setLevel(logging.INFO)
 
 
 def convert_radec_to_decimal(source):
@@ -40,12 +41,9 @@ def add_publications(db):
     ingest_publication(db, bibcode='2019ApJ...881...17M')
     ingest_publication(db, bibcode='2021ApJ...918...11L')
     ingest_publication(db, bibcode='2020ApJ...889..176F')
-    ingest_publication(db, publication='Pinf14.priv', description='P. Pinfield and M. Gromadzki, private communication 2014')
+    ingest_publication(db, publication='Pinf14.priv',
+                       description='P. Pinfield and M. Gromadzki, private communication 2014')
 
-    db.Publications.update().where(db.Publications.c.publication == 'Delo08a').values(
-        publication='Delo08.961').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Delo08b').values(
-        publication='Delo08.469').execute()
     db.Publications.update().where(db.Publications.c.publication == 'Burn10').values(
         publication='Burn10.1952').execute()
     db.Publications.update().where(db.Publications.c.publication == 'Burn10b').values(
@@ -54,6 +52,13 @@ def add_publications(db):
         publication='Burn11.3590').execute()
     db.Publications.update().where(db.Publications.c.publication == 'Burn11b').values(
         publication='Burn11.90').execute()
+
+    db.Publications.update().where(db.Publications.c.publication == 'Burg00a').values(
+        publication='Burg00.57').execute()
+    db.Publications.update().where(db.Publications.c.publication == 'Burg00b').values(
+        publication='Burg00.473').execute()
+    db.Publications.update().where(db.Publications.c.publication == 'Burg00c').values(
+        publication='Burg00.1100').execute()
 
     db.Publications.update().where(db.Publications.c.publication == 'Burg02a').values(
         publication='Burg02.421').execute()
@@ -94,6 +99,11 @@ def add_publications(db):
 
     db.Publications.update().where(db.Publications.c.publication == 'Cush11').values(
         publication='Cush11.50').execute()
+
+    db.Publications.update().where(db.Publications.c.publication == 'Delo08a').values(
+        publication='Delo08.961').execute()
+    db.Publications.update().where(db.Publications.c.publication == 'Delo08b').values(
+        publication='Delo08.469').execute()
 
     db.Publications.update().where(db.Publications.c.publication == 'Dupu15a').values(
         publication='Dupu15.102').execute()
@@ -186,18 +196,14 @@ legg21_table = ascii.read('scripts/ingests/apjac0cfet10_mrt.txt', format='mrt')
 
 #  for all cases in the table, search and replace these strings
 for row, source in enumerate(legg21_table):
-    if source['DisRef'] == 'Burningham_2010a':
-        legg21_table[row]['DisRef'] = 'Burn10.1952'
+    # if row == 319 or row == 215 or row == 216 or row == 210 or \
+    #         row == 166 or row == 176 or row == 145 or row == 124 or \
+    #         row ==320 or row ==326:
+    #     # print(row, source['DisRef'])
+    #     # print(row, source['r_SpType'])
 
-    if source['DisRef'] == 'Burningham_2010b':
-        legg21_table[row]['DisRef'] = 'Burn10.1885'
-    if source['r_SpType'] == 'Burningham_2010b':
-        legg21_table[row]['r_SpType'] = 'Burn10.1885'
-
-    if source['DisRef'] == 'Burningham_2011':
-        legg21_table[row]['DisRef'] = 'Burn11.90'
-    if source['r_SpType'] == 'Burningham_2011':
-        legg21_table[row]['r_SpType'] = 'Burn11.90'
+    if source['DisRef'] == 'Burgasser_2000':
+        legg21_table[row]['DisRef'] = 'Burg00.57'
 
     if source['DisRef'] == 'Burgasser_2002':
         legg21_table[row]['DisRef'] = 'Burg02.421'
@@ -213,11 +219,37 @@ for row, source in enumerate(legg21_table):
     if source['DisRef'] == 'Burgasser_2004':
         legg21_table[row]['DisRef'] = 'Burg04.2856'
 
+    if 'Burningham_2010a' in source['DisRef']:
+        b10_split = source['DisRef'].split()
+        try:
+            new = 'Burn10.1885 ' + b10_split[1]
+        except IndexError:
+            new = 'Burn10.1885'
+        legg21_table[row]['DisRef'] = new
+    if source['r_SpType'] == 'Burningham_2010a':
+        legg21_table[row]['r_SpType'] = 'Burn10.1885'
+
+    if 'Burningham_2010b' in source['DisRef']:
+        b10b_split = source['DisRef'].split()
+        try:
+            if b10b_split[0] == 'Burningham_2010b':
+                new = 'Burn10.1885 ' + b10b_split[1]
+            elif b10b_split[1] == 'Burningham_2010b':
+                new = b10b_split[0] + ' Burn10.1885 '
+        except IndexError:
+            new = 'Burn10.1885'
+        legg21_table[row]['DisRef'] = new
+
+    # TODO: Need to fix this
+    if source['r_SpType'] == 'Burningham_2010b':
+        legg21_table[row]['r_SpType'] = 'Burn10.1885'
     if source['r_SpType'] == 'Burgasser_2010b':  # Error in Leggett 2021
         legg21_table[row]['r_SpType'] = 'Burg02.421'
 
-    if source['r_SpType'] == 'Burningham_2010a':
-        legg21_table[row]['r_SpType'] = 'Burn10.1885'
+    if source['DisRef'] == 'Burningham_2011':
+        legg21_table[row]['DisRef'] = 'Burn11.90'
+    if source['r_SpType'] == 'Burningham_2011':
+        legg21_table[row]['r_SpType'] = 'Burn11.90'
 
     if source['DisRef'] == 'Cushing_2011':
         legg21_table[row]['DisRef'] = 'Cush11.50'
@@ -233,8 +265,14 @@ for row, source in enumerate(legg21_table):
     if source['r_SpType'] == 'Gelino_2011':
         legg21_table[row]['r_SpType'] = 'Geli11.57'
 
-    if source['DisRef'] == 'Kirkpatrick_2012':
-        legg21_table[row]['DisRef'] = 'Kirk12'
+    if 'Kirkpatrick_2012' in source['DisRef']:
+        k12_split = source['DisRef'].split()
+        try:
+            new = 'Kirk12 ' + k12_split[1]
+        except IndexError:
+            new = 'Kirk12'
+        legg21_table[row]['DisRef'] = new
+
     if source['r_SpType'] == 'Kirkpatrick_2012':
         legg21_table[row]['r_SpType'] = 'Kirk12'
 
@@ -274,6 +312,9 @@ for row, source in enumerate(legg21_table):
     if source['DisRef'] == 'Lucas_2010':
         legg21_table[row]['DisRef'] = 'Luca10'
 
+    if source['DisRef'] == 'Luhman_2012':
+        legg21_table[row]['DisRef'] = 'Luhm12.135'
+
     if source['DisRef'] == 'Luhman_2014':
         legg21_table[row]['DisRef'] = 'Luhm14.18'
 
@@ -310,18 +351,39 @@ for row, source in enumerate(legg21_table):
     if source['r_SpType'] == 'Pinfield_Gromadzki_2014':
         legg21_table[row]['r_SpType'] = 'Pinf14.priv'
 
-    if source['DisRef'] == 'Scholz_2010a':
-        legg21_table[row]['DisRef'] = 'Scho10.8'
+    if 'Scholz_2010a' in source['DisRef']:
+        s10_split = source['DisRef'].split()
+        try:
+            new = s10_split[0] + ' Scho10.8'
+        except IndexError:
+            new = 'Scho10.8'
+        legg21_table[row]['DisRef'] = new
+
     if source['r_SpType'] == 'Scholz_2010a':
         legg21_table[row]['r_SpType'] = 'Scho10.8'
-    if source['DisRef'] == 'Scholz_2010b':
-        legg21_table[row]['DisRef'] = 'Scho10.92'
+
+    if 'Scholz_2010b' in source['DisRef']:
+        s10b_split = source['DisRef'].split()
+        try:
+            if s10b_split[0] == 'Scholz_2010b':
+                new = 'Scho10.92 ' + s10b_split[1]
+            elif s10b_split[1] == 'Scholz_2010b':
+                new = s10b_split[0] + ' Scho10.92'
+        except IndexError:
+            new = 'Scho10.92'
+        legg21_table[row]['DisRef'] = new
+
     if source['DisRef'] == 'Tinney_2005':
         legg21_table[row]['DisRef'] = 'Tinn05.2326'
 
     if source['DisRef'] == 'Warren_2007':
         legg21_table[row]['DisRef'] = 'Warr07.1400'
 
+    # if row == 319 or row == 215 or row == 216 or row == 210 or \
+    #         row == 166 or row == 176 or row == 145 or row == 124 or \
+    #         row == 320 or row == 326:
+    #     print(row, legg21_table[row]['DisRef'])
+    #     print(row, legg21_table[row]['r_SpType'])
 
     # write out modified table
 
@@ -356,6 +418,7 @@ for row, source in enumerate(legg21_table):
         other_references.append(second_ref)
         # print(f"other ref: {ref}")
     except IndexError:
+        second_ref = ''
         other_references.append(None)
 
     # convert Legg21 SpType to string
@@ -387,13 +450,12 @@ for row, source in enumerate(legg21_table):
     sp_types.append(sp_type_string)
 
     sp_type_ref = convert_ref_name(source['r_SpType'])
-    print(source_string, discovery_ref, sp_type_ref)
+    print(source_string, discovery_ref, sp_type_ref, 'SECOND: ', second_ref)
     sp_type_refs.append(sp_type_ref)
 
 ingest_sources(db, source_strings, ras=ras, decs=decs,
                references=discovery_refs, other_references=other_references)
 
-# ingest spectral types
 ingest_spectral_types(db, source_strings, sp_types, sp_type_refs, regimes='nir')
 
 
