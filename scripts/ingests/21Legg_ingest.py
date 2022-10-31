@@ -3,17 +3,28 @@ from astropy.io import ascii
 from scripts.ingests.utils import *
 from scripts.ingests.ingest_utils import *
 from astropy.utils.exceptions import AstropyWarning
+import numpy.ma as ma
 
 # TODO: Figure out binaries
-# TODO: figure out Burgasser10 duplicate
+# A and B: WISE	014656.66	+423410.0
+# A and B: WISEPA	045853.89	+643452.9
+# WISEPC	121756.91	+162640.2
+# 2MASS	122554.32	-273946.6
+# CFBDSIR	145829.00	+101343.0
+# 2MASSI	155302.20	+153236.0
+# WISEPA	171104.60	+350036.8
+# Other names: LHS6176B
+# Other name: Gl423B xiUmaB
+# SDSS141624.08+134826.7B
+# Gl547B 1BD01d2920B
 
 warnings.simplefilter('ignore', category=AstropyWarning)
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = True  # recreates the .db file from the data files
+RECREATE_DB = False  # recreates the .db file from the data files
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.WARNING)
 
 
 def convert_radec_to_decimal(source):
@@ -179,11 +190,58 @@ def add_publications(db):
         publication='Warr07.213').execute()
 
 def convert_ref_name(reference):
+    ref_dict = {'Burgasser_2000': 'Burg00.57',
+                'Burgasser_2002': 'Burg02.421',
+                'Burgasser_2003': 'Burg03.2487',
+                'Burgasser_2006': 'Burg06.1067',
+                'Burgasser_2004': 'Burg04.2856',
+                'Burgasser_2010b': 'Burg02.421',  # Error in Leggett 2021
+                'Burningham_2010a': 'Burn10.1885',
+                'Burningham_2010b': 'Burn10.1885',
+                'Burningham_2011': 'Burn11.90',
+                'Cushing_2011': 'Cush11.50',
+                'Delorme_2008': 'Delo08.961',
+                'Dupuy_2015': 'Dupu15.102',
+                'Gelino_2011': 'Geli11.57',
+                'Kirkpatrick_2012': 'Kirk12',
+                'Kirkpatrick_2013': 'Kirk13',
+                'Liu_2011': 'Liu_11.108',
+                'Lodieu_2007': 'Lodi07.1423',
+                'Lodieu_2009': 'Lodi09.258',
+                'Lodieu_2012': 'Lodi12.53',
+                'Looper_2007': 'Loop07.1162',
+                'this_work': 'Legg21',
+                'Lucas_2010': 'Luca10',
+                'Luhman_2012': 'Luhm12.135',
+                'Luhman_2014': 'Luhm14.18',
+                'Mace_2013a': 'Mace13.6',
+                'Mace_2013b': 'Mace13.36',
+                'Meisner_2020a': 'Meis20.74',
+                'Meisner_2020b': 'Meis20.123',
+                'Pinfield_2014a': 'Pinf14.1009',
+                'Pinfield_2014b': 'Pinf14.1931',
+                'Pinfield_Gromadzki_2014': 'Pinf14.priv',
+                'Scholz_2010a': 'Scho10.8',
+                'Scholz_2010b': 'Scho10.92',
+                'Tinney_2005': 'Tinn05.2326',
+                'Warren_2007': 'Warr07.1400'
+                }
+
     # convert reference names
     first_ref = reference.split()[0]
-    # print(first_ref)
-    simple_ref = find_publication(db, first_ref)[1]
-    # print(discovery_ref)
+    # print('Leggett Ref: ', first_ref)
+    for leggett_ref, simple_ref in ref_dict.items():
+        if first_ref == leggett_ref:
+            first_ref = first_ref.replace(leggett_ref, simple_ref)
+            # print('Replaced: ', first_ref)
+
+    simple_search = find_publication(db, first_ref)
+    if simple_search[0]:
+        simple_ref = simple_search[1]
+    else:
+        msg = f'More than SIMPLE ref found for {first_ref}'
+        raise SimpleError(msg)
+    # print('Simple Ref: ', simple_ref)
     return simple_ref
 
 
@@ -192,213 +250,14 @@ if RECREATE_DB:
 
 legg21_table = ascii.read('scripts/ingests/apjac0cfet10_mrt.txt', format='mrt')
 
-# legg21_table.write('scripts/ingests/legg21.csv', overwrite=True, format='ascii.csv')
-
-#  for all cases in the table, search and replace these strings
-for row, source in enumerate(legg21_table):
-    # if row == 319 or row == 215 or row == 216 or row == 210 or \
-    #         row == 166 or row == 176 or row == 145 or row == 124 or \
-    #         row ==320 or row ==326:
-    #     # print(row, source['DisRef'])
-    #     # print(row, source['r_SpType'])
-
-    if source['DisRef'] == 'Burgasser_2000':
-        legg21_table[row]['DisRef'] = 'Burg00.57'
-
-    if source['DisRef'] == 'Burgasser_2002':
-        legg21_table[row]['DisRef'] = 'Burg02.421'
-
-    if source['DisRef'] == 'Burgasser_2003':
-        legg21_table[row]['DisRef'] = 'Burg03.2487'
-    if source['r_SpType'] == 'Burgasser_2003':
-        legg21_table[row]['r_SpType'] = 'Burg03.2487'
-
-    if source['r_SpType'] == 'Burgasser_2006':
-        legg21_table[row]['r_SpType'] = 'Burg06.1067'
-
-    if source['DisRef'] == 'Burgasser_2004':
-        legg21_table[row]['DisRef'] = 'Burg04.2856'
-
-    if 'Burningham_2010a' in source['DisRef']:
-        b10_split = source['DisRef'].split()
-        try:
-            new = 'Burn10.1885 ' + b10_split[1]
-        except IndexError:
-            new = 'Burn10.1885'
-        legg21_table[row]['DisRef'] = new
-    if source['r_SpType'] == 'Burningham_2010a':
-        legg21_table[row]['r_SpType'] = 'Burn10.1885'
-
-    if 'Burningham_2010b' in source['DisRef']:
-        b10b_split = source['DisRef'].split()
-        try:
-            if b10b_split[0] == 'Burningham_2010b':
-                new = 'Burn10.1885 ' + b10b_split[1]
-            elif b10b_split[1] == 'Burningham_2010b':
-                new = b10b_split[0] + ' Burn10.1885 '
-        except IndexError:
-            new = 'Burn10.1885'
-        legg21_table[row]['DisRef'] = new
-
-    # TODO: Need to fix this
-    if source['r_SpType'] == 'Burningham_2010b':
-        legg21_table[row]['r_SpType'] = 'Burn10.1885'
-    if source['r_SpType'] == 'Burgasser_2010b':  # Error in Leggett 2021
-        legg21_table[row]['r_SpType'] = 'Burg02.421'
-
-    if source['DisRef'] == 'Burningham_2011':
-        legg21_table[row]['DisRef'] = 'Burn11.90'
-    if source['r_SpType'] == 'Burningham_2011':
-        legg21_table[row]['r_SpType'] = 'Burn11.90'
-
-    if source['DisRef'] == 'Cushing_2011':
-        legg21_table[row]['DisRef'] = 'Cush11.50'
-    if source['r_SpType'] == 'Cushing_2011':
-        legg21_table[row]['r_SpType'] = 'Cush11.50'
-
-    if source['DisRef'] == 'Delorme_2008':
-        legg21_table[row]['DisRef'] = 'Delo08.961'
-
-    if source['r_SpType'] == 'Dupuy_2015':
-        legg21_table[row]['r_SpType'] = 'Dupu15.102'
-
-    if source['r_SpType'] == 'Gelino_2011':
-        legg21_table[row]['r_SpType'] = 'Geli11.57'
-
-    if 'Kirkpatrick_2012' in source['DisRef']:
-        k12_split = source['DisRef'].split()
-        try:
-            new = 'Kirk12 ' + k12_split[1]
-        except IndexError:
-            new = 'Kirk12'
-        legg21_table[row]['DisRef'] = new
-
-    if source['r_SpType'] == 'Kirkpatrick_2012':
-        legg21_table[row]['r_SpType'] = 'Kirk12'
-
-    if source['DisRef'] == 'Kirkpatrick_2013':
-        legg21_table[row]['DisRef'] = 'Kirk13'
-    if source['r_SpType'] == 'Kirkpatrick_2013':
-        legg21_table[row]['r_SpType'] = 'Kirk13'
-
-    if source['DisRef'] == 'Lodieu_2007':
-        legg21_table[row]['DisRef'] = 'Lodi07.1423'
-    if source['r_SpType'] == 'Lodieu_2007':
-        legg21_table[row]['r_SpType'] = 'Lodi07.1423'
-    if source['DisRef'] == 'Lodieu_2009':
-        legg21_table[row]['DisRef'] = 'Lodi09.258'
-    if source['r_SpType'] == 'Lodieu_2009':
-        legg21_table[row]['r_SpType'] = 'Lodi09.258'
-
-    if source['DisRef'] == 'Lodieu_2012':
-        legg21_table[row]['DisRef'] = 'Lodi12.53'
-    if source['r_SpType'] == 'Lodieu_2012':
-        legg21_table[row]['r_SpType'] = 'Lodi12.53'
-
-    if source['DisRef'] == 'Looper_2007':
-        legg21_table[row]['DisRef'] = 'Loop07.1162'
-    if source['r_SpType'] == 'Looper_2007':
-        legg21_table[row]['r_SpType'] = 'Loop07.1162'
-
-    if source['r_SpType'] == 'this_work':
-        legg21_table[row]['r_SpType'] = 'Legg21'
-
-    if source['r_SpType'] == 'Liu_2011':
-        legg21_table[row]['r_SpType'] = 'Liu_11.108'
-
-    if source['r_SpType'] == 'Liu_2011':
-        legg21_table[row]['r_SpType'] = 'Liu_11.108'
-
-    if source['DisRef'] == 'Lucas_2010':
-        legg21_table[row]['DisRef'] = 'Luca10'
-
-    if source['DisRef'] == 'Luhman_2012':
-        legg21_table[row]['DisRef'] = 'Luhm12.135'
-
-    if source['DisRef'] == 'Luhman_2014':
-        legg21_table[row]['DisRef'] = 'Luhm14.18'
-
-    if source['DisRef'] == 'Meisner_2020a':
-        legg21_table[row]['DisRef'] = 'Meis20.74'
-    if source['r_SpType'] == 'Meisner_2020a':
-        legg21_table[row]['r_SpType'] = 'Meis20.74'
-
-    if source['DisRef'] == 'Meisner_2020b':
-        legg21_table[row]['DisRef'] = 'Meis20.123'
-    if source['r_SpType'] == 'Meisner_2020b':
-        legg21_table[row]['r_SpType'] = 'Meis20.123'
-
-    if source['DisRef'] == 'Mace_2013a':
-        legg21_table[row]['DisRef'] = 'Mace13.6'
-    if source['r_SpType'] == 'Mace_2013a':
-        legg21_table[row]['r_SpType'] = 'Mace13.6'
-
-    if source['DisRef'] == 'Mace_2013b':
-        legg21_table[row]['DisRef'] = 'Mace13.36'
-    if source['r_SpType'] == 'Mace_2013b':
-        legg21_table[row]['r_SpType'] = 'Mace13.36'
-
-    if source['DisRef'] == 'Pinfield_2014a':
-        legg21_table[row]['DisRef'] = 'Pinf14.1009'
-    if source['r_SpType'] == 'Pinfield_2014a':
-        legg21_table[row]['r_SpType'] = 'Pinf14.1009'
-
-    if source['DisRef'] == 'Pinfield_2014b':
-        legg21_table[row]['DisRef'] = 'Pinf14.1931'
-    if source['r_SpType'] == 'Pinfield_2014b':
-        legg21_table[row]['r_SpType'] = 'Pinf14.1931'
-
-    if source['r_SpType'] == 'Pinfield_Gromadzki_2014':
-        legg21_table[row]['r_SpType'] = 'Pinf14.priv'
-
-    if 'Scholz_2010a' in source['DisRef']:
-        s10_split = source['DisRef'].split()
-        try:
-            new = s10_split[0] + ' Scho10.8'
-        except IndexError:
-            new = 'Scho10.8'
-        legg21_table[row]['DisRef'] = new
-
-    if source['r_SpType'] == 'Scholz_2010a':
-        legg21_table[row]['r_SpType'] = 'Scho10.8'
-
-    if 'Scholz_2010b' in source['DisRef']:
-        s10b_split = source['DisRef'].split()
-        try:
-            if s10b_split[0] == 'Scholz_2010b':
-                new = 'Scho10.92 ' + s10b_split[1]
-            elif s10b_split[1] == 'Scholz_2010b':
-                new = s10b_split[0] + ' Scho10.92'
-        except IndexError:
-            new = 'Scho10.92'
-        legg21_table[row]['DisRef'] = new
-
-    if source['DisRef'] == 'Tinney_2005':
-        legg21_table[row]['DisRef'] = 'Tinn05.2326'
-
-    if source['DisRef'] == 'Warren_2007':
-        legg21_table[row]['DisRef'] = 'Warr07.1400'
-
-    # if row == 319 or row == 215 or row == 216 or row == 210 or \
-    #         row == 166 or row == 176 or row == 145 or row == 124 or \
-    #         row == 320 or row == 326:
-    #     print(row, legg21_table[row]['DisRef'])
-    #     print(row, legg21_table[row]['r_SpType'])
-
-    # write out modified table
-
-# print(legg21_table['DisRef'])
-
-#  Check if all sources are in the database
-# legg21_sources = legg21_table['Survey', 'RA', 'Decl.', 'DisRef']
 source_strings = []
 discovery_refs = []
 ras = []
 decs = []
 other_references = []
+spt_source_strings = []
 sp_types = []
 sp_type_refs = []
-
 
 for row, source in enumerate(legg21_table):
     source_string = f"{source['Survey']} J{source['RA']}{source['Decl.']}"
@@ -412,14 +271,19 @@ for row, source in enumerate(legg21_table):
     #  Deal with discovery ref and references
     discovery_ref = convert_ref_name(source['DisRef'])
     discovery_refs.append(discovery_ref)
+    # Take care of secord discovery ref, if provided
     try:
         legg21_second_ref = source['DisRef'].split()[1]
+        print('2nd: ', legg21_second_ref)
         second_ref = convert_ref_name(legg21_second_ref)
         other_references.append(second_ref)
         # print(f"other ref: {ref}")
     except IndexError:
         second_ref = ''
         other_references.append(None)
+
+    # SPECTRAL TYPES
+    spt_source_strings.append(source_string)
 
     # convert Legg21 SpType to string
     legg21_sptype_code_base = source['SpType'].split('.')[0]
@@ -450,13 +314,38 @@ for row, source in enumerate(legg21_table):
     sp_types.append(sp_type_string)
 
     sp_type_ref = convert_ref_name(source['r_SpType'])
-    print(source_string, discovery_ref, sp_type_ref, 'SECOND: ', second_ref)
     sp_type_refs.append(sp_type_ref)
+    # If 2nd Spectral Type Ref, add them both
+    try:
+        legg21_second_spt_ref = source['r_SpType'].split()[1]
+        print('2nd Spt: ', legg21_second_spt_ref)
+        second_spt_ref = convert_ref_name(legg21_second_spt_ref)
+        spt_source_strings.append(source_string)
+        sp_types.append(sp_type_string)
+        sp_type_refs.append(second_spt_ref)
+    except IndexError:
+        second_spt_ref = ''
 
-ingest_sources(db, source_strings, ras=ras, decs=decs,
+    print(source_string, discovery_ref, sp_type_ref,
+          'SECOND Dis: ', second_ref, 'SECOND SpT: ', second_spt_ref)
+
+    # BINARIES
+    if not ma.is_masked(source['CBin']):
+        print(f"binary: {source['CBin']}")
+
+    # OTHER NAMES
+    if not ma.is_masked(source['OName']):
+        other_names = source['OName']
+        print(f'Other Names: {other_names}')
+
+print(f'Sources to ingest: {len(source_strings)}')
+print(f'SpTypes to ingest: {len(spt_source_strings)}')
+
+if RECREATE_DB:
+    ingest_sources(db, source_strings, ras=ras, decs=decs,
                references=discovery_refs, other_references=other_references)
 
-ingest_spectral_types(db, source_strings, sp_types, sp_type_refs, regimes='nir')
+    ingest_spectral_types(db, spt_source_strings, sp_types, sp_type_refs, regimes='nir')
 
 
 # ingest NIR photometry
