@@ -1,3 +1,12 @@
+# move script to spectra convert folder on github in SIMPLE db
+#update issue 287 w tally and description
+#save file w 1081 wcs1d files to explore auto reader
+# change it to a list instead of a set
+# instead of add row it is appned
+# save the list as an astropy table for the spectra -> can be txt
+# push
+# commit and push !!!!!!!!!!!!!!!!!!
+#open pull request once its in spectra convert folder
 
 from scripts.ingests.utils import *
 import csv
