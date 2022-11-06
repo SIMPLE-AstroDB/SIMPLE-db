@@ -36,6 +36,7 @@ wcs1d_fits_spectra = []
 
 
 #ASCII, iraf, tabular-fits, wcs1d-fits, Spex Prism, ecsv
+
 for n ,spectrum in enumerate(table):
     file = os.path.basename(spectrum[0])
     file_root = os.path.splitext(file)[1]
