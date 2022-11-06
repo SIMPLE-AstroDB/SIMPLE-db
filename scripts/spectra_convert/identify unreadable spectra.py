@@ -1,8 +1,5 @@
-# move script to spectra convert folder on github in SIMPLE db
-#update issue 287 w tally and description
+
 #save file w 1081 wcs1d files to explore auto reader
-# change it to a list instead of a set
-# instead of add row it is appned
 # save the list as an astropy table for the spectra -> can be txt
 # push
 # commit and push !!!!!!!!!!!!!!!!!!
@@ -31,11 +28,11 @@ spex_units = 0
 ascii_tally = 0
 not_working_tally =0
 
-not_working_set = set()
-not_working_spectra = set()
-not_working_txt = set()
-# list = []
-# .append
+
+not_working_errors = [] #prints out the errors for the ones that don't work that dont work
+not_working_spectra = []
+not_working_txt = []
+wcs1d_fits_spectra = []
 
 
 #ASCII, iraf, tabular-fits, wcs1d-fits, Spex Prism, ecsv
@@ -46,16 +43,15 @@ for n ,spectrum in enumerate(table):
     try:
         spec = Spectrum1D.read(spectrum[0], format = 'wcs1d-fits')
         wcs1d_fits_tally +=1
+        wcs1d_fits_spectra.append(spectrum[0])
         try:
             spec.wavelength.to(u.micron).value
         except:
             fits_units += 1
-        #print(f'wcs1d fits tally: {wcs1d_fits_tally}')
     except Exception as e_wcs1d:
-        not_working_set.add(f'wcs1d err: {e_wcs1d} \n') # add to every error
-        not_working_set.add(e_wcs1d)
-        not_working_spectra.add(spectrum[0])
-        #not_working_tally += 1
+        not_working_errors.append(f'wcs1d err: {e_wcs1d} \n') # this does not work -
+        # add to every error? does this just add #?
+        not_working_spectra.append(spectrum[0])
         try:
             spec = Spectrum1D.read(spectrum[0], format = 'Spex Prism')
             spex_prism_tally += 1
@@ -64,34 +60,26 @@ for n ,spectrum in enumerate(table):
                 spec.wavelength.to(u.micron).value
             except:
                 spex_units += 1
-            #print(f'spex prism tally: {spex_prism_tally}')
         except Exception as e_spex:
-            not_working_set.add(f'wcs1d err: {e_spex} \n') # add to every error
-            not_working_set.add(e_spex)
-            not_working_spectra.add(spectrum[0])
-            #not_working_tally += 1
+            not_working_errors.append(f'spex prism err: {e_spex} \n') # add to every error
+            not_working_spectra.append(spectrum[0])
             try:
                 spec = Spectrum1D.read(spectrum[0], format = 'iraf')
                 iraf_tally += 1
-                #print(f'iraf prism tally: {iraf_tally}')
             except Exception as e_iraf:
                 try:
                     spec = Spectrum1D.read(spectrum[0], format = 'tabular-fits')
                     tabularfits_tally += 1
-                    #print(f'tabular fits tally: {tabularfits_tally}')
                 except Exception as e_tabular:
                     try:
                         spec = Spectrum1D.read(spectrum[0], format = 'ASCII')
                         ascii_tally += 1
-                        #print(f'ascii tally: {ascii_tally}')
                     except Exception as e_ascii:
-                        not_working_set.add(f'wcs1d err: {e_ascii} \n') # add to every error
-                        not_working_set.add(e_ascii)
-                        not_working_spectra.add(spectrum[0])
+                        not_working_errors.append(f'ascii err: {e_ascii} \n') # add to every error
+                        not_working_spectra.append(spectrum[0])
                         not_working_tally += 1
                         if file_root == '.txt':
-                            not_working_txt.add(spectrum[0])
-                        #print(f'not_working_tally: {not_working_tally}')
+                            not_working_txt.append(spectrum[0])
 
 
 
@@ -106,31 +94,19 @@ print(f'tabularfits tally: {tabularfits_tally}')
 print(f'ascii tally: {ascii_tally}')
 print(f'not_working_tally: {not_working_tally}')
 
+not_working_spectrum_table = Table([not_working_spectra],
+                       names=['Not Working Spectra (all)'])
 
-#print(not_working_set)
-#print(not_working_spectra) # save as a csv
+not_working_txt_spectrum_table = Table([not_working_txt],
+                       names=['Not Working Spectra (.txt)'])
 
+wcs1d_spectrum_table = Table([wcs1d_fits_spectra],
+                       names=['wcs1d-fits Spectra'])
 
-with open('notworkingspectra.csv', 'w') as f:
+print(not_working_spectrum_table)
+print(not_working_txt_spectrum_table)
+print(wcs1d_spectrum_table)
 
-    write = csv.writer(f)
-
-    write.writerow(not_working_spectra)
-
-
-with open('notworking_txt_spectra.csv', 'w') as f:
-
-    write = csv.writer(f)
-
-    write.writerow(not_working_txt)
-
-
-#make a loader like in convert_VHS1256b.py to load in unreadable txt files
-#with file kelle sent
-#not loop yet focus on one file
-
-##############################################################
-#check what unreadible were - optical?
 
 #plt.plot(spec.wavelength, spec.flux)
 #plt.show()
