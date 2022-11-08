@@ -13,7 +13,7 @@ DB_PATH = 'data'
 DB_NAME = 'SIMPLE.db'
 
 # Used to overwrite AstrodbKit2 reference tables defaults
-REFERENCE_TABLES = ['Publications', 'Telescopes', 'Instruments', 'Modes', 'PhotometryFilters', 'Versions']
+REFERENCE_TABLES = ['Publications', 'Telescopes', 'Instruments', 'Modes', 'PhotometryFilters', 'Versions', 'Parameters']
 
 
 def load_postgres(connection_string):
