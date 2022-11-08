@@ -15,10 +15,10 @@ print(db.query(db.Versions).table())
 
 # Add new version, add new entries as appropriate
 # Note that start_date and end_date are strings of the date in format YYYY-MM-DD
-data = [{'version': '2022.3',
-         'start_date': '2022-10-11',
-         'end_date': '2022-10-13',
-         'description': 'Added VHS 1256b data'}]
+data = [{'version': '2022.4',
+         'start_date': '2022-10-14',
+         'end_date': '2022-10-16',
+         'description': ''}]
 db.Versions.insert().execute(data)
 
 # Fetch data of latest release
