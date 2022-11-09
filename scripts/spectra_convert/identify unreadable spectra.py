@@ -5,8 +5,7 @@
 # commit and push !!!!!!!!!!!!!!!!!!
 #open pull request once its in spectra convert folder
 
-from scripts.ingests.utils import *
-import csv
+from astropy.io import ascii
 from scripts.ingests.utils import *
 from specutils import Spectrum1D
 import astropy.units as u
@@ -98,16 +97,22 @@ print(f'not_working_tally: {not_working_tally}')
 not_working_spectrum_table = Table([not_working_spectra],
                        names=['Not Working Spectra (all)'])
 
+
 not_working_txt_spectrum_table = Table([not_working_txt],
                        names=['Not Working Spectra (.txt)'])
 
-wcs1d_spectrum_table = Table([wcs1d_fits_spectra],
+#wcs1d_spectrum_table = Table([wcs1d_fits_spectra],
+                      # names=['wcs1d-fits Spectra'])
+
+data = Table([wcs1d_fits_spectra],
                        names=['wcs1d-fits Spectra'])
+ascii.write(data, 'wcs1d_spectrum_table.dat', overwrite=True)
 
 print(not_working_spectrum_table)
 print(not_working_txt_spectrum_table)
-print(wcs1d_spectrum_table)
+print(data)
 
+#explore auto reader???
 
 #plt.plot(spec.wavelength, spec.flux)
 #plt.show()
