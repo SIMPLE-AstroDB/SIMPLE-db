@@ -512,6 +512,47 @@ def convert_spt_string_to_code(spectral_types):
     return spectral_type_codes
 
 
+def convert_spt_code_to_string_to_code(spectral_codes, decimals=1):
+    """
+    Convert spectral type codes to string values
+
+    Parameters
+    ----------
+    spectral_codes : list[float]
+        List of spectral type codes
+
+    Returns
+    -------
+    spectral_types : list[str]
+        List of spectral types
+    """
+    if isinstance(spectral_codes, float):
+        spectral_codes = [spectral_codes]
+
+    spectral_types = []
+    for spt in spectral_codes:
+        spt_type = ''
+
+        # Identify major type
+        if 60 <= spt < 70:
+            spt_type = 'M'
+        elif 70 <= spt < 80:
+            spt_type = 'L'
+        elif 80 <= spt < 90:
+            spt_type = 'T'
+        elif 90 <= spt < 100:
+            spt_type = 'Y'
+
+        # Numeric part of type
+        format = f'.{decimals}f'
+        spt_type = f'{spt_type}{spt % 10:{format}}'
+        logger.debug(f"Converting: {spt} -> {spt_type}")
+
+        spectral_types.append(spt_type)
+
+    return spectral_types
+
+
 # PARALLAXES
 def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
     """
