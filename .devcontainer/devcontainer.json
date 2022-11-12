@@ -13,8 +13,7 @@
 	"forwardPorts": [5432],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip install astrodbkit2 pytest psycopg2"
-	// python scripts/tutorials/generate_database.py sqlite
+	"postCreateCommand": "pip install astrodbkit2 pytest psycopg2 && python scripts/tutorials/generate_database.py sqlite"
 	// python scripts/tutorials/generate_database.py postgres postgres://postgres@localhost:5432
 
 	// Configure tool-specific properties.
