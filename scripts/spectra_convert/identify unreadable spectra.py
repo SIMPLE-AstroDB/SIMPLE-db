@@ -1,8 +1,3 @@
-#open up an issue with file of 16 to fix and convert spectra (open issue and upload file)
-# (do not need to put file in repo)
-#also open up issue for spex prism spectra
-#mention issue #287 in both issues
-
 from astropy.io import ascii
 from scripts.ingests.utils import *
 from specutils import Spectrum1D
