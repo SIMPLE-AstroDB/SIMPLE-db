@@ -1,7 +1,5 @@
 #add date file was generate and converted by reprocessed
 #add keywords to dataset_dict from original dict
-#pass dictionary to convert_to_fits()   function!!!
-
 
 from convert_spectra_to_spec1dfits import *
 from astropy.io import ascii
@@ -38,6 +36,5 @@ text_spectrum_loader(spectrum_path)
 new_dict = {**original_header_dict, **dataset_dict} #header dictionary shoudl go first bc new info goes at bottom
 
 convert_to_fits(new_dict)
-                        #column_mapping={'flux': ('flux', 'Jy'), 'flux_uncertainty': ('flux_uncertainty', 'Jy')})
 
 
