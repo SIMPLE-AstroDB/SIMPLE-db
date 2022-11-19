@@ -99,6 +99,28 @@ def test_publications(db):
     assert len(t) == 26, f'found {len(t)} publications with missing bibcode and doi'
 
 
+def test_parameters(db):
+    """
+    Test the Parameters table exists and has data
+    """
+
+    t = db.query(db.Parameters).astropy()
+    assert len(t) > 0, 'Parameters table is empty'
+
+    # Check usage of Parameters
+    param_list = db.query(db.ModeledParameters.c.parameter).astropy()
+    if len(param_list) > 0:
+        # Get unique values
+        param_list = param_list['parameter'].to_list()
+        param_list = list(set(param_list))
+        t = db.query(db.Parameters).filter(db.Parameters.c.parameter.notin_(param_list)).astropy()
+        if len(t) > 0:
+            print('The following parameters are not being used:')
+            print(t)
+        # Skipping actual assertion test
+        # assert len(t) == 0, f'{len(t)} unused parameters'
+
+
 def test_coordinates(db):
     # Verify that all sources have valid coordinates
     t = db.query(db.Sources.c.source, db.Sources.c.ra, db.Sources.c.dec).filter(
