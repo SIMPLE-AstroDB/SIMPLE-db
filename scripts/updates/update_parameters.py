@@ -28,8 +28,8 @@ existing_data = db.query(db.Parameters).table()
 
 # Loop over the parameters, inserting those missing
 for p in parameter_data:
-    print(p)
     if len(existing_data) > 0 and p['parameter'] in existing_data['parameter']:
+        print(f'Already in database, skipping {p}')
         continue
 
     db.Parameters.insert([p]).execute()
