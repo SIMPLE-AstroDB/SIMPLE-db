@@ -1,8 +1,12 @@
-# Schema for the SIMPLE database
+"""
+Schema for the SIMPLE database
+"""
 
+# pylint: disable=line-too-long, missing-class-docstring, unused-import, invalid-name
+
+import enum
 from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, \
     BigInteger, Enum, Date, DateTime, ForeignKeyConstraint
-import enum
 from astrodbkit2.astrodb import Base
 
 
