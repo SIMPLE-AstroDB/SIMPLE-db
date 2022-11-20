@@ -34,13 +34,13 @@ def db():
     assert db
     assert 'source' in [c.name for c in db.Sources.columns]
 
+    # Load data into an in-memory sqlite database first, for performance
+    temp_db = Database('sqlite://', reference_tables=REFERENCE_TABLES)  # creates and connects to a temporary in-memory database
+    temp_db.load_database(DB_PATH, verbose=False)  # loads the data from the data files into the database
+    temp_db.dump_sqlite(DB_NAME)  # dump in-memory database to file
+    db = Database('sqlite:///' + DB_NAME, reference_tables=REFERENCE_TABLES)  # replace database object with new file version
+
     return db
-
-
-def test_data_load(db):
-    # Test that all data can be loaded into the database
-    # This should take care of finding serious issues (key/column violations)
-    db.load_database(DB_PATH, verbose=False)
 
 
 def test_reference_uniqueness(db):
