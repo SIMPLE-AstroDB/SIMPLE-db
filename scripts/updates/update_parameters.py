@@ -19,7 +19,7 @@ parameter_data = [
     {'parameter': 'mass', 'description': 'Mass'},
     {'parameter': 'radius', 'description': 'Radius'},
     {'parameter': 'log g', 'description': 'Log surface gravity'},
-    {'parameter': 'T eff', 'description': 'Effective temperature in K'},
+    {'parameter': 'T eff', 'description': 'Effective temperature'},
     {'parameter': 'metallicity', 'description': 'Metallicity'},
     {'parameter': 'C/O ratio', 'description': 'C/O ratio'},
 ]
