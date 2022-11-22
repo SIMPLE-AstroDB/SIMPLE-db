@@ -10,5 +10,6 @@ Columns marked with an asterisk (*) may not be empty.
 | *source    | Unique identifier for the source |   | String(100)  | primary and foreign: Sources.source   |
 | *parameter | Name of parameter |  | String(30)  | primary and foreign: Parameters.parameter |
 | *value      | Value for parameter | | Float    |     |
+| unit      | Unit of parameter | | String(20)    |     |
 | comments  | Free form comments |   | String(1000) |   |
 | *reference | Reference |   | String(30) | primary and foreign: Publications.name |
