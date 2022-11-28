@@ -1,8 +1,12 @@
-# Schema for the SIMPLE database
+"""
+Schema for the SIMPLE database
+"""
 
+# pylint: disable=line-too-long, missing-class-docstring, unused-import, invalid-name
+
+import enum
 from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, \
     BigInteger, Enum, Date, DateTime, ForeignKeyConstraint
-import enum
 from astrodbkit2.astrodb import Base
 
 
@@ -38,6 +42,13 @@ class Modes(Base):
     telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'), primary_key=True)
 
 
+class Parameters(Base):
+    """Table for storing possible parameters for the ModeledParameters table"""
+    __tablename__ = 'Parameters'
+    parameter = Column(String(30), primary_key=True, nullable=False)
+    description = Column(String(1000))
+
+
 class PhotometryFilters(Base):
     """
     ORM for filter table.
@@ -69,7 +80,7 @@ class Versions(Base):
 class Regime(enum.Enum):
     """Enumeration for spectral type, spectra, and photometry regimes
     Use UCD controlled vocabulary: https://www.ivoa.net/documents/UCD1+/20200212/PEN-UCDlist-1.4-20200212.html#tth_sEcB
-    The string values are used, not the variable names.
+    The variable name is stored and used in the database; the string value should match it
     """
     ultraviolet = 'em.UV'
     optical_UCD = 'em.opt'
@@ -86,6 +97,7 @@ class Regime(enum.Enum):
 
 class Gravity(enum.Enum):
     """Enumeration for gravity"""
+    # TODO: Fix enumerations; the variable name is what's used throughout the database
     a = 'alpha'
     b = 'beta'
     g = 'gamma'
@@ -242,3 +254,16 @@ class Spectra(Base):
                                            [Modes.telescope, Modes.instrument, Modes.name],
                                            onupdate="cascade"),
                       {})
+
+
+class ModeledParameters(Base):
+    # Table to store derived/inferred paramaters from models
+    __tablename__ = 'ModeledParameters'
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
+                    nullable=False, primary_key=True)
+
+    parameter = Column(String(30), ForeignKey('Parameters.parameter', onupdate='cascade'), primary_key=True)
+    value = Column(Float, nullable=False)
+    unit = Column(String(20))
+    comments = Column(String(1000))
+    reference = Column(String(30), ForeignKey('Publications.publication', onupdate='cascade'), primary_key=True)

@@ -34,13 +34,13 @@ def db():
     assert db
     assert 'source' in [c.name for c in db.Sources.columns]
 
+    # Load data into an in-memory sqlite database first, for performance
+    temp_db = Database('sqlite://', reference_tables=REFERENCE_TABLES)  # creates and connects to a temporary in-memory database
+    temp_db.load_database(DB_PATH, verbose=False)  # loads the data from the data files into the database
+    temp_db.dump_sqlite(DB_NAME)  # dump in-memory database to file
+    db = Database('sqlite:///' + DB_NAME, reference_tables=REFERENCE_TABLES)  # replace database object with new file version
+
     return db
-
-
-def test_data_load(db):
-    # Test that all data can be loaded into the database
-    # This should take care of finding serious issues (key/column violations)
-    db.load_database(DB_PATH, verbose=False)
 
 
 def test_reference_uniqueness(db):
@@ -97,6 +97,28 @@ def test_publications(db):
             and_(db.Publications.c.doi.is_(None), db.Publications.c.bibcode.is_('')),
             and_(db.Publications.c.doi.is_(''), db.Publications.c.bibcode.is_('')))).astropy()
     assert len(t) == 26, f'found {len(t)} publications with missing bibcode and doi'
+
+
+def test_parameters(db):
+    """
+    Test the Parameters table exists and has data
+    """
+
+    t = db.query(db.Parameters).astropy()
+    assert len(t) > 0, 'Parameters table is empty'
+
+    # Check usage of Parameters
+    param_list = db.query(db.ModeledParameters.c.parameter).astropy()
+    if len(param_list) > 0:
+        # Get unique values
+        param_list = param_list['parameter'].to_list()
+        param_list = list(set(param_list))
+        t = db.query(db.Parameters).filter(db.Parameters.c.parameter.notin_(param_list)).astropy()
+        if len(t) > 0:
+            print('The following parameters are not being used:')
+            print(t)
+        # Skipping actual assertion test
+        # assert len(t) == 0, f'{len(t)} unused parameters'
 
 
 def test_coordinates(db):
