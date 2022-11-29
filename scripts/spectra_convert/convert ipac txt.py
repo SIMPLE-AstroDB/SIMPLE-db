@@ -1,5 +1,5 @@
 #add date file was generate and converted by reprocessed
-#add keywords to dataset_dict from original dict
+#already in convert to fits
 
 from convert_spectra_to_spec1dfits import *
 from astropy.io import ascii
@@ -11,7 +11,6 @@ def text_spectrum_loader(spectrum_path):
     spectrum_table['flux_density'].name = 'flux'
     spectrum_table['error'].name = 'flux_uncertainty'
     spectrum_table['wavelength'].unit = u.um
-    #spectrum_table.remove_column('bit-flag') #I DELETED THIS COLUMN!!!!
     return spectrum_table
 
 dat = ascii.read(spectrum_path)
