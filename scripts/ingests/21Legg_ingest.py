@@ -263,9 +263,27 @@ discovery_refs = []
 ras = []
 decs = []
 other_references = []
+# spectral type variables
 spt_source_strings = []
 sp_types = []
 sp_type_refs = []
+# spitzer phot variables
+iraci1_source_strings = []
+iraci2_source_strings = []
+iraci3_source_strings = []
+iraci4_source_strings = []
+iraci1_mags = []
+iraci2_mags = []
+iraci3_mags = []
+iraci4_mags = []
+iraci1_mags_err = []
+iraci2_mags_err = []
+iraci3_mags_err = []
+iraci4_mags_err = []
+iraci1_refs = []
+iraci2_refs = []
+iraci3_refs = []
+iraci4_refs = []
 
 for row, source in enumerate(legg21_table):
     if not ma.is_masked(source['CBin']):
@@ -378,6 +396,35 @@ for row, source in enumerate(legg21_table):
         other_names = source['OName']
         print(f'Other Names: {other_names}')
 
+    # IRAC photometry
+    if not ma.is_masked(source['3.6mag']):
+        iraci1_source_strings.append(source_string)
+        iraci1_mags.append(source['3.6mag'])
+        iraci1_mags_err.append(source['e_3.6mag'])
+        iraci1_ref = convert_ref_name(source['SpitRef'])
+        iraci1_refs.append(iraci1_ref)
+
+    if not ma.is_masked(source['4.5mag']):
+        iraci2_source_strings.append(source_string)
+        iraci2_mags.append(source['4.5mag'])
+        iraci2_mags_err.append(source['e_4.5mag'])
+        iraci2_ref = convert_ref_name(source['SpitRef'])
+        iraci2_refs.append(iraci2_ref)
+
+    if not ma.is_masked(source['5.8mag']):
+        iraci3_source_strings.append(source_string)
+        iraci3_mags.append(source['5.8mag'])
+        iraci3_mags_err.append(source['e_5.8mag'])
+        iraci3_ref = convert_ref_name(source['SpitRef'])
+        iraci3_refs.append(iraci3_ref)
+
+    if not ma.is_masked(source['8.0mag']):
+        iraci4_source_strings.append(source_string)
+        iraci4_mags.append(source['8.0mag'])
+        iraci4_mags_err.append(source['e_8.0mag'])
+        iraci4_ref = convert_ref_name(source['SpitRef'])
+        iraci4_refs.append(iraci4_ref)
+
 print(f'Sources to ingest: {len(source_strings)}')
 print(f'SpTypes to ingest: {len(spt_source_strings)}')
 
@@ -388,11 +435,22 @@ if RECREATE_DB:
 
     ingest_spectral_types(db, spt_source_strings, sp_types, sp_type_refs, regimes='nir')
 
+    # ingest Spitzer photometry
+    ingest_photometry(db, iraci1_source_strings, 'IRAC.I1', iraci1_mags, iraci1_mags_err,
+                      iraci1_refs, ucds='em.IR.3-4um', telescope='Spitzer', instrument='IRAC',
+                      raise_error=False)
+
+    ingest_photometry(db, iraci2_source_strings, 'IRAC.I2', iraci2_mags, iraci2_mags_err,
+                      iraci2_refs, ucds='em.IR.4-8um', telescope='Spitzer', instrument='IRAC', raise_error=False)
+
+    ingest_photometry(db, iraci3_source_strings, 'IRAC.I3', iraci3_mags, iraci3_mags_err,
+                      iraci3_refs, ucds='em.IR.4-8um', telescope='Spitzer', instrument='IRAC', raise_error=False)
+
+    ingest_photometry(db, iraci4_source_strings, 'IRAC.I4', iraci4_mags, iraci4_mags_err,
+                      iraci4_refs, ucds='em.IR.8-15um', telescope='Spitzer', instrument='IRAC',raise_error=False)
 
 # ingest NIR photometry
 
-# ingest Spitzer photometry
 
 # ingest WISE photometry
-
-# ingest Other Names
+# ref = "Cutr12"

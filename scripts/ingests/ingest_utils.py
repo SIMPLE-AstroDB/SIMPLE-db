@@ -793,7 +793,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
 
 # PHOTOMETRY
 def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, reference, ucds=None,
-                      telescope=None, instrument=None, epoch=None, comments=None):
+                      telescope=None, instrument=None, epoch=None, comments=None, raise_error=True):
     """
     TODO: Write Docstring
 
@@ -810,6 +810,9 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
     instrument: str or list[str]
     epoch: list[float], optional
     comments: list[str], optional
+    raise_error: bool, optional
+        True (default): Raise an error if a source cannot be ingested
+        False: Log a warning but skip sources which cannot be ingested
 
     Returns
     -------
@@ -887,13 +890,21 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
             n_added += 1
             logger.info(f"Photometry measurement added: \n"
                         f"{photometry_data}")
-        except sqlalchemy.exc.IntegrityError:
-            msg = "The source may not exist in Sources table.\n" \
+        except sqlalchemy.exc.IntegrityError as e:
+            if 'UNIQUE constraint failed:' in str(e):
+                msg = "The measurement may be a duplicate."
+                if raise_error:
+                    logger.error(msg)
+                    raise SimpleError(msg)
+                else:
+                    logger.warning(msg)
+                    continue
+            else:
+                msg = "The source may not exist in Sources table.\n" \
                   "The reference may not exist in the Publications table. " \
-                  "Add it with add_publication function. \n" \
-                  "The measurement may be a duplicate."
-            logger.error(msg)
-            raise SimpleError(msg)
+                  "Add it with add_publication function."
+                logger.error(msg)
+                raise SimpleError(msg)
 
     logger.info(f"Total photometry measurements added to database: {n_added} \n")
 
