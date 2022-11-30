@@ -5,26 +5,14 @@ from scripts.ingests.ingest_utils import *
 from astropy.utils.exceptions import AstropyWarning
 import numpy.ma as ma
 
-# TODO: Figure out binaries
-# A and B: WISE	014656.66	+423410.0
-# A and B: WISEPA	045853.89	+643452.9
-# WISEPC	121756.91	+162640.2
-# 2MASS	122554.32	-273946.6
-# CFBDSIR	145829.00	+101343.0
-# 2MASSI	155302.20	+153236.0
-# WISEPA	171104.60	+350036.8
-# Other names: LHS6176B
-# Other name: Gl423B xiUmaB
-# SDSS141624.08+134826.7B
-# Gl547B 1BD01d2920B
 
 warnings.simplefilter('ignore', category=AstropyWarning)
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = False  # recreates the .db file from the data files
+RECREATE_DB = True  # recreates the .db file from the data files
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
-logger.setLevel(logging.WARNING)
+logger.setLevel(logging.INFO)
 
 
 def convert_radec_to_decimal(source):
@@ -189,6 +177,7 @@ def add_publications(db):
     db.Publications.update().where(db.Publications.c.publication == 'Warr07a').values(
         publication='Warr07.213').execute()
 
+
 def convert_ref_name(reference):
     ref_dict = {'Burgasser_2000': 'Burg00.57',
                 'Burgasser_2002': 'Burg02.421',
@@ -250,6 +239,18 @@ if RECREATE_DB:
 
 legg21_table = ascii.read('scripts/ingests/apjac0cfet10_mrt.txt', format='mrt')
 
+primary_list = ['WISE J014656.66+423410.0A']
+
+binary_list = [
+    "WISE J014656.66+423410.0B",
+    "WISEPA J045853.89+643452.9B",
+    "WISEPC J121756.91+162640.2B",
+    "2MASS J122554.32-273946.6B",
+    "CFBDS J145829.00+101343.0B",
+    "2MASSI J155302.20+153236.0B",
+    "WISEPA J171104.60+350036.8B"
+]
+
 source_strings = []
 discovery_refs = []
 ras = []
@@ -260,7 +261,10 @@ sp_types = []
 sp_type_refs = []
 
 for row, source in enumerate(legg21_table):
-    source_string = f"{source['Survey']} J{source['RA']}{source['Decl.']}"
+    if not ma.is_masked(source['CBin']):
+        source_string = f"{source['Survey']} J{source['RA']}{source['Decl.']}{source['CBin']}"
+    else:
+        source_string = f"{source['Survey']} J{source['RA']}{source['Decl.']}"
     source_strings.append(source_string)
 
     ra, dec = convert_radec_to_decimal(source)
@@ -281,6 +285,27 @@ for row, source in enumerate(legg21_table):
     except IndexError:
         second_ref = ''
         other_references.append(None)
+
+    #Add A components as Other Name
+    if source_string in primary_list:
+        source = find_source_in_db(db, source_string, ra, dec)
+        names_data = [{'source': source,
+                       'other_name': source_string}]
+        db.Names.insert().execute(names_data)
+        print(f'Added: {source_string}')
+
+    #Add the B components directly.
+    if source_string in binary_list:
+        source_data = [{'source': source_string,
+                        'ra': ra,
+                        'dec': dec,
+                        'reference': discovery_ref}
+                        ]
+        names_data = [{'source': source_string,
+                       'other_name': source_string}]
+        db.Sources.insert().execute(source_data)
+        db.Names.insert().execute(names_data)
+        print(f'Added: {source_string}')
 
     # SPECTRAL TYPES
     spt_source_strings.append(source_string)
@@ -329,9 +354,7 @@ for row, source in enumerate(legg21_table):
     print(source_string, discovery_ref, sp_type_ref,
           'SECOND Dis: ', second_ref, 'SECOND SpT: ', second_spt_ref)
 
-    # BINARIES
-    if not ma.is_masked(source['CBin']):
-        print(f"binary: {source['CBin']}")
+
 
     # OTHER NAMES
     if not ma.is_masked(source['OName']):
@@ -340,6 +363,7 @@ for row, source in enumerate(legg21_table):
 
 print(f'Sources to ingest: {len(source_strings)}')
 print(f'SpTypes to ingest: {len(spt_source_strings)}')
+
 
 if RECREATE_DB:
     ingest_sources(db, source_strings, ras=ras, decs=decs,
