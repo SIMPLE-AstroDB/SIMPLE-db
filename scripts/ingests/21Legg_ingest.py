@@ -239,7 +239,14 @@ if RECREATE_DB:
 
 legg21_table = ascii.read('scripts/ingests/apjac0cfet10_mrt.txt', format='mrt')
 
-primary_list = ['WISE J014656.66+423410.0A']
+primary_list = ['WISE J014656.66+423410.0A',
+                'WISEPA J045853.89+643452.9A',
+                "WISEPC J121756.91+162640.2A",
+                "2MASS J122554.32-273946.6A",
+                "CFBDSIR J145829.00+101343.0A",
+                '2MASSI J155302.20+153236.0A',
+                "WISEPA J171104.60+350036.8A"
+                ]
 
 binary_list = [
     "WISE J014656.66+423410.0B",
@@ -288,11 +295,21 @@ for row, source in enumerate(legg21_table):
 
     #Add A components as Other Name
     if source_string in primary_list:
-        source = find_source_in_db(db, source_string, ra, dec)
-        names_data = [{'source': source,
+        source_matches = find_source_in_db(db, source_string, ra, dec)
+        if len(source_matches) == 1:
+            source_match = source_matches[0]
+        else:
+            shortest = 100
+            source_short = ''
+            for source_match in source_matches:
+                if len(source_match) < shortest:
+                    source_short = source_match
+                    shortest = len(source_short)
+            source_match = source_short
+        names_data = [{'source': source_match,
                        'other_name': source_string}]
         db.Names.insert().execute(names_data)
-        print(f'Added: {source_string}')
+        print(f'Added to Names: {source_match, source_string}')
 
     #Add the B components directly.
     if source_string in binary_list:
@@ -305,7 +322,7 @@ for row, source in enumerate(legg21_table):
                        'other_name': source_string}]
         db.Sources.insert().execute(source_data)
         db.Names.insert().execute(names_data)
-        print(f'Added: {source_string}')
+        print(f'Added Source: {source_string}')
 
     # SPECTRAL TYPES
     spt_source_strings.append(source_string)
