@@ -19,6 +19,7 @@ from astroquery.simbad import Simbad
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 import socket
+from scripts import REFERENCE_TABLES
 
 warnings.filterwarnings("ignore", module='astroquery.simbad')
 logger = logging.getLogger('SIMPLE')
@@ -51,7 +52,7 @@ class SimpleError(Exception):
 #     sys.tracebacklimit = default_value  # revert changes
 
 
-def load_simpledb(db_file, recreatedb=True):
+def load_simpledb(db_file, recreatedb=True, reference_tables=REFERENCE_TABLES):
     # Utility function to load the database
 
     db_file_path = Path(db_file)
@@ -62,17 +63,17 @@ def load_simpledb(db_file, recreatedb=True):
 
     if not db_file_path.exists():
         try: # Use fancy in-memory database, if supported by astrodbkit2
-            db = Database('sqlite://')  # creates and connects to a temporary in-memory database
+            db = Database('sqlite://', reference_tables=REFERENCE_TABLES)  # creates and connects to a temporary in-memory database
             db.load_database('data/')  # loads the data from the data files into the database
             db.dump_sqlite(db_file)  # dump in-memory database to file
-            db = Database(db_connection_string)  # replace database object with new file version
+            db = Database(db_connection_string, reference_tables=REFERENCE_TABLES)  # replace database object with new file version
         except RuntimeError:
             # use in-file database
             create_database(db_connection_string)  # creates empty database based on the simple schema
-            db = Database(db_connection_string)  # connects to the empty database
+            db = Database(db_connection_string, reference_tables=REFERENCE_TABLES)  # connects to the empty database
             db.load_database('data/')  # loads the data from the data files into the database
     else:
-        db = Database(db_connection_string)  # if database already exists, connects to .db file
+        db = Database(db_connection_string, reference_tables=REFERENCE_TABLES)  # if database already exists, connects to .db file
 
     return db
 

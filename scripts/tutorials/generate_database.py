@@ -13,7 +13,7 @@ DB_PATH = 'data'
 DB_NAME = 'SIMPLE.db'
 
 # Used to overwrite AstrodbKit2 reference tables defaults
-REFERENCE_TABLES = ['Publications', 'Telescopes', 'Instruments', 'Modes', 'PhotometryFilters', 'Versions']
+REFERENCE_TABLES = ['Publications', 'Telescopes', 'Instruments', 'Modes', 'PhotometryFilters', 'Versions', 'Parameters']
 
 
 def load_postgres(connection_string):
@@ -37,17 +37,32 @@ def load_postgres(connection_string):
 
 
 def load_sqlite():
+    """
+    Load SQLite database
+    """
     # First, remove the existing database in order to recreate it from the schema
     # If the schema has not changed, this part can be skipped
     if os.path.exists(DB_NAME):
         os.remove(DB_NAME)
     connection_string = 'sqlite:///' + DB_NAME
 
-    # Proceed to load the database
-    load_database(connection_string)
+    # Use in-memory database for initial load (addresses issues with IO bottlenecks)
+    try: 
+        db = Database('sqlite://', reference_tables=REFERENCE_TABLES)  # creates and connects to a temporary in-memory database
+        db.load_database(DB_PATH)  # loads the data from the data files into the database
+        db.dump_sqlite(DB_NAME)  # dump in-memory database to file
+        print('In-memory database created and saved to file.')
+        db.session.close()
+        db.engine.dispose()
+    except RuntimeError:
+        # use in-file database
+        load_database(connection_string)
 
 
 def load_database(connection_string):
+    """
+    Create and load the database specified in the connection_string
+    """
     # Create and load the database
     create_database(connection_string)
 
