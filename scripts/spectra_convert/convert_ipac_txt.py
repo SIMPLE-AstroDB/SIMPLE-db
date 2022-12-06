@@ -1,12 +1,3 @@
-#think about improving file name - instument? telescope?
-
-#final pull request will include this script
-#spectra uplaoded by kelle to aws
-#pull request w id unreable spectra
-
-#make annual report -> on the blog
-# reu program, talk , grant
-
 from convert_spectra_to_spec1dfits import *
 from astropy.io import ascii
 import astropy.units as u
