@@ -43,7 +43,7 @@ for row in data:
             'object_name' : original_header_dict['OBJECT']['value'].translate({ord("'"): None}).split('/')[0],
             'telescope': original_header_dict['TELESCOP']['value'],
             'instrument': insturment,
-            'filename':original_header_dict['OBJECT']['value'].translate({ord("'"): None}).split('/')[0],
+            'filename':original_header_dict['OBJECT']['value'].translate({ord("'"): None}).split('  ')[0],
 
         }
 
