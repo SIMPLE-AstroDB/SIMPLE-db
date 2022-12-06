@@ -1,10 +1,7 @@
-import logging
 from astropy.io import ascii
-from scripts.ingests.utils import *
 from scripts.ingests.ingest_utils import *
 from astropy.utils.exceptions import AstropyWarning
 import numpy.ma as ma
-
 
 warnings.simplefilter('ignore', category=AstropyWarning)
 
@@ -311,7 +308,7 @@ for row, source in enumerate(legg21_table):
         second_ref = ''
         other_references.append(None)
 
-    #Add A components as Other Name
+    # Add A components as Other Name
     if source_string in primary_list:
         source_matches = find_source_in_db(db, source_string, ra, dec)
         if len(source_matches) == 1:
@@ -329,7 +326,7 @@ for row, source in enumerate(legg21_table):
         db.Names.insert().execute(names_data)
         print(f'Added to Names: {source_match, source_string}')
 
-    #Add the B components directly.
+    # Add the B components directly.
     if source_string in binary_list:
         source_data = [{'source': source_string,
                         'ra': ra,
@@ -389,8 +386,6 @@ for row, source in enumerate(legg21_table):
     print(source_string, discovery_ref, sp_type_ref,
           'SECOND Dis: ', second_ref, 'SECOND SpT: ', second_spt_ref)
 
-
-
     # OTHER NAMES
     if not ma.is_masked(source['OName']):
         other_names = source['OName']
@@ -447,10 +442,8 @@ if RECREATE_DB:
                       iraci3_refs, ucds='em.IR.4-8um', telescope='Spitzer', instrument='IRAC', raise_error=False)
 
     ingest_photometry(db, iraci4_source_strings, 'IRAC.I4', iraci4_mags, iraci4_mags_err,
-                      iraci4_refs, ucds='em.IR.8-15um', telescope='Spitzer', instrument='IRAC',raise_error=False)
+                      iraci4_refs, ucds='em.IR.8-15um', telescope='Spitzer', instrument='IRAC', raise_error=False)
 
-# ingest NIR photometry
+# not ingesting NIR photometry at the moment. Data is too heterogeneous.
 
-
-# ingest WISE photometry
-# ref = "Cutr12"
+# not going to ingest WISE photometry. Should get direct from IRSA
