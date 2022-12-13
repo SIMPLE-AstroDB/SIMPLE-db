@@ -182,7 +182,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
 
     Returns
     -------
-    True, string: if only one match
+    True, str: if only one match
     False, 0: No matches
     False, N_matches: Multiple matches
 
