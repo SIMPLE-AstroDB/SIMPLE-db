@@ -101,37 +101,10 @@ db.Photometry.update(). \
 
 
 # Best 20a and Best 20b
-db.Photometry.update(). \
-    where(and_(db.Photometry.c.band == 'MKO.H', db.Photometry.c.reference == 'Best20a')). \
-    values(band='UKIRT/WFCAM.H').execute()
-
-db.Photometry.update(). \
-    where(and_(db.Photometry.c.band == 'MKO.J', db.Photometry.c.reference == 'Best20a')). \
-    values(band='UKIRT/WFCAM.J').execute()
-
-db.Photometry.update(). \
-    where(and_(db.Photometry.c.band == 'MKO.Y', db.Photometry.c.reference == 'Best20a')). \
-    values(band='UKIRT/WFCAM.Y').execute()
-
-db.Photometry.update(). \
-    where(and_(db.Photometry.c.band == 'MKO.K', db.Photometry.c.reference == 'Best20a')). \
-    values(band='UKIRT/WFCAM.K').execute()
-
-db.Photometry.update(). \
-    where(and_(db.Photometry.c.band == 'MKO.H', db.Photometry.c.reference == 'Best20b')). \
-    values(band='UKIRT/WFCAM.H').execute()
-
-db.Photometry.update(). \
-    where(and_(db.Photometry.c.band == 'MKO.J', db.Photometry.c.reference == 'Best20b')). \
-    values(band='UKIRT/WFCAM.J').execute()
-
-db.Photometry.update(). \
-    where(and_(db.Photometry.c.band == 'MKO.Y', db.Photometry.c.reference == 'Best20b')). \
-    values(band='UKIRT/WFCAM.Y').execute()
-
-db.Photometry.update(). \
-    where(and_(db.Photometry.c.band == 'MKO.K', db.Photometry.c.reference == 'Best20b')). \
-    values(band='UKIRT/WFCAM.K').execute()
+mkod = {f'MKO.{band}': f'UKIRT/WFCAM.{band}' for band in ('Y', 'J', 'H', 'K')}
+for ref in ('Best20a', 'Best20b'):
+    for mkoband, ukirtband in mkod.items():
+        db.Photometry.update().where(and_(db.Photometry.c.band == mkoband, db.Photometry.c.reference == ref)).values(band=ukirtband).execute()
 
 
 # Stra99
