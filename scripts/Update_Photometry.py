@@ -31,7 +31,11 @@ for ref in ('Best20a', 'Best20b', 'Hewe06'):
         db.Photometry.update().where(and_(db.Photometry.c.band == mkoband, db.Photometry.c.reference == ref)).values(band=ukirtband).execute()
 
 
-# Curr13a
+#  Paranal/NACO
+par_lp = {f'MKO.{band}': f'Paranal/NACO.{band}' for band in "L'"}
+for ref in ('Curr13a', ''):
+    for mkoband, paranalband in par_lp.items():
+        db.Photometry.update().where(and_(db.Photometry.c.band == mkoband, db.Photometry.c.reference == ref)).values(band=paranalband).execute()
 # Legg10
 # Legg98
 # Legg01
