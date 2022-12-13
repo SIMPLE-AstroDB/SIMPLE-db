@@ -264,7 +264,7 @@ iraci1_mags, iraci2_mags, iraci3_mags, iraci4_mags = [], [], [], []
 iraci1_mags_err, iraci2_mags_err, iraci3_mags_err, iraci4_mags_err = [], [], [], []
 iraci1_refs, iraci2_refs, iraci3_refs, iraci4_refs = [], [], [], []
 
-for row, source in enumerate(legg21_table):
+for row_number, source in enumerate(legg21_table):
     if not ma.is_masked(source['CBin']):
         source_string = f"{source['Survey']} J{source['RA']}{source['Decl.']}{source['CBin']}"
     else:
@@ -274,7 +274,7 @@ for row, source in enumerate(legg21_table):
     ra, dec = convert_radec_to_decimal(source)
     ras.append(ra)
     decs.append(dec)
-    print(row, source_string, ra, dec)
+    print(row_number, source_string, ra, dec)
 
     #  Deal with discovery ref and references
     discovery_ref = convert_ref_name(source['DisRef'])
@@ -333,6 +333,22 @@ for row, source in enumerate(legg21_table):
         half_int_string = ''
     else:
         msg = f"Unexpected half integer {half_int} for {source_string}"
+        raise SimpleError(msg)
+    print(f"kelle's way: {half_int_string}")
+
+    # Will's way
+    w_half_int_string = ''
+    try:
+        half_int = int(half_int)
+        if half_int:
+            w_half_int_string += f'.{half_int}'
+    except ValueError:
+        msg = f"Unexpected half integer {half_int} for {source_string}"
+        raise SimpleError(msg)
+    print(f'Wills way: {w_half_int_string}')
+
+    if w_half_int_string != half_int_string:
+        msg = f'{w_half_int_string} and {half_int_string} are not the same'
         raise SimpleError(msg)
 
     try:
