@@ -255,32 +255,14 @@ binary_list = [
     "WISEPA J171104.60+350036.8B"
 ]
 
-source_strings = []
-discovery_refs = []
-ras = []
-decs = []
-other_references = []
+source_strings, discovery_refs, ras, decs, other_references = [], [], [], [], []
 # spectral type variables
-spt_source_strings = []
-sp_types = []
-sp_type_refs = []
+spt_source_strings, sp_types, sp_type_refs = [], [], []
 # spitzer phot variables
-iraci1_source_strings = []
-iraci2_source_strings = []
-iraci3_source_strings = []
-iraci4_source_strings = []
-iraci1_mags = []
-iraci2_mags = []
-iraci3_mags = []
-iraci4_mags = []
-iraci1_mags_err = []
-iraci2_mags_err = []
-iraci3_mags_err = []
-iraci4_mags_err = []
-iraci1_refs = []
-iraci2_refs = []
-iraci3_refs = []
-iraci4_refs = []
+iraci1_source_strings, iraci2_source_strings, iraci3_source_strings, iraci4_source_strings = [], [], [], []
+iraci1_mags, iraci2_mags, iraci3_mags, iraci4_mags = [], [], [], []
+iraci1_mags_err, iraci2_mags_err, iraci3_mags_err, iraci4_mags_err = [], [], [], []
+iraci1_refs, iraci2_refs, iraci3_refs, iraci4_refs = [], [], [], []
 
 for row, source in enumerate(legg21_table):
     if not ma.is_masked(source['CBin']):
