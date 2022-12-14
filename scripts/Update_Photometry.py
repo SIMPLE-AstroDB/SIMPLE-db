@@ -10,37 +10,50 @@ logger.setLevel(logging.INFO)
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
 # Add New Filters Themselves
-# Todo : Ukidss and ufti y band
 
 # UKIRT/UFTI
 mko_ufti = {f'MKO.{band}': f'UKIRT/UFTI.{band}' for band in ('Y', 'J', 'H', 'K')}
-for ref in ('Goli04a', 'Legg02a', 'Knap04', 'Stra99'):
-    for mkoband, ukirtband in mko_ufti.items():
-        db.Photometry.update().where(and_(db.Photometry.c.band == mkoband, db.Photometry.c.reference == ref)).values(band=ukirtband).execute()
+for ref in ('Goli04a', 'Legg02a', 'Knap04', 'Stra99', 'Geba01', 'Chiu06', 'Naud14'):
+    for mkoband, uftiband in mko_ufti.items():
+        db.Photometry.update().where(and_(db.Photometry.c.band == mkoband, db.Photometry.c.reference == ref)).values(
+            band=uftiband).execute()
 
 # UKIRT/UKIDSS
 mko_uki = {f'MKO.{band}': f'UKIRT/UKIDSS.{band}' for band in ('Y', 'J', 'H', 'K')}
-for ref in ('Burn10', 'Best20b', 'Legg10'):
-    for mkoband, ukirtband in mko_uki.items():
-        db.Photometry.update().where(and_(db.Photometry.c.band == mkoband, db.Photometry.c.reference == ref)).values(band=ukirtband).execute()
+for ref in ('Burn10', 'Legg10'):
+    for mkoband, ukidband in mko_uki.items():
+        db.Photometry.update().where(and_(db.Photometry.c.band == mkoband, db.Photometry.c.reference == ref)).values(
+            band=ukidband).execute()
 
 # UKIRT/WFCAM
 mko_wfc = {f'MKO.{band}': f'UKIRT/WFCAM.{band}' for band in ('Y', 'J', 'H', 'K')}
-for ref in ('Best20a', 'Best20b', 'Hewe06'):
-    for mkoband, ukirtband in mko_wfc.items():
-        db.Photometry.update().where(and_(db.Photometry.c.band == mkoband, db.Photometry.c.reference == ref)).values(band=ukirtband).execute()
+for ref in ('Hewe06', 'Best20'):
+    for mkoband, wfcband in mko_wfc.items():
+        db.Photometry.update().where(and_(db.Photometry.c.band == mkoband, db.Photometry.c.reference == ref)).values(
+            band=wfcband).execute()
 
+# Paranal/NACO
+for ref in ('Curr13a', 'Chau04'):
+    db.Photometry.update().where(and_(db.Photometry.c.band == "MKO.L'", db.Photometry.c.reference == ref)).values(
+        band='Paranal/NACO.Lp').execute()
 
-#  Paranal/NACO
-par_lp = {f'MKO.{band}': f'Paranal/NACO.{band}' for band in "L'"}
-for ref in ('Curr13a', ''):
-    for mkoband, paranalband in par_lp.items():
-        db.Photometry.update().where(and_(db.Photometry.c.band == mkoband, db.Photometry.c.reference == ref)).values(band=paranalband).execute()
-# Legg10
-# Legg98
+# MKO/NSFCam
+mko_nsf = {f'MKO.{band}': f'MKO/NSFCam.{band}' for band in ('J', 'H', 'K')}
+for ref in ('Legg98', 'Legg01'):
+    for mkoband, nsfband in mko_nsf.items():
+        db.Photometry.update().where(and_(db.Photometry.c.band == mkoband, db.Photometry.c.reference == ref)).values(
+            band=nsfband).execute()
+
+# Lp NSFCam
+for ref in ('Geba01', 'Legg98', 'Legg01'):
+    db.Photometry.update().where(and_(db.Photometry.c.band == "MKO.L'", db.Photometry.c.reference == ref)).values(
+        band='MKO/NSFCam.Lp').execute()
+
+# Reid02b not sure
+# Goli04a
+# Jone96
+# Legg02a
+# Legg07b
+# Legg00
+# Luhm07a
 # Legg01
-# Geba01
-# Chiu06
-# Reid02b
-# Naud14
-# Chau04
