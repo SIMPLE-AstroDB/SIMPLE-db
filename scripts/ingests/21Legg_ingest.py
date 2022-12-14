@@ -5,7 +5,7 @@ import numpy.ma as ma
 
 warnings.simplefilter('ignore', category=AstropyWarning)
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
@@ -40,139 +40,73 @@ def add_publications(db):
     ingest_publication(db, publication='Pinf14.priv',
                        description='P. Pinfield and M. Gromadzki, private communication 2014')
 
-    db.Publications.update().where(db.Publications.c.publication == 'Burn10').values(
-        publication='Burn10.1952').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burn10b').values(
-        publication='Burn10.1885').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burn11').values(
-        publication='Burn11.3590').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burn11b').values(
-        publication='Burn11.90').execute()
+    update_ref_dict = {
+        "Burn10": "Burn10.1952",
+        "Burn10b": "Burn10.1885",
+        "Burn11": "Burn11.3590",
+        "Burn11b": "Burn11.90",
+        "Burg00a": "Burg00.57",
+        "Burg00b": "Burg00.473",
+        "Burg00c": "Burg00.1100",
+        "Burg02a": "Burg02.421",
+        "Burg02b": "Burg02.2744",
+        "Burg02c": "Burg02.151",
+        "Burg03d": "Burg03.510",
+        "Burg03b": "Burg03.512",
+        "Burg03c": "Burg03.1186",
+        "Burg03e": "Burg03.2487",
+        "Burg03a": "Burg03.850",
+        "Burg04c": "Burg04.73",
+        "Burg04a": "Burg04.827",
+        "Burg04b": "Burg04.2856",
+        "Burg04d": "Burg04.191",
+        "Burg06c": "Burg06.1095",
+        "Burg06e": "Burg06.585",
+        "Burg06b": "Burg06.1067",
+        "Burg06a": "Burg06.1007",
+        "Burg06d": "Burg06.1485",
+        "Cush11": "Cush11.50",
+        "Delo08a": "Delo08.961",
+        "Delo08b": "Delo08.469",
+        "Dupu15a": "Dupu15.102",
+        "Dupu15b": "Dupu15.56",
+        "Geli11": "Geli11.57",
+        "Geli11b": "Geli11.871",
+        "Lodi09b": "Lodi09.1631",
+        "Lodi09d": "Lodi09.258",
+        "Lodi07a": "Lodi07.1423",
+        "Lodi07b": "Lodi07.372",
+        "Lodi12a": "Lodi12.1495",
+        "Lodi12b": "Lodi12.105",
+        "Lodi12d": "Lodi12.53",
+        "Loop07a": "Loop07.1162",
+        "Loop07b": "Loop07.97",
+        "Liu_11a": "Liu_11.32",
+        "Liu_11b": "Liu_11.108",
+        "Luhm12": "Luhm12.135",
+        "Luhm12d": "Luhm12.152",
+        "Luhm14b": "Luhm14.18",
+        "Luhm14d": "Luhm14.16",
+        "Luhm14a": "Luhm14.4",
+        "Luhm14c": "Luhm14.126",
+        "Luhm14e": "Luhm14.6",
+        "Mace13": "Mace13.6",
+        "Mace13b": "Mace13.36",
+        "Pinf14": "Pinf14.1931",
+        "Pinf14a": "Pinf14.1009",
+        "Scho10a": "Scho10.92",
+        "Scho10b": "Scho10.8",
+        "Tinn05a": "Tinn05.1171",
+        "Tinn05b": "Tinn05.2326",
+        "Warr07": "Warr07.1400",
+        "Warr07a": "Warr07.213",
+    }
 
-    db.Publications.update().where(db.Publications.c.publication == 'Burg00a').values(
-        publication='Burg00.57').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg00b').values(
-        publication='Burg00.473').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg00c').values(
-        publication='Burg00.1100').execute()
+    for old_ref, new_ref in update_ref_dict.items():
+        db.Publications.update().where(db.Publications.c.publication == old_ref).values(
+            publication=new_ref).execute()
 
-    db.Publications.update().where(db.Publications.c.publication == 'Burg02a').values(
-        publication='Burg02.421').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg02b').values(
-        publication='Burg02.2744').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg02c').values(
-        publication='Burg02.151').execute()
-
-    db.Publications.update().where(db.Publications.c.publication == 'Burg03d').values(
-        publication='Burg03.510').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg03b').values(
-        publication='Burg03.512').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg03c').values(
-        publication='Burg03.1186').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg03e').values(
-        publication='Burg03.2487').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg03a').values(
-        publication='Burg03.850').execute()
-
-    db.Publications.update().where(db.Publications.c.publication == 'Burg04c').values(
-        publication='Burg04.73').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg04a').values(
-        publication='Burg04.827').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg04b').values(
-        publication='Burg04.2856').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg04d').values(
-        publication='Burg04.191').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg06c').values(
-        publication='Burg06.1095').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg06e').values(
-        publication='Burg06.585').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg06b').values(
-        publication='Burg06.1067').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg06a').values(
-        publication='Burg06.1007').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Burg06d').values(
-        publication='Burg06.1485').execute()
-
-    db.Publications.update().where(db.Publications.c.publication == 'Cush11').values(
-        publication='Cush11.50').execute()
-
-    db.Publications.update().where(db.Publications.c.publication == 'Delo08a').values(
-        publication='Delo08.961').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Delo08b').values(
-        publication='Delo08.469').execute()
-
-    db.Publications.update().where(db.Publications.c.publication == 'Dupu15a').values(
-        publication='Dupu15.102').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Dupu15b').values(
-        publication='Dupu15.56').execute()
-
-    db.Publications.update().where(db.Publications.c.publication == 'Geli11').values(
-        publication='Geli11.57').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Geli11b').values(
-        publication='Geli11.871').execute()
-
-    db.Publications.update().where(db.Publications.c.publication == 'Lodi09b').values(
-        publication='Lodi09.1631').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Lodi09d').values(
-        publication='Lodi09.258').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Lodi07a').values(
-        publication='Lodi07.1423').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Lodi07b').values(
-        publication='Lodi07.372').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Lodi12a').values(
-        publication='Lodi12.1495').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Lodi12b').values(
-        publication='Lodi12.105').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Lodi12d').values(
-        publication='Lodi12.53').execute()
     db.Publications.delete().where(db.Publications.c.publication == 'Lodi12').execute()
-
-    db.Publications.update().where(db.Publications.c.publication == 'Loop07a').values(
-        publication='Loop07.1162').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Loop07b').values(
-        publication='Loop07.97').execute()
-
-    db.Publications.update().where(db.Publications.c.publication == 'Liu_11a').values(
-        publication='Liu_11.32').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Liu_11b').values(
-        publication='Liu_11.108').execute()
-
-    db.Publications.update().where(db.Publications.c.publication == 'Luhm12').values(
-        publication='Luhm12.135').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Luhm12d').values(
-        publication='Luhm12.152').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Luhm14b').values(
-        publication='Luhm14.18').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Luhm14d').values(
-        publication='Luhm14.16').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Luhm14a').values(
-        publication='Luhm14.4').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Luhm14c').values(
-        publication='Luhm14.126').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Luhm14e').values(
-        publication='Luhm14.6').execute()
-
-    db.Publications.update().where(db.Publications.c.publication == 'Mace13').values(
-        publication='Mace13.6').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Mace13b').values(
-        publication='Mace13.36').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Pinf14').values(
-        publication='Pinf14.1931').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Pinf14a').values(
-        publication='Pinf14.1009').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Scho10a').values(
-        publication='Scho10.92').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Scho10b').values(
-        publication='Scho10.8').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Tinn05a').values(
-        publication='Tinn05.1171').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Tinn05b').values(
-        publication='Tinn05.2326').execute()
-
-    db.Publications.update().where(db.Publications.c.publication == 'Warr07').values(
-        publication='Warr07.1400').execute()
-    db.Publications.update().where(db.Publications.c.publication == 'Warr07a').values(
-        publication='Warr07.213').execute()
 
 
 def convert_ref_name(reference):
@@ -445,3 +379,7 @@ if RECREATE_DB:
 # not ingesting NIR photometry at the moment. Data is too heterogeneous.
 
 # not going to ingest WISE photometry. Should get direct from IRSA
+
+# WRITE THE JSON FILES
+if SAVE_DB:
+    db.save_database(directory='data/')
