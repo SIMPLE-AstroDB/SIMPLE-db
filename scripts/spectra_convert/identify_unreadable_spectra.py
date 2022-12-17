@@ -2,15 +2,17 @@ from astropy.io import ascii
 from scripts.ingests.utils import *
 from specutils import Spectrum1D
 import astropy.units as u
+from datetime import date
 
 logger.setLevel(logging.DEBUG)
 
 db = load_simpledb('SIMPLE.db', recreatedb=False)
 data = db.inventory('2MASS J13571237+1428398',pretty_print= True)
 
+date = date.today()
 
 table = db.query(db.Spectra).table()
-print(table.info)
+#print(table.info)
 
 wcs1d_fits_tally = 0
 spex_prism_tally = 0
@@ -28,6 +30,7 @@ not_working_names =[]
 
 not_working_txt = []
 txt_names=[]
+txt_references =[]
 
 wcs1d_fits_spectra = []
 wcs1d_fits_units_issue = []
@@ -37,7 +40,6 @@ units_issue_names =[]
 spex_prism_spectra = []
 spex_prism_names= []
 #ASCII, iraf, tabular-fits, wcs1d-fits, Spex Prism, ecsv
-#spectrum
 
 for n ,spectrum in enumerate(table):
     file = os.path.basename(spectrum['spectrum'])
@@ -49,7 +51,6 @@ for n ,spectrum in enumerate(table):
         wcs1d_fits_tally +=1
         wcs1d_fits_spectra.append(spectrum['spectrum'])
         wcs1d_fits_names.append(spectrum['source'])
-        print(spectrum['source'])
         try:
             spec.wavelength.to(u.micron).value
         except:
@@ -68,7 +69,7 @@ for n ,spectrum in enumerate(table):
             except:
                 spex_units += 1
         except Exception as e_spex:
-            not_working_errors.append(f'spex prism err: {e_spex} \n') # add to every error
+            not_working_errors.append(f'spex prism err: {e_spex} \n')
             try:
                 spec = Spectrum1D.read(spectrum['spectrum'], format = 'iraf')
                 iraf_tally += 1
@@ -81,13 +82,14 @@ for n ,spectrum in enumerate(table):
                         spec = Spectrum1D.read(spectrum['spectrum'], format = 'ASCII')
                         ascii_tally += 1
                     except Exception as e_ascii:
-                        not_working_errors.append(f'ascii err: {e_ascii} \n') # add to every error
+                        not_working_errors.append(f'ascii err: {e_ascii} \n')
                         not_working_spectra.append(spectrum['spectrum'])
                         not_working_names.append(spectrum['source'])
                         not_working_tally += 1
                         if file_root == '.txt':
                             not_working_txt.append(spectrum['spectrum'])
                             txt_names.append(spectrum['source'])
+                            txt_references.append(spectrum['reference'])
 
 
 
@@ -107,31 +109,31 @@ print(f'total tally:{wcs1d_fits_tally + spex_prism_tally + iraf_tally + tabularf
 #table for all not wokring spectra
 data_not_working = Table([not_working_names,not_working_spectra],
                        names=('source','spectrum')) #add column names source and url
-ascii.write(data_not_working, 'not_working_table.dat', overwrite=True)
+ascii.write(data_not_working, f'not_working_table_{date}.dat', overwrite=False)
 
 
 #table for not wokring .txt spectra
-data_not_working_txt = Table([txt_names, not_working_txt],
-                       names=('source','spectrum'))
-ascii.write(data_not_working_txt, 'not_working_txt_table.dat', overwrite=True)
+data_not_working_txt = Table([txt_names, not_working_txt, txt_references],
+                       names=('source','spectrum','reference'))
+ascii.write(data_not_working_txt, f'not_working_txt_table_{date}.dat', overwrite=False)
 
 
 #table for wcs1d-fits spectra
 data = Table([wcs1d_fits_names,wcs1d_fits_spectra],
                        names=('source','spectrum'))
-ascii.write(data, 'wcs1d_spectrum_table.dat', overwrite=True)
+ascii.write(data, f'wcs1d_spectrum_table_{date}.dat', overwrite=False)
 
 
 #table for wcs1d spectra w units errors
 units_data = Table([units_issue_names, wcs1d_fits_units_issue],
                         names=('source','spectrum'))
-ascii.write(units_data, 'wcs1d_convert_unit_table.dat', overwrite=True)
+ascii.write(units_data, f'wcs1d_convert_unit_table_{date}.dat', overwrite=False)
 
 
 #table for spex prism spectra
 spex_data = Table([spex_prism_names, spex_prism_spectra],
                         names=('source','spectrum'))
-ascii.write(spex_data, 'spex_prism_table.dat', overwrite=True)
+ascii.write(spex_data, f'spex_prism_table_{date}.dat', overwrite=False)
 
 
 #plt.plot(spec.wavelength, spec.flux)

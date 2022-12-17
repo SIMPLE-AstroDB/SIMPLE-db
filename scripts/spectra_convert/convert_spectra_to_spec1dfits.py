@@ -67,7 +67,7 @@ def convert_to_fits(spectrum_info_all):
 
     fits_filename = spectrum_info_all['fits_data_dir'] + spectrum_info_all['generated_filename'] + '.fits'
     try:
-        spectrum_mef.writeto(fits_filename, overwrite=True, output_verify="exception")
+        spectrum_mef.writeto(fits_filename, overwrite=False, output_verify="exception")
         # TODO: think about overwrite
         logger.info(f'Wrote {fits_filename}')
     except:
