@@ -75,7 +75,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
     for i, input_value in enumerate(input_values):
         if input_value is None:
             input_values[i] = [None] * n_sources
-        elif isinstance(input_value, str) or isinstance(input_value, float):
+        elif isinstance(input_value, (str, float)):
             input_values[i] = [input_value] * n_sources
     sources, references, ras, decs, epochs, equinoxes, comments, other_references = input_values
 
@@ -324,7 +324,7 @@ def find_survey_name_in_simbad(sources, desig_prefix, source_id_index=None):
 
 
 # SPECTRAL TYPES
-def ingest_spectral_types(db, sources, spectral_types, references, regimes=None, spectral_type_error=None,
+def ingest_spectral_types(db, sources, spectral_types, references, regimes, spectral_type_error=None,
                           comments=None):
     """
     Script to ingest spectral types
