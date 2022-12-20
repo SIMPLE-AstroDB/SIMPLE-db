@@ -2,6 +2,7 @@ from astropy.io import ascii
 from scripts.ingests.ingest_utils import *
 from astropy.utils.exceptions import AstropyWarning
 import numpy.ma as ma
+from sqlalchemy import and_
 
 warnings.simplefilter('ignore', category=AstropyWarning)
 
@@ -379,6 +380,21 @@ if RECREATE_DB:
 # not ingesting NIR photometry at the moment. Data is too heterogeneous.
 
 # not going to ingest WISE photometry. Should get direct from IRSA
+
+# remove duplicate spectral types
+query = "SELECT source, reference, regime, spectral_type_code, count(*) FROM SpectralTypes where regime like 'nir%' " \
+        "Group by source, reference, spectral_type_code " \
+        "having count(*)>1 " \
+        "ORDER by source"
+
+dupe_types = db.sql_query(query, fmt='astropy')
+# make sure it's 103
+for row in dupe_types:
+    db.SpectralTypes.delete().where(and_(
+    db.SpectralTypes.c.source == row['source'],
+    db.SpectralTypes.c.reference == row['reference'],
+    db.SpectralTypes.c.regime == 'nir_UCD'))\
+        .execute()
 
 # WRITE THE JSON FILES
 if SAVE_DB:
