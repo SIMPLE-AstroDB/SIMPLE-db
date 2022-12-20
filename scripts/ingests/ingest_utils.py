@@ -44,6 +44,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
         Epochs of coordinates
     equinoxes: str or list[string], optional
         Equinoxes of coordinates
+    other_references: str or list[strings]
     raise_error: bool, optional
         True (default): Raise an error if a source cannot be ingested
         False: Log a warning but skip sources which cannot be ingested
