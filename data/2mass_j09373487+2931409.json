@@ -7,7 +7,7 @@
             "epoch": null,
             "equinox": null,
             "shortname": "0937+2931",
-            "reference": "Burg02a",
+            "reference": "Burg02.421",
             "other_references": null,
             "comments": null
         }
@@ -15,6 +15,9 @@
     "Names": [
         {
             "other_name": "2MASS J09373487+2931409"
+        },
+        {
+            "other_name": "2MASSI J093734.70+293142.0"
         },
         {
             "other_name": "2MASSI J0937347+293142"
@@ -59,6 +62,17 @@
         },
         {
             "band": "IRAC.I1",
+            "ucd": "em.IR.3-4um",
+            "magnitude": 13.16,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
+        },
+        {
+            "band": "IRAC.I1",
             "ucd": null,
             "magnitude": 13.1,
             "magnitude_error": 0.03,
@@ -67,6 +81,17 @@
             "epoch": null,
             "comments": null,
             "reference": "Patt06"
+        },
+        {
+            "band": "IRAC.I2",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 11.69,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
         },
         {
             "band": "IRAC.I2",
@@ -81,6 +106,17 @@
         },
         {
             "band": "IRAC.I3",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 12.32,
+            "magnitude_error": 0.03,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
+        },
+        {
+            "band": "IRAC.I3",
             "ucd": null,
             "magnitude": 12.32,
             "magnitude_error": 0.02,
@@ -89,6 +125,17 @@
             "epoch": null,
             "comments": null,
             "reference": "Patt06"
+        },
+        {
+            "band": "IRAC.I4",
+            "ucd": "em.IR.8-15um",
+            "magnitude": 11.73,
+            "magnitude_error": 0.05,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
         },
         {
             "band": "IRAC.I4",
@@ -324,7 +371,7 @@
             "flux_units": "normalized",
             "wavelength_order": null,
             "comments": null,
-            "reference": "Burg06b",
+            "reference": "Burg06.1067",
             "other_references": null
         },
         {
@@ -340,7 +387,7 @@
             "flux_units": "erg s-1 cm-2 A-1",
             "wavelength_order": null,
             "comments": null,
-            "reference": "Burg03d",
+            "reference": "Burg03.510",
             "other_references": null
         }
     ],
@@ -349,10 +396,10 @@
             "spectral_type_string": "T6 pec",
             "spectral_type_code": 86.0,
             "spectral_type_error": null,
-            "regime": "nir_UCD",
+            "regime": "nir",
             "adopted": null,
             "comments": null,
-            "reference": "Burg06b"
+            "reference": "Burg06.1067"
         },
         {
             "spectral_type_string": "T7",
@@ -361,7 +408,7 @@
             "regime": "optical",
             "adopted": null,
             "comments": null,
-            "reference": "Burg03d"
+            "reference": "Burg03.510"
         }
     ]
 }

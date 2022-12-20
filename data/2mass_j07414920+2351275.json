@@ -68,6 +68,28 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "IRAC.I1",
+            "ucd": "em.IR.3-4um",
+            "magnitude": 15.02,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "IRAC.I2",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 14.03,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
         }
     ],
     "ProperMotions": [
@@ -92,13 +114,22 @@
     ],
     "SpectralTypes": [
         {
+            "spectral_type_string": "T5.5",
+            "spectral_type_code": 85.5,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Burg02.421"
+        },
+        {
             "spectral_type_string": "T5",
             "spectral_type_code": 85.0,
             "spectral_type_error": null,
             "regime": "nir_UCD",
             "adopted": null,
             "comments": null,
-            "reference": "Burg06b"
+            "reference": "Burg06.1067"
         }
     ]
 }

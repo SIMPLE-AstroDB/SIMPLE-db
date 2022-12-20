@@ -7,7 +7,7 @@
             "epoch": null,
             "equinox": "2000",
             "shortname": null,
-            "reference": "Pinf14a",
+            "reference": "Pinf14.1009",
             "other_references": null,
             "comments": null
         }
@@ -15,6 +15,33 @@
     "Names": [
         {
             "other_name": "WISE J001354.39+063448.1"
+        },
+        {
+            "other_name": "WISE J001354.39+063448.2"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "IRAC.I1",
+            "ucd": "em.IR.3-4um",
+            "magnitude": 17.15,
+            "magnitude_error": 0.03,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Pinf14.1009"
+        },
+        {
+            "band": "IRAC.I2",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 15.16,
+            "magnitude_error": 0.03,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Pinf14.1009"
         }
     ],
     "ProperMotions": [
@@ -25,7 +52,7 @@
             "mu_dec_error": 90.0,
             "adopted": true,
             "comments": null,
-            "reference": "Pinf14a"
+            "reference": "Pinf14.1009"
         }
     ],
     "SpectralTypes": [
@@ -33,10 +60,10 @@
             "spectral_type_string": "T8",
             "spectral_type_code": 88.0,
             "spectral_type_error": null,
-            "regime": "nir_UCD",
+            "regime": "nir",
             "adopted": null,
             "comments": null,
-            "reference": "Pinf14a"
+            "reference": "Pinf14.1009"
         }
     ]
 }

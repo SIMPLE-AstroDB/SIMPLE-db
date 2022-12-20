@@ -74,6 +74,17 @@
         },
         {
             "band": "IRAC.I1",
+            "ucd": "em.IR.3-4um",
+            "magnitude": 14.41,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
+        },
+        {
+            "band": "IRAC.I1",
             "ucd": null,
             "magnitude": 14.3,
             "magnitude_error": 0.03,
@@ -82,6 +93,17 @@
             "epoch": null,
             "comments": null,
             "reference": "Patt06"
+        },
+        {
+            "band": "IRAC.I2",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 13.1,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
         },
         {
             "band": "IRAC.I2",
@@ -96,6 +118,17 @@
         },
         {
             "band": "IRAC.I3",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 13.25,
+            "magnitude_error": 0.08,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
+        },
+        {
+            "band": "IRAC.I3",
             "ucd": null,
             "magnitude": 13.25,
             "magnitude_error": 0.08,
@@ -104,6 +137,17 @@
             "epoch": null,
             "comments": null,
             "reference": "Patt06"
+        },
+        {
+            "band": "IRAC.I4",
+            "ucd": "em.IR.8-15um",
+            "magnitude": 12.84,
+            "magnitude_error": 0.09,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
         },
         {
             "band": "IRAC.I4",
@@ -169,7 +213,7 @@
             "instrument": null,
             "epoch": null,
             "comments": null,
-            "reference": "Burg06e"
+            "reference": "Burg06.585"
         },
         {
             "band": "SDSS.g",
@@ -366,7 +410,7 @@
             "flux_units": "normalized",
             "wavelength_order": null,
             "comments": null,
-            "reference": "Burg06b",
+            "reference": "Burg06.1067",
             "other_references": null
         },
         {
@@ -382,7 +426,7 @@
             "flux_units": "erg s-1 cm-2 A-1",
             "wavelength_order": null,
             "comments": null,
-            "reference": "Burg00b",
+            "reference": "Burg00.473",
             "other_references": null
         }
     ],
@@ -392,18 +436,18 @@
             "spectral_type_code": 86.0,
             "spectral_type_error": null,
             "regime": "nir",
-            "adopted": false,
+            "adopted": null,
             "comments": null,
-            "reference": "Manj19"
+            "reference": "Burg06.1067"
         },
         {
             "spectral_type_string": "T6",
             "spectral_type_code": 86.0,
             "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
+            "regime": "nir",
+            "adopted": false,
             "comments": null,
-            "reference": "Burg06b"
+            "reference": "Manj19"
         },
         {
             "spectral_type_string": "T6",

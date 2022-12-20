@@ -7,7 +7,7 @@
             "epoch": null,
             "equinox": "2000",
             "shortname": null,
-            "reference": "Mace13",
+            "reference": "Mace13.6",
             "other_references": null,
             "comments": null
         }
@@ -15,6 +15,30 @@
     "Names": [
         {
             "other_name": "WISE J032517.69-385454.1"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "IRAC.I1",
+            "ucd": "em.IR.3-4um",
+            "magnitude": 17.12,
+            "magnitude_error": 0.05,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
+        },
+        {
+            "band": "IRAC.I2",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 14.98,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
         }
     ],
     "ProperMotions": [
@@ -33,10 +57,19 @@
             "spectral_type_string": "T9",
             "spectral_type_code": 89.0,
             "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Mace13.36"
+        },
+        {
+            "spectral_type_string": "T9",
+            "spectral_type_code": 89.0,
+            "spectral_type_error": null,
             "regime": "nir_UCD",
             "adopted": null,
             "comments": null,
-            "reference": "Mace13"
+            "reference": "Mace13.6"
         }
     ]
 }

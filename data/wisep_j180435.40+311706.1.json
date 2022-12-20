@@ -23,6 +23,30 @@
             "other_name": "WISEPA J180435.40+311706.1"
         }
     ],
+    "Photometry": [
+        {
+            "band": "IRAC.I1",
+            "ucd": "em.IR.3-4um",
+            "magnitude": 16.61,
+            "magnitude_error": 0.04,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
+        },
+        {
+            "band": "IRAC.I2",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 14.6,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
+        }
+    ],
     "ProperMotions": [
         {
             "mu_ra": -251.7,
@@ -36,10 +60,10 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "T9.5:",
+            "spectral_type_string": "T9.5",
             "spectral_type_code": 89.5,
             "spectral_type_error": null,
-            "regime": "nir_UCD",
+            "regime": "nir",
             "adopted": null,
             "comments": null,
             "reference": "Kirk11"
