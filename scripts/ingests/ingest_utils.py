@@ -22,7 +22,7 @@ logger = logging.getLogger('SIMPLE')
 
 # SOURCES
 def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=None, epochs=None,
-                   equinoxes=None, raise_error=True, search_db=True):
+                   equinoxes=None, other_references=None, raise_error=True, search_db=True):
     """
     Script to ingest sources
     TODO: better support references=None
@@ -44,6 +44,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
         Epochs of coordinates
     equinoxes: str or list[string], optional
         Equinoxes of coordinates
+    other_references: str or list[strings]
     raise_error: bool, optional
         True (default): Raise an error if a source cannot be ingested
         False: Log a warning but skip sources which cannot be ingested
@@ -71,13 +72,13 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
         n_sources = len(sources)
 
     # Convert single element input values into lists
-    input_values = [sources, references, epochs, equinoxes, comments]
+    input_values = [sources, references, ras, decs, epochs, equinoxes, comments, other_references]
     for i, input_value in enumerate(input_values):
         if input_value is None:
             input_values[i] = [None] * n_sources
-        elif isinstance(input_value, str):
+        elif isinstance(input_value, (str, float)):
             input_values[i] = [input_value] * n_sources
-    sources, references, epochs, equinoxes, comments = input_values
+    sources, references, ras, decs, epochs, equinoxes, comments, other_references = input_values
 
     n_added = 0
     n_existing = 0
@@ -86,7 +87,8 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
     n_skipped = 0
     n_multiples = 0
 
-    logger.info(f"Trying to add {n_sources} sources")
+    if n_sources > 1:
+        logger.info(f"Trying to add {n_sources} sources")
 
     # Loop over each source and decide to ingest, skip, or add alt name
     for i, source in enumerate(sources):
@@ -102,9 +104,8 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
 
         if len(name_matches) == 1 and search_db:  # Source is already in database
             n_existing += 1
-            msg1 = f"{i}: Skipping {source}. Already in database. \n "
-            msg2 = f"{i}: Match found for {source}: {name_matches[0]}"
-            logger.debug(msg1 + msg2)
+            msg1 = f"{i}: Skipping {source}. Already in database as {name_matches[0]}. \n "
+            logger.debug(msg1)
 
             # Figure out if ingest name is an alternate name and add
             db_matches = db.search_object(source, output_table='Sources', fuzzy_search=False)
@@ -178,6 +179,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
                         'reference': references[i],
                         'epoch': epoch,
                         'equinox': equinox,
+                        'other_references': other_references[i],
                         'comments': None if ma.is_masked(comments[i]) else comments[i]}]
         names_data = [{'source': source,
                        'other_name': source}]
@@ -235,12 +237,13 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
             else:
                 continue
 
-    logger.info(f"Sources added to database: {n_added}")
-    logger.info(f"Names added to database: {n_names} \n")
-    logger.info(f"Sources already in database: {n_existing}")
-    logger.info(f"Alt Names added to database: {n_alt_names}")
-    logger.info(f"Sources NOT added to database because multiple matches: {n_multiples}")
-    logger.info(f"Sources NOT added to database: {n_skipped} \n")
+    if n_sources > 1:
+        logger.info(f"Sources added to database: {n_added}")
+        logger.info(f"Names added to database: {n_names} \n")
+        logger.info(f"Sources already in database: {n_existing}")
+        logger.info(f"Alt Names added to database: {n_alt_names}")
+        logger.info(f"Sources NOT added to database because multiple matches: {n_multiples}")
+        logger.info(f"Sources NOT added to database: {n_skipped} \n")
 
     if n_added != n_names:
         msg = f"Number added should equal names added."
@@ -362,6 +365,7 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes, spec
     sources, spectral_types, spectral_type_error, regimes, comments, references = input_values
 
     n_added = 0
+    n_skipped = 0
 
     logger.info(f"Trying to add {n_sources} spectral types")
 
@@ -437,7 +441,9 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes, spec
                                                                 db.SpectralTypes.c.regime == regimes[i],
                                                                 db.SpectralTypes.c.reference == references[i])).count()
         if check == 1:
-            logger.debug(f'{db_name} already in the database: skipping insert')
+            n_skipped += 1
+            logger.info(f'Spectral type for {db_name} already in the database: skipping insert '
+                         f'{spt_data}')
             continue
 
         logger.debug(f"Trying to insert {spt_data} into Spectral Types table ")
@@ -460,6 +466,10 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes, spec
                 msg = "Other error\n"
                 logger.error(msg)
                 raise SimpleError(msg)
+
+    msg = f"Spectral types added: {n_added} \n" \
+          f"Spectral Types skipped: {n_skipped}"
+    logger.info(msg)
 
 
 def convert_spt_string_to_code(spectral_types):
@@ -825,7 +835,7 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
 
 # PHOTOMETRY
 def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, reference, ucds=None,
-                      telescope=None, instrument=None, epoch=None, comments=None):
+                      telescope=None, instrument=None, epoch=None, comments=None, raise_error=True):
     """
     TODO: Write Docstring
 
@@ -842,6 +852,9 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
     instrument: str or list[str]
     epoch: list[float], optional
     comments: list[str], optional
+    raise_error: bool, optional
+        True (default): Raise an error if a source cannot be ingested
+        False: Log a warning but skip sources which cannot be ingested
 
     Returns
     -------
@@ -919,13 +932,21 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
             n_added += 1
             logger.info(f"Photometry measurement added: \n"
                         f"{photometry_data}")
-        except sqlalchemy.exc.IntegrityError:
-            msg = "The source may not exist in Sources table.\n" \
+        except sqlalchemy.exc.IntegrityError as e:
+            if 'UNIQUE constraint failed:' in str(e):
+                msg = "The measurement may be a duplicate."
+                if raise_error:
+                    logger.error(msg)
+                    raise SimpleError(msg)
+                else:
+                    logger.warning(msg)
+                    continue
+            else:
+                msg = "The source may not exist in Sources table.\n" \
                   "The reference may not exist in the Publications table. " \
-                  "Add it with add_publication function. \n" \
-                  "The measurement may be a duplicate."
-            logger.error(msg)
-            raise SimpleError(msg)
+                  "Add it with add_publication function."
+                logger.error(msg)
+                raise SimpleError(msg)
 
     logger.info(f"Total photometry measurements added to database: {n_added} \n")
 

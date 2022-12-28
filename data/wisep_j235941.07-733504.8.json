@@ -18,6 +18,9 @@
         },
         {
             "other_name": "WISEP J235941.07-733504.8"
+        },
+        {
+            "other_name": "WISEPA J235941.07-733504.8"
         }
     ],
     "Photometry": [
@@ -53,6 +56,28 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "IRAC.I1",
+            "ucd": "em.IR.3-4um",
+            "magnitude": 14.47,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "IRAC.I2",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 13.38,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
         }
     ],
     "ProperMotions": [
@@ -68,13 +93,22 @@
     ],
     "SpectralTypes": [
         {
+            "spectral_type_string": "T5.5",
+            "spectral_type_code": 85.5,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Kirk11"
+        },
+        {
             "spectral_type_string": "T6.5",
             "spectral_type_code": 86.5,
             "spectral_type_error": null,
             "regime": "nir_UCD",
             "adopted": null,
             "comments": null,
-            "reference": "Mace13"
+            "reference": "Mace13.6"
         }
     ]
 }
