@@ -96,7 +96,7 @@ def test_publications(db):
             and_(db.Publications.c.doi.is_(''), db.Publications.c.bibcode.is_(None)),
             and_(db.Publications.c.doi.is_(None), db.Publications.c.bibcode.is_('')),
             and_(db.Publications.c.doi.is_(''), db.Publications.c.bibcode.is_('')))).astropy()
-    assert len(t) == 26, f'found {len(t)} publications with missing bibcode and doi'
+    assert len(t) == 27, f'found {len(t)} publications with missing bibcode and doi'
 
 
 def test_parameters(db):
@@ -421,9 +421,9 @@ def test_sources(db):
 
     ref = 'Kirk11'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 98, f'found {len(t)} sources from {ref}'
+    assert len(t) == 100, f'found {len(t)} sources from {ref}'
 
-    ref = 'Mace13'
+    ref = 'Mace13.6'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 93, f'found {len(t)} sources from {ref}'
 
@@ -467,7 +467,7 @@ def test_sources(db):
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 45, f'found {len(t)} sources from {ref}'
 
-    ref = 'Burn10b'
+    ref = 'Burn10.1885'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 43, f'found {len(t)} sources from {ref}'
 

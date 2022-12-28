@@ -60,7 +60,8 @@ def t_pm():
 def test_setup_db(db):
     # Some setup tasks to ensure some data exists in the database first
     ref_data = [{'publication': 'Ref 1', 'doi': '10.1093/mnras/staa1522', 'bibcode': '2020MNRAS.496.1922B'},
-                {'publication': 'Ref 2', 'doi': 'Doi2', 'bibcode': '2012yCat.2311....0C'}]
+                {'publication': 'Ref 2', 'doi': 'Doi2', 'bibcode': '2012yCat.2311....0C'},
+                {'publication': 'Burn08', 'doi': 'Doi3', 'bibcode': '2008MNRAS.391..320B'}]
     db.Publications.insert().execute(ref_data)
 
     source_data = [{'source': 'Fake 1', 'ra': 9.0673755, 'dec': 18.352889, 'reference': 'Ref 1'},
@@ -173,16 +174,16 @@ def test_find_publication(db):
     assert find_publication(db, name='Ref 1', doi='10.1093/mnras/staa1522')[0]  # True
     doi_search = find_publication(db, doi='10.1093/mnras/staa1522')
     assert doi_search[0]  # True
-    assert doi_search[1] == 1
+    assert doi_search[1] == 'Ref 1'
     bibcode_search = find_publication(db, bibcode='2020MNRAS.496.1922B')
     assert bibcode_search[0]  # True
-    assert bibcode_search[1] == 1
+    assert bibcode_search[1] == 'Ref 1'
     multiple_matches = find_publication(db, name='Ref')
     assert not multiple_matches[0]  # False, multiple matches
     assert multiple_matches[1] == 2  # multiple matches
     assert not find_publication(db, name='Ref 2', doi='10.1093/mnras/staa1522')[0]  # False
     assert not find_publication(db, name='Ref 2', bibcode='2020MNRAS.496.1922B')[0]  # False
-
+    assert find_publication(db, name='Burningham_2008') == (1, 'Burn08')
 
 def test_ingest_publication(db):
     # should fail if trying to add a duplicate record

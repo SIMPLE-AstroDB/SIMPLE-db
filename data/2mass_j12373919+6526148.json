@@ -14,6 +14,9 @@
     ],
     "Names": [
         {
+            "other_name": "2MASS J123739.19+652614.8"
+        },
+        {
             "other_name": "2MASS J12373919+6526148"
         },
         {
@@ -48,6 +51,17 @@
         },
         {
             "band": "IRAC.I1",
+            "ucd": "em.IR.3-4um",
+            "magnitude": 14.43,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
+        },
+        {
+            "band": "IRAC.I1",
             "ucd": null,
             "magnitude": 14.39,
             "magnitude_error": 0.03,
@@ -56,6 +70,17 @@
             "epoch": null,
             "comments": null,
             "reference": "Patt06"
+        },
+        {
+            "band": "IRAC.I2",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 12.95,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
         },
         {
             "band": "IRAC.I2",
@@ -70,6 +95,17 @@
         },
         {
             "band": "IRAC.I3",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 13.42,
+            "magnitude_error": 0.06,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
+        },
+        {
+            "band": "IRAC.I3",
             "ucd": null,
             "magnitude": 13.42,
             "magnitude_error": 0.06,
@@ -78,6 +114,17 @@
             "epoch": null,
             "comments": null,
             "reference": "Patt06"
+        },
+        {
+            "band": "IRAC.I4",
+            "ucd": "em.IR.8-15um",
+            "magnitude": 12.78,
+            "magnitude_error": 0.11,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
         },
         {
             "band": "IRAC.I4",
@@ -312,7 +359,7 @@
             "flux_units": "erg s-1 cm-2 A-1",
             "wavelength_order": null,
             "comments": null,
-            "reference": "Burg00b",
+            "reference": "Burg00.473",
             "other_references": null
         }
     ],
@@ -321,10 +368,10 @@
             "spectral_type_string": "T6.5",
             "spectral_type_code": 86.5,
             "spectral_type_error": null,
-            "regime": "nir_UCD",
+            "regime": "nir",
             "adopted": null,
             "comments": null,
-            "reference": "Burg06b"
+            "reference": "Burg06.1067"
         },
         {
             "spectral_type_string": "T7",
@@ -333,7 +380,7 @@
             "regime": "optical",
             "adopted": null,
             "comments": null,
-            "reference": "Burg03d"
+            "reference": "Burg03.510"
         }
     ]
 }
