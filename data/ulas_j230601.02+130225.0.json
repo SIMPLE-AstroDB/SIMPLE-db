@@ -7,7 +7,7 @@
             "epoch": null,
             "equinox": "2000",
             "shortname": null,
-            "reference": "Burn10b",
+            "reference": "Burn10.1885",
             "other_references": null,
             "comments": null
         }
@@ -26,6 +26,30 @@
             "reference": "Best20a"
         }
     ],
+    "Photometry": [
+        {
+            "band": "IRAC.I1",
+            "ucd": "em.IR.3-4um",
+            "magnitude": 16.49,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Grif12"
+        },
+        {
+            "band": "IRAC.I2",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 15.11,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Grif12"
+        }
+    ],
     "ProperMotions": [
         {
             "mu_ra": 69.9,
@@ -42,10 +66,10 @@
             "spectral_type_string": "T6.5",
             "spectral_type_code": 86.5,
             "spectral_type_error": null,
-            "regime": "nir_UCD",
+            "regime": "nir",
             "adopted": null,
             "comments": null,
-            "reference": "Burn10b"
+            "reference": "Burn10.1885"
         }
     ]
 }

@@ -7,14 +7,41 @@
             "epoch": null,
             "equinox": "2000",
             "shortname": null,
-            "reference": "Scho10b",
+            "reference": "Scho10.8",
             "other_references": null,
             "comments": null
         }
     ],
     "Names": [
         {
+            "other_name": "SDSS J144901.96+114712.3"
+        },
+        {
             "other_name": "WISE J144901.85+114710.9"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "IRAC.I1",
+            "ucd": "em.IR.3-4um",
+            "magnitude": 16.06,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Grif12"
+        },
+        {
+            "band": "IRAC.I2",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 14.91,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Grif12"
         }
     ],
     "ProperMotions": [
@@ -30,13 +57,22 @@
     ],
     "SpectralTypes": [
         {
+            "spectral_type_string": "T7",
+            "spectral_type_code": 87.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Burn13"
+        },
+        {
             "spectral_type_string": "T5 pec",
             "spectral_type_code": 85.0,
             "spectral_type_error": null,
             "regime": "nir_UCD",
             "adopted": null,
             "comments": null,
-            "reference": "Mace13"
+            "reference": "Mace13.6"
         }
     ]
 }

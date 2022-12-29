@@ -7,7 +7,7 @@
             "epoch": null,
             "equinox": null,
             "shortname": "0146+4234",
-            "reference": "Mace13",
+            "reference": "Mace13.6",
             "other_references": null,
             "comments": null
         }
@@ -17,7 +17,34 @@
             "other_name": "WISE J014656.66+423410.0"
         },
         {
+            "other_name": "WISE J014656.66+423410.0A"
+        },
+        {
             "other_name": "WISEA J014656.66+423409.9"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "IRAC.I1",
+            "ucd": "em.IR.3-4um",
+            "magnitude": 17.86,
+            "magnitude_error": 0.17,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Legg21"
+        },
+        {
+            "band": "IRAC.I2",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 15.54,
+            "magnitude_error": 0.1,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Legg21"
         }
     ],
     "ProperMotions": [
@@ -32,6 +59,15 @@
         }
     ],
     "SpectralTypes": [
+        {
+            "spectral_type_string": "T9",
+            "spectral_type_code": 89.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Dupu15.102"
+        },
         {
             "spectral_type_string": "T9.5",
             "spectral_type_code": 89.5,
