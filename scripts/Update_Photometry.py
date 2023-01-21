@@ -49,7 +49,7 @@ for ref in ('Geba01', 'Legg98', 'Legg01'):
     db.Photometry.update().where(and_(db.Photometry.c.band == "MKO.L'", db.Photometry.c.reference == ref)).values(
         band='MKO/NSFCam.Lp').execute()
 
-# Reid02b not sure
+# Reid02b
 # Goli04a
 # Jone96
 # Legg02a
