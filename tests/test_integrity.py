@@ -519,6 +519,8 @@ def test_spectra(db):
     assert len(flux_unit_fail) == 0, f'Some flux units did not resolve: {flux_unit_fail}'
 
 
+#problem with the astropy units resolve s
+
 def test_special_characters(db):
     # This test asserts that no special unicode characters are in the database
     # This can be expanded with additional characters we want to avoid
