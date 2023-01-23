@@ -475,6 +475,7 @@ def test_sources(db):
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 37, f'found {len(t)} sources from {ref}'
 
+#problem with the astropy units resolve funtion will go here
 
 def test_spectra(db):
     # Tests against the Spectra table
@@ -519,7 +520,6 @@ def test_spectra(db):
     assert len(flux_unit_fail) == 0, f'Some flux units did not resolve: {flux_unit_fail}'
 
 
-#problem with the astropy units resolve s
 
 def test_special_characters(db):
     # This test asserts that no special unicode characters are in the database
