@@ -11,9 +11,13 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
 # Add New Filters Themselves
 
+# Fix the Reid02b publication into Reid02 and the Publication in the Photometry table
+db.Publications.update().where(db.Publications.c.publication == 'Reid02a').values(publication='Reid02').execute()
+db.Photometry.update().where(db.Photometry.c.reference == 'Reid02b').values(reference='Reid02').execute()
+
 # UKIRT/UFTI
 mko_ufti = {f'MKO.{band}': f'UKIRT/UFTI.{band}' for band in ('Y', 'J', 'H', 'K')}
-for ref in ('Goli04a', 'Legg02a', 'Knap04', 'Stra99', 'Geba01', 'Chiu06', 'Naud14'):
+for ref in ('Goli04a', 'Knap04', 'Stra99', 'Geba01', 'Chiu06', 'Naud14'):
     for mkoband, uftiband in mko_ufti.items():
         db.Photometry.update().where(and_(db.Photometry.c.band == mkoband, db.Photometry.c.reference == ref)).values(
             band=uftiband).execute()
@@ -39,19 +43,18 @@ for ref in ('Curr13a', 'Chau04'):
 
 # MKO/NSFCam
 mko_nsf = {f'MKO.{band}': f'MKO/NSFCam.{band}' for band in ('J', 'H', 'K')}
-for ref in ('Legg98', 'Legg01'):
+for ref in ('Legg98', 'Legg01', 'Legg02a'):
     for mkoband, nsfband in mko_nsf.items():
         db.Photometry.update().where(and_(db.Photometry.c.band == mkoband, db.Photometry.c.reference == ref)).values(
             band=nsfband).execute()
 
 # Lp NSFCam
-for ref in ('Geba01', 'Legg98', 'Legg01'):
+for ref in ('Geba01', 'Legg98', 'Legg01', 'Reid02', 'Goli04a', 'Jone96', 'Legg02a'):
     db.Photometry.update().where(and_(db.Photometry.c.band == "MKO.L'", db.Photometry.c.reference == ref)).values(
         band='MKO/NSFCam.Lp').execute()
 
-# Reid02b
-# Goli04a
-# Jone96
+
+
 # Legg02a
 # Legg07b
 # Legg00
