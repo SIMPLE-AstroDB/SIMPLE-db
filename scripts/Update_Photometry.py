@@ -49,14 +49,13 @@ for ref in ('Legg98', 'Legg01', 'Legg02a'):
             band=nsfband).execute()
 
 # Lp NSFCam
-for ref in ('Geba01', 'Legg98', 'Legg01', 'Reid02', 'Goli04a', 'Jone96', 'Legg02a'):
+for ref in ('Geba01', 'Legg98', 'Legg01', 'Reid02', 'Goli04a', 'Jone96', 'Legg02a','Legg07b'):
     db.Photometry.update().where(and_(db.Photometry.c.band == "MKO.L'", db.Photometry.c.reference == ref)).values(
         band='MKO/NSFCam.Lp').execute()
 
 
 
-# Legg02a
-# Legg07b
+# todo check if the double quote works
 # Legg00
 # Luhm07a
 # Legg01
