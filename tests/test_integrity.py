@@ -475,7 +475,35 @@ def test_sources(db):
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 37, f'found {len(t)} sources from {ref}'
 
-#problem with the astropy units resolve funtion will go here
+def test_modeledparameters(db):
+
+
+    # There should be no entries in the modeled parameters table without parameter
+
+    t = db.query(db.ModeledParameters.c.source). \
+         filter(db.ModeledParameters.c.parameter.is_(None)). \
+         astropy()
+    #
+    if len(t) > 0:
+         print('\nEntries found without a parameter')
+         print(t)
+    assert len(t) == 0
+
+    # Test units are astropy.unit resolvable
+    t = db.query(db.ModeledParameters.c.unit).filter(db.ModeledParameters.c.unit.is_not(None)).distinct().astropy()
+    unit_fail = []
+    for x in t:
+        unit = x['unit']
+
+        try:
+            assert u.Unit(unit, parse_strict='raise')
+        except ValueError: #put in raise and logger debug
+            print(f'{unit} is not a recognized astropy unit') #put a debug and error
+            counts = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.unit == unit).count()
+            unit_fail.append({unit: counts}) #check on counts
+
+    assert len(unit_fail) == 0, f'Some parameter units did not resolve: {unit_fail}' #ma
+
 
 def test_spectra(db):
     # Tests against the Spectra table
