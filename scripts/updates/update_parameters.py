@@ -32,7 +32,9 @@ for p in parameter_data:
         print(f'Already in database, skipping {p}')
         continue
 
-    db.Parameters.insert([p]).execute()
+    with db.engine.connect() as conn:
+        conn.execute(db.Parameters.insert().values([p]))
+        conn.commit()
 
 # Save the database
 if SAVE_DB:

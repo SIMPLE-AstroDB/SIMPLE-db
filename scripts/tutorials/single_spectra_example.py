@@ -7,11 +7,13 @@ connection_string = 'sqlite:///SIMPLE.db'  # SQLite
 db = Database(connection_string)
 
 # Add missing telescopes, etc
-db.Telescopes.insert().execute([{'name': 'IRTF'}])
-db.Instruments.insert().execute([{'name': 'SpeX'}])
-db.Modes.insert().execute([{'name': 'Prism',
-                            'instrument': 'SpeX',
-                            'telescope': 'IRTF'}])
+with db.engine.connect() as conn:
+    conn.execute(db.Telescopes.insert().values([{'name': 'IRTF'}]))
+    conn.execute(db.Instruments.insert().values([{'name': 'SpeX'}]))
+    conn.execute(db.Modes.insert().values([{'name': 'Prism',
+                                'instrument': 'SpeX',
+                                'telescope': 'IRTF'}]))
+    conn.commit()
 
 # Add actual Spectra
 spec_data = [{'source': '2MASS J00192626+4614078',
@@ -25,7 +27,9 @@ spec_data = [{'source': '2MASS J00192626+4614078',
               'flux_units': 'erg s-1 cm-2 A-1',
               'observation_date': datetime.fromisoformat('2004-11-08')
               }]
-db.Spectra.insert().execute(spec_data)
+with db.engine.connect() as conn:
+    conn.execute(db.Spectra.insert().values(spec_data))
+    conn.commit()
 
 # Verify inventory lists the new spectrum
 _ = db.inventory('2MASS J00192626+4614078', pretty_print=True)
@@ -41,4 +45,3 @@ print(type(spec))
 
 # Save database modifications to disk
 db.save_database('data')
-

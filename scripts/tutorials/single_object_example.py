@@ -23,17 +23,23 @@ publications_data = [{'name': 'Schm10',
                       'bibcode': '2012yCat.2311....0C',
                       'doi': None,
                       'description': 'WISE All-Sky Data Release'}]
-db.Publications.insert().execute(publications_data)
+with db.engine.connect() as conn:
+    conn.execute(db.Publications.insert().values(publications_data))
+    conn.commit()
 
 # Add telescope
-db.Telescopes.insert().execute([{'name': 'WISE'}])
+with db.engine.connect() as conn:
+    conn.execute(db.Telescopes.insert().values([{'name': 'WISE'}]))
+    conn.commit()
 
 # Add source
 sources_data = [{'ra': 209.301675, 'dec': 14.477722,
                  'source': '2MASS J13571237+1428398',
                  'reference': 'Schm10',
                  'shortname': '1357+1428'}]
-db.Sources.insert().execute(sources_data)
+with db.engine.connect() as conn:
+    conn.execute(db.Sources.insert().values(sources_data))
+    conn.commit()
 
 # Additional names
 names_data = [{'source': '2MASS J13571237+1428398',
@@ -41,7 +47,9 @@ names_data = [{'source': '2MASS J13571237+1428398',
               {'source': '2MASS J13571237+1428398',
                'other_name': '2MASS J13571237+1428398'},
               ]
-db.Names.insert().execute(names_data)
+with db.engine.connect() as conn:
+    conn.execute(db.Names.insert().values(names_data))
+    conn.commit()
 
 # Add Photometry
 phot_data = [{'source': '2MASS J13571237+1428398',
@@ -72,7 +80,9 @@ phot_data = [{'source': '2MASS J13571237+1428398',
               'telescope': 'WISE',
               'reference': 'Cutr12'
               }]
-db.Photometry.insert().execute(phot_data)
+with db.engine.connect() as conn:
+    conn.execute(db.Photometry.insert().values(phot_data))
+    conn.commit()
 
 # Checking object
 _ = db.inventory('2MASS J13571237+1428398', pretty_print=True)
