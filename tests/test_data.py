@@ -85,9 +85,9 @@ def test_discovery_references(db):
 
     ref = 'Kirk11'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 98, f'found {len(t)} discovery reference entries for {ref}'
+    assert len(t) == 100, f'found {len(t)} discovery reference entries for {ref}'
 
-    ref = 'Mace13'
+    ref = 'Mace13.6'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 93, f'found {len(t)} discovery reference entries for {ref}'
 
@@ -263,7 +263,7 @@ def test_missions(db):
                   select([db.Photometry.c.source]).where(db.Photometry.c.band.like("2MASS%")))
     result = db.session.execute(stm)
     s = result.scalars().all()
-    assert len(s) == 254, f'found {len(s)} sources with 2MASS designation that have no 2MASS photometry'
+    assert len(s) == 255, f'found {len(s)} sources with 2MASS designation that have no 2MASS photometry'
 
     # If 2MASS photometry, 2MASS designation should be in Names
     stm = except_(select([db.Photometry.c.source]).where(db.Photometry.c.band.like("2MASS%")),
@@ -291,7 +291,7 @@ def test_missions(db):
                   select([db.Photometry.c.source]).where(db.Photometry.c.band.like("WISE%")))
     result = db.session.execute(stm)
     s = result.scalars().all()
-    assert len(s) == 392, f'found {len(s)} sources with WISE designation that have no WISE photometry'
+    assert len(s) == 479, f'found {len(s)} sources with WISE designation that have no WISE photometry'
 
     # If Wise photometry, Wise designation should be in Names
     stm = except_(select([db.Photometry.c.source]).where(db.Photometry.c.band.like("WISE%")),
@@ -387,11 +387,11 @@ def test_spectral_types(db):
 
     regime = 'nir'
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 42, f'found {len(t)} spectral types in the {regime} regime'
+    assert len(t) == 380, f'found {len(t)} spectral types in the {regime} regime'
 
     regime = 'nir_UCD'
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 2080, f'found {len(t)} spectral types in the {regime} regime'
+    assert len(t) == 1977, f'found {len(t)} spectral types in the {regime} regime'
 
     regime = 'mir'
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
@@ -405,6 +405,28 @@ def test_spectral_types(db):
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
     assert len(t) == 10, f'found {len(t)} spectral types in the {regime} regime'
 
+    # Test number MLTY dwarfs
+    m_dwarfs = db.query(db.SpectralTypes).filter(
+        and_(db.SpectralTypes.c.spectral_type_code >= 60,
+             db.SpectralTypes.c.spectral_type_code < 70)).astropy()
+    assert len(m_dwarfs) == 843, f'found {len(t)} M spectral types'
+
+    l_dwarfs = db.query(db.SpectralTypes).filter(
+        and_(db.SpectralTypes.c.spectral_type_code >= 70,
+             db.SpectralTypes.c.spectral_type_code < 80)).astropy()
+    assert len(l_dwarfs) == 1963, f'found {len(t)} L spectral types'
+
+    t_dwarfs = db.query(db.SpectralTypes).filter(
+        and_(db.SpectralTypes.c.spectral_type_code >= 80,
+             db.SpectralTypes.c.spectral_type_code < 90)).astropy()
+    assert len(t_dwarfs) == 998, f'found {len(t)} T spectral types'
+
+    y_dwarfs = db.query(db.SpectralTypes).filter(
+        and_(db.SpectralTypes.c.spectral_type_code >= 90)).astropy()
+    assert len(y_dwarfs) == 79, f'found {len(t)} Y spectral types'
+
+    n_spectral_types = db.query(db.SpectralTypes).count()
+    assert len(m_dwarfs) + len(l_dwarfs) + len(t_dwarfs) + len(y_dwarfs) == n_spectral_types
 
 # Individual ingest tests
 # -----------------------------------------------------------------------------------------
@@ -468,8 +490,8 @@ def test_Kirk19_ingest(db):
     # -----------------------------------------------------------------------------------------
 
     # Test refereces added
-    ref_list = ['Tinn18', 'Pinf14', 'Mace13', 'Kirk12', 'Cush11', 'Kirk13',
-                'Schn15', 'Luhm14b', 'Tinn14', 'Tinn12', 'Cush14', 'Kirk19']
+    ref_list = ['Tinn18', 'Pinf14.1931', 'Mace13.6', 'Kirk12', 'Cush11.50', 'Kirk13',
+                'Schn15', 'Luhm14.18', 'Tinn14', 'Tinn12', 'Cush14', 'Kirk19']
     t = db.query(db.Publications).filter(db.Publications.c.publication.in_(ref_list)).astropy()
 
     if len(ref_list) != len(t):
@@ -478,14 +500,14 @@ def test_Kirk19_ingest(db):
 
     # Check DOI and Bibcode values are correctly set for new references added
     reference_verifier(t, 'Kirk19', '2019ApJS..240...19K', '10.3847/1538-4365/aaf6af')
-    reference_verifier(t, 'Pinf14', '2014MNRAS.444.1931P', '10.1093/mnras/stu1540')
+    reference_verifier(t, 'Pinf14.1931', '2014MNRAS.444.1931P', '10.1093/mnras/stu1540')
     reference_verifier(t, 'Tinn18', '2018ApJS..236...28T', '10.3847/1538-4365/aabad3')
 
     # Data tests
     # -----------------------------------------------------------------------------------------
 
     # Test sources added
-    ref = 'Pinf14'
+    ref = 'Pinf14.1931'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 1, f'found {len(t)} sources for {ref}'
 
@@ -503,12 +525,15 @@ def test_Kirk19_ingest(db):
 
     # Test photometry added
     telescope = 'Spitzer'
-    t = db.query(db.Photometry).filter(db.Photometry.c.telescope == telescope).astropy()
-    assert len(t) == 350, f'found {len(t)} photometry entries for {telescope}'
+    ref = 'Kirk19'
+    t = db.query(db.Photometry).filter(and_(
+        db.Photometry.c.telescope == telescope,
+        db.Photometry.c.reference == ref)).astropy()
+    assert len(t) == 290, f'found {len(t)} photometry entries for {telescope}'
 
     ref = 'Kirk19'
     t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
-    assert len(t) == 18, f'found {len(t)} photometry entries for {ref}'
+    assert len(t) == 290, f'found {len(t)} photometry entries for {ref}'
 
     ref = 'Schn15'
     t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()

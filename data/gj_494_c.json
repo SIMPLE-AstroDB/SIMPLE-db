@@ -57,6 +57,17 @@
             "reference": "Grif12"
         },
         {
+            "band": "IRAC.I1",
+            "ucd": "em.IR.3-4um",
+            "magnitude": 15.36,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
+        },
+        {
             "band": "IRAC.I2",
             "ucd": null,
             "magnitude": 13.85,
@@ -66,6 +77,17 @@
             "epoch": null,
             "comments": null,
             "reference": "Grif12"
+        },
+        {
+            "band": "IRAC.I2",
+            "ucd": "em.IR.4-8um",
+            "magnitude": 13.85,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "instrument": "IRAC",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
         },
         {
             "band": "SDSS.g",
@@ -242,6 +264,15 @@
     ],
     "SpectralTypes": [
         {
+            "spectral_type_string": "T8",
+            "spectral_type_code": 88.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Cush11.50"
+        },
+        {
             "spectral_type_string": "T7.5",
             "spectral_type_code": 87.5,
             "spectral_type_error": null,
@@ -249,15 +280,6 @@
             "adopted": false,
             "comments": null,
             "reference": "Manj19"
-        },
-        {
-            "spectral_type_string": "T8",
-            "spectral_type_code": 88.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Cush11"
         }
     ]
 }
