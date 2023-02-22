@@ -65,10 +65,9 @@ def convert_to_fits(spectrum_info_all):
     # Write the MEF with the header and the data
     spectrum_mef = fits.HDUList([hdu0, hdu1])  # hdu0 is header and hdu1 is data
 
-    file_root = os.path.splitext(file)[0]
-    fits_filename = spectrum_info_all['fits_data_dir'] + file_root + '.fits'
+    fits_filename = spectrum_info_all['fits_data_dir'] + spectrum_info_all['generated_filename'] + '.fits'
     try:
-        spectrum_mef.writeto(fits_filename, overwrite=True, output_verify="exception")
+        spectrum_mef.writeto(fits_filename, overwrite=False, output_verify="exception")
         # TODO: think about overwrite
         logger.info(f'Wrote {fits_filename}')
     except:
@@ -94,7 +93,7 @@ def convert_to_fits(spectrum_info_all):
     ax.set_xlabel(f"Dispersion ({spec1d.spectral_axis.unit})")
     ax.set_ylabel(f"Flux ({spec1d.flux.unit})")
     plt.title(f"{name} {header['TELESCOP']} {header['INSTRUME']}")
-    plt.show()
+    plt.savefig(spectrum_info_all['fits_data_dir'] + spectrum_info_all['generated_filename'] + '.png')
 
     return
 
