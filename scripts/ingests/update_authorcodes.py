@@ -2,7 +2,7 @@ from scripts.ingests.utils import *
 from sqlalchemy import select, or_
 import pandas as pd
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
