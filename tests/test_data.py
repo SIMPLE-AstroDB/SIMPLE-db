@@ -95,7 +95,7 @@ def test_discovery_references(db):
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 69, f'found {len(t)} discovery reference entries for {ref}'
 
-    ref = 'Gagn15b'
+    ref = 'Gagn15.33G'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 68, f'found {len(t)} discovery reference entries for {ref}'
 
@@ -140,7 +140,7 @@ def test_proper_motion_refs(db):
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 348, f'found {len(t)} proper motion reference entries for {ref}'
 
-    ref = 'Gagn15a'
+    ref = 'Gagn15.73'
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 325, f'found {len(t)} proper motion reference entries for {ref}'
 
@@ -366,7 +366,7 @@ def test_spectra(db):
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
     assert len(t) == 57, f'found {len(t)} spectra from {ref}'
 
-    ref = 'Burg10a'
+    ref = 'Burg10.1142'
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
     assert len(t) == 46, f'found {len(t)} spectra from {ref}'
 
