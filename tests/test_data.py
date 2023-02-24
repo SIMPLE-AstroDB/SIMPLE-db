@@ -67,7 +67,7 @@ def test_discovery_references(db):
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 192, f'found {len(t)} discovery reference entries for {ref}'
 
-    ref = 'Reid08b'
+    ref = 'Reid08.1290'
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 206, f'found {len(t)} discovery reference entries for {ref}'
 
@@ -136,7 +136,7 @@ def test_proper_motion_refs(db):
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 1076, f'found {len(t)} proper motion reference entries for {ref}'
 
-    ref = 'Best20a'
+    ref = 'Best20.257'
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 348, f'found {len(t)} proper motion reference entries for {ref}'
 
@@ -346,7 +346,7 @@ def test_spectra(db):
         and_(db.Spectra.c.telescope == telescope, db.Spectra.c.instrument == instrument)).astropy()
     assert len(t) == 77, f'found {len(t)} spectra from {telescope}/{instrument}'
 
-    ref = 'Reid08b'
+    ref = 'Reid08.1290'
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
     assert len(t) == 280, f'found {len(t)} spectra from {ref}'
 
@@ -546,16 +546,16 @@ def test_Kirk19_ingest(db):
 
 
 def test_Best2020_ingest(db):
-    # Test for Best20a proper motions added
-    ref = 'Best20a'
+    # Test for Best20.257 proper motions added
+    ref = 'Best20.257'
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 348, f'found {len(t)} proper motion entries for {ref}'
 
-    # Test for Best2020a parallaxes added
-    ref = 'Best20a'
+    # Test for Best20.257 parallaxes added
+    ref = 'Best20.257'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
     assert len(t) == 348, f'found {len(t)} parallax entries for {ref}'
-    # Test for number of Best20a parallaxes that are adopted
+    # Test for number of Best20.257 parallaxes that are adopted
     t = db.query(db.Parallaxes).filter(and_(db.Parallaxes.c.reference == ref,
                                             db.Parallaxes.c.adopted == 1)).astropy()
     assert len(t) == 255, f'found {len(t)} adopted parallax entries for {ref}'
