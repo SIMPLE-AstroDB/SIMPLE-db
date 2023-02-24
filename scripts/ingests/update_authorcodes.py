@@ -22,10 +22,10 @@ print(np.where(df[0]))
 new_publications = []
 small_names = []
 for publication, bibcode in zip(df[0], df[1]):
-    if bibcode is None:
-        print(publication)
-    # author_last_name = publication[:4]
-    # new_publication_name = author_last_name + bibcode[17:-1]
-    # new_publications.append(new_publications)
-# print(new_publications)
+    if publication != "Missing":
+        author_last_name = publication[:4]
+        new_publication_name = author_last_name + bibcode[2:4] + '.' +bibcode[17:-1]
+        new_publications.append(new_publication_name)
+
+print(new_publications)
 # start at bidcode[17:-1]
