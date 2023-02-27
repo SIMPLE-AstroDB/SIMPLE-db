@@ -12,7 +12,7 @@ from astropy.table import unique
 from astropy import units as u
 from astroquery.simbad import Simbad
 from astrodbkit2.utils import _name_formatter
-from astropy.constants import R_jup
+
 
 DB_NAME = 'temp.db'
 DB_PATH = 'data'
@@ -482,7 +482,11 @@ from astropy.table import Table
 
 def test_ingest_modeledparameters(db):
     # organized data
-    model_params_data =[{'source': '2MASS J00001354+2554180', 'value': 0.99, 'parameter': 'radius', 'reference': 'Fili15', 'unit': 'R_jup'}]  # change to csv
+    model_params_data = [{'source': '2MASS J00001354+2554180', 'value': 0.99, 'parameter': 'radius', 'reference': 'Fili15', 'unit': 'R_jup'},
+                         {'source': '2MASS J00001354+2554180', 'value': 5.02, 'parameter': 'log g', 'reference': 'Fili15', 'unit': 'dex'},
+                         {'source': '2MASS J00001354+2554180', 'value': 1227.0, 'parameter': 'T eff', 'reference': 'Fili15', 'unit': 'K'},
+                         {'source': '2MASS J00001354+2554180', 'value': 47.56, 'parameter': 'mass', 'reference': 'Fili15', 'unit': 'M_jup'}]
+
     db.ModeledParameters.insert().execute(model_params_data)
 
 
