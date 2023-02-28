@@ -478,8 +478,6 @@ def test_sources(db):
 
 
 # importing table 9 for data in test parameters
-from astropy.table import Table
-
 def test_ingest_modeledparameters(db):
     # organized data
     model_params_data = [{'source': '2MASS J00001354+2554180', 'value': 0.99, 'parameter': 'radius', 'reference': 'Fili15', 'unit': 'R_jup'},
