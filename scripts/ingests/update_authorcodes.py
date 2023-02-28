@@ -28,24 +28,10 @@ df = pd.DataFrame(result.all())
 # Looping through old author codes and updating them
 for publication, bibcode in zip(df[0], df[1]):
     if publication != "Missing":
-        if bibcode[14:-1].find('.') == -1:
-            new_publication_name = publication[0:6] + '.' + bibcode[14:-1]
-            db.Publications.update().where(db.Publications.c.publication == publication).values(
-                publication=new_publication_name).execute()
-        elif bibcode[15:-1].find('.') == -1:
-            new_publication_name = publication[0:6] + '.' + bibcode[15:-1]
-            db.Publications.update().where(db.Publications.c.publication == publication).values(
-                publication=new_publication_name).execute()
-        elif bibcode[16:-1].find('.') == -1:
-            new_publication_name = publication[0:6] + '.' + bibcode[16:-1]
-            db.Publications.update().where(db.Publications.c.publication == publication).values(
-                publication=new_publication_name).execute()
-        elif bibcode[17:-1].find('.') == -1:
-            new_publication_name = publication[0:6] + '.' + bibcode[17:-1]
-            db.Publications.update().where(db.Publications.c.publication == publication).values(
-                publication=new_publication_name).execute()
-        elif bibcode[18:-1].find('.') == -1:
-            new_publication_name = publication[0:6] + '.' + bibcode[18:-1]
+        ind = bibcode.rfind('.')  # find index of the last period
+        if ind != -1:
+            # if a match was found, generate the new name
+            new_publication_name = publication[0:6] + '.' + bibcode[ind + 1:-1]
             db.Publications.update().where(db.Publications.c.publication == publication).values(
                 publication=new_publication_name).execute()
 
