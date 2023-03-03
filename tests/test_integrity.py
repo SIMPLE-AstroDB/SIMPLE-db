@@ -477,26 +477,27 @@ def test_sources(db):
     assert len(t) == 37, f'found {len(t)} sources from {ref}'
 
 
-# importing table 9 for data in test parameters
-def test_ingest_modeledparameters(db):
-    # organized data
-    model_params_data = [{'source': '2MASS J00001354+2554180', 'value': 0.99, 'parameter': 'radius', 'reference': 'Fili15', 'unit': 'R_jup'},
-                         {'source': '2MASS J00001354+2554180', 'value': 5.02, 'parameter': 'log g', 'reference': 'Fili15', 'unit': 'dex'},
-                         {'source': '2MASS J00001354+2554180', 'value': 1227.0, 'parameter': 'T eff', 'reference': 'Fili15', 'unit': 'K'},
-                         {'source': '2MASS J00001354+2554180', 'value': 47.56, 'parameter': 'mass', 'reference': 'Fili15', 'unit': 'M_jup'},
-                         # next data points should fail
-                         {'source': '2MASS J00034227-2822410', 'value': 106.97, 'parameter': 'mass', 'reference': 'Fili15', 'unit': 'M_Jupiter'},
-                         {'source': '2MASS J00034227-2822410', 'value': 1.32, 'parameter': 'radius', 'reference': 'Fili15', 'unit': 'R_Jup'},
-                         {'source': '2MASS J00034227-2822410', 'value': 2871.0, 'parameter': 'T eff', 'reference': 'Fili15', 'unit': 'kelvin'},
-                         {'source': '2MASS J00034227-2822410', 'value': 5.18, 'parameter': 'log g', 'reference': 'Fili15', 'unit': '.'}]
+def test_modeled_parameters(db):
+    # test data ingest
+    model_params_data = [
+        {'source': '2MASS J00001354+2554180', 'value': 0.99, 'parameter': 'radius', 'reference': 'Fili15',
+         'unit': 'R_jup'},
+        {'source': '2MASS J00001354+2554180', 'value': 5.02, 'parameter': 'log g', 'reference': 'Fili15',
+         'unit': 'dex'},
+        {'source': '2MASS J00001354+2554180', 'value': 1227.0, 'parameter': 'T eff', 'reference': 'Fili15',
+         'unit': 'K'},
+        {'source': '2MASS J00001354+2554180', 'value': 47.56, 'parameter': 'mass', 'reference': 'Fili15',
+         'unit': 'M_jup'},
+        # next data points should fail
+        {'source': '2MASS J00034227-2822410', 'value': 106.97, 'parameter': 'mass', 'reference': 'Fili15',
+         'unit': 'M_Jupiter'},
+        {'source': '2MASS J00034227-2822410', 'value': 1.32, 'parameter': 'radius', 'reference': 'Fili15',
+         'unit': 'R_Jup'},
+        {'source': '2MASS J00034227-2822410', 'value': 2871.0, 'parameter': 'T eff', 'reference': 'Fili15',
+         'unit': 'kelvin'},
+        {'source': '2MASS J00034227-2822410', 'value': 5.18, 'parameter': 'log g', 'reference': 'Fili15', 'unit': '.'}]
 
     db.ModeledParameters.insert().execute(model_params_data)
-
-
-
-
-def test_modeledparameters(db):
-
 
     # There should be no entries in the modeled parameters table without parameter
 
