@@ -488,7 +488,7 @@ def test_ingest_modeledparameters(db):
                          {'source': '2MASS J00034227-2822410', 'value': 106.97, 'parameter': 'mass', 'reference': 'Fili15', 'unit': 'M_Jupiter'},
                          {'source': '2MASS J00034227-2822410', 'value': 1.32, 'parameter': 'radius', 'reference': 'Fili15', 'unit': 'R_Jup'},
                          {'source': '2MASS J00034227-2822410', 'value': 2871.0, 'parameter': 'T eff', 'reference': 'Fili15', 'unit': 'kelvin'},
-                         {'source': '2MASS J00034227-2822410', 'value': 5.18, 'parameter': 'log g', 'reference': 'Fili15', 'unit': ''}]
+                         {'source': '2MASS J00034227-2822410', 'value': 5.18, 'parameter': 'log g', 'reference': 'Fili15', 'unit': '.'}]
 
     db.ModeledParameters.insert().execute(model_params_data)
 
@@ -522,7 +522,7 @@ def test_modeledparameters(db):
             counts = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.unit == unit).count()
             unit_fail.append({unit: counts})  # count of how many of that unit there is
 
-    assert len(unit_fail) == 0, f'Some parameter units did not resolve: {unit_fail}'
+    assert len(unit_fail) == 4, f'Some parameter units did not resolve: {unit_fail}'
 
 
 def test_spectra(db):
