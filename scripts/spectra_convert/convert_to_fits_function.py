@@ -9,6 +9,7 @@ from specutils import Spectrum1D
 from header_function import *
 logger = logging.getLogger('SIMPLE')
 
+
 # Logger setup
 logger.propagate = False  # prevents duplicated logging messages
 LOGFORMAT = logging.Formatter('%(asctime)s %(levelname)s: %(message)s', datefmt='%m/%d/%Y %I:%M:%S%p')

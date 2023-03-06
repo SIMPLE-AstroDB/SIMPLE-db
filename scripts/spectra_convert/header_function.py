@@ -4,6 +4,7 @@ from datetime import date
 import astropy.io.fits as fits
 import numpy as np
 
+
 def compile_header(wavelength_data, **spectra_data_info):
     """Creates a header from a dictionary of values. """
 
