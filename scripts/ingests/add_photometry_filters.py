@@ -85,7 +85,9 @@ if len(existing) > 0:
 new_telescopes = list(set(telescopes)-set(existing))
 insert_data = [{'name': s} for s in new_telescopes]
 if len(insert_data) > 0:
-    db.Telescopes.insert().execute(insert_data)
+    with db.engine.connect() as conn:
+        conn.execute(db.Telescopes.insert().values(insert_data))
+        conn.commit()
 
 # Fetch existing instruments, add if missing
 instruments = list(set([s['instrument'] for s in filters_to_add]))
@@ -95,7 +97,9 @@ if len(existing) > 0:
 new_instruments = list(set(instruments)-set(existing))
 insert_data = [{'name': s} for s in new_instruments]
 if len(insert_data) > 0:
-    db.Instruments.insert().execute(insert_data)
+    with db.engine.connect() as conn:
+        conn.execute(db.Instruments.insert().values(insert_data))
+        conn.commit()
 
 # ---------------------------------------------------------------------------------
 # Add to the database
@@ -111,7 +115,9 @@ new_bands = list(set(full_bands)-set(existing_bands))
 insert_data = list(filter(lambda d: d['band'] in new_bands, filters_to_add))
 if len(insert_data) > 0:
     print(f'Entries to insert: {insert_data}')
-    db.PhotometryFilters.insert().execute(insert_data)
+    with db.engine.connect() as conn:
+        conn.execute(db.PhotometryFilters.insert().values(insert_data))
+        conn.commit()
 
 # Data to be updated
 update_data = list(filter(lambda d: d['band'] in existing_bands, filters_to_add))
@@ -120,13 +126,16 @@ if len(update_data) > 0:
     # Use bindparam to handle multiple UPDATE commands
     # had to rename band since bindparam complains about it being the same as the column name
     update_data = [{'_band': s['band'], **s} for s in update_data]
-    stmt = db.PhotometryFilters.update().where(db.PhotometryFilters.c.band == bindparam('_band')).\
-        values(telescope=bindparam('telescope'),
-               instrument=bindparam('instrument'),
-               effective_wavelength=bindparam('effective_wavelength'),
-               width=bindparam('width')
-               )
-    db.engine.execute(stmt, update_data)
+    with db.engine.connect() as conn:
+        stmt = db.PhotometryFilters.update().where(db.PhotometryFilters.c.band == bindparam('_band')).\
+            values(telescope=bindparam('telescope'),
+                instrument=bindparam('instrument'),
+                effective_wavelength=bindparam('effective_wavelength'),
+                width=bindparam('width')
+                )
+        # DR: Not 100% sure of how this one will work since it's a different style of updating
+        db.engine.execute(stmt, update_data)
+        conn.commit()
 
 # Save output
 if SAVE_DB:
