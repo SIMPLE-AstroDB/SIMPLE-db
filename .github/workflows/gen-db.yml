@@ -29,7 +29,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install git+https://github.com/dr-rodriguez/AstrodbKit2.git@sqlalchemy2
+        pip install astrodbkit2
 
     - name: Generate sqlite (file) database
       run: |
