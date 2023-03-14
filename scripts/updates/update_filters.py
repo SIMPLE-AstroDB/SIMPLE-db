@@ -7,6 +7,7 @@ RECREATE_DB = True  # recreates the .db file from the data files
 logger.setLevel(logging.INFO)
 
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
+conn = db.engine.connect()
 
 # TODO in data files
 # TODO: change MKO to UFTI for Leggett and Knapp data
@@ -18,21 +19,25 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 # TODO: Add references
 
 # Change IRAC band names
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'IRAC.ch1').\
-    values(band='IRAC.I1').execute()
+    values(band='IRAC.I1'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'IRAC.ch2').\
-    values(band='IRAC.I2').execute()
+    values(band='IRAC.I2'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'IRAC.ch3').\
-    values(band='IRAC.I3').execute()
+    values(band='IRAC.I3'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'IRAC.ch4').\
-    values(band='IRAC.I4').execute()
+    values(band='IRAC.I4'))
 
 
 # table with columns named band, weff, instrument, telescope
@@ -104,12 +109,12 @@ telescopes = ['Sloan', 'DENIS', 'Soar', 'CTIO', 'Pan-STARRS', 'Unknown']
 for instrument in instruments:
     new_instrument = [{'name': instrument,
                        'reference': None}]
-    db.Instruments.insert().execute(new_instrument)
+    conn.execute(db.Instruments.insert().values(new_instrument))
 
 # ingest new Telescopes
 for telescope in telescopes:
     new_telescope = [{'name': telescope, 'reference': None}]
-    db.Telescopes.insert().execute(new_telescope)
+    conn.execute(db.Telescopes.insert().values(new_telescope))
 
 # ingest new filters
 for filter in filters:
@@ -119,97 +124,119 @@ for filter in filters:
                    'telescope': filter['telescope']
                    }]
 
-    db.PhotometryFilters.insert().execute(new_filter)
+    conn.execute(db.PhotometryFilters.insert().values(new_filter))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'HST.F110W').\
-    values(band='NICMOS1.F110W', ucd='em.opt.J').execute()
+    values(band='NICMOS1.F110W', ucd='em.opt.J'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'HST.F090M').\
-    values(band='NICMOS1.F090M', ucd='em.opt.I').execute()
+    values(band='NICMOS1.F090M', ucd='em.opt.I'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'MIPS.ch1').\
-    values(band='MIPS.24mu', ucd='em.IR.15-30um').execute()
+    values(band='MIPS.24mu', ucd='em.IR.15-30um'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'y').\
-    values(band='PS1.y', ucd='em.IR.I').execute()
+    values(band='PS1.y', ucd='em.IR.I'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'Z').\
-    values(band='UKIDSS.Z', ucd='em.IR.I').execute()
+    values(band='UKIDSS.Z', ucd='em.IR.I'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'MKO.Y').\
     where(db.Photometry.c.reference == 'Lawr07').\
-    values(band='UKIDSS.Y', ucd='em.opt.I').execute()
+    values(band='UKIDSS.Y', ucd='em.opt.I'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'MKO.J').\
     where(db.Photometry.c.reference == 'Lawr07').\
-    values(band='UKIDSS.J', ucd='em.IR.J').execute()
+    values(band='UKIDSS.J', ucd='em.IR.J'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'MKO.H').\
     where(db.Photometry.c.reference == 'Lawr07').\
-    values(band='UKIDSS.H', ucd='em.IR.H').execute()
+    values(band='UKIDSS.H', ucd='em.IR.H'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'MKO.K').\
     where(db.Photometry.c.reference == 'Lawr07').\
-    values(band='UKIDSS.K', ucd='em.IR.K').execute()
+    values(band='UKIDSS.K', ucd='em.IR.K'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'MKO.K').\
     where(db.Photometry.c.reference == 'Liu_13b').\
-    values(band='WFCAM.K', ucd='em.IR.J').execute()
+    values(band='WFCAM.K', ucd='em.IR.J'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'MKO.J').\
     where(db.Photometry.c.reference == 'Liu_13b').\
-    values(band='WFCAM.J', ucd='em.IR.J').execute()
+    values(band='WFCAM.J', ucd='em.IR.J'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'MKO.H').\
     where(db.Photometry.c.reference == 'Liu_13b').\
-    values(band='WFCAM.H', ucd='em.IR.H').execute()
+    values(band='WFCAM.H', ucd='em.IR.H'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'MKO.Y').\
     where(db.Photometry.c.reference == 'Liu_13b').\
-    values(band='WFCAM.Y', ucd='em.opt.I').execute()
+    values(band='WFCAM.Y', ucd='em.opt.I'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'SDSS.g').\
     where(db.Photometry.c.reference == 'Liu_13b').\
-    values(band='PS1.g',ucd='em.opt.B').execute()
+    values(band='PS1.g',ucd='em.opt.B'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'SDSS.i').\
     where(db.Photometry.c.reference == 'Liu_13b').\
-    values(band='PS1.i', ucd='em.opt.I').execute()
+    values(band='PS1.i', ucd='em.opt.I'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'SDSS.r').\
     where(db.Photometry.c.reference == 'Liu_13b').\
-    values(band='PS1.r', ucd='em.opt.R').execute()
+    values(band='PS1.r', ucd='em.opt.R'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.band == 'SDSS.z').\
     where(db.Photometry.c.reference == 'Liu_13b').\
-    values(band='PS1.z', ucd='em.opt.I').execute()
+    values(band='PS1.z', ucd='em.opt.I'))
 
-db.PhotometryFilters.update().\
+conn.execute(db.PhotometryFilters.\
+    update().\
     where(db.PhotometryFilters.c.telescope == 'SDSS').\
-    values(telescope='Sloan').execute()
+    values(telescope='Sloan'))
 
-db.Photometry.update().\
+conn.execute(db.Photometry.\
+    update().\
     where(db.Photometry.c.telescope == 'SDSS').\
-    values(telescope='Sloan').execute()
+    values(telescope='Sloan'))
 
-db.Telescopes.delete().where(db.Telescopes.c.name == 'SDSS').execute()
+conn.execute(db.Telescopes.delete().where(db.Telescopes.c.name == 'SDSS'))
+
+# Actually send all the queued up commands
+conn.commit()
 
 # WRITE THE JSON FILES
 if SAVE_DB:

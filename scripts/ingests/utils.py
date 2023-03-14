@@ -454,7 +454,9 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, publication: st
     new_ref = [{'publication': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
 
     try:
-        db.Publications.insert().execute(new_ref)
+        with db.engine.connect() as conn:
+            conn.execute(db.Publications.insert().values(new_ref))
+            conn.commit()
         logger.info(f'Added {name_add} to Publications table using {using}')
     except sqlalchemy.exc.IntegrityError as error:
         msg = f"Not able to add {new_ref} to the database. " \
