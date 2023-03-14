@@ -35,7 +35,9 @@ data = [{new_db_mapping.get(k, k): x.__getattribute__(k)
          }
         for x in temp]
 
-db.Publications.insert().execute(data)
+with db.engine.connect() as conn:
+    conn.execute(db.Publications.insert().values(data))
+    conn.commit()
 
 # Verify insert and save to disk
 db.query(db.Publications).count()
@@ -76,7 +78,9 @@ counter = Counter([s['source'].strip() for s in data])
 counter = {k:v for k,v in counter.items() if v > 1}  # select duplicates
 data = [d for d in data if d['source'].strip() not in counter.keys()]
 
-db.Sources.insert().execute(data)
+with db.engine.connect() as conn:
+    conn.execute(db.Sources.insert().values(data))
+    conn.commit()
 db.query(db.Sources).count()
 
 # ----------------------------------------------------------------------------------------
@@ -93,14 +97,17 @@ for row in temp:
     for n in name_list:
         name_data.append({'source': row.designation, 'other_name': n})
 
-db.Names.insert().execute(name_data)
+with db.engine.connect() as conn:
+    conn.execute(db.Names.insert().values(name_data))
+    conn.commit()
 db.query(db.Names).count()
 
 # Some manual source name clean-ups (two many spaces, special characters)
-stmt = db.Sources.update()\
-         .where(db.Sources.c.source == 'L   97-3 B')\
-         .values(source='L 97-3B')
-db.engine.execute(stmt)
+with db.engine.connect() as conn:
+    conn.execute(db.Sources.update()\
+            .where(db.Sources.c.source == 'L   97-3 B')\
+            .values(source='L 97-3B'))
+    conn.commit()
 
 name_updates = {'LEHPM 2-  50': 'LEHPM 2-50',
                 'LHS  2021': 'LHS 2021',
@@ -125,9 +132,10 @@ name_updates = {'LEHPM 2-  50': 'LEHPM 2-50',
                 }
 for old_name, new_name in name_updates.items():
     print(f'{old_name} -> {new_name}')
-    stmt = db.Sources.update() \
-        .where(db.Sources.c.source == old_name) \
-        .values(source=new_name)
-    db.engine.execute(stmt)
+    with db.engine.connect() as conn:
+        conn.commit(db.Sources.update() \
+            .where(db.Sources.c.source == old_name) \
+            .values(source=new_name))
+        conn.commit()
 
 db.save_db('data')

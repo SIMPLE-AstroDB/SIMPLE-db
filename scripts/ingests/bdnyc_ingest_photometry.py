@@ -130,7 +130,9 @@ for tel in tel_list:
         new_tel.append(datum)
 if len(new_tel) > 0:
     print(f'Inserting: {new_tel}')
-    db.Telescopes.insert().execute(new_tel)
+    with db.engine.connect() as conn:
+        conn.execute(db.Telescopes.insert().values(new_tel))
+        conn.commit()
 
 # Get the BDNYC source_id values for our SIMPLE sources
 source_dict = {}
@@ -193,7 +195,9 @@ for source, bdnyc_id in source_dict.items():
                             'bibcode': t['bibcode'][0],
                             'doi': t['DOI'][0],
                             'description': t['description'][0]}]
-                db.Publications.insert().execute(new_pub)
+                with db.engine.connect() as conn:
+                    conn.execute(db.Publications.insert().values(new_pub))
+                    conn.commit()
                 ref = t['shortname'][0]
             except Exception as e:
                 # If the publication can't be added- skip this photometry data point
@@ -217,7 +221,9 @@ for source, bdnyc_id in source_dict.items():
     if new_data is not None and len(new_data) > 0:
         print(f"{source} : Ingesting new data: {new_data}")
         try:
-            db.Photometry.insert().execute(new_data)
+            with db.engine.connect() as conn:
+                conn.execute(db.Photometry.insert().values(new_data))
+                conn.commit()
         except Exception as e:
             # Print out some diagnositics (the new data to be inserted and the original) to spot the issue
             print(Table(new_data))

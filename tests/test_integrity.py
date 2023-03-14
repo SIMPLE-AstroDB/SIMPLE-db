@@ -497,17 +497,18 @@ def test_modeled_parameters(db):
          'unit': 'kelvin'},
         {'source': '2MASS J00034227-2822410', 'value': 5.18, 'parameter': 'log g', 'reference': 'Fili15', 'unit': '.'}]
 
-    db.ModeledParameters.insert().execute(model_params_data)
+    # Inserting rows
+    with db.engine.connect() as conn:
+        conn.execute(db.ModeledParameters.insert().values(model_params_data))
+        conn.commit()
 
     # There should be no entries in the modeled parameters table without parameter
-
     t = db.query(db.ModeledParameters.c.source). \
-         filter(db.ModeledParameters.c.parameter.is_(None)). \
-         astropy()
-    #
+           filter(db.ModeledParameters.c.parameter.is_(None)). \
+           astropy()
     if len(t) > 0:
-         print('\nEntries found without a parameter')
-         print(t)
+        print('\nEntries found without a parameter')
+        print(t)
     assert len(t) == 0
 
     # Test units are astropy.unit resolvable

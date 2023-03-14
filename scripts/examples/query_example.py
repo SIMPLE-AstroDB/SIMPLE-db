@@ -37,16 +37,18 @@ db.query(db.Sources).filter(and_(db.Sources.c.dec > 0, db.Sources.c.ra > 200)).a
 db.query(db.Sources).filter(or_(db.Sources.c.dec < 0, db.Sources.c.ra > 200)).all()
 
 # Update a row
-stmt = db.Sources.update()\
-         .where(db.Sources.c.source == '2MASS J13571237+1428398')\
-         .values(shortname='1357+1428')
-db.engine.execute(stmt)
+with db.engine.connect() as conn:
+    conn.execute(db.Sources.update()\
+                   .where(db.Sources.c.source == '2MASS J13571237+1428398')\
+                   .values(shortname='1357+1428'))
+    conn.commit()
 
 # Testing foreign key updates
-stmt = db.Publications.update()\
-         .where(db.Publications.c.name == 'Cutr12')\
-         .values(name='FAKEREF')
-db.engine.execute(stmt)
+with db.engine.connect() as conn:
+    conn.execute(db.Publications.update()\
+                   .where(db.Publications.c.name == 'Cutr12')\
+                   .values(name='FAKEREF'))
+    conn.commit()
 db.query(db.Publications).filter(db.Publications.c.name == 'FAKEREF').all()
 results = db.query(db.Photometry).filter(db.Photometry.c.reference == 'FAKEREF').all()
 print(results)
@@ -68,14 +70,18 @@ db.search_object('1357+1428', output_table='Photometry', fmt='astropy')
 # Delete a row
 for row in db.query(db.Photometry).all():
     print(row)
-db.Photometry.delete().where(db.Photometry.c.band == 'WISE_W1').execute()
+with db.engine.connect() as conn:
+    conn.execute(db.Photometry.delete().where(db.Photometry.c.band == 'WISE_W1'))
+    conn.commit()
 db.query(db.Photometry).all()
 db.query(db.Photometry).count()
 
 # Delete entire table
 # NOTE: data linked via foreign keys are also deleted
 db.query(db.Telescopes).all()
-db.Telescopes.delete().execute()
+with db.engine.connect() as conn:
+    conn.execute(db.Telescopes.delete())
+    conn.commit()
 db.query(db.Telescopes).count()
 
 # Reload via json file

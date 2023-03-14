@@ -259,59 +259,51 @@ def test_photometry_bands(db):
 
 def test_missions(db):
     # If 2MASS designation in Names, 2MASS photometry should exist
-    stm = except_(select([db.Names.c.source]).where(db.Names.c.other_name.like("2MASS J%")),
-                  select([db.Photometry.c.source]).where(db.Photometry.c.band.like("2MASS%")))
-    result = db.session.execute(stm)
-    s = result.scalars().all()
+    stm = except_(select(db.Names.c.source).where(db.Names.c.other_name.like("2MASS J%")),
+                  select(db.Photometry.c.source).where(db.Photometry.c.band.like("2MASS%")))
+    s = db.session.scalars(stm).all()
     assert len(s) == 255, f'found {len(s)} sources with 2MASS designation that have no 2MASS photometry'
 
     # If 2MASS photometry, 2MASS designation should be in Names
-    stm = except_(select([db.Photometry.c.source]).where(db.Photometry.c.band.like("2MASS%")),
-                  select([db.Names.c.source]).where(db.Names.c.other_name.like("2MASS J%")))
-    result = db.session.execute(stm)
-    s = result.scalars().all()
+    stm = except_(select(db.Photometry.c.source).where(db.Photometry.c.band.like("2MASS%")),
+                  select(db.Names.c.source).where(db.Names.c.other_name.like("2MASS J%")))
+    s = db.session.scalars(stm).all()
     assert len(s) == 2, f'found {len(s)} sources with 2MASS photometry that have no 2MASS designation '
 
     # If Gaia designation in Names, Gaia photometry and astrometry should exist
-    stm = except_(select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia%")),
-                  select([db.Photometry.c.source]).where(db.Photometry.c.band.like("GAIA%")))
-    result = db.session.execute(stm)
-    s = result.scalars().all()
+    stm = except_(select(db.Names.c.source).where(db.Names.c.other_name.like("Gaia%")),
+                  select(db.Photometry.c.source).where(db.Photometry.c.band.like("GAIA%")))
+    s = db.session.scalars(stm).all()
     assert len(s) == 1, f'found {len(s)} sources with Gaia designation that have no GAIA photometry'
 
     # If Gaia photometry, Gaia designation should be in Names
-    stm = except_(select([db.Photometry.c.source]).where(db.Photometry.c.band.like("GAIA%")),
-                  select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia%")))
-    result = db.session.execute(stm)
-    s = result.scalars().all()
+    stm = except_(select(db.Photometry.c.source).where(db.Photometry.c.band.like("GAIA%")),
+                  select(db.Names.c.source).where(db.Names.c.other_name.like("Gaia%")))
+    s = db.session.scalars(stm).all()
     assert len(s) == 0, f'found {len(s)} sources with Gaia photometry and no Gaia designation in Names'
 
     # If Wise designation in Names, Wise phot should exist
-    stm = except_(select([db.Names.c.source]).where(db.Names.c.other_name.like("WISE%")),
-                  select([db.Photometry.c.source]).where(db.Photometry.c.band.like("WISE%")))
-    result = db.session.execute(stm)
-    s = result.scalars().all()
+    stm = except_(select(db.Names.c.source).where(db.Names.c.other_name.like("WISE%")),
+                  select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")))
+    s = db.session.scalars(stm).all()
     assert len(s) == 479, f'found {len(s)} sources with WISE designation that have no WISE photometry'
 
     # If Wise photometry, Wise designation should be in Names
-    stm = except_(select([db.Photometry.c.source]).where(db.Photometry.c.band.like("WISE%")),
-                  select([db.Names.c.source]).where(db.Names.c.other_name.like("WISE%")))
-    result = db.session.execute(stm)
-    s = result.scalars().all()
+    stm = except_(select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")),
+                  select(db.Names.c.source).where(db.Names.c.other_name.like("WISE%")))
+    s = db.session.scalars(stm).all()
     assert len(s) == 388, f'found {len(s)} sources with WISE photometry and no Wise designation in Names'
 
     # If Gaia EDR3 pm, Gaia EDR3 designation should be in Names
-    stm = except_(select([db.ProperMotions.c.source]).where(db.ProperMotions.c.reference.like("GaiaEDR3%")),
-                  select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia EDR3%")))
-    result = db.session.execute(stm)
-    s = result.scalars().all()
+    stm = except_(select(db.ProperMotions.c.source).where(db.ProperMotions.c.reference.like("GaiaEDR3%")),
+                  select(db.Names.c.source).where(db.Names.c.other_name.like("Gaia EDR3%")))
+    s = db.session.scalars(stm).all()
     assert len(s) == 0, f'found {len(s)} sources with Gaia EDR3 proper motion and no Gaia EDR3 designation in Names'
 
     # If Gaia EDR3 parallax, Gaia EDR3 designation should be in Names
-    stm = except_(select([db.Parallaxes.c.source]).where(db.Parallaxes.c.reference.like("GaiaEDR3%")),
-                  select([db.Names.c.source]).where(db.Names.c.other_name.like("Gaia EDR3%")))
-    result = db.session.execute(stm)
-    s = result.scalars().all()
+    stm = except_(select(db.Parallaxes.c.source).where(db.Parallaxes.c.reference.like("GaiaEDR3%")),
+                  select(db.Names.c.source).where(db.Names.c.other_name.like("Gaia EDR3%")))
+    s = db.session.scalars(stm).all()
     assert len(s) == 0, f'found {len(s)} sources with Gaia EDR3 parallax and no Gaia EDR3 designation in Names'
 
 

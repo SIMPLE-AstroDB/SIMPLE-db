@@ -112,7 +112,9 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
             if len(db_matches) == 0:
                 alt_names_data = [{'source': name_matches[0], 'other_name': source}]
                 try:
-                    db.Names.insert().execute(alt_names_data)
+                    with db.engine.connect() as conn:
+                        conn.execute(db.Names.insert().values(alt_names_data))
+                        conn.commit()
                     logger.debug(f"{i}: Name added to database: {alt_names_data}\n")
                     n_alt_names += 1
                 except sqlalchemy.exc.IntegrityError as e:
@@ -186,7 +188,9 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
 
         # Try to add the source to the database
         try:
-            db.Sources.insert().execute(source_data)
+            with db.engine.connect() as conn:
+                conn.execute(db.Sources.insert().values(source_data))
+                conn.commit()
             n_added += 1
             msg = f"Added {str(source_data)}"
             logger.debug(msg)
@@ -226,7 +230,9 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
 
         # Try to add the source name to the Names table
         try:
-            db.Names.insert().execute(names_data)
+            with db.engine.connect() as conn:
+                conn.execute(db.Names.insert().values(names_data))
+                conn.commit()
             logger.debug(f"Name added to database: {names_data}\n")
             n_names += 1
         except sqlalchemy.exc.IntegrityError:
@@ -403,10 +409,15 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes, spec
                     adopted = True
 
                     if old_adopted:
-                        db.SpectralTypes.update().where(and_(db.SpectralTypes.c.source == old_adopted['source'][0],
-                                                             db.SpectralTypes.c.reference == old_adopted['reference'][
-                                                                 0])). \
-                            values(adopted=False).execute()
+                        with db.engine.connect() as conn:
+                            conn.execute(
+                                db.SpectralTypes. \
+                                update(). \
+                                where(and_(db.SpectralTypes.c.source == old_adopted['source'][0],
+                                        db.SpectralTypes.c.reference == old_adopted['reference'][0])). \
+                                values(adopted=False)
+                                )
+                            conn.commit()
                         # check that adopted flag is successfully changed
                         old_adopted_data = db.query(db.SpectralTypes).filter(
                             and_(db.SpectralTypes.c.source == old_adopted['source'][0],
@@ -448,7 +459,9 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes, spec
 
         logger.debug(f"Trying to insert {spt_data} into Spectral Types table ")
         try:
-            db.SpectralTypes.insert().execute(spt_data)
+            with db.engine.connect() as conn:
+                conn.execute(db.SpectralTypes.insert().values(spt_data))
+                conn.commit()
             n_added += 1
             msg = f"Added {str(spt_data)}"
             logger.debug(msg)
@@ -651,9 +664,15 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
 
                     # unset old adopted
                     if old_adopted:
-                        db.Parallaxes.update().where(and_(db.Parallaxes.c.source == old_adopted['source'][0],
-                                                          db.Parallaxes.c.reference == old_adopted['reference'][0])). \
-                            values(adopted=False).execute()
+                        with db.engine.connect() as conn:
+                            conn.execute(
+                                db.Parallaxes. \
+                                update(). \
+                                where(and_(db.Parallaxes.c.source == old_adopted['source'][0],
+                                           db.Parallaxes.c.reference == old_adopted['reference'][0])). \
+                                values(adopted=False)
+                                )
+                            conn.commit()
                         # check that adopted flag is successfully changed
                         old_adopted_data = db.query(db.Parallaxes).filter(
                             and_(db.Parallaxes.c.source == old_adopted['source'][0],
@@ -680,7 +699,9 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
         logger.debug(f"{parallax_data}")
 
         try:
-            db.Parallaxes.insert().execute(parallax_data)
+            with db.engine.connect() as conn:
+                conn.execute(db.Parallaxes.insert().values(parallax_data))
+                conn.commit()
             n_added += 1
             logger.info(f"Parallax added to database: \n "
                         f"{parallax_data}")
@@ -778,10 +799,15 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                 adopted = True
                 # unset old adopted if it exists
                 if old_adopted:
-                    db.ProperMotions. \
-                        update().where(and_(db.ProperMotions.c.source == old_adopted['source'][0],
-                                            db.ProperMotions.c.reference == old_adopted['reference'][0])). \
-                        values(adopted=False).execute()
+                    with db.engine.connect() as conn:
+                        conn.execute(
+                            db.ProperMotions. \
+                            update(). \
+                            where(and_(db.ProperMotions.c.source == old_adopted['source'][0],
+                                       db.ProperMotions.c.reference == old_adopted['reference'][0])). \
+                            values(adopted=False)
+                            )
+                        conn.commit()
             else:
                 adopted = False
                 # if no previous adopted measurement, set adopted to the measurement with the smallest errors
@@ -794,7 +820,9 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
                                                                       db.ProperMotions.c.mu_dec_error == min(
                                                                           source_pm_data['mu_dec_error']))). \
                         values(adopted=True)
-                    db.engine.execute(adopted_pm)
+                    with db.engine.connect() as conn:
+                        conn.execute(adopted_pm)
+                        conn.commit()
             logger.debug("!!! Another Proper motion exists")
             if logger.level == 10:
                 source_pm_data.pprint_all()
@@ -815,7 +843,9 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
         logger.debug(f'Proper motion data to add: {pm_data}')
 
         try:
-            db.ProperMotions.insert().execute(pm_data)
+            with db.engine.connect() as conn:
+                conn.execute(db.ProperMotions.insert().values(pm_data))
+                conn.commit()
             n_added += 1
         except sqlalchemy.exc.IntegrityError:
             msg = "The source may not exist in Sources table.\n" \
@@ -928,7 +958,9 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
         logger.debug(f'Photometry data: {photometry_data}')
 
         try:
-            db.Photometry.insert().execute(photometry_data)
+            with db.engine.connect() as conn:
+                conn.execute(db.Photometry.insert().values(photometry_data))
+                conn.commit()
             n_added += 1
             logger.info(f"Photometry measurement added: \n"
                         f"{photometry_data}")
@@ -1124,7 +1156,9 @@ def ingest_spectra(db, sources, spectra, regimes, telescopes, instruments, modes
         logger.debug(row_data)
 
         try:
-            db.Spectra.insert().execute(row_data)
+            with db.engine.connect() as conn:
+                conn.execute(db.Spectra.insert().values(row_data))
+                conn.commit()
             n_added += 1
         except sqlalchemy.exc.IntegrityError as e:
 
@@ -1269,7 +1303,9 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
     if telescope is not None and len(telescope_db) == 0:
         telescope_add = [{'name': telescope}]
         try:
-            db.Telescopes.insert().execute(telescope_add)
+            with db.engine.connect() as conn:
+                conn.execute(db.Telescopes.insert().values(telescope_add))
+                conn.commit()
             msg_telescope = f'{telescope} was successfully ingested in the database'
             logger.info(msg_telescope)
         except sqlalchemy.exc.IntegrityError as e:
@@ -1285,7 +1321,9 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
     if instrument is not None and len(instrument_db) == 0:
         instrument_add = [{'name': instrument}]
         try:
-            db.Instruments.insert().execute(instrument_add)
+            with db.engine.connect() as conn:
+                conn.execute(db.Instruments.insert().values(instrument_add))
+                conn.commit()
             msg_instrument = f'{instrument} was successfully ingested in the database.'
             logger.info(msg_instrument)
         except sqlalchemy.exc.IntegrityError as e:
@@ -1303,7 +1341,9 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
                      'instrument': instrument,
                      'telescope': telescope}]
         try:
-            db.Modes.insert().execute(mode_add)
+            with db.engine.connect() as conn:
+                conn.execute(db.Modes.insert().values(mode_add))
+                conn.commit()
             msg_mode = f'{mode} was successfully ingested in the database'
             logger.info(msg_mode)
         except sqlalchemy.exc.IntegrityError as e:
