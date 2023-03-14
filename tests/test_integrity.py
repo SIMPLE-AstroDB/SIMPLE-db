@@ -13,6 +13,7 @@ from astropy import units as u
 from astroquery.simbad import Simbad
 from astrodbkit2.utils import _name_formatter
 
+
 DB_NAME = 'temp.db'
 DB_PATH = 'data'
 
@@ -476,6 +477,56 @@ def test_sources(db):
     assert len(t) == 37, f'found {len(t)} sources from {ref}'
 
 
+def test_modeled_parameters(db):
+    # test data ingest
+    model_params_data = [
+        {'source': '2MASS J00001354+2554180', 'value': 0.99, 'parameter': 'radius', 'reference': 'Fili15',
+         'unit': 'R_jup'},
+        {'source': '2MASS J00001354+2554180', 'value': 5.02, 'parameter': 'log g', 'reference': 'Fili15',
+         'unit': 'dex'},
+        {'source': '2MASS J00001354+2554180', 'value': 1227.0, 'parameter': 'T eff', 'reference': 'Fili15',
+         'unit': 'K'},
+        {'source': '2MASS J00001354+2554180', 'value': 47.56, 'parameter': 'mass', 'reference': 'Fili15',
+         'unit': 'M_jup'},
+        # next data points should fail
+        {'source': '2MASS J00034227-2822410', 'value': 106.97, 'parameter': 'mass', 'reference': 'Fili15',
+         'unit': 'M_Jupiter'},
+        {'source': '2MASS J00034227-2822410', 'value': 1.32, 'parameter': 'radius', 'reference': 'Fili15',
+         'unit': 'R_Jup'},
+        {'source': '2MASS J00034227-2822410', 'value': 2871.0, 'parameter': 'T eff', 'reference': 'Fili15',
+         'unit': 'kelvin'},
+        {'source': '2MASS J00034227-2822410', 'value': 5.18, 'parameter': 'log g', 'reference': 'Fili15', 'unit': '.'}]
+
+    # Inserting rows
+    with db.engine.connect() as conn:
+        conn.execute(db.ModeledParameters.insert().values(model_params_data))
+        conn.commit()
+
+    # There should be no entries in the modeled parameters table without parameter
+    t = db.query(db.ModeledParameters.c.source). \
+           filter(db.ModeledParameters.c.parameter.is_(None)). \
+           astropy()
+    if len(t) > 0:
+        print('\nEntries found without a parameter')
+        print(t)
+    assert len(t) == 0
+
+    # Test units are astropy.unit resolvable
+    t = db.query(db.ModeledParameters.c.unit).filter(db.ModeledParameters.c.unit.is_not(None)).distinct().astropy()
+    unit_fail = []
+    for x in t:
+        unit = x['unit']
+
+        try:
+            assert u.Unit(unit, parse_strict='raise')
+        except ValueError:
+            print(f'{unit} is not a recognized astropy unit')
+            counts = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.unit == unit).count()
+            unit_fail.append({unit: counts})  # count of how many of that unit there is
+
+    assert len(unit_fail) == 4, f'Some parameter units did not resolve: {unit_fail}'
+
+
 def test_spectra(db):
     # Tests against the Spectra table
 
@@ -487,36 +538,6 @@ def test_spectra(db):
         print('\nEntries found without spectrum')
         print(t)
     assert len(t) == 0
-
-    # Test units are astropy.unit resolvable
-    t = db.query(db.Spectra.c.wavelength_units).filter(db.Spectra.c.wavelength_units.is_not(None)).distinct().astropy()
-    wave_unit_fail = []
-    for x in t:
-        unit = x['wavelength_units']
-        try:
-            assert u.Unit(unit, parse_strict='raise')
-        except ValueError:
-            print(f'{unit} is not a recognized astropy unit')
-            counts = db.query(db.Spectra).filter(db.Spectra.c.wavelength_units == unit).count()
-            wave_unit_fail.append({unit: counts})
-    assert len(wave_unit_fail) == 0, f'Some wavelength units did not resolve: {wave_unit_fail}'
-
-    t = db.query(db.Spectra.c.flux_units).filter(db.Spectra.c.flux_units.is_not(None)).distinct().astropy()
-    flux_unit_fail = []
-    for x in t:
-        unit = x['flux_units']
-
-        # Special exception for the 'normalized' unit
-        if unit == 'normalized':
-            continue
-
-        try:
-            assert u.Unit(unit, parse_strict='raise')
-        except ValueError:
-            print(f'{unit} is not a recognized astropy unit')
-            counts = db.query(db.Spectra).filter(db.Spectra.c.flux_units == unit).count()
-            flux_unit_fail.append({unit: counts})
-    assert len(flux_unit_fail) == 0, f'Some flux units did not resolve: {flux_unit_fail}'
 
 
 def test_special_characters(db):

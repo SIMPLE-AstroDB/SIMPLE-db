@@ -53,7 +53,6 @@ def load_sqlite():
         db.dump_sqlite(DB_NAME)  # dump in-memory database to file
         print('In-memory database created and saved to file.')
         db.session.close()
-        db.engine.dispose()
     except RuntimeError:
         # use in-file database
         load_database(connection_string)
