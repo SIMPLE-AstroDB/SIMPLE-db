@@ -25,7 +25,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pytest ads
-        pip install git+https://github.com/dr-rodriguez/AstrodbKit2.git@sqlalchemy2
+        pip install astrodbkit2
 
     - name: Test with pytest
       run: |
