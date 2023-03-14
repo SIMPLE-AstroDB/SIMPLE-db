@@ -10,6 +10,7 @@ logger.setLevel(logging.INFO)
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
 # Add New Filters Themselves
+# Take out the old filters
 
 # Fix the Reid02.2806 Publication in the Photometry table
 db.Photometry.update().where(db.Photometry.c.reference == 'Reid02.2806').values(reference='Reid02.466').execute()
