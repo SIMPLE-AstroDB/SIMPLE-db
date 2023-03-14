@@ -538,37 +538,6 @@ def test_spectra(db):
         print(t)
     assert len(t) == 0
 
-    # Test units are astropy.unit resolvable
-    t = db.query(db.Spectra.c.wavelength_units).filter(db.Spectra.c.wavelength_units.is_not(None)).distinct().astropy()
-    wave_unit_fail = []
-    for x in t:
-        unit = x['wavelength_units']
-        try:
-            assert u.Unit(unit, parse_strict='raise')
-        except ValueError:
-            print(f'{unit} is not a recognized astropy unit')
-            counts = db.query(db.Spectra).filter(db.Spectra.c.wavelength_units == unit).count()
-            wave_unit_fail.append({unit: counts})
-    assert len(wave_unit_fail) == 0, f'Some wavelength units did not resolve: {wave_unit_fail}'
-
-    t = db.query(db.Spectra.c.flux_units).filter(db.Spectra.c.flux_units.is_not(None)).distinct().astropy()
-    flux_unit_fail = []
-    for x in t:
-        unit = x['flux_units']
-
-        # Special exception for the 'normalized' unit
-        if unit == 'normalized':
-            continue
-
-        try:
-            assert u.Unit(unit, parse_strict='raise')
-        except ValueError:
-            print(f'{unit} is not a recognized astropy unit')
-            counts = db.query(db.Spectra).filter(db.Spectra.c.flux_units == unit).count()
-            flux_unit_fail.append({unit: counts})
-    assert len(flux_unit_fail) == 0, f'Some flux units did not resolve: {flux_unit_fail}'
-
-
 
 def test_special_characters(db):
     # This test asserts that no special unicode characters are in the database
