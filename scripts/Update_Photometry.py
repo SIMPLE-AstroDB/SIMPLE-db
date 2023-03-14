@@ -9,32 +9,34 @@ logger.setLevel(logging.INFO)
 
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
-# Add New Filters Themselves
-# Take out the old filters
-
-# Fix the Reid02.2806 Publication in the Photometry table
+# Fix the Reid02.2806 Publication in the Photometry table and take out old MKO photometry filters
 if RECREATE_DB:
-    with db.engine.begin() as conn:
+    with db.engine.connect() as conn:
         conn.execute(
             db.Photometry.update().where(db.Photometry.c.reference == 'Reid02.2806').values(reference='Reid02.466'))
-    new_instrument = [{'name': 'NACO', 'reference': None}]
-    new_telescope = [{'name': 'ESO VLT U4', 'reference': None}]
-    new_filter = [{'band': 'NACO.Lp',
-                   'effective_wavelength': 37701.21,
-                   'instrument': 'NACO',
-                   'telescope': 'ESO VLT U4'}]
-    with db.engine.connect() as conn:
+        new_instrument = [{'name': 'NACO', 'reference': None}]
+        new_telescope = [{'name': 'ESO VLT U4', 'reference': None}]
+        new_filter = [{'band': 'NACO.Lp',
+                       'effective_wavelength': 37701.21,
+                       'instrument': 'NACO',
+                       'telescope': 'ESO VLT U4'}]
+        mko_old = {f'MKO.{band}' for band in ("Y", "J", "H", "K", "L'")}
+        for mkoband in mko_old:
+            conn.execute(db.PhotometryFilters.delete().where(db.PhotometryFilters.c.band == mkoband))
         conn.execute(db.Instruments.insert().values(new_instrument))
         conn.execute(db.Telescopes.insert().values(new_telescope))
         conn.execute(db.PhotometryFilters.insert().values(new_filter))
+        conn.execute(db.PhotometryFilters.delete().where(db.PhotometryFilters.c.band == 'MKO.Y'))
+        conn.execute(db.PhotometryFilters.delete().where(db.PhotometryFilters.c.band == 'MKO.Y'))
         conn.commit()
 
 # UKIRT/UFTI
 mko_ufti = {f'MKO.{band}' for band in ("Y", "J", "H", "K", "L'")}
 mko_ufti_u = {f'UFTI.{band}' for band in ("Y", "J", "H", "K", "Lp")}
 for ref in (
-'Goli04.3516', 'Knap04', 'Stra99', 'Geba01', 'Chiu06', 'Naud14', 'Legg00', 'Legg98', 'Legg01', 'Legg02.452', 'Geba01',
-'Reid02.466', 'Goli04.3516', 'Jone96', 'Legg07.1079', 'Luhm07.570'):
+        'Goli04.3516', 'Knap04', 'Stra99', 'Geba01', 'Chiu06', 'Naud14', 'Legg00', 'Legg98', 'Legg01', 'Legg02.452',
+        'Geba01',
+        'Reid02.466', 'Goli04.3516', 'Jone96', 'Legg07.1079', 'Luhm07.570'):
     for mkoband, uftiband in zip(mko_ufti, mko_ufti_u):
         with db.engine.begin() as conn:
             conn.execute(db.Photometry.update().where(
