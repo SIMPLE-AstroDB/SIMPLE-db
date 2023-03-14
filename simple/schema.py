@@ -17,7 +17,7 @@ class Publications(Base):
     This stores reference information (DOI, bibcodes, etc) and has shortname as the primary key
     """
     __tablename__ = 'Publications'
-    publication = Column(String(30), primary_key=True, nullable=False)
+    reference = Column(String(30), primary_key=True, nullable=False)
     bibcode = Column(String(100))
     doi = Column(String(100))
     description = Column(String(1000))
