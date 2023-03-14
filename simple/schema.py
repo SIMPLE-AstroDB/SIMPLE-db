@@ -240,9 +240,6 @@ class Spectra(Base):
     instrument = Column(String(30), ForeignKey(Instruments.name))
     mode = Column(String(30))  # eg, Prism, Echelle, etc
     observation_date = Column(DateTime, primary_key=True)
-    wavelength_units = Column(String(20))
-    flux_units = Column(String(20))
-    wavelength_order = Column(Integer)
 
     # Common metadata
     comments = Column(String(1000))

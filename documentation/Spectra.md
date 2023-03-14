@@ -16,9 +16,6 @@ Columns marked with an asterisk (*) may not be empty.
 | *instrument       | Name of instrument |  | String(30)   | foreign: Instruments.name |
 | *mode             | Mode of spectrum  |  | String(30)   | foreign: Modes.name |
 | *observation_date | Observation date  |  | DateTime     | primary |
-| wavelength_units  | Units for wavelength | | String(20)   | |
-| flux_units        | Units for flux   | | String(20)   | |
-| wavelength_order  | Wavelength order | | Integer      | |
 | comments          | Free form comments |   | String(1000) |   |
 | *reference        | Primary Reference |   | String(30)   | primary and foreign: Publications.name |
 | other_references  | Other References |   | String(100)  |   |
