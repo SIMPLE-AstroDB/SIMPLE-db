@@ -19,12 +19,17 @@ if RECREATE_DB:
                        'effective_wavelength': 37701.21,
                        'instrument': 'NACO',
                        'telescope': 'ESO VLT U4'}]
+        new_filter_u = [{'band': 'UFTI.Y',
+                       'effective_wavelength': 10170.36	,
+                       'instrument': 'UFTI',
+                       'telescope': 'UKIRT'}]
         mko_old = {f'MKO.{band}' for band in ("Y", "J", "H", "K", "L'")}
         for mkoband in mko_old:
             conn.execute(db.PhotometryFilters.delete().where(db.PhotometryFilters.c.band == mkoband))
         conn.execute(db.Instruments.insert().values(new_instrument))
         conn.execute(db.Telescopes.insert().values(new_telescope))
         conn.execute(db.PhotometryFilters.insert().values(new_filter))
+        conn.execute(db.PhotometryFilters.insert().values(new_filter_u))
         conn.execute(db.PhotometryFilters.delete().where(db.PhotometryFilters.c.band == 'MKO.Y'))
         conn.execute(db.PhotometryFilters.delete().where(db.PhotometryFilters.c.band == 'MKO.Y'))
         conn.commit()
