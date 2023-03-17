@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 from specutils import Spectrum1D
 from header_function import *
 logger = logging.getLogger('SIMPLE')
+import astropy.units as u
 
 
 # Logger setup
@@ -21,21 +22,15 @@ if not len(logger.handlers):
 logger.setLevel(logging.INFO)
 
 
-def convert_to_fits(spectrum_info_all):
+def convert_to_fits(spectrum_info_all, spectrum_table):
     # TODO: add docstring with expected keywords
     # TODO: add error handling for expected keywords
     object_name = unquote(spectrum_info_all['object_name'])
     spectrum_info_all['object_name'] = object_name
 
-    spectrum_path = spectrum_info_all['file_path']
-    file = os.path.basename(spectrum_path)
-    logger.debug(f'Trying to convert {object_name}: {file}')
+ # gives original name of file
+    spectrum_info_all['history'] = spectrum_info_all['generated_history']  # shows where file came from
 
-    spectrum_info_all['history1'] = ascii(f'Original file: {file}')  # gives original name of file
-    spectrum_info_all['history2'] = spectrum_info_all['generated_history']  # shows where file came from
-
-    loader_function = spectrum_info_all['loader_function']
-    spectrum_table = loader_function(spectrum_path)
 
     wavelength = spectrum_table['wavelength']
     flux = spectrum_table['flux']
@@ -55,28 +50,12 @@ def convert_to_fits(spectrum_info_all):
     # Write the MEF with the header and the data
     spectrum_mef = fits.HDUList([hdu0, hdu1])  # hdu0 is header and hdu1 is data
 
-    file_root = os.path.splitext(file)[0]
-    fits_filename = spectrum_info_all['fits_data_dir'] + file_root + '.fits'
+    fits_filename = spectrum_info_all['fits_data_dir'] + object_name + '.fits'
     try:
         spectrum_mef.writeto(fits_filename, overwrite=True, output_verify="exception")
         # TODO: think about overwrite
         logger.info(f'Wrote {fits_filename}')
     except:
         raise
-
-    # Read spectrum back in and plot
-    # TODO: Make plotting optional
-    spec1d = Spectrum1D.read(fits_filename, format='tabular-fits')
-    header = fits.getheader(fits_filename)
-    name = header['OBJECT']
-    logger.info(f'Plotting spectrum of {name} stored in {fits_filename}')
-
-    ax = plt.subplots()[1]
-    # ax.plot(spec1d.spectral_axis, spec1d.flux)
-    ax.errorbar(spec1d.spectral_axis.value, spec1d.flux.value, yerr=spec1d.uncertainty.array, fmt='-')
-    ax.set_xlabel(f"Dispersion ({spec1d.spectral_axis.unit})")
-    ax.set_ylabel(f"Flux ({spec1d.flux.unit})")
-    plt.title(f"{name} {header['TELESCOP']} {header['INSTRUME']}")
-    plt.show()
 
     return
