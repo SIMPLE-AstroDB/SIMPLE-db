@@ -5,9 +5,11 @@ Schema for the SIMPLE database
 # pylint: disable=line-too-long, missing-class-docstring, unused-import, invalid-name
 
 import enum
+import sqlalchemy as sa
 from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, \
     BigInteger, Enum, Date, DateTime, ForeignKeyConstraint
 from astrodbkit2.astrodb import Base
+from astrodbkit2.views import view
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -264,3 +266,19 @@ class ModeledParameters(Base):
     unit = Column(String(20))
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.publication', onupdate='cascade'), primary_key=True)
+
+    
+# -------------------------------------------------------------------------------------------------------------------
+# Views
+ObsCore = view(
+        "ObsCore",
+        Base.metadata,
+        sa.select(
+            Sources.source.label("target_name"),
+            Sources.ra.label("s_ra"),
+            Sources.dec.label("s_dec"),
+            Spectra.spectrum.label("access_url"),
+            Spectra.telescope.label("facility_name"),
+            Spectra.instrument.label("instrument_name"),
+        ).select_from(Sources).join(Spectra, Sources.source == Spectra.source)
+        )
