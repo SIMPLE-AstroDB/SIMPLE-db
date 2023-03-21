@@ -59,9 +59,9 @@ def t_pm():
 
 def test_setup_db(db):
     # Some setup tasks to ensure some data exists in the database first
-    ref_data = [{'publication': 'Ref 1', 'doi': '10.1093/mnras/staa1522', 'bibcode': '2020MNRAS.496.1922B'},
-                {'publication': 'Ref 2', 'doi': 'Doi2', 'bibcode': '2012yCat.2311....0C'},
-                {'publication': 'Burn08', 'doi': 'Doi3', 'bibcode': '2008MNRAS.391..320B'}]
+    ref_data = [{'reference': 'Ref 1', 'doi': '10.1093/mnras/staa1522', 'bibcode': '2020MNRAS.496.1922B'},
+                {'reference': 'Ref 2', 'doi': 'Doi2', 'bibcode': '2012yCat.2311....0C'},
+                {'reference': 'Burn08', 'doi': 'Doi3', 'bibcode': '2008MNRAS.391..320B'}]
 
     source_data = [{'source': 'Fake 1', 'ra': 9.0673755, 'dec': 18.352889, 'reference': 'Ref 1'},
                    {'source': 'Fake 2', 'ra': 9.0673755, 'dec': 18.352889, 'reference': 'Ref 1'},

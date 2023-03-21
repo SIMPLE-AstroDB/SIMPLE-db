@@ -466,7 +466,7 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes, spec
             msg = f"Added {str(spt_data)}"
             logger.debug(msg)
         except sqlalchemy.exc.IntegrityError as e:
-            if db.query(db.Publications).filter(db.Publications.c.publication == references[i]).count() == 0:
+            if db.query(db.Publications).filter(db.Publications.c.reference == references[i]).count() == 0:
                 msg = f"The publication does not exist in the database"
                 msg1 = f"Add it with ingest_publication function."
                 logger.debug(msg + msg1)

@@ -220,7 +220,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
     not_null_pub_filters = []
     if name:
         # fuzzy_query_name = '%' + name + '%'
-        not_null_pub_filters.append(db.Publications.c.publication.ilike(name))
+        not_null_pub_filters.append(db.Publications.c.reference.ilike(name))
     if doi:
         not_null_pub_filters.append(db.Publications.c.doi.ilike(doi))
     if bibcode:
@@ -233,10 +233,10 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
 
     if n_pubs_found == 1:
         logger.info(f'Found {n_pubs_found} matching publications for '
-                    f"{name} or {doi} or {bibcode}: {pub_search_table['publication'].data}")
+                    f"{name} or {doi} or {bibcode}: {pub_search_table['reference'].data}")
         if logger.level <= 10:  # debug
             pub_search_table.pprint_all()
-        return True, pub_search_table['publication'].data[0]
+        return True, pub_search_table['reference'].data[0]
 
     if n_pubs_found > 1:
         logger.warning(f'Found {n_pubs_found} matching publications for {name} or {doi} or {bibcode}')
@@ -250,7 +250,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
         logger.debug(f'No matching publications for {name}, Trying {shorter_name}.')
         fuzzy_query_shorter_name = '%' + shorter_name + '%'
         pub_search_table = db.query(db.Publications).filter(
-            db.Publications.c.publication.ilike(fuzzy_query_shorter_name)).table()
+            db.Publications.c.reference.ilike(fuzzy_query_shorter_name)).table()
         n_pubs_found_short = len(pub_search_table)
         if n_pubs_found_short == 0:
             logger.warning(f'No matching publications for {name} or {shorter_name}')
@@ -284,7 +284,7 @@ def find_publication(db, name: str = None, doi: str = None, bibcode: str = None)
                 logger.debug(f'Trying to limit using {two_digit_date}')
                 n_pubs_found_short_date = 0
                 pubs_found_short_date = []
-                for pub in pub_search_table['publication']:
+                for pub in pub_search_table['reference']:
                     if pub.find(two_digit_date) != -1:
                         n_pubs_found_short_date += 1
                         pubs_found_short_date.append(pub)
@@ -451,7 +451,7 @@ def ingest_publication(db, doi: str = None, bibcode: str = None, publication: st
         name_add = publication
         using = 'user input'
 
-    new_ref = [{'publication': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
+    new_ref = [{'reference': name_add, 'bibcode': bibcode_add, 'doi': doi_add, 'description': description}]
 
     try:
         with db.engine.connect() as conn:
