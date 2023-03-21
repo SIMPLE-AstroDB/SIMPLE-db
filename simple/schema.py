@@ -39,7 +39,7 @@ class Instruments(Base):
 
 class Modes(Base):
     __tablename__ = 'Modes'
-    name = Column(String(30), primary_key=True, nullable=False)
+    mode = Column(String(30), primary_key=True, nullable=False)
     instrument = Column(String(30), ForeignKey('Instruments.instrument', onupdate='cascade'), primary_key=True)
     telescope = Column(String(30), ForeignKey('Telescopes.telescope', onupdate='cascade'), primary_key=True)
     description = Column(String(1000))
