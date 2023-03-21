@@ -8,7 +8,7 @@ import numpy as np
 def compile_header(wavelength_data, **spectra_data_info):
     """Creates a header from a dictionary of values. """
 
-    history = spectra_data_info['generated_history']
+    history = spectra_data_info['history']
 
     comment = 'To read this file in with specutils use Spectrum1D.read() with format = \'tabular-fits\''
 
@@ -90,9 +90,10 @@ def compile_header(wavelength_data, **spectra_data_info):
     w_mid = ((w_max + w_min)/2).astype(np.single)
 
     try:
-        header.set('SPECBAND', spectra_data_info['bandpass'], 'SED.bandpass')
+        bandpass = spectra_data_info['bandpass']
+        header.set('SPECBAND', bandpass, 'SED.bandpass')
     except KeyError:
-        pass
+        bandpass = None
 
     try:
         header.set('SPEC_VAL', w_mid, f"[{w_units}] Characteristic spec coord")
@@ -104,9 +105,10 @@ def compile_header(wavelength_data, **spectra_data_info):
     header.set('TDMAX1', w_max, f"[{w_units}] Ending wavelength")
 
     try:
-        header.set('APERTURE', spectra_data_info['aperture'], '[arcsec] slit width')
+        aperture = spectra_data_info['aperture']
+        header.set('APERTURE', aperture, '[arcsec] slit width')
     except KeyError:
-        pass
+        aperture = None
 
     try:
         obs_date = to_datetime(spectra_data_info['observation_date']).strftime("%Y-%m-%d")

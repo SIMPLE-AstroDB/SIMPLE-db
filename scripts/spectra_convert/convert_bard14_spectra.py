@@ -26,32 +26,33 @@ for index, row in data.iterrows():
 
     url_data = safe_url_string(spectrum_url, encoding="utf-8")
     spectrum_table = Table.read(url_data,format = 'ascii', names=['wavelength', 'flux', 'flux_uncertainty'])
-    file = os.path.basename(spectrum_url)
 
-    history = f'Original file: {file}' #gives orginal name of file
 
-    #turn these into a dictionary
-    spectrum_info_all = {
+
+    spectrum_info = {
+        'fits_data_dir': '/Users/jolie/gitlocation/SIMPLE-db/scripts/spectra_convert/bard14/'
+        }
+
+    header_dictionary = {
         'VOCLASS' : 'Spectrum-1.0',
         'VOPUB' : 'SIMPLE Archive' ,
         'RA' : row['ra'] ,
         'dec' : row['dec'] ,
-        'bandpass' : None ,
-        'aperture' : None ,
+        'bandpass' : row['regime'] ,
+        'aperture' : row['aperture'] ,
         'object_name' : object_name,
-
-        #OTHER KEYWORDS
-        'bibcode' : None ,
+        'bibcode' : '2014ApJ...794..143B' ,
         'instrument' : row['instrument'] ,
         'obs_date' : to_datetime(row['observation_date']) ,
-        'author' : None,
-        'doi' : None ,
+        'author' : 'Bardalez Gagliuffi, Daniella ; Burgasser, Adam ; Gelino, Christopher ; Looper, Dagny ; Nicholls, Christine ; Schmidt, Sarah ; Cruz, Kelle ; West, Andrew ; Gizis, John ; Metchev, Stanimir ',
+        'doi' : '10.1088/0004-637X/794/2/143' ,
         'telescope' : row['telescope'] ,
-        'history' : history ,
+        'history' :  f'Original file: {os.path.basename(spectrum_url)}',
         'comment': row['spectrum comments'],
-        'fits_data_dir': '/Users/jolie/gitlocation/SIMPLE-db/scripts/spectra_convert/bard14', #seperate dic
-        'generated_history': None,
-        }
+        'observatory' : row['telescope']
 
-    #compile_header()
-    #convert_to_fits(spectrum_info_all, spectrum_table)
+    }
+
+    header = compile_header(spectrum_table['wavelength'],**header_dictionary)
+
+    convert_to_fits(spectrum_info, spectrum_table, header)

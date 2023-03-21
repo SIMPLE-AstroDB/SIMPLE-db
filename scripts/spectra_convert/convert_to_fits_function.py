@@ -22,23 +22,23 @@ if not len(logger.handlers):
 logger.setLevel(logging.INFO)
 
 
-def convert_to_fits(spectrum_info_all, spectrum_table):
+def convert_to_fits(spectrum_info_all, spectrum_table, header):
     # TODO: add docstring with expected keywords
     # TODO: add error handling for expected keywords
-    object_name = unquote(spectrum_info_all['object_name'])
-    spectrum_info_all['object_name'] = object_name
+
+    object_name =header['OBJECT']
 
  # gives original name of file
-    spectrum_info_all['history'] = spectrum_info_all['generated_history']  # shows where file came from
+   # spectrum_info_all['history'] = spectrum_info_all['generated_history']  # shows where file came from
 
 
     wavelength = spectrum_table['wavelength']
     flux = spectrum_table['flux']
     flux_unc = spectrum_table['flux_uncertainty']
 
-    header = compile_header(wavelength, **spectrum_info_all)
+    #header = compile_header(wavelength, **spectrum_info_all)
 
-    spectrum_data_out = Table({'wavelength': wavelength, 'flux': flux, 'flux_uncertainty': flux_unc})
+    spectrum_data_out = Table({'wavelength': wavelength*u.um, 'flux': flux * u.Jy, 'flux_uncertainty': flux_unc*u.Jy})
 
 
     # Make the HDUs
