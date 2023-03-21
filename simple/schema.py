@@ -241,7 +241,7 @@ class Spectra(Base):
                     primary_key=True)  # eg, Optical, Infrared, etc
     telescope = Column(String(30), ForeignKey(Telescopes.telescope))
     instrument = Column(String(30), ForeignKey(Instruments.instrument))
-    mode = Column(String(30), ForeignKey(Modes.mode))  # eg, Prism, Echelle, etc
+    mode = Column(String(30))  # eg, Prism, Echelle, etc
     observation_date = Column(DateTime, primary_key=True)
 
     # Common metadata
