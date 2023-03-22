@@ -3,7 +3,7 @@ from astropy.time import Time
 from datetime import date
 import astropy.io.fits as fits
 import numpy as np
-
+import logging
 
 def compile_header(wavelength_data, **spectra_data_info):
     """Creates a header from a dictionary of values. """
@@ -19,24 +19,25 @@ def compile_header(wavelength_data, **spectra_data_info):
     try:
         header.set('VOCLASS', spectra_data_info['voclass'], 'VO Data Model')
     except KeyError:
-        pass
+        logging.warning('No VO Data Model')
 
     # Target Data
     try:
         header.set('OBJECT', spectra_data_info['object_name'], 'Name of observed object')
     except KeyError:
-        pass
+        logging.warning('No object name')
 
     try:
         ra = spectra_data_info['RA']
         header.set('RA', ra, '[deg] Pointing position')
     except KeyError:
+        logging.warning('No RA')
         ra = None
-
     try:
         dec = spectra_data_info['dec']
         header.set('DEC', dec, '[deg] Pointing position')
     except KeyError:
+        logging.warning('No DEC')
         dec = None
 
     try:
@@ -45,18 +46,21 @@ def compile_header(wavelength_data, **spectra_data_info):
         header.set('TMID', time, '[d] MJD mid expsoure')
     except KeyError:
         time = None
+        logging.warning('No time')
 
     try:
         exposure_time = spectra_data_info['exposure_time']
         header.set('TELAPSE', exposure_time, '[s] Total elapsed time')
     except KeyError:
         exposure_time = None
+        logging.warning('No exposure time')
 
     try:
         time_start = Time(to_datetime(spectra_data_info['start_time'])).jd
         header.set('TSTART', time_start, '[d] MJD start time')
     except KeyError:
         time_start = None
+
 
     try:
         time_stop = Time(to_datetime(spectra_data_info['stop_time'])).jd
@@ -69,18 +73,21 @@ def compile_header(wavelength_data, **spectra_data_info):
         header.set('OBSERVAT', obs_location, 'name of observatory')
     except KeyError:
         obs_location = None
+        logging.warning('No observatory')
 
     try:
         telescope = spectra_data_info['telescope']
         header.set('TELESCOP', telescope, 'name of telescope')
     except KeyError:
         telescope = None
+        logging.warning('No telescope')
 
     try:
         instrument = spectra_data_info['instrument']
         header.set('INSTRUME', instrument, 'name of instrument')
     except KeyError:
         instrument = None
+        logging.warning('No instrument')
 
     # Wavelength info
     w_units = wavelength_data.unit
@@ -94,6 +101,7 @@ def compile_header(wavelength_data, **spectra_data_info):
         header.set('SPECBAND', bandpass, 'SED.bandpass')
     except KeyError:
         bandpass = None
+        logging.warning('No bandpass')
 
     try:
         header.set('SPEC_VAL', w_mid, f"[{w_units}] Characteristic spec coord")
@@ -109,12 +117,15 @@ def compile_header(wavelength_data, **spectra_data_info):
         header.set('APERTURE', aperture, '[arcsec] slit width')
     except KeyError:
         aperture = None
+        logging.warning('No aperature')
 
     try:
-        obs_date = to_datetime(spectra_data_info['observation_date']).strftime("%Y-%m-%d")
+        obs_date = to_datetime(spectra_data_info['obs_date']).strftime("%Y-%m-%d")
         header.set('DATE-OBS', obs_date, 'date of the observation')
     except KeyError:
+        print(KeyError)
         obs_date = None
+        logging.warning('No observation date')
 
     # Publication Information
     try:
@@ -122,11 +133,13 @@ def compile_header(wavelength_data, **spectra_data_info):
         header.set('TITLE', title, 'Data set title')
     except KeyError:
         pass
+        logging.warning('No title')
 
     try:
         header.set('AUTHOR', spectra_data_info['author'], 'Authors of the data')
     except KeyError:
         pass
+        logging.warning('No author')
 
     try:
         header.set('VOREF', spectra_data_info['bibcode'], 'Bibcode of dataset')
@@ -141,7 +154,7 @@ def compile_header(wavelength_data, **spectra_data_info):
     try:
         header.set('VOPUB', spectra_data_info['vopub'], 'VO Publisher')
     except KeyError:
-        pass
+        logging.warning('No VO Publisher')
 
 
     try:

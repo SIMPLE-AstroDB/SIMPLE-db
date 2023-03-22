@@ -1,5 +1,4 @@
 import pandas as pd
-from pandas import to_datetime
 import os
 import warnings
 warnings.filterwarnings('ignore')
@@ -43,7 +42,8 @@ for index, row in data.iterrows():
         'object_name' : object_name,
         'bibcode' : '2014ApJ...794..143B' ,
         'instrument' : row['instrument'] ,
-        'obs_date' : to_datetime(row['observation_date']) ,
+        'obs_date' : row['observation date'] ,
+        'title' : None ,
         'author' : 'Bardalez Gagliuffi, Daniella ; Burgasser, Adam ; Gelino, Christopher ; Looper, Dagny ; Nicholls, Christine ; Schmidt, Sarah ; Cruz, Kelle ; West, Andrew ; Gizis, John ; Metchev, Stanimir ',
         'doi' : '10.1088/0004-637X/794/2/143' ,
         'telescope' : row['telescope'] ,
@@ -52,7 +52,7 @@ for index, row in data.iterrows():
         'observatory' : row['telescope']
 
     }
-
+    print(header_dictionary['obs_date'])
     header = compile_header(spectrum_table['wavelength'],**header_dictionary)
 
     convert_to_fits(spectrum_info, spectrum_table, header)
