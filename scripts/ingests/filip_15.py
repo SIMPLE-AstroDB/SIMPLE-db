@@ -1,5 +1,5 @@
-from astrodbkit2.astrodb import create_database
-from astrodbkit2.astrodb import Database
+from scripts.ingests.ingest_utils import *
+from scripts.ingests.utils import *
 from astropy.table import Table
 
 SAVE_DB = True  # save the data files in addition to modifying the .db file
