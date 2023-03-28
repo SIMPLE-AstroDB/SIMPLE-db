@@ -285,3 +285,16 @@ ObsCore = view(
             Spectra.instrument.label("instrument_name"),
         ).select_from(Sources).join(Spectra, Sources.source == Spectra.source)
         )
+
+ParallaxView = view(
+    "ParallaxView",
+    Base.metadata,
+    sa.select(
+        Parallaxes.source.label('source'),
+        Parallaxes.parallax.label('parallax'),
+        Parallaxes.parallax_error.label('parallax_error'),
+        Parallaxes.comments.label('comments'),
+        Parallaxes.reference.label('reference')
+    ).select_from(Parallaxes)
+    .where(Parallaxes.adopted == True),
+)
