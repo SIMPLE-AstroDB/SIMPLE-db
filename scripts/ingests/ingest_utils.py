@@ -466,7 +466,7 @@ def ingest_spectral_types(db, sources, spectral_types, references, regimes, spec
             msg = f"Added {str(spt_data)}"
             logger.debug(msg)
         except sqlalchemy.exc.IntegrityError as e:
-            if db.query(db.Publications).filter(db.Publications.c.publication == references[i]).count() == 0:
+            if db.query(db.Publications).filter(db.Publications.c.reference == references[i]).count() == 0:
                 msg = f"The publication does not exist in the database"
                 msg1 = f"Add it with ingest_publication function."
                 logger.debug(msg + msg1)
@@ -1288,10 +1288,10 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
     logger.info(msg_search)
 
     # Search for the inputs in the database
-    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == telescope).table()
-    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == instrument).table()
+    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.telescope == telescope).table()
+    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.instrument == instrument).table()
     if mode is not None:
-        mode_db = db.query(db.Modes).filter(and_(db.Modes.c.name == mode,
+        mode_db = db.query(db.Modes).filter(and_(db.Modes.c.mode == mode,
                                                  db.Modes.c.instrument == instrument,
                                                  db.Modes.c.telescope == telescope)).table()
 
@@ -1301,7 +1301,7 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
         return
 
     if telescope is not None and len(telescope_db) == 0:
-        telescope_add = [{'name': telescope}]
+        telescope_add = [{'telescope': telescope}]
         try:
             with db.engine.connect() as conn:
                 conn.execute(db.Telescopes.insert().values(telescope_add))
@@ -1319,7 +1319,7 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
                 raise SimpleError(msg + '\n' + str(e))
 
     if instrument is not None and len(instrument_db) == 0:
-        instrument_add = [{'name': instrument}]
+        instrument_add = [{'instrument': instrument}]
         try:
             with db.engine.connect() as conn:
                 conn.execute(db.Instruments.insert().values(instrument_add))
@@ -1337,7 +1337,7 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
                 raise SimpleError(msg + '\n' + str(e))
 
     if mode is not None and len(mode_db) == 0:
-        mode_add = [{'name': mode,
+        mode_add = [{'mode': mode,
                      'instrument': instrument,
                      'telescope': telescope}]
         try:
