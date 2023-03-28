@@ -25,21 +25,24 @@ class Publications(Base):
 
 class Telescopes(Base):
     __tablename__ = 'Telescopes'
-    name = Column(String(30), primary_key=True, nullable=False)
+    telescope = Column(String(30), primary_key=True, nullable=False)
+    description = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'))
 
 
 class Instruments(Base):
     __tablename__ = 'Instruments'
-    name = Column(String(30), primary_key=True, nullable=False)
+    instrument = Column(String(30), primary_key=True, nullable=False)
+    description = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'))
 
 
 class Modes(Base):
     __tablename__ = 'Modes'
-    name = Column(String(30), primary_key=True, nullable=False)
-    instrument = Column(String(30), ForeignKey('Instruments.name', onupdate='cascade'), primary_key=True)
-    telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'), primary_key=True)
+    mode = Column(String(30), primary_key=True, nullable=False)
+    instrument = Column(String(30), ForeignKey('Instruments.instrument', onupdate='cascade'), primary_key=True)
+    telescope = Column(String(30), ForeignKey('Telescopes.telescope', onupdate='cascade'), primary_key=True)
+    description = Column(String(1000))
 
 
 class Parameters(Base):
@@ -56,8 +59,8 @@ class PhotometryFilters(Base):
     """
     __tablename__ = 'PhotometryFilters'
     band = Column(String(30), primary_key=True, nullable=False)  # of the form instrument.filter (see SVO)
-    instrument = Column(String(30), ForeignKey('Instruments.name', onupdate='cascade'), primary_key=True)
-    telescope = Column(String(30), ForeignKey('Telescopes.name', onupdate='cascade'), primary_key=True)
+    instrument = Column(String(30), ForeignKey('Instruments.instrument', onupdate='cascade'), primary_key=True)
+    telescope = Column(String(30), ForeignKey('Telescopes.telescope', onupdate='cascade'), primary_key=True)
     effective_wavelength = Column(Float, nullable=False)
     width = Column(Float)
 
@@ -236,8 +239,8 @@ class Spectra(Base):
     regime = Column(Enum(Regime, create_constraint=True, values_callable=lambda x: [e.value for e in x],
                          native_enum=False),
                     primary_key=True)  # eg, Optical, Infrared, etc
-    telescope = Column(String(30), ForeignKey(Telescopes.name))
-    instrument = Column(String(30), ForeignKey(Instruments.name))
+    telescope = Column(String(30), ForeignKey(Telescopes.telescope))
+    instrument = Column(String(30), ForeignKey(Instruments.instrument))
     mode = Column(String(30))  # eg, Prism, Echelle, etc
     observation_date = Column(DateTime, primary_key=True)
 
@@ -248,7 +251,7 @@ class Spectra(Base):
 
     # Foreign key constraints for telescope, instrument, mode; all handled via reference to Modes table
     __table_args__ = (ForeignKeyConstraint([telescope, instrument, mode],
-                                           [Modes.telescope, Modes.instrument, Modes.name],
+                                           [Modes.telescope, Modes.instrument, Modes.mode],
                                            onupdate="cascade"),
                       {})
 
