@@ -50,6 +50,7 @@ for index, row in data.iterrows():
         'history' :  f'Original file: {os.path.basename(spectrum_url)}',
         'comment': row['spectrum comments'],
         'observatory' : row['telescope'],
+        'TEST' : 'test exception'
 
     }
 

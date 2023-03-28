@@ -14,7 +14,7 @@ def compile_header(wavelength_data, **spectra_data_info):
 
     for i in range(len(keywords_given)):
         if keywords_given[i] not in required_keywords:
-            print('Must Add Keywords')
+            raise Exception("Must Add Keyword")
         else :
             pass
 
