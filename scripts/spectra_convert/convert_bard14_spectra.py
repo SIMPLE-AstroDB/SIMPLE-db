@@ -49,10 +49,13 @@ for index, row in data.iterrows():
         'telescope' : row['telescope'] ,
         'history' :  f'Original file: {os.path.basename(spectrum_url)}',
         'comment': row['spectrum comments'],
-        'observatory' : row['telescope']
+        'observatory' : row['telescope'],
 
     }
-    print(header_dictionary['obs_date'])
+
     header = compile_header(spectrum_table['wavelength'],**header_dictionary)
 
     convert_to_fits(spectrum_info, spectrum_table, header)
+
+
+

@@ -8,6 +8,16 @@ import logging
 def compile_header(wavelength_data, **spectra_data_info):
     """Creates a header from a dictionary of values. """
 
+    required_keywords = ['VOCLASS', 'VOPUB', 'RA', 'dec', 'bandpass', 'aperture', 'object_name', 'bibcode', 'instrument', 'obs_date', 'title', 'author', 'doi', 'telescope', 'history', 'comment', 'observatory']
+
+    keywords_given = list(spectra_data_info.keys())
+
+    for i in range(len(keywords_given)):
+        if keywords_given[i] not in required_keywords:
+            print('Must Add Keywords')
+        else :
+            pass
+
     history = spectra_data_info['history']
 
     comment = 'To read this file in with specutils use Spectrum1D.read() with format = \'tabular-fits\''
@@ -129,7 +139,7 @@ def compile_header(wavelength_data, **spectra_data_info):
 
     # Publication Information
     try:
-        title = (spectra_data_info['title'])[0:20]  # trim so header wraps nicely
+        title = (spectra_data_info['title'])  # trim so header wraps nicely
         header.set('TITLE', title, 'Data set title')
     except KeyError:
         pass
