@@ -28,9 +28,7 @@ def convert_to_fits(spectrum_info_all, spectrum_table, header):
 
     object_name =header['OBJECT']
 
- # gives original name of file
-   # spectrum_info_all['history'] = spectrum_info_all['generated_history']  # shows where file came from
-
+    header['HISTORY'] = "File made with the SIMPLE convert_to_fits.py function"
 
     wavelength = spectrum_table['wavelength']
     flux = spectrum_table['flux']

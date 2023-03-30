@@ -8,7 +8,6 @@
 # commit and push !!!!!!!!!!!!!!!!!!
 #open pull request once its in spectra convert folder
 
-from scripts.ingests.utils import *
 import csv
 from scripts.ingests.utils import *
 from specutils import Spectrum1D

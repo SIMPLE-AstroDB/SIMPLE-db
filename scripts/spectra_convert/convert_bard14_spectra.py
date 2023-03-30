@@ -44,7 +44,7 @@ for index, row in data.iterrows():
         'instrument' : row['instrument'] ,
         'obs_date' : row['observation date'] ,
         'title' : None ,
-        'author' : 'Bardalez Gagliuffi, Daniella ; Burgasser, Adam ; Gelino, Christopher ; Looper, Dagny ; Nicholls, Christine ; Schmidt, Sarah ; Cruz, Kelle ; West, Andrew ; Gizis, John ; Metchev, Stanimir ',
+        'author' : 'Bardalez Gagliuffi, et. al.',
         'doi' : '10.1088/0004-637X/794/2/143' ,
         'telescope' : row['telescope'] ,
         'history' :  f'Original file: {os.path.basename(spectrum_url)}',
