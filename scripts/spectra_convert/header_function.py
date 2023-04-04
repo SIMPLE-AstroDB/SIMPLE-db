@@ -14,7 +14,7 @@ def compile_header(wavelength_data, **spectra_data_info):
 
     for key in keywords_given:
         if key not in required_keywords:
-            raise Exception(f"Expecting keyword: {key}")
+            raise Exception(f"Not expecting keyword: {key}. Add manually.")
         else :
             pass
 
@@ -162,7 +162,7 @@ def compile_header(wavelength_data, **spectra_data_info):
         pass
 
     try:
-        header.set('VOPUB', spectra_data_info['vopub'], 'VO Publisher')
+        header.set('VOPUB', spectra_data_info['VOPUB'], 'VO Publisher')
     except KeyError:
         logging.warning('No VO Publisher')
 
