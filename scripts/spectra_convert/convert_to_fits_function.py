@@ -48,7 +48,7 @@ def convert_to_fits(spectrum_info_all, spectrum_table, header):
     # Write the MEF with the header and the data
     spectrum_mef = fits.HDUList([hdu0, hdu1])  # hdu0 is header and hdu1 is data
 
-    fits_filename = spectrum_info_all['fits_data_dir'] + object_name + '.fits'
+    fits_filename = spectrum_info_all['fits_data_dir'] + object_name + '_' + header['DATE-OBS'] + '.fits'
     try:
         spectrum_mef.writeto(fits_filename, overwrite=True, output_verify="exception")
         # TODO: think about overwrite
