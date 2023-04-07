@@ -261,6 +261,7 @@ class ModeledParameters(Base):
 
     parameter = Column(String(30), ForeignKey('Parameters.parameter', onupdate='cascade'), primary_key=True)
     value = Column(Float, nullable=False)
+    value_error = Column(Float)
     unit = Column(String(20))
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.publication', onupdate='cascade'), primary_key=True)
