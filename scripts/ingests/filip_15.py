@@ -22,12 +22,12 @@ columns = ['Designation 9', 'pi', 'pi References', 'log(L_*/L_sun)', 'Age^a', 'R
 data9stuff = Table.read(link, format='ascii', data_start=6, data_end = 203, header_start=4, names=columns, guess=False,
                         fast_reader=False, delimiter=',')
 
-data_columns = ['Radius', 'log(g)', 'T_eff', 'Mass']  # columns with data values
+data_columns = ['Radius', 'log(g)', 'T_eff', 'Mass']  # columns with wanted data values
 
-for i in data9stuff:  # rewriting so that the empty values are None
-    for c in data_columns:
-        if i[c] == 'cdots':
-            i[c] = None
+for row in data9stuff:  # rewriting so that the empty values are None
+    for column in data_columns:
+        if row[column] == 'cdots':
+            row[column] = None
 
 
 def get_float_value(value):
@@ -49,15 +49,15 @@ def get_float_error_value(value):
 
 
 # creating list of dictionaries for each value in table 9 formatted for modeled parameters
-Radius = [{'source': i['Designation 1'], 'value': get_float_value(i['Radius']),
+Radius = [{'source': row['Designation 1'], 'value': get_float_value(row['Radius']),
            'parameter': "radius", 'reference': "Fili15", 'unit': 'R_jup'}
-          for i in data9stuff]
-log_g = [{'source': i['Designation 1'], 'value': get_float_value(i['log(g)']),
+          for row in data9stuff]
+log_g = [{'source': row['Designation 1'], 'value': get_float_value(row['log(g)']),
           'parameter': "log g", 'reference': "Fili15", 'unit': 'dex'}
-         for i in data9stuff]
-T_eff = [{'source': i['Designation 1'], 'value': get_float_value(i['T_eff']),
+         for row in data9stuff]
+T_eff = [{'source': row['Designation 1'], 'value': get_float_value(row['T_eff']),
           'parameter': "T eff", 'reference': "Fili15", 'unit': 'K'}
-         for i in data9stuff]
-Mass = [{'source': i['Designation 1'], 'value': get_float_value(i['Mass']),
+         for row in data9stuff]
+Mass = [{'source': row['Designation 1'], 'value': get_float_value(i['Mass']),
          'parameter': "mass", 'reference': "Fili15", 'unit': 'M_jup'}
-        for i in data9stuff]
+        for row in data9stuff]
