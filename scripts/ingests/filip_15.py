@@ -7,7 +7,7 @@ import astropy.units as u
 from astropy.coordinates import Angle
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = False  # recreates the .db file from the data files
+RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = False
 # LOAD THE DATABASE
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
@@ -24,8 +24,8 @@ filip15_table = Table.read(link, format='ascii', data_start=6, data_end=203, hea
 data_columns = ['Radius', 'log(g)', 'T_eff', 'Mass']  # columns with wanted data values
 
 # replacing empty values ('cdots') with None
-    for column in data_columns: 
-        filip15_table[column][np.where(filip15_table[column] == 'cdots')] = None
+for column in data_columns:
+    filip15_table[column][np.where(filip15_table[column] == 'cdots')] = None
 
 
 def get_float_value(value, error=False):
@@ -90,12 +90,19 @@ for i, source_dict in enumerate(modeled_parameters_ingest_dict):
     else:
         sources_in_NOT_db.append([modeled_parameters_ingest_dict[i]['source'], i])
 
-print(sources_in_NOT_db)
 
-small_dict = {'source': '2MASS J00001354+2554180', 'reference': 'Fili15', 'value': 0.99, 'value_error': 0.15, 'parameter': 'radius', 'unit': 'R_jup'}
+# one source needed manual changing
+modeled_parameters_ingest_dict[53]['source'] = "2MASS J04433761+0002051"
 
+
+value_types = ['Radius', 'log_g', 'T_eff', 'Mass']
 with db.engine.connect() as conn:
-    conn.execute(db.ModeledParameters.insert().values(small_dict))  # have this for mass rad etc
+    for row in modeled_parameters_ingest_dict:
+        row_dict = []
+        for value_type in value_types:
+            if row[value_type]['value'] is not None: # checking that there's a value
+                conn.execute(db.ModeledParameters.insert().values({'source': row['source'], 'reference': 'Fili15', **row[value_type]}))
+
     conn.commit()  # sqlalchemy 2.0 does not autocommit  can go again
 
 
