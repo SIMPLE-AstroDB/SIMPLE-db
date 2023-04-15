@@ -25,10 +25,9 @@ filip15_table = Table.read(link, format='ascii', data_start=6, data_end=203, hea
 
 data_columns = ['Radius', 'log(g)', 'T_eff', 'Mass']  # columns with wanted data values
 
-for row in filip15_table:  # rewriting so that the empty values are None
-    for column in data_columns:
-        if row[column] == 'cdots':
-            row[column] = None
+# replacing empty values ('cdots') with None
+    for column in data_columns: 
+        filip15_table[column][np.where(filip15_table[column] == 'cdots')] = None
 
 
 def get_float_value(value, error=False):
