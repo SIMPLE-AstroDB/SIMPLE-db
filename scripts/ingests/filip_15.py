@@ -7,14 +7,12 @@ import astropy.units as u
 from astropy.coordinates import Angle
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = True  # recreates the .db file from the data files
+RECREATE_DB = False  # recreates the .db file from the data files
 VERBOSE = False
 # LOAD THE DATABASE
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
-# WRITE THE JSON FILES
-if SAVE_DB:
-    db.save_database(directory='data/')
+
 # live google sheet
 link = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJZccUnKGOLcfPixaS3Tib0sqqC23n1Q_0ybjwXN4ZDYBT_-2_FeHLShVBzkIDfo39-tV1aoz5rCth/pub?output=csv"
 
@@ -54,7 +52,7 @@ def get_coords(string):
 
 
 # creating list of dictionaries for each value in table 9 formatted for modeled parameters
-modeled_parameters_ingest_dict = [{'source': row['Designation 1'],  'reference': "Fili15",
+modeled_parameters_ingest_dict = [{'source': row['Designation 1'], 'reference': "Fili15",
                                    'ra': get_coords(row['R.A.']), 'dec': get_coords(row['Decl.']),
                                    'Radius':
                                        {'value': get_float_value(row['Radius']),
@@ -73,3 +71,34 @@ modeled_parameters_ingest_dict = [{'source': row['Designation 1'],  'reference':
                                         'value_error': get_float_value(row['Mass'], error=True),
                                         'parameter': "mass", 'unit': 'M_jup'}}
                                   for row in filip15_table]
+
+
+
+sources_in_db = []
+sources_in_NOT_db = []
+many_source_match = []
+for i, source_dict in enumerate(modeled_parameters_ingest_dict):
+    found_source = find_source_in_db(db, source_dict['source'], ra=source_dict['ra'], dec=source_dict['dec'])
+
+    if len(found_source) == 1:
+        sources_in_db.append([modeled_parameters_ingest_dict[i]['source'], found_source[0], i])
+        modeled_parameters_ingest_dict[i]['source'] = found_source[0]
+
+    elif len(found_source) > 1:
+        many_source_match.append([modeled_parameters_ingest_dict[i]['source'], found_source, i])
+
+    else:
+        sources_in_NOT_db.append([modeled_parameters_ingest_dict[i]['source'], i])
+
+print(sources_in_NOT_db)
+
+small_dict = {'source': '2MASS J00001354+2554180', 'reference': 'Fili15', 'value': 0.99, 'value_error': 0.15, 'parameter': 'radius', 'unit': 'R_jup'}
+
+with db.engine.connect() as conn:
+    conn.execute(db.ModeledParameters.insert().values(small_dict))  # have this for mass rad etc
+    conn.commit()  # sqlalchemy 2.0 does not autocommit  can go again
+
+
+# WRITE THE JSON FILES
+if SAVE_DB:
+    db.save_database(directory='data/')
