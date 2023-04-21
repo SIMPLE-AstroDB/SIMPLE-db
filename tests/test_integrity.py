@@ -566,15 +566,14 @@ def test_special_characters(db):
 def test_database_views(db):
     # Tests to verify views exist and work as intended
 
-    # ObsCore view
-    # Views do not exist as attributes to db so db.ObsCore does not work
+    # Views do not exist as attributes to db so db.ViewName does not work
     # TODO: Figure out other ways to refer to it in db.metadata info
-    t = db.query(ObsCore).table()
+    t = db.query(ParallaxView).table()
     print(t)
     assert len(t) > 0
 
     # Check view is not part of inventory
-    assert 'ObsCore' not in db.inventory('2MASSI J0019457+521317').keys()
+    assert 'ParallaxView' not in db.inventory('2MASSI J0019457+521317').keys()
                     
 def test_remove_database(db):
     # Clean up temporary database

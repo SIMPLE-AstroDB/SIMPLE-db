@@ -273,18 +273,6 @@ class ModeledParameters(Base):
 
 # -------------------------------------------------------------------------------------------------------------------
 # Views
-ObsCore = view(
-        "ObsCore",
-        Base.metadata,
-        sa.select(
-            Sources.source.label("target_name"),
-            Sources.ra.label("s_ra"),
-            Sources.dec.label("s_dec"),
-            Spectra.spectrum.label("access_url"),
-            Spectra.telescope.label("facility_name"),
-            Spectra.instrument.label("instrument_name"),
-        ).select_from(Sources).join(Spectra, Sources.source == Spectra.source)
-        )
 
 ParallaxView = view(
     "ParallaxView",
@@ -297,4 +285,24 @@ ParallaxView = view(
         Parallaxes.reference.label('reference')
     ).select_from(Parallaxes)
     .where(Parallaxes.adopted == True),
+)
+
+PhotometryView = view(
+    "PhotometryView",
+    Base.metadata,
+    sa.select(
+        Photometry.source.label('source'),
+        sa.func.avg(sa.case((Photometry.band == "2MASS.J", Photometry.magnitude))).label("2MASS.J"),
+        sa.func.avg(sa.case((Photometry.band == "2MASS.H", Photometry.magnitude))).label("2MASS.H"),
+        sa.func.avg(sa.case((Photometry.band == "2MASS.Ks", Photometry.magnitude))).label("2MASS.Ks"),
+        sa.func.avg(sa.case((Photometry.band == "WISE.W1", Photometry.magnitude))).label("WISE.W1"),
+        sa.func.avg(sa.case((Photometry.band == "WISE.W2", Photometry.magnitude))).label("WISE.W2"),
+        sa.func.avg(sa.case((Photometry.band == "WISE.W3", Photometry.magnitude))).label("WISE.W3"),
+        sa.func.avg(sa.case((Photometry.band == "WISE.W4", Photometry.magnitude))).label("WISE.W4"),
+        sa.func.avg(sa.case((Photometry.band == "IRAC.I1", Photometry.magnitude))).label("IRAC.I1"),
+        sa.func.avg(sa.case((Photometry.band == "IRAC.I2", Photometry.magnitude))).label("IRAC.I2"),
+        sa.func.avg(sa.case((Photometry.band == "IRAC.I3", Photometry.magnitude))).label("IRAC.I3"),
+        sa.func.avg(sa.case((Photometry.band == "IRAC.I4", Photometry.magnitude))).label("IRAC.I4"),
+    ).select_from(Photometry)
+    .group_by(Photometry.source)
 )
