@@ -568,3 +568,9 @@ def test_suar22_ingest(db):
     # Test for Suar22 spectra added
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
     assert len(t) == 112, f'found {len(t)} spectra entries for {ref}'
+
+def test_modeledparameters(db):
+    # Test to verify existing counts of modeled parameters
+    ref = 'Fili15'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.reference == ref).astropy()
+    assert len(t) == 696, f'found {len(t)} modeled parameters with {ref} reference'
