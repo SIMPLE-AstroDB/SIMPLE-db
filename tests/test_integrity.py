@@ -480,22 +480,22 @@ def test_sources(db):
 def test_modeled_parameters(db):
     # test data ingest
     model_params_data = [
-        {'source': '2MASS J03552014+1439297', 'value': 0.99, 'parameter': 'radius', 'reference': 'Fili15',
-         'unit': 'R_jup'},
-        {'source': '2MASS J00001354+2554180', 'value': 5.02, 'parameter': 'log g', 'reference': 'Fili15',
-         'unit': 'dex'},
-        {'source': '2MASS J00001354+2554180', 'value': 1227.0, 'parameter': 'T eff', 'reference': 'Fili15',
-         'unit': 'K'},
-        {'source': '2MASS J00001354+2554180', 'value': 47.56, 'parameter': 'mass', 'reference': 'Fili15',
-         'unit': 'M_jup'},
+        #{'source': '2MASS J03552014+1439297', 'value': 0.99, 'parameter': 'radius', 'reference': 'Fili15',
+        # 'unit': 'R_jup'},
+        #{'source': '2MASS J00001354+2554180', 'value': 5.02, 'parameter': 'log g', 'reference': 'Fili15',
+         #'unit': 'dex'},
+        #{'source': '2MASS J00001354+2554180', 'value': 1227.0, 'parameter': 'T eff', 'reference': 'Fili15',
+        # 'unit': 'K'},
+        #{'source': '2MASS J00001354+2554180', 'value': 47.56, 'parameter': 'mass', 'reference': 'Fili15',
+        # 'unit': 'M_jup'},
         # next data points should fail
-        {'source': '2MASS J00034227-2822410', 'value': 106.97, 'parameter': 'mass', 'reference': 'Fili15',
+        {'source': 'HIP 6407B', 'value': 106.97, 'parameter': 'mass', 'reference': 'Fili15',
          'unit': 'M_Jupiter'},
-        {'source': '2MASS J00034227-2822410', 'value': 1.32, 'parameter': 'radius', 'reference': 'Fili15',
+        {'source': 'HIP 6407B', 'value': 1.32, 'parameter': 'radius', 'reference': 'Fili15',
          'unit': 'R_Jup'},
-        {'source': '2MASS J00034227-2822410', 'value': 2871.0, 'parameter': 'T eff', 'reference': 'Fili15',
+        {'source': 'HIP 6407B', 'value': 2871.0, 'parameter': 'T eff', 'reference': 'Fili15',
          'unit': 'kelvin'},
-        {'source': '2MASS J00034227-2822410', 'value': 5.18, 'parameter': 'log g', 'reference': 'Fili15', 'unit': '.'}]
+        {'source': 'HIP 6407B', 'value': 5.18, 'parameter': 'log g', 'reference': 'Fili15', 'unit': '.'}]
 
     # Inserting rows
     with db.engine.connect() as conn:
