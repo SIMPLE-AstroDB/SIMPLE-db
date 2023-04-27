@@ -112,7 +112,7 @@ def test_parameters(db):
     param_list = db.query(db.ModeledParameters.c.parameter).astropy()
     if len(param_list) > 0:
         # Get unique values
-        param_list = param_list['parameter'].to_list()
+        param_list = list(param_list['parameter'])
         param_list = list(set(param_list))
         t = db.query(db.Parameters).filter(db.Parameters.c.parameter.notin_(param_list)).astropy()
         if len(t) > 0:
@@ -480,7 +480,7 @@ def test_sources(db):
 def test_modeled_parameters(db):
     # test data ingest
     model_params_data = [
-        {'source': '2MASS J00001354+2554180', 'value': 0.99, 'parameter': 'radius', 'reference': 'Fili15',
+        {'source': '2MASS J03552014+1439297', 'value': 0.99, 'parameter': 'radius', 'reference': 'Fili15',
          'unit': 'R_jup'},
         {'source': '2MASS J00001354+2554180', 'value': 5.02, 'parameter': 'log g', 'reference': 'Fili15',
          'unit': 'dex'},
