@@ -59,9 +59,9 @@ def t_pm():
 
 def test_setup_db(db):
     # Some setup tasks to ensure some data exists in the database first
-    ref_data = [{'publication': 'Ref 1', 'doi': '10.1093/mnras/staa1522', 'bibcode': '2020MNRAS.496.1922B'},
-                {'publication': 'Ref 2', 'doi': 'Doi2', 'bibcode': '2012yCat.2311....0C'},
-                {'publication': 'Burn08', 'doi': 'Doi3', 'bibcode': '2008MNRAS.391..320B'}]
+    ref_data = [{'reference': 'Ref 1', 'doi': '10.1093/mnras/staa1522', 'bibcode': '2020MNRAS.496.1922B'},
+                {'reference': 'Ref 2', 'doi': 'Doi2', 'bibcode': '2012yCat.2311....0C'},
+                {'reference': 'Burn08', 'doi': 'Doi3', 'bibcode': '2008MNRAS.391..320B'}]
 
     source_data = [{'source': 'Fake 1', 'ra': 9.0673755, 'dec': 18.352889, 'reference': 'Ref 1'},
                    {'source': 'Fake 2', 'ra': 9.0673755, 'dec': 18.352889, 'reference': 'Ref 1'},
@@ -201,46 +201,46 @@ def test_ingest_instrument(db):
 
     #  test adding just telescope
     ingest_instrument(db, telescope='test')
-    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == 'test').table()
+    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.telescope == 'test').table()
     assert len(telescope_db) == 1
-    assert telescope_db['name'][0] == 'test'
+    assert telescope_db['telescope'][0] == 'test'
 
     #  test adding telescope and instrument
     tel_test = 'test2'
     inst_test = 'test3'
     ingest_instrument(db, telescope=tel_test, instrument=inst_test)
-    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == tel_test).table()
-    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == inst_test).table()
+    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.telescope == tel_test).table()
+    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.instrument == inst_test).table()
     assert len(telescope_db) == 1
-    assert telescope_db['name'][0] == tel_test
+    assert telescope_db['telescope'][0] == tel_test
     assert len(instrument_db) == 1
-    assert instrument_db['name'][0] == inst_test
+    assert instrument_db['instrument'][0] == inst_test
 
     #  test adding new telescope, instrument, and mode
     tel_test = 'test4'
     inst_test = 'test5'
     mode_test = 'test6'
     ingest_instrument(db, telescope=tel_test, instrument=inst_test, mode=mode_test)
-    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.name == tel_test).table()
-    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.name == inst_test).table()
-    mode_db = db.query(db.Modes).filter(db.Modes.c.name == mode_test).table()
+    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.telescope == tel_test).table()
+    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.instrument == inst_test).table()
+    mode_db = db.query(db.Modes).filter(db.Modes.c.mode == mode_test).table()
     assert len(telescope_db) == 1
-    assert telescope_db['name'][0] == tel_test
+    assert telescope_db['telescope'][0] == tel_test
     assert len(instrument_db) == 1
-    assert instrument_db['name'][0] == inst_test
+    assert instrument_db['instrument'][0] == inst_test
     assert len(mode_db) == 1
-    assert mode_db['name'][0] == mode_test
+    assert mode_db['mode'][0] == mode_test
 
     #  test adding common mode name for new telescope, instrument
     tel_test = 'test4'
     inst_test = 'test5'
     mode_test = 'Prism'
     ingest_instrument(db, telescope=tel_test, instrument=inst_test, mode=mode_test)
-    mode_db = db.query(db.Modes).filter(and_(db.Modes.c.name == mode_test,
+    mode_db = db.query(db.Modes).filter(and_(db.Modes.c.mode == mode_test,
                                              db.Modes.c.instrument == inst_test,
                                              db.Modes.c.telescope == tel_test)).table()
     assert len(mode_db) == 1
-    assert mode_db['name'][0] == mode_test
+    assert mode_db['mode'][0] == mode_test
 
     #  TESTS WHICH SHOULD FAIL
     #  test with no variables provided

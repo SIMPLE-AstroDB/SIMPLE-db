@@ -46,19 +46,19 @@ def db():
 
 def test_reference_uniqueness(db):
     # Verify that all Publications.name values are unique
-    t = db.query(db.Publications.c.publication).astropy()
-    assert len(t) == len(unique(t, keys='publication')), 'Duplicated Publications found'
+    t = db.query(db.Publications.c.reference).astropy()
+    assert len(t) == len(unique(t, keys='reference')), 'duplicated publications found'
 
     # Verify that DOI are supplied
-    t = db.query(db.Publications.c.publication).filter(db.Publications.c.doi.is_(None)).astropy()
+    t = db.query(db.Publications.c.reference).filter(db.Publications.c.doi.is_(None)).astropy()
     if len(t) > 0:
         print(f'\n{len(t)} publications lacking DOI:')
         print(t)
 
     # Verify that Bibcodes are supplied
-    t = db.query(db.Publications.c.publication).filter(db.Publications.c.bibcode.is_(None)).astropy()
+    t = db.query(db.Publications.c.reference).filter(db.Publications.c.bibcode.is_(None)).astropy()
     if len(t) > 0:
-        print(f'\n{len(t)} publications lacking Bibcodes:')
+        print(f'\n{len(t)} publications lacking ADS bibcodes:')
         print(t)
 
 
@@ -76,23 +76,23 @@ def test_references(db):
     ref_list = list(set(ref_list))
 
     # Confirm that all are in Publications
-    t = db.query(db.Publications.c.publication).filter(db.Publications.c.publication.in_(ref_list)).astropy()
+    t = db.query(db.Publications.c.reference).filter(db.Publications.c.reference.in_(ref_list)).astropy()
     assert len(t) == len(ref_list), 'Some references were not matched'
 
     # List out publications that have not been used
-    t = db.query(db.Publications.c.publication).filter(db.Publications.c.publication.notin_(ref_list)).astropy()
+    t = db.query(db.Publications.c.reference).filter(db.Publications.c.reference.notin_(ref_list)).astropy()
     assert len(t) <= 606, f'{len(t)} unused references'
 
 
 def test_publications(db):
     # Find unused references in the Sources Table
-    # stm = except_(select([db.Publications.c.publication]), select([db.Sources.c.reference]))
+    # stm = except_(select([db.Publications.c.reference]), select([db.Sources.c.reference]))
     # result = db.session.execute(stm)
     # s = result.scalars().all()
     # assert len(s) == 720, f'found {len(s)} unused references'
 
     # Find references with no doi or bibcode
-    t = db.query(db.Publications.c.publication).filter(
+    t = db.query(db.Publications.c.reference).filter(
         or_(and_(db.Publications.c.doi.is_(None), db.Publications.c.bibcode.is_(None)),
             and_(db.Publications.c.doi.is_(''), db.Publications.c.bibcode.is_(None)),
             and_(db.Publications.c.doi.is_(None), db.Publications.c.bibcode.is_('')),
@@ -526,7 +526,7 @@ def test_special_characters(db):
         if len(data) > 0:
             for table_name in data.keys():
                 if table_name == 'Publications':
-                    check = [char not in data[table_name]['publication']]
+                    check = [char not in data[table_name]['reference']]
                     assert all(check), f'{char} in {table_name}'
                 elif table_name == 'Spectra':
                     check = [char not in data[table_name]['spectrum']]
