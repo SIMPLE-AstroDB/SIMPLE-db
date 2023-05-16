@@ -268,3 +268,14 @@ class ModeledParameters(Base):
     unit = Column(String(20))
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'), primary_key=True)
+
+
+class CompanionRelationships(Base):
+    # Table to store information about companions
+    __tablename__ = 'CompanionRelationships'
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
+                    nullable=False, primary_key=True)
+    companion = Column(String(100), nullable=False)
+    relationship = Column(String(100), nullable=False) # TODO: restrict to Parent, Child, Sibling, Unresolved Parent
+    comments = Column(String(1000))
+    reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'))
