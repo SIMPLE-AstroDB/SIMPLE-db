@@ -2,7 +2,7 @@
 Schema for the SIMPLE database
 """
 
-# pylint: disable=line-too-long, missing-class-docstring, unused-import, invalid-name
+# pylint: disable=line-too-long, missing-class-docstring, unused-import, invalid-name, singleton-comparison
 
 import enum
 import sqlalchemy as sa
@@ -282,10 +282,11 @@ ParallaxView = view(
         Parallaxes.source.label('source'),
         Parallaxes.parallax.label('parallax'),
         Parallaxes.parallax_error.label('parallax_error'),
+        (1000./Parallaxes.parallax).label('distance'),  # distance in parsecs
         Parallaxes.comments.label('comments'),
         Parallaxes.reference.label('reference')
     ).select_from(Parallaxes)
-    .where(Parallaxes.adopted == True),
+    .where(sa.and_(Parallaxes.adopted == True, Parallaxes.parallax > 0)),
 )
 
 PhotometryView = view(
