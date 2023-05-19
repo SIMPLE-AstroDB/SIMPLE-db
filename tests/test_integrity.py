@@ -112,7 +112,7 @@ def test_parameters(db):
     param_list = db.query(db.ModeledParameters.c.parameter).astropy()
     if len(param_list) > 0:
         # Get unique values
-        param_list = param_list['parameter'].to_list()
+        param_list = list(param_list['parameter'])
         param_list = list(set(param_list))
         t = db.query(db.Parameters).filter(db.Parameters.c.parameter.notin_(param_list)).astropy()
         if len(t) > 0:
@@ -478,30 +478,6 @@ def test_sources(db):
 
 
 def test_modeled_parameters(db):
-    # test data ingest
-    model_params_data = [
-        {'source': '2MASS J00001354+2554180', 'value': 0.99, 'parameter': 'radius', 'reference': 'Fili15',
-         'unit': 'R_jup'},
-        {'source': '2MASS J00001354+2554180', 'value': 5.02, 'parameter': 'log g', 'reference': 'Fili15',
-         'unit': 'dex'},
-        {'source': '2MASS J00001354+2554180', 'value': 1227.0, 'parameter': 'T eff', 'reference': 'Fili15',
-         'unit': 'K'},
-        {'source': '2MASS J00001354+2554180', 'value': 47.56, 'parameter': 'mass', 'reference': 'Fili15',
-         'unit': 'M_jup'},
-        # next data points should fail
-        {'source': '2MASS J00034227-2822410', 'value': 106.97, 'parameter': 'mass', 'reference': 'Fili15',
-         'unit': 'M_Jupiter'},
-        {'source': '2MASS J00034227-2822410', 'value': 1.32, 'parameter': 'radius', 'reference': 'Fili15',
-         'unit': 'R_Jup'},
-        {'source': '2MASS J00034227-2822410', 'value': 2871.0, 'parameter': 'T eff', 'reference': 'Fili15',
-         'unit': 'kelvin'},
-        {'source': '2MASS J00034227-2822410', 'value': 5.18, 'parameter': 'log g', 'reference': 'Fili15', 'unit': '.'}]
-
-    # Inserting rows
-    with db.engine.connect() as conn:
-        conn.execute(db.ModeledParameters.insert().values(model_params_data))
-        conn.commit()
-
     # There should be no entries in the modeled parameters table without parameter
     t = db.query(db.ModeledParameters.c.source). \
            filter(db.ModeledParameters.c.parameter.is_(None)). \
@@ -524,7 +500,7 @@ def test_modeled_parameters(db):
             counts = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.unit == unit).count()
             unit_fail.append({unit: counts})  # count of how many of that unit there is
 
-    assert len(unit_fail) == 4, f'Some parameter units did not resolve: {unit_fail}'
+    assert len(unit_fail) == 0, f'Some parameter units did not resolve: {unit_fail}'
 
 
 def test_spectra(db):
