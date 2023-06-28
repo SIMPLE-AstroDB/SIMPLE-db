@@ -1,4 +1,7 @@
 # Script to handle some rework of the PhotometryFilters table
+
+# pylint: disable=all
+
 import sqlalchemy as sa
 from scripts.ingests.utils import *
 
