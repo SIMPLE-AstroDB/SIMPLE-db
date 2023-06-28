@@ -35,16 +35,10 @@ class Telescopes(Base):
 class Instruments(Base):
     __tablename__ = 'Instruments'
     instrument = Column(String(30), primary_key=True, nullable=False)
+    mode = Column(String(30))
+    telescope = Column(String(30), ForeignKey('Telescopes.telescope', onupdate='cascade'))
     description = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'))
-
-
-class Modes(Base):
-    __tablename__ = 'Modes'
-    mode = Column(String(30), primary_key=True, nullable=False)
-    instrument = Column(String(30), ForeignKey('Instruments.instrument', onupdate='cascade'), primary_key=True)
-    telescope = Column(String(30), ForeignKey('Telescopes.telescope', onupdate='cascade'), primary_key=True)
-    description = Column(String(1000))
 
 
 class Parameters(Base):
@@ -242,11 +236,11 @@ class Spectra(Base):
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'), primary_key=True)
     other_references = Column(String(100))
 
-    # Foreign key constraints for telescope, instrument, mode; all handled via reference to Modes table
-    __table_args__ = (ForeignKeyConstraint([telescope, instrument, mode],
-                                           [Modes.telescope, Modes.instrument, Modes.mode],
-                                           onupdate="cascade"),
-                      {})
+    # Foreign key constraints for telescope, instrument, mode; all handled via reference to Instruments table
+    # __table_args__ = (ForeignKeyConstraint([instrument, mode],
+    #                                        [Instruments.instrument, Instruments.mode],
+    #                                        onupdate="cascade"),
+    #                   {})
 
 
 class ModeledParameters(Base):
