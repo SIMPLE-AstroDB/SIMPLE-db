@@ -61,8 +61,7 @@ class PhotometryFilters(Base):
     """
     __tablename__ = 'PhotometryFilters'
     band = Column(String(30), primary_key=True, nullable=False)  # of the form instrument.filter (see SVO)
-    instrument = Column(String(30), ForeignKey('Instruments.instrument', onupdate='cascade'), primary_key=True)
-    telescope = Column(String(30), ForeignKey('Telescopes.telescope', onupdate='cascade'), primary_key=True)
+    ucd = Column(String(100))
     effective_wavelength = Column(Float, nullable=False)
     width = Column(Float)
 
@@ -138,26 +137,19 @@ class Names(Base):
 
 
 class Photometry(Base):
-    #TODO: Constrain UCD with Regime enumeration
+    # Table to store photometry information
     __tablename__ = 'Photometry'
     source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
                     nullable=False, primary_key=True)
-    band = Column(String(30), primary_key=True)
+    band = Column(String(30), ForeignKey('PhotometryFilters.band'), primary_key=True)
     ucd = Column(String(100))
     magnitude = Column(Float, nullable=False)
     magnitude_error = Column(Float)
-    telescope = Column(String(30))
-    instrument = Column(String(30))
+    telescope = Column(String(30), ForeignKey('Telescopes.telescope'))
+    instrument = Column(String(30), ForeignKey('Instruments.instrument'))
     epoch = Column(Float)  # decimal year
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'), primary_key=True)
-
-    # Foreign key constraints for telescope, instrument, band; all handled via reference to Modes table
-    __table_args__ = (ForeignKeyConstraint([telescope, instrument, band],
-                                           [PhotometryFilters.telescope, PhotometryFilters.instrument,
-                                            PhotometryFilters.band],
-                                           onupdate="cascade"),
-                      {})
 
 
 class Parallaxes(Base):
