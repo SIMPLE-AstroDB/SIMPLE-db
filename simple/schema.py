@@ -142,7 +142,6 @@ class Photometry(Base):
     source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
                     nullable=False, primary_key=True)
     band = Column(String(30), ForeignKey('PhotometryFilters.band'), primary_key=True)
-    ucd = Column(String(100))
     magnitude = Column(Float, nullable=False)
     magnitude_error = Column(Float)
     telescope = Column(String(30), ForeignKey('Telescopes.telescope'))

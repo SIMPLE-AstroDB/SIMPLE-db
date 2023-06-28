@@ -24,9 +24,13 @@ with db.engine.connect() as conn:
     # Run all update
     conn.commit()
 
+# Drop the UCD column from Photometry
+with db.engine.connect() as conn:
+    conn.execute(sa.text('ALTER TABLE Photometry DROP COLUMN ucd'))
+    conn.commit()
+
 # Reload with new structure
 db = load_simpledb('SIMPLE.db', recreatedb=False)
-
 
 # Save modified database
 db.save_database('data/')
