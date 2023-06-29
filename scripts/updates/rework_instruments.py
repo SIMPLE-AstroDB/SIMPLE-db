@@ -38,6 +38,7 @@ with db.engine.connect() as conn:
 db = load_simpledb('SIMPLE.db', recreatedb=False)
 instruments = db.query(db.Instruments).pandas()
 
+
 # Telescope settings
 with db.engine.connect() as conn:
     conn.execute(db.Instruments.update().where(db.Instruments.c.instrument == 'IRAC').values(telescope='Spitzer'))
@@ -56,6 +57,27 @@ with db.engine.connect() as conn:
 # Update Spectra values since they MUST have a mode from now on
 with db.engine.connect() as conn:
     conn.execute(db.Spectra.update().where(db.Spectra.c.mode == None).values(mode='Unknown'))
+    conn.execute(db.Spectra.update().where(db.Spectra.c.instrument == None).values(instrument='Unknown'))
+    conn.commit()
+
+# Fix to account for missing modes based on Spectra table
+spectra = db.query(db.Spectra.c.telescope, db.Spectra.c.instrument, db.Spectra.c.mode).distinct().pandas()
+data_list = []
+for i, row in spectra.iterrows():
+    check = db.query(db.Instruments).where(sa.and_(db.Instruments.c.instrument == row['instrument'],
+                                                   db.Instruments.c.mode == row['mode'])
+    ).count()
+
+    if check == 0:
+        # Missing entry, adding to Instruments
+        datum = {'instrument': row['instrument'],
+                 'telescope': row['telescope'],
+                 'mode': row['mode']}
+        data_list.append(datum)
+
+# Ingest to database
+with db.engine.connect() as conn:
+    conn.execute(db.Instruments.insert().values(data_list))
     conn.commit()
 
 # Can't drop the Modes table due to existing foreign key constraints. 
