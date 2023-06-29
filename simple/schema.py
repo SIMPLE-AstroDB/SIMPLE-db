@@ -145,7 +145,6 @@ class Photometry(Base):
     magnitude = Column(Float, nullable=False)
     magnitude_error = Column(Float)
     telescope = Column(String(30), ForeignKey('Telescopes.telescope'))
-    instrument = Column(String(30), ForeignKey('Instruments.instrument'))
     epoch = Column(Float)  # decimal year
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'), primary_key=True)
