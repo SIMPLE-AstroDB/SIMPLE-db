@@ -238,6 +238,8 @@ def test_ingest_instrument(db):
     tel_test = 'test4'
     inst_test = 'test5'
     mode_test = 'Prism'
+    print(db.query(db.Telescopes).table())
+    print(db.query(db.Instruments).table())
     ingest_instrument(db, telescope=tel_test, instrument=inst_test, mode=mode_test)
     mode_db = db.query(db.Instruments).filter(and_(db.Instruments.c.mode == mode_test,
                                                    db.Instruments.c.instrument == inst_test,

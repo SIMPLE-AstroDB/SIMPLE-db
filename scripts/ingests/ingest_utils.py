@@ -1289,16 +1289,16 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
 
     # Search for the inputs in the database
     telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.telescope == telescope).table()
-    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.instrument == instrument).table()
     mode_db = db.query(db.Instruments).filter(and_(db.Instruments.c.mode == mode,
                                                     db.Instruments.c.instrument == instrument,
                                                     db.Instruments.c.telescope == telescope)).table()
 
-    if len(telescope_db) == 1 and len(instrument_db) == 1 and len(mode_db) == 1:
+    if len(telescope_db) == 1 and len(mode_db) == 1:
         msg_found = f'{telescope}, {instrument}, and {mode} are already in the database.'
         logger.info(msg_found)
         return
 
+    # Ingest telescope entry if not already present
     if telescope is not None and len(telescope_db) == 0:
         telescope_add = [{'telescope': telescope}]
         try:
@@ -1308,13 +1308,14 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
             msg_telescope = f'{telescope} was successfully ingested in the database'
             logger.info(msg_telescope)
         except sqlalchemy.exc.IntegrityError as e:  # pylint: disable=invalid-name
-            msg = 'Telescope could not be ingested for unknown reason.'
+            msg = 'Telescope could not be ingested'
             logger.error(msg)
             raise SimpleError(msg + '\n' + str(e))
 
-    if instrument is not None and mode is not None and len(instrument_db) == 0 and len(mode_db) == 0:
-        instrument_add = [{'instrument': instrument, 
-                           'mode': mode, 
+    # Ingest instrument+mode (requires telescope) if not already present
+    if telescope is not None and instrument is not None and mode is not None and len(mode_db) == 0:
+        instrument_add = [{'instrument': instrument,
+                           'mode': mode,
                            'telescope': telescope}]
         try:
             with db.engine.connect() as conn:
@@ -1323,7 +1324,7 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
             msg_instrument = f'{instrument} was successfully ingested in the database.'
             logger.info(msg_instrument)
         except sqlalchemy.exc.IntegrityError as e:  # pylint: disable=invalid-name
-            msg = 'Instrument/Mode could not be ingested for unknown reason.'
+            msg = 'Instrument/Mode could not be ingested'
             logger.error(msg)
             raise SimpleError(msg + '\n' + str(e))
 

@@ -53,7 +53,10 @@ with db.engine.connect() as conn:
     conn.execute(db.Instruments.update().where(db.Instruments.c.telescope == None).values(telescope='Unknown'))
     conn.commit()
 
-# TODO: Update Spectra values since they MUST have a mode from now on
+# Update Spectra values since they MUST have a mode from now on
+with db.engine.connect() as conn:
+    conn.execute(db.Spectra.update().where(db.Spectra.c.mode == None).values(mode='Unknown'))
+    conn.commit()
 
 # Can't drop the Modes table due to existing foreign key constraints. 
 # Easier to do so manually (delete Modes.json) and rebuild the database.
