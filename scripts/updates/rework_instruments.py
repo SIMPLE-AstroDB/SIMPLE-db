@@ -1,5 +1,7 @@
 # This script reworks the instruments table
 
+# pylint: disable=all
+
 import sqlalchemy as sa
 from scripts.ingests.utils import *
 
@@ -28,9 +30,9 @@ with db.engine.connect() as conn:
 
 # Commenting this out because for now it's not a primary key
 # Because mode is going to be a primary key, can't have it NULL
-# with db.engine.connect() as conn:
-#     conn.execute(sa.text(f"UPDATE Instruments SET mode='Unknown' WHERE mode IS NULL"))
-#     conn.commit()
+with db.engine.connect() as conn:
+    conn.execute(sa.text("UPDATE Instruments SET mode='Unknown' WHERE mode IS NULL"))
+    conn.commit()
 
 # Reflect table changes, if doing ALTER commands
 db = load_simpledb('SIMPLE.db', recreatedb=False)
@@ -50,6 +52,8 @@ with db.engine.connect() as conn:
 with db.engine.connect() as conn:
     conn.execute(db.Instruments.update().where(db.Instruments.c.telescope == None).values(telescope='Unknown'))
     conn.commit()
+
+# TODO: Update Spectra values since they MUST have a mode from now on
 
 # Can't drop the Modes table due to existing foreign key constraints. 
 # Easier to do so manually (delete Modes.json) and rebuild the database.
