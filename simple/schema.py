@@ -236,10 +236,10 @@ class Spectra(Base):
     other_references = Column(String(100))
 
     # Composite Foreign key constraints for instrument and mode
-    # __table_args__ = (ForeignKeyConstraint([instrument, mode],
-    #                                        [Instruments.instrument, Instruments.mode],
-    #                                        onupdate="cascade"),
-    #                   {})
+    __table_args__ = (ForeignKeyConstraint([instrument, mode],
+                                           [Instruments.instrument, Instruments.mode],
+                                           onupdate="cascade"),
+                      {})
 
 
 class ModeledParameters(Base):
