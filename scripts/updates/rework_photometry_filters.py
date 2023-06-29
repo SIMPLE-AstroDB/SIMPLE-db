@@ -27,9 +27,10 @@ with db.engine.connect() as conn:
     # Run all update
     conn.commit()
 
-# Drop the UCD column from Photometry
+# Drop the ucd and instrument column from Photometry
 with db.engine.connect() as conn:
     conn.execute(sa.text('ALTER TABLE Photometry DROP COLUMN ucd'))
+    conn.execute(sa.text('ALTER TABLE Photometry DROP COLUMN instrument'))
     conn.commit()
 
 # Reload with new structure
