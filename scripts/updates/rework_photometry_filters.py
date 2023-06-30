@@ -33,7 +33,7 @@ with db.engine.connect() as conn:
     conn.execute(sa.text('ALTER TABLE Photometry DROP COLUMN instrument'))
     conn.commit()
 
-# Reload with new structure
+# Re-instantiate with changed DB, but don't build from JSON files
 db = load_simpledb('SIMPLE.db', recreatedb=False)
 
 # Save modified database
