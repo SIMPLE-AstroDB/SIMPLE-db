@@ -17,8 +17,14 @@ Object Tables:
  - [RadialVelocities](RadialVelocities.md)
  - [SpectralTypes](SpectralTypes.md)
  - [Gravities](Gravities.md)
+ - [Spectra](Spectra.md)
+ - [ModeledParameters](ModeledParameters.md)
  
 Reference Tables:
  - [Publications](Publications.md)
  - [Telescopes](Telescopes.md)
  - [Instruments](Instruments.md)
+ - [PhometeryFilters](PhotometryFilters.md)
+ - Versions
+
+In addition to the physical tables, we also have database [Views](Views.md).

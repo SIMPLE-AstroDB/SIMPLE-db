@@ -2,12 +2,14 @@
 Schema for the SIMPLE database
 """
 
-# pylint: disable=line-too-long, missing-class-docstring, unused-import, invalid-name
+# pylint: disable=line-too-long, missing-class-docstring, unused-import, invalid-name, singleton-comparison
 
 import enum
+import sqlalchemy as sa
 from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, \
     BigInteger, Enum, Date, DateTime, ForeignKeyConstraint
 from astrodbkit2.astrodb import Base
+from astrodbkit2.views import view
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -268,3 +270,41 @@ class ModeledParameters(Base):
     unit = Column(String(20))
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'), primary_key=True)
+
+
+# -------------------------------------------------------------------------------------------------------------------
+# Views
+
+ParallaxView = view(
+    "ParallaxView",
+    Base.metadata,
+    sa.select(
+        Parallaxes.source.label('source'),
+        Parallaxes.parallax.label('parallax'),
+        Parallaxes.parallax_error.label('parallax_error'),
+        (1000./Parallaxes.parallax).label('distance'),  # distance in parsecs
+        Parallaxes.comments.label('comments'),
+        Parallaxes.reference.label('reference')
+    ).select_from(Parallaxes)
+    .where(sa.and_(Parallaxes.adopted == True, Parallaxes.parallax > 0)),
+)
+
+PhotometryView = view(
+    "PhotometryView",
+    Base.metadata,
+    sa.select(
+        Photometry.source.label('source'),
+        sa.func.avg(sa.case((Photometry.band == "2MASS.J", Photometry.magnitude))).label("2MASS.J"),
+        sa.func.avg(sa.case((Photometry.band == "2MASS.H", Photometry.magnitude))).label("2MASS.H"),
+        sa.func.avg(sa.case((Photometry.band == "2MASS.Ks", Photometry.magnitude))).label("2MASS.Ks"),
+        sa.func.avg(sa.case((Photometry.band == "WISE.W1", Photometry.magnitude))).label("WISE.W1"),
+        sa.func.avg(sa.case((Photometry.band == "WISE.W2", Photometry.magnitude))).label("WISE.W2"),
+        sa.func.avg(sa.case((Photometry.band == "WISE.W3", Photometry.magnitude))).label("WISE.W3"),
+        sa.func.avg(sa.case((Photometry.band == "WISE.W4", Photometry.magnitude))).label("WISE.W4"),
+        sa.func.avg(sa.case((Photometry.band == "IRAC.I1", Photometry.magnitude))).label("IRAC.I1"),
+        sa.func.avg(sa.case((Photometry.band == "IRAC.I2", Photometry.magnitude))).label("IRAC.I2"),
+        sa.func.avg(sa.case((Photometry.band == "IRAC.I3", Photometry.magnitude))).label("IRAC.I3"),
+        sa.func.avg(sa.case((Photometry.band == "IRAC.I4", Photometry.magnitude))).label("IRAC.I4"),
+    ).select_from(Photometry)
+    .group_by(Photometry.source)
+)
