@@ -25,3 +25,6 @@ ingest_sources(db, ["CWISE J210640.16+250729.0"], references="Roth",
             decs=[Angle(DEC, u.degree).degree], 
             search_db=False)
 
+# Ingest other name for NLTT 1011B (one used in SIMBAD)
+# code from deprecated utils does not work
+# add_names(db, sources=['NLTT 1011B'], other_names=['2MASS J00193275+4018576'])
