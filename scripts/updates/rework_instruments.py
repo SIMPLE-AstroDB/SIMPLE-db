@@ -60,6 +60,13 @@ with db.engine.connect() as conn:
     conn.execute(db.Spectra.update().where(db.Spectra.c.instrument == None).values(instrument='Unknown'))
     conn.commit()
 
+# Renaming Unknown to Missing
+with db.engine.connect() as conn:
+    conn.execute(db.Telescopes.update().where(db.Telescopes.c.telescope == 'Unknown').values(telescope='Missing'))
+    conn.execute(db.Instruments.update().where(db.Instruments.c.mode == 'Unknown').values(mode='Missing'))
+    conn.execute(db.Instruments.update().where(db.Instruments.c.instrument == 'Unknown').values(instrument='Missing'))
+    conn.commit()
+
 # Fix to account for missing modes based on Spectra table
 spectra = db.query(db.Spectra.c.telescope, db.Spectra.c.instrument, db.Spectra.c.mode).distinct().pandas()
 data_list = []
