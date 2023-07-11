@@ -36,7 +36,7 @@ class Instruments(Base):
     __tablename__ = 'Instruments'
     instrument = Column(String(30), primary_key=True, nullable=False)
     mode = Column(String(30), primary_key=True)
-    telescope = Column(String(30), ForeignKey('Telescopes.telescope', onupdate='cascade'))
+    telescope = Column(String(30), ForeignKey('Telescopes.telescope', onupdate='cascade'), primary_key=True)
     description = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'))
 
@@ -225,7 +225,7 @@ class Spectra(Base):
     regime = Column(Enum(Regime, create_constraint=True, values_callable=lambda x: [e.value for e in x],
                          native_enum=False),
                     primary_key=True)  # eg, Optical, Infrared, etc
-    telescope = Column(String(30), ForeignKey('Telescopes.telescope'))
+    telescope = Column(String(30))
     instrument = Column(String(30))
     mode = Column(String(30))  # eg, Prism, Echelle, etc
     observation_date = Column(DateTime, primary_key=True)
@@ -236,8 +236,8 @@ class Spectra(Base):
     other_references = Column(String(100))
 
     # Composite Foreign key constraints for instrument and mode
-    __table_args__ = (ForeignKeyConstraint([instrument, mode],
-                                           [Instruments.instrument, Instruments.mode],
+    __table_args__ = (ForeignKeyConstraint([telescope, instrument, mode],
+                                           [Instruments.telescope, Instruments.instrument, Instruments.mode],
                                            onupdate="cascade"),
                       {})
 
