@@ -3,6 +3,8 @@ import pytest
 import sys
 import math
 
+# pylint: disable=all
+
 sys.path.append('.')
 from scripts.ingests.utils import *
 from scripts.ingests.ingest_utils import *
@@ -205,16 +207,17 @@ def test_ingest_instrument(db):
     assert len(telescope_db) == 1
     assert telescope_db['telescope'][0] == 'test'
 
+    # No longer supported just adding an instrument without a mode
     #  test adding telescope and instrument
-    tel_test = 'test2'
-    inst_test = 'test3'
-    ingest_instrument(db, telescope=tel_test, instrument=inst_test)
-    telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.telescope == tel_test).table()
-    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.instrument == inst_test).table()
-    assert len(telescope_db) == 1
-    assert telescope_db['telescope'][0] == tel_test
-    assert len(instrument_db) == 1
-    assert instrument_db['instrument'][0] == inst_test
+    # tel_test = 'test2'
+    # inst_test = 'test3'
+    # ingest_instrument(db, telescope=tel_test, instrument=inst_test)
+    # telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.telescope == tel_test).table()
+    # instrument_db = db.query(db.Instruments).filter(db.Instruments.c.instrument == inst_test).table()
+    # assert len(telescope_db) == 1
+    # assert telescope_db['telescope'][0] == tel_test
+    # assert len(instrument_db) == 1
+    # assert instrument_db['instrument'][0] == inst_test
 
     #  test adding new telescope, instrument, and mode
     tel_test = 'test4'
@@ -222,23 +225,25 @@ def test_ingest_instrument(db):
     mode_test = 'test6'
     ingest_instrument(db, telescope=tel_test, instrument=inst_test, mode=mode_test)
     telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.telescope == tel_test).table()
-    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.instrument == inst_test).table()
-    mode_db = db.query(db.Modes).filter(db.Modes.c.mode == mode_test).table()
-    assert len(telescope_db) == 1
+    instrument_db = db.query(db.Instruments).filter(and_(db.Instruments.c.mode == mode_test,
+                                                         db.Instruments.c.instrument == inst_test,
+                                                         db.Instruments.c.telescope == tel_test)).table()
+    assert len(telescope_db) == 1, 'Missing telescope insert'
     assert telescope_db['telescope'][0] == tel_test
     assert len(instrument_db) == 1
     assert instrument_db['instrument'][0] == inst_test
-    assert len(mode_db) == 1
-    assert mode_db['mode'][0] == mode_test
+    assert instrument_db['mode'][0] == mode_test
 
     #  test adding common mode name for new telescope, instrument
     tel_test = 'test4'
     inst_test = 'test5'
     mode_test = 'Prism'
+    print(db.query(db.Telescopes).table())
+    print(db.query(db.Instruments).table())
     ingest_instrument(db, telescope=tel_test, instrument=inst_test, mode=mode_test)
-    mode_db = db.query(db.Modes).filter(and_(db.Modes.c.mode == mode_test,
-                                             db.Modes.c.instrument == inst_test,
-                                             db.Modes.c.telescope == tel_test)).table()
+    mode_db = db.query(db.Instruments).filter(and_(db.Instruments.c.mode == mode_test,
+                                                   db.Instruments.c.instrument == inst_test,
+                                                   db.Instruments.c.telescope == tel_test)).table()
     assert len(mode_db) == 1
     assert mode_db['mode'][0] == mode_test
 
@@ -251,7 +256,7 @@ def test_ingest_instrument(db):
     #  test with mode but no instrument or telescope
     with pytest.raises(SimpleError) as error_message:
         ingest_instrument(db, mode='test')
-    assert 'Telescope and instrument must be provided to ingest a mode' in str(error_message.value)
+    assert 'Telescope, Instrument, and Mode must be provided' in str(error_message.value)
 
 # TODO: test for ingest_photometry
 
