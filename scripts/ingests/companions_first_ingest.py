@@ -20,6 +20,9 @@ ingest_publication(db, doi = None, bibcode = None, publication = "Roth",
 
 RA =   "21 06 40.1664"
 DEC = "+25 07 28.99"
+ras= Angle(RA, u.degree).degree 
+decs=Angle(DEC, u.degree).degree
+
 ingest_sources(db, ["CWISE J210640.16+250729.0"], references="Roth", 
             ras= [Angle(RA, u.degree).degree], 
             decs=[Angle(DEC, u.degree).degree], 
@@ -30,25 +33,7 @@ ingest_sources(db, ["CWISE J210640.16+250729.0"], references="Roth",
 #  add_names(db, sources=['NLTT 1011B'], other_names=['2MASS J00193275+4018576'])
 
 #  start of ingest 
-
-#ingest a single row
-def add_to_CompanionRelationship(source, companion_name, projected_separation = None, 
-                                 projected_separation_error = None, relationship = None, 
-                                 comment = None, ref = None):
-    """
-    This function ingests a single row in to the CompanionRelationship table
-    """
-    with db.engine.connect() as conn:
-        conn.execute(db.CompanionRelationships.insert().values(
-            {'source': source, 
-             'companion_name': companion_name, 
-             'projected_separation_arcsec':projected_separation,
-             'projected_separation_error':projected_separation_error, 
-             'relationship':relationship,
-             'reference': ref, 
-             'comment': comment}))
         
-        conn.commit()  # sqlalchemy 2.0 does not autocommit  can go again
 
 #  link to live google sheet
 link = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEOZ56agEsAAd6SHVrwXc4hIrTtlCnCNWMefGuKkAXBjius1LgKFbj8fgbL7e8bmLTJbbBIZgwPQrz/pub?gid=0&single=true&output=csv'
@@ -67,5 +52,5 @@ for row in companions:
         ref = row['ref']
     
     #  adding row
-    add_to_CompanionRelationship(source, companion_name, projected_separation =projected_separation, 
+    add_to_CompanionRelationship(db, source, companion_name, projected_separation =projected_separation, 
                                  relationship = relationship, ref = ref)
