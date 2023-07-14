@@ -1518,7 +1518,7 @@ def ingest_CompanionRelationship(db, source, companion_name, projected_separatio
                 'comment': comment}))
             conn.commit()
             logger.info(f"ComapnionRelationship added: \n",  \
-                        f"{source, companion_name, projected_separation, 
+                        f"{source, companion_name, projected_separation, \
                            projected_separation_error, relationship, comment, ref} \n")
     except sqlalchemy.exc.IntegrityError as e:
         if 'UNIQUE constraint failed:' in str(e):
