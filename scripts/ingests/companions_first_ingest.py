@@ -20,7 +20,7 @@ ingest_publication(db, doi = None, bibcode = None, publication = "Roth",
 
 RA =   "21 06 40.1664"
 DEC = "+25 07 28.99"
-ras= Angle(RA, u.degree).degree 
+ras= Angle(RA, u.hour).degree 
 decs=Angle(DEC, u.degree).degree
 
 ingest_sources(db, ["CWISE J210640.16+250729.0"], references="Roth", 
@@ -30,7 +30,7 @@ ingest_sources(db, ["CWISE J210640.16+250729.0"], references="Roth",
 
 #  Ingest other name for NLTT 1011B (one used in SIMBAD)
 #  code from deprecated utils does not work
-#  add_names(db, sources=['NLTT 1011B'], other_names=['2MASS J00193275+4018576'])
+ingest_names(db, 'NLTT 1011B', '2MASS J00193275+4018576')
 
 #  start of ingest 
         
@@ -52,5 +52,5 @@ for row in companions:
         ref = row['ref']
     
     #  adding row
-    add_to_CompanionRelationship(db, source, companion_name, projected_separation =projected_separation, 
+    ingest_CompanionRelationship(db, source, companion_name, projected_separation =projected_separation, 
                                  relationship = relationship, ref = ref)
