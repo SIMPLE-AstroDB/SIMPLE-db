@@ -558,7 +558,7 @@ def test_remove_database(db):
     if os.path.exists(DB_NAME):
         os.remove(DB_NAME)
 
-def test_CompanionRelationship(db):
+def test_companion_relationship(db):
     # There should be no entries without a companion name
     t = db.query(db.CompanionRelationship.c.source). \
            filter(db.CompanionRelationship.c.companion_name.is_(None)). \
@@ -569,7 +569,7 @@ def test_CompanionRelationship(db):
     assert len(t) == 0
 
     # check no negative separations or error
-        # first separtation
+    ## first separtation
     t = db.query(db.CompanionRelationship.c.projected_separation_error). \
         filter(or_(db.CompanionRelationship.c.projected_separation_arcsec < 0,
                    db.CompanionRelationship.c.projected_separation_arcsec == None)). \
@@ -579,7 +579,7 @@ def test_CompanionRelationship(db):
         print(t)
     assert len(t) == 0
 
-        # separation error
+    ## separation error
     t = db.query(db.CompanionRelationship). \
         filter(or_(db.CompanionRelationship.c.projected_separation_error < 0,
                    db.CompanionRelationship.c.projected_separation_error == None)). \
@@ -589,19 +589,37 @@ def test_CompanionRelationship(db):
         print(t)
     assert len(t) == 0
 
+def test_companion_relationship_uniqueness(db):
     # Verify that all souces and companion_names values are unique combinations
-    sql_text = "SELECT Sources.source FROM Sources GROUP BY source " \
-               "HAVING (Count(*) > 1)"
-    
+    ## first finding duplicate sources
+    sql_text = "SELECT CompanionRelationship.source FROM CompanionRelationship GROUP BY source " \
+               "HAVING (Count(*) > 1)" 
     duplicate_sources = db.sql_query(sql_text, fmt='astropy')
+
+    ##checking duplicate sources have different companions 
+    non_unique = []
     for source in duplicate_sources:
         t = db.query(db.CompanionRelationship.c.companion_name)
-        filter(db.CompanionRelationship.c.source == name). \
+        filter(db.CompanionRelationship.c.source == source). \
         astropy()
-        duplicates = [n for n, companion in enumerate(t) if companion in t[:n]]
+        duplicate_companions = [n for n, companion in enumerate(t) if companion in t[:n]]
 
-        if len(duplicates) > 0:
-            print('\n Non-unique companion combination')
-            print(f"{source} and {duplicates}")
-        assert len(duplicates) == 0
+        if len(duplicate_companions) > 0:
+            non_unique.append(f"{source} and {duplicate_companions}")
+    if len(non_unique) > 0:
+        print('\n Non-unique companion combination(s)')
+        print(non_unique)
+    assert len(non_unique) == 0
 
+def test_names_uniqueness(db):
+    # Verify that all Names.other_name values are unique
+    sql_text = "SELECT Names.other_name FROM Names GROUP BY other_name " \
+               "HAVING (Count(*) > 1)"
+    duplicate_names = db.sql_query(sql_text, fmt='astropy')
+
+    # if duplicate_names is non_zero, print out duplicate other names
+    if len(duplicate_names) > 0:
+        print(f'\n{len(duplicate_names)} duplicated other_name')
+        print(duplicate_names)
+
+    assert len(duplicate_names) == 0
