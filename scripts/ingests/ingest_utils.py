@@ -1475,3 +1475,68 @@ def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
 
     ingest_spectra(db, source, spectrum_fits_file, regime, telescope, instrument, None, obs_date, reference,
                    wavelength_units=w_unit, flux_units=flux_unit)
+
+def add_to_CompanionRelationship(db, source, companion_name, projected_separation = None, 
+                                 projected_separation_error = None, relationship = None, 
+                                 comment = None, ref = None):
+    """
+    This function ingests a single row in to the CompanionRelationship table
+
+    Parameters
+    ----------
+    db: astrodbkit2.astrodb.Database
+        Database object created by astrodbkit2
+    source: str
+        Name of source as it appears in sources table
+    companion_name: str
+        SIMBAD resovable name of companion object
+    projected_separation: float (optional)
+        Projected separtaion should be recorded in arc sec
+    projected_separation_error: float (optional)
+        Projected separtaion should be recorded in arc sec
+    relationship: str (optional)
+        relationship is of the souce to its companion
+        should be one of the following: Child, Sibling, Parent, or Unresolved Parent
+        see note
+    references: str (optional)
+        Discovery references of sources
+    comments: str (optional)
+        Comments
+
+    Returns
+    -------
+    None
+
+Note: Relationships are not currently constrained but should be one of the following:
+- *Child*: The source is lower mass/fainter than the companion
+- *Sibling*: The source is similar to the companion
+- *Parent*: The source is higher mass/brighter than the companion
+- *Unresolved Parent*: The source is the unresolved, combined light source of an unresolved multiple system which includes the companion
+
+ """
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(db.CompanionRelationships.insert().values(
+                {'source': source, 
+                'companion_name': companion_name, 
+                'projected_separation_arcsec':projected_separation,
+                'projected_separation_error':projected_separation_error, 
+                'relationship':relationship,
+                'reference': ref, 
+                'comment': comment}))
+            conn.commit()
+            logger.info(f"ComapnionRelationship added: \n  \
+                        {source, companion_name, projected_separation, \
+                        projected_separation_error, relationship, comment, ref} ")
+    except sqlalchemy.exc.IntegrityError as e:
+        if 'UNIQUE constraint failed:' in str(e):
+            msg = "The companion may be a duplicate."
+            logger.error(msg)
+            raise SimpleError(msg)
+        
+        else:
+            msg = "The source may not exist in Sources table.\n" \
+                "The reference may not exist in the Publications table. " \
+                "Add it with add_publication function."
+            logger.error(msg)
+            raise SimpleError(msg)
