@@ -45,15 +45,15 @@ def get_float_value(value, error=False):
         return float_value
 
 
-def get_coords(string):
+def get_coords(string, unit == u.degree):
     # given RA or Dec as string given in table returns as degree decimals
-    angle = Angle(string, u.degree)
+    angle = Angle(string, unit)
     return angle.degree
 
 
 # creating list of dictionaries for each value in table 9 formatted for modeled parameters
 modeled_parameters_ingest_dict = [{'source': row['Designation 1'], 'reference': "Fili15",
-                                   'ra': get_coords(row['R.A.']), 'dec': get_coords(row['Decl.']),
+                                   'ra': get_coords(row['R.A.'], unit = u.hour), 'dec': get_coords(row['Decl.']),
                                    'Radius':
                                        {'value': get_float_value(row['Radius']),
                                         'value_error': get_float_value(row['Radius'], error=True),

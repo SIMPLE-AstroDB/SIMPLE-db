@@ -1525,9 +1525,8 @@ Note: Relationships are not currently constrained but should be one of the follo
                 'reference': ref, 
                 'comment': comment}))
             conn.commit()
-            logger.info(f"ComapnionRelationship added: \n  \
-                        {source, companion_name, projected_separation, \
-                        projected_separation_error, relationship, comment, ref} ")
+            logger.info(f"ComapnionRelationship added: \n",  \
+                        f"{source, companion_name, projected_separation, projected_separation_error, relationship, comment, ref} ")
     except sqlalchemy.exc.IntegrityError as e:
         if 'UNIQUE constraint failed:' in str(e):
             msg = "The companion may be a duplicate."
