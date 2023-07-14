@@ -19,6 +19,36 @@ from scripts.ingests.utils import *
 
 logger = logging.getLogger('SIMPLE')
 
+# NAMES
+def ingest_names(db, source, other_name):
+    '''
+    This function ingests an other name into the Names table
+
+    Parameters
+    ----------
+    db: astrodbkit2.astrodb.Database
+        Database object created by astrodbkit2
+    source: str
+        Name of source as it appears in sources table
+
+    other_name: str
+        Name of the source different than that found in source table
+
+    Returns
+    -------
+    None
+   '''
+    alt_names_data = [{'source': source, 'other_name': other_name}]
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(db.Names.insert().values(alt_names_data))
+            conn.commit()
+            logger.debug(f"{i}: Name added to database: {alt_names_data}\n")
+    except sqlalchemy.exc.IntegrityError as e:
+        msg = f"{i}: Could not add {alt_names_data} to database"
+        logger.warning(msg)
+        raise SimpleError(msg + '\n' + str(e))
+
 
 # SOURCES
 def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=None, epochs=None,
@@ -110,21 +140,9 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
             # Figure out if ingest name is an alternate name and add
             db_matches = db.search_object(source, output_table='Sources', fuzzy_search=False)
             if len(db_matches) == 0:
-                alt_names_data = [{'source': name_matches[0], 'other_name': source}]
-                try:
-                    with db.engine.connect() as conn:
-                        conn.execute(db.Names.insert().values(alt_names_data))
-                        conn.commit()
-                    logger.debug(f"{i}: Name added to database: {alt_names_data}\n")
-                    n_alt_names += 1
-                except sqlalchemy.exc.IntegrityError as e:
-                    msg = f"{i}: Could not add {alt_names_data} to database"
-                    logger.warning(msg)
-                    if raise_error:
-                        raise SimpleError(msg + '\n' + str(e))
-                    else:
-                        continue
-            continue  # Source is already in database, nothing new to ingest
+                #add other name to names table
+                ingest_names(db,  name_matches[0], source)
+
         elif len(name_matches) > 1 and search_db:  # Multiple source matches in the database
             n_multiples += 1
             msg1 = f"{i} Skipping {source} "
@@ -1476,7 +1494,8 @@ def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
     ingest_spectra(db, source, spectrum_fits_file, regime, telescope, instrument, None, obs_date, reference,
                    wavelength_units=w_unit, flux_units=flux_unit)
 
-def add_to_CompanionRelationship(db, source, companion_name, projected_separation = None, 
+#COMPANION RELATIONSHIP
+def ingest_CompanionRelationship(db, source, companion_name, projected_separation = None, 
                                  projected_separation_error = None, relationship = None, 
                                  comment = None, ref = None):
     """
@@ -1507,11 +1526,12 @@ def add_to_CompanionRelationship(db, source, companion_name, projected_separatio
     -------
     None
 
-Note: Relationships are not currently constrained but should be one of the following:
-- *Child*: The source is lower mass/fainter than the companion
-- *Sibling*: The source is similar to the companion
-- *Parent*: The source is higher mass/brighter than the companion
-- *Unresolved Parent*: The source is the unresolved, combined light source of an unresolved multiple system which includes the companion
+    Note: Relationships are not currently constrained but should be one of the following:
+    - *Child*: The source is lower mass/fainter than the companion
+    - *Sibling*: The source is similar to the companion
+    - *Parent*: The source is higher mass/brighter than the companion
+    - *Unresolved Parent*: The source is the unresolved, combined light source of an unresolved
+         multiple system which includes the companion
 
  """
     try:
@@ -1526,7 +1546,8 @@ Note: Relationships are not currently constrained but should be one of the follo
                 'comment': comment}))
             conn.commit()
             logger.info(f"ComapnionRelationship added: \n",  \
-                        f"{source, companion_name, projected_separation, projected_separation_error, relationship, comment, ref} ")
+                        f"{source, companion_name, projected_separation, 
+                           projected_separation_error, relationship, comment, ref} \n")
     except sqlalchemy.exc.IntegrityError as e:
         if 'UNIQUE constraint failed:' in str(e):
             msg = "The companion may be a duplicate."
@@ -1536,6 +1557,8 @@ Note: Relationships are not currently constrained but should be one of the follo
         else:
             msg = "The source may not exist in Sources table.\n" \
                 "The reference may not exist in the Publications table. " \
-                "Add it with add_publication function."
+                "Add it with add_publication function. \n"
             logger.error(msg)
             raise SimpleError(msg)
+
+
