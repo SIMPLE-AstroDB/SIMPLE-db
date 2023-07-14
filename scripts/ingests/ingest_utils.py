@@ -1297,7 +1297,7 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
     """
 
     # Make sure enough inputs are provided
-    if telescope is None and instrument is None and mode is None:
+    if telescope is None and (instrument is None or mode is None):
         msg = "Telescope, Instrument, and Mode must be provided"
         logger.error(msg)
         raise SimpleError(msg)
@@ -1307,17 +1307,16 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
 
     # Search for the inputs in the database
     telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.telescope == telescope).table()
-    instrument_db = db.query(db.Instruments).filter(db.Instruments.c.instrument == instrument).table()
-    if mode is not None:
-        mode_db = db.query(db.Modes).filter(and_(db.Modes.c.mode == mode,
-                                                 db.Modes.c.instrument == instrument,
-                                                 db.Modes.c.telescope == telescope)).table()
+    mode_db = db.query(db.Instruments).filter(and_(db.Instruments.c.mode == mode,
+                                                    db.Instruments.c.instrument == instrument,
+                                                    db.Instruments.c.telescope == telescope)).table()
 
-    if len(telescope_db) == 1 and len(instrument_db) == 1 and len(mode_db) == 1:
+    if len(telescope_db) == 1 and len(mode_db) == 1:
         msg_found = f'{telescope}, {instrument}, and {mode} are already in the database.'
         logger.info(msg_found)
         return
 
+    # Ingest telescope entry if not already present
     if telescope is not None and len(telescope_db) == 0:
         telescope_add = [{'telescope': telescope}]
         try:
@@ -1326,53 +1325,26 @@ def ingest_instrument(db, telescope=None, instrument=None, mode=None):
                 conn.commit()
             msg_telescope = f'{telescope} was successfully ingested in the database'
             logger.info(msg_telescope)
-        except sqlalchemy.exc.IntegrityError as e:
-            if telescope is None:
-                msg = 'Telescope name must be provided to ingest a telescope.'
-                logger.error(msg)
-                raise SimpleError(msg + '\n' + str(e))
-            else:
-                msg = 'Telescope could not be ingested for unknown reason.'
-                logger.error(msg)
-                raise SimpleError(msg + '\n' + str(e))
+        except sqlalchemy.exc.IntegrityError as e:  # pylint: disable=invalid-name
+            msg = 'Telescope could not be ingested'
+            logger.error(msg)
+            raise SimpleError(msg + '\n' + str(e))
 
-    if instrument is not None and len(instrument_db) == 0:
-        instrument_add = [{'instrument': instrument}]
+    # Ingest instrument+mode (requires telescope) if not already present
+    if telescope is not None and instrument is not None and mode is not None and len(mode_db) == 0:
+        instrument_add = [{'instrument': instrument,
+                           'mode': mode,
+                           'telescope': telescope}]
         try:
             with db.engine.connect() as conn:
                 conn.execute(db.Instruments.insert().values(instrument_add))
                 conn.commit()
             msg_instrument = f'{instrument} was successfully ingested in the database.'
             logger.info(msg_instrument)
-        except sqlalchemy.exc.IntegrityError as e:
-            if instrument is None:
-                msg = 'Instrument name must be provided to ingest an instrument.'
-                logger.error(msg)
-                raise SimpleError(msg + '\n' + str(e))
-            else:
-                msg = 'Instrument could not be ingested for unknown reason.'
-                logger.error(msg)
-                raise SimpleError(msg + '\n' + str(e))
-
-    if mode is not None and len(mode_db) == 0:
-        mode_add = [{'mode': mode,
-                     'instrument': instrument,
-                     'telescope': telescope}]
-        try:
-            with db.engine.connect() as conn:
-                conn.execute(db.Modes.insert().values(mode_add))
-                conn.commit()
-            msg_mode = f'{mode} was successfully ingested in the database'
-            logger.info(msg_mode)
-        except sqlalchemy.exc.IntegrityError as e:
-            if instrument is None or telescope is None:
-                msg = 'Telescope and instrument must be provided to ingest a mode'
-                logger.error(msg)
-                raise SimpleError(msg + '\n' + str(e))
-            else:
-                msg = 'Mode could not be ingested for unknown reason.'
-                logger.error(msg)
-                raise SimpleError(msg + '\n' + str(e))
+        except sqlalchemy.exc.IntegrityError as e:  # pylint: disable=invalid-name
+            msg = 'Instrument/Mode could not be ingested'
+            logger.error(msg)
+            raise SimpleError(msg + '\n' + str(e))
 
     return
 
