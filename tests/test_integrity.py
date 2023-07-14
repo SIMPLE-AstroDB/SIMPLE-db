@@ -557,3 +557,51 @@ def test_remove_database(db):
     db.engine.dispose()
     if os.path.exists(DB_NAME):
         os.remove(DB_NAME)
+
+def test_CompanionRelationship(db):
+    # There should be no entries without a companion name
+    t = db.query(db.CompanionRelationship.c.source). \
+           filter(db.CompanionRelationship.c.companion_name.is_(None)). \
+           astropy()
+    if len(t) > 0:
+        print('\nEntries found without a companion name')
+        print(t)
+    assert len(t) == 0
+
+    # check no negative separations or error
+        # first separtation
+    t = db.query(db.CompanionRelationship.c.projected_separation_error). \
+        filter(or_(db.CompanionRelationship.c.projected_separation_arcsec < 0,
+                   db.CompanionRelationship.c.projected_separation_arcsec == None)). \
+        astropy()
+    if len(t) > 0:
+        print('\n Negative projected separations')
+        print(t)
+    assert len(t) == 0
+
+        # separation error
+    t = db.query(db.CompanionRelationship). \
+        filter(or_(db.CompanionRelationship.c.projected_separation_error < 0,
+                   db.CompanionRelationship.c.projected_separation_error == None)). \
+        astropy()
+    if len(t) > 0:
+        print('\n Negative projected separations')
+        print(t)
+    assert len(t) == 0
+
+    # Verify that all souces and companion_names values are unique combinations
+    sql_text = "SELECT Sources.source FROM Sources GROUP BY source " \
+               "HAVING (Count(*) > 1)"
+    
+    duplicate_sources = db.sql_query(sql_text, fmt='astropy')
+    for source in duplicate_sources:
+        t = db.query(db.CompanionRelationship.c.companion_name)
+        filter(db.CompanionRelationship.c.source == name). \
+        astropy()
+        duplicates = [n for n, companion in enumerate(t) if companion in t[:n]]
+
+        if len(duplicates) > 0:
+            print('\n Non-unique companion combination')
+            print(f"{source} and {duplicates}")
+        assert len(duplicates) == 0
+
