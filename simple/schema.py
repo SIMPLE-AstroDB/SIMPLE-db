@@ -35,16 +35,10 @@ class Telescopes(Base):
 class Instruments(Base):
     __tablename__ = 'Instruments'
     instrument = Column(String(30), primary_key=True, nullable=False)
-    description = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'))
-
-
-class Modes(Base):
-    __tablename__ = 'Modes'
-    mode = Column(String(30), primary_key=True, nullable=False)
-    instrument = Column(String(30), ForeignKey('Instruments.instrument', onupdate='cascade'), primary_key=True)
+    mode = Column(String(30), primary_key=True)
     telescope = Column(String(30), ForeignKey('Telescopes.telescope', onupdate='cascade'), primary_key=True)
     description = Column(String(1000))
+    reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'))
 
 
 class Parameters(Base):
@@ -61,8 +55,7 @@ class PhotometryFilters(Base):
     """
     __tablename__ = 'PhotometryFilters'
     band = Column(String(30), primary_key=True, nullable=False)  # of the form instrument.filter (see SVO)
-    instrument = Column(String(30), ForeignKey('Instruments.instrument', onupdate='cascade'), primary_key=True)
-    telescope = Column(String(30), ForeignKey('Telescopes.telescope', onupdate='cascade'), primary_key=True)
+    ucd = Column(String(100))
     effective_wavelength = Column(Float, nullable=False)
     width = Column(Float)
 
@@ -138,26 +131,17 @@ class Names(Base):
 
 
 class Photometry(Base):
-    #TODO: Constrain UCD with Regime enumeration
+    # Table to store photometry information
     __tablename__ = 'Photometry'
     source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
                     nullable=False, primary_key=True)
-    band = Column(String(30), primary_key=True)
-    ucd = Column(String(100))
+    band = Column(String(30), ForeignKey('PhotometryFilters.band'), primary_key=True)
     magnitude = Column(Float, nullable=False)
     magnitude_error = Column(Float)
-    telescope = Column(String(30))
-    instrument = Column(String(30))
+    telescope = Column(String(30), ForeignKey('Telescopes.telescope'))
     epoch = Column(Float)  # decimal year
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'), primary_key=True)
-
-    # Foreign key constraints for telescope, instrument, band; all handled via reference to Modes table
-    __table_args__ = (ForeignKeyConstraint([telescope, instrument, band],
-                                           [PhotometryFilters.telescope, PhotometryFilters.instrument,
-                                            PhotometryFilters.band],
-                                           onupdate="cascade"),
-                      {})
 
 
 class Parallaxes(Base):
@@ -241,8 +225,8 @@ class Spectra(Base):
     regime = Column(Enum(Regime, create_constraint=True, values_callable=lambda x: [e.value for e in x],
                          native_enum=False),
                     primary_key=True)  # eg, Optical, Infrared, etc
-    telescope = Column(String(30), ForeignKey(Telescopes.telescope))
-    instrument = Column(String(30), ForeignKey(Instruments.instrument))
+    telescope = Column(String(30))
+    instrument = Column(String(30))
     mode = Column(String(30))  # eg, Prism, Echelle, etc
     observation_date = Column(DateTime, primary_key=True)
 
@@ -251,9 +235,9 @@ class Spectra(Base):
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'), primary_key=True)
     other_references = Column(String(100))
 
-    # Foreign key constraints for telescope, instrument, mode; all handled via reference to Modes table
+    # Composite Foreign key constraints for instrument and mode
     __table_args__ = (ForeignKeyConstraint([telescope, instrument, mode],
-                                           [Modes.telescope, Modes.instrument, Modes.mode],
+                                           [Instruments.telescope, Instruments.instrument, Instruments.mode],
                                            onupdate="cascade"),
                       {})
 
@@ -271,19 +255,6 @@ class ModeledParameters(Base):
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'), primary_key=True)
 
-
-class CompanionRelationships(Base):
-    # Table to store information about companions
-    __tablename__ = 'CompanionRelationships'
-    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
-                    nullable=False, primary_key=True)
-    companion_name = Column(String(100), nullable=False, primary_key=True)
-    projected_separation_arcsec = Column(Float)
-    projected_separation_error = Column(Float)
-    relationship = Column(String(100), nullable=False) # Relationship of source to companion. 
-                                                       # Options: Child, Sibling, Parent, Unresolved Parent
-    comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'))
 
 # -------------------------------------------------------------------------------------------------------------------
 # Views
