@@ -32,9 +32,15 @@ ingest_sources(db, ["CWISE J210640.16+250729.0"], references="Roth",
 #  code from deprecated utils does not work
 ingest_names(db, 'NLTT 1011B', '2MASS J00193275+4018576')
 
-#  start of ingest 
-        
+# testing if duplicate is blocked
+try:
+    ingest_names(db, 'NLTT 1011B', '2MASS J00193275+4018576')
+except SimpleError as e:
+    print('DUPLICATE BLOCKED! (as expected)')
+    pass
 
+
+#  start of ingest 
 #  link to live google sheet
 link = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEOZ56agEsAAd6SHVrwXc4hIrTtlCnCNWMefGuKkAXBjius1LgKFbj8fgbL7e8bmLTJbbBIZgwPQrz/pub?gid=0&single=true&output=csv'
 #  
