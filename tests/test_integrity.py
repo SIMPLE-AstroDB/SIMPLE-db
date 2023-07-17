@@ -568,6 +568,15 @@ def test_companion_relationship(db):
         print(t)
     assert len(t) == 0
 
+    # There should be no entries a companion name thats the same as the source
+    t = db.query(db.CompanionRelationship.c.source). \
+           filter(db.CompanionRelationship.c.companion_name == db.CompanionRelationship.c.source). \
+           astropy()
+    if len(t) > 0:
+        print('\nCompanion name cannot be source name')
+        print(t)
+    assert len(t) == 0
+
     # check no negative separations or error
     ## first separtation
     t = db.query(db.CompanionRelationship). \

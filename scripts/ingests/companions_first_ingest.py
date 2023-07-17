@@ -50,7 +50,7 @@ companions = Table.read(link, format='ascii', data_start=2, data_end=14, names=c
    
 for row in companions:
     #  collecting variables 
-    source, companion_name, projected_separation, relationship = row['source', 'companion_name', 'projected_separation','relationship']
+    source, companion_name, projected_separation_arcsec, relationship = row['source', 'companion_name', 'projected_separation','relationship']
     
     #  getting reference if there is one 
     ref = None
@@ -58,5 +58,38 @@ for row in companions:
         ref = row['ref']
     
     #  adding row
-    ingest_CompanionRelationship(db, source, companion_name, projected_separation =projected_separation, 
+    ingest_CompanionRelationship(db, source, companion_name, projected_separation_arcsec =projected_separation_arcsec, 
                                  relationship = relationship, ref = ref)
+
+
+
+
+# testing companion ingest
+## trying no companion 
+try:
+    ingest_CompanionRelationship(db, source, None )
+except SimpleError as e:
+    print('Companionless source in CompanionRelationship BLOCKED (as expected)')
+    pass
+
+## trying companion == source
+try:
+    ingest_CompanionRelationship(db, source, source)
+except AssertionError as e:
+    print('source == compnion_name in CompanionRelationship BLOCKED (as expected)')
+    pass
+
+
+## trying negative separation
+try:
+    ingest_CompanionRelationship(db, source, 'Bad Companion', projected_separation_arcsec = -5)
+except AssertionError as e:
+    print('negative separation in CompanionRelationship BLOCKED (as expected)')
+    pass
+
+## trying negative separation error
+try:
+    ingest_CompanionRelationship(db, source, 'Bad Companion', projected_separation_error = -5)
+except AssertionError as e:
+    print('negative separation in CompanionRelationship BLOCKED (as expected)')
+    pass

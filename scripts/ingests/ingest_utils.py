@@ -1466,7 +1466,7 @@ def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
                    wavelength_units=w_unit, flux_units=flux_unit)
 
 #COMPANION RELATIONSHIP
-def ingest_CompanionRelationship(db, source, companion_name, projected_separation = None, 
+def ingest_CompanionRelationship(db, source, companion_name, projected_separation_arcsec = None, 
                                  projected_separation_error = None, relationship = None, 
                                  comment = None, ref = None):
     """
@@ -1480,7 +1480,7 @@ def ingest_CompanionRelationship(db, source, companion_name, projected_separatio
         Name of source as it appears in sources table
     companion_name: str
         SIMBAD resovable name of companion object
-    projected_separation: float (optional)
+    projected_separation_arcsec: float (optional)
         Projected separtaion should be recorded in arc sec
     projected_separation_error: float (optional)
         Projected separtaion should be recorded in arc sec
@@ -1510,14 +1510,14 @@ def ingest_CompanionRelationship(db, source, companion_name, projected_separatio
             conn.execute(db.CompanionRelationships.insert().values(
                 {'source': source, 
                 'companion_name': companion_name, 
-                'projected_separation_arcsec':projected_separation,
+                'projected_separation_arcsec':projected_separation_arcsec,
                 'projected_separation_error':projected_separation_error, 
                 'relationship':relationship,
                 'reference': ref, 
                 'comment': comment}))
             conn.commit()
         logger.info("ComapnionRelationship added: \n",  
-                    [source, companion_name, projected_separation, \
+                    [source, companion_name, projected_separation_arcsec, \
                     projected_separation_error, relationship, comment, ref], "\n")
     except sqlalchemy.exc.IntegrityError as e:
         if 'UNIQUE constraint failed:' in str(e):
