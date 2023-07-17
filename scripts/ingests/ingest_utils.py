@@ -43,9 +43,9 @@ def ingest_names(db, source, other_name):
         with db.engine.connect() as conn:
             conn.execute(db.Names.insert().values(alt_names_data))
             conn.commit()
-            logger.debug(f" Name added to database: {alt_names_data}\n")
+        logger.info(f" Name added to database: {alt_names_data}\n")
     except sqlalchemy.exc.IntegrityError as e:
-        msg = f"Could not add {alt_names_data} to database"
+        msg = f"Could not add {alt_names_data} to database likely a duplicate"
         logger.warning(msg)
         raise SimpleError(msg + '\n' + str(e))
 
@@ -141,8 +141,8 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
             db_matches = db.search_object(source, output_table='Sources', fuzzy_search=False)
             if len(db_matches) == 0:
                 #add other name to names table
-                ingest_names(db,  name_matches[0], source)
-
+                ingest_names(db, name_matches[0], source)
+                n_alt_names += 1
         elif len(name_matches) > 1 and search_db:  # Multiple source matches in the database
             n_multiples += 1
             msg1 = f"{i} Skipping {source} "
@@ -249,8 +249,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
         # Try to add the source name to the Names table
         try:
             with db.engine.connect() as conn:
-                conn.execute(db.Names.insert().values(names_data))
-                conn.commit()
+                ingest_names(db,  source, source)
             logger.debug(f"Name added to database: {names_data}\n")
             n_names += 1
         except sqlalchemy.exc.IntegrityError:
@@ -1517,9 +1516,9 @@ def ingest_CompanionRelationship(db, source, companion_name, projected_separatio
                 'reference': ref, 
                 'comment': comment}))
             conn.commit()
-            logger.info("ComapnionRelationship added: \n",  
-                        source, companion_name, projected_separation,
-                        projected_separation_error, relationship, comment, ref, "\n")
+        logger.info("ComapnionRelationship added: \n",  
+                    [source, companion_name, projected_separation, \
+                    projected_separation_error, relationship, comment, ref], "\n")
     except sqlalchemy.exc.IntegrityError as e:
         if 'UNIQUE constraint failed:' in str(e):
             msg = "The companion may be a duplicate."
