@@ -43,9 +43,9 @@ def ingest_names(db, source, other_name):
         with db.engine.connect() as conn:
             conn.execute(db.Names.insert().values(alt_names_data))
             conn.commit()
-            logger.debug(f"{i}: Name added to database: {alt_names_data}\n")
+            logger.debug(f" Name added to database: {alt_names_data}\n")
     except sqlalchemy.exc.IntegrityError as e:
-        msg = f"{i}: Could not add {alt_names_data} to database"
+        msg = f"Could not add {alt_names_data} to database"
         logger.warning(msg)
         raise SimpleError(msg + '\n' + str(e))
 
@@ -1517,9 +1517,9 @@ def ingest_CompanionRelationship(db, source, companion_name, projected_separatio
                 'reference': ref, 
                 'comment': comment}))
             conn.commit()
-            logger.info(f"ComapnionRelationship added: \n",  \
-                        f"{source, companion_name, projected_separation, \
-                           projected_separation_error, relationship, comment, ref} \n")
+            logger.info("ComapnionRelationship added: \n",  
+                        source, companion_name, projected_separation,
+                        projected_separation_error, relationship, comment, ref, "\n")
     except sqlalchemy.exc.IntegrityError as e:
         if 'UNIQUE constraint failed:' in str(e):
             msg = "The companion may be a duplicate."
