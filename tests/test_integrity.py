@@ -570,9 +570,10 @@ def test_companion_relationship(db):
 
     # check no negative separations or error
     ## first separtation
-    t = db.query(db.CompanionRelationship.c.projected_separation_error). \
-        filter(or_(db.CompanionRelationship.c.projected_separation_arcsec < 0,
-                   db.CompanionRelationship.c.projected_separation_arcsec == None)). \
+    t = db.query(db.CompanionRelationship). \
+        filter(db.CompanionRelationship.c.projected_separation_arcsec != None). \
+        astropy()
+    t = t.filter(db.CompanionRelationship.c.projected_separation_arcsec < 0). \
         astropy()
     if len(t) > 0:
         print('\n Negative projected separations')
@@ -581,8 +582,9 @@ def test_companion_relationship(db):
 
     ## separation error
     t = db.query(db.CompanionRelationship). \
-        filter(or_(db.CompanionRelationship.c.projected_separation_error < 0,
-                   db.CompanionRelationship.c.projected_separation_error == None)). \
+        filter(db.CompanionRelationship.c.projected_separation_error != None). \
+        astropy()
+    t = t.filter(db.CompanionRelationship.c.projected_separation_error < 0). \
         astropy()
     if len(t) > 0:
         print('\n Negative projected separations')
