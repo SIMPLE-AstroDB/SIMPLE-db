@@ -1514,11 +1514,11 @@ def ingest_CompanionRelationship(db, source, companion_name, projected_separatio
                 'projected_separation_error':projected_separation_error, 
                 'relationship':relationship,
                 'reference': ref, 
-                'comment': comment}))
+                'comments': comment}))
             conn.commit()
-        logger.info("ComapnionRelationship added: \n",  
+        logger.info(f"ComapnionRelationship added: ", \
                     [source, companion_name, projected_separation_arcsec, \
-                    projected_separation_error, relationship, comment, ref], "\n")
+                    projected_separation_error, relationship, comment, ref])
     except sqlalchemy.exc.IntegrityError as e:
         if 'UNIQUE constraint failed:' in str(e):
             msg = "The companion may be a duplicate."
@@ -1526,8 +1526,8 @@ def ingest_CompanionRelationship(db, source, companion_name, projected_separatio
             raise SimpleError(msg)
         
         else:
-            msg = "The source may not exist in Sources table.\n" \
-                "The reference may not exist in the Publications table. " \
+            msg = "The source may not exist in Sources table \n" \
+                "or the reference may not exist in the Publications table. " \
                 "Add it with add_publication function. \n"
             logger.error(msg)
             raise SimpleError(msg)

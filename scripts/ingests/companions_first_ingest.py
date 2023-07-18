@@ -66,30 +66,36 @@ for row in companions:
 
 # testing companion ingest
 ## trying no companion 
+tests_passed = 0
 try:
     ingest_CompanionRelationship(db, source, None )
 except SimpleError as e:
     print('Companionless source in CompanionRelationship BLOCKED (as expected)')
+    tests_passed += 1
     pass
 
 ## trying companion == source
 try:
     ingest_CompanionRelationship(db, source, source)
-except AssertionError as e:
+except SimpleError as e:
     print('source == compnion_name in CompanionRelationship BLOCKED (as expected)')
+    tests_passed += 1
     pass
 
 
 ## trying negative separation
 try:
     ingest_CompanionRelationship(db, source, 'Bad Companion', projected_separation_arcsec = -5)
-except AssertionError as e:
+except SimpleError as e:
     print('negative separation in CompanionRelationship BLOCKED (as expected)')
+    tests_passed += 1
     pass
 
 ## trying negative separation error
 try:
     ingest_CompanionRelationship(db, source, 'Bad Companion', projected_separation_error = -5)
-except AssertionError as e:
+except SimpleError as e:
     print('negative separation in CompanionRelationship BLOCKED (as expected)')
+    tests_passed += 1
     pass
+
