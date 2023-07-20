@@ -81,7 +81,3 @@ for i in range(len(UCS)):
 # WRITE THE JSON FILES
 if SAVE_DB:
     db.save_database(directory='data/')
-
-
-print('hi')
-
