@@ -621,6 +621,18 @@ def test_companion_relationship(db):
         print(t)
     assert len(t) == 0
 
+    # test correct relationship 
+    possible_relationships = ['Child', 'Sibling', 'Parent', 'Unresolved Parent']
+    t = db.query(db.CompanionRelationship). \
+        filter(db.CompanionRelationship.c.relationship not in possible_relationships). \
+        astropy()
+    if len(t) > 0:
+        print('\n relationship is of the souce to its companion \
+            should be one of the following: Child, Sibling, Parent, or Unresolved Parent')
+        print(t)
+    assert len(t) == 0
+
+
 def test_companion_relationship_uniqueness(db):
     # Verify that all souces and companion_names values are unique combinations
     ## first finding duplicate sources
