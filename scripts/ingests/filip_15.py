@@ -45,7 +45,7 @@ def get_float_value(value, error=False):
         return float_value
 
 
-def get_coords(string, unit == u.degree):
+def get_coords(string, unit = u.degree):
     # given RA or Dec as string given in table returns as degree decimals
     angle = Angle(string, unit)
     return angle.degree
