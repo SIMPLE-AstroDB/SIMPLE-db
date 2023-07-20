@@ -630,7 +630,7 @@ def test_names_uniqueness(db):
 
     # if duplicate_names is non_zero, print out duplicate other names
     if len(duplicate_names) > 0:
-        print(f'\n{len(duplicate_names)} duplicated other_name')
+        print(f'\n{len(duplicate_names)} possibly a duplicated other_name.')
         print(duplicate_names)
 
     assert len(duplicate_names) == 0

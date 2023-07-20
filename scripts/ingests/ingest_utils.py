@@ -38,16 +38,16 @@ def ingest_names(db, source, other_name):
     -------
     None
    '''
-    alt_names_data = [{'source': source, 'other_name': other_name}]
+    names_data = [{'source': source, 'other_name': other_name}]
     try:
         with db.engine.connect() as conn:
-            conn.execute(db.Names.insert().values(alt_names_data))
+            conn.execute(db.Names.insert().values(names_data))
             conn.commit()
-        logger.info(f" Name added to database: {alt_names_data}\n")
+        logger.info(f" Name added to database: {names_data}\n")
     except sqlalchemy.exc.IntegrityError as e:
-        msg = f"Could not add {alt_names_data} to database likely a duplicate"
+        msg = f"Could not add {names_data} to database. Name is likely a duplicate."
         logger.warning(msg)
-        raise SimpleError(msg + '\n' + str(e))
+        raise SimpleError(msg + '\n' + str(e) + '\n')
 
 
 # SOURCES
@@ -1466,7 +1466,7 @@ def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
                    wavelength_units=w_unit, flux_units=flux_unit)
 
 #COMPANION RELATIONSHIP
-def ingest_CompanionRelationship(db, source, companion_name, projected_separation_arcsec = None, 
+def ingest_companion_relationship(db, source, companion_name, projected_separation_arcsec = None, 
                                  projected_separation_error = None, relationship = None, 
                                  comment = None, ref = None):
     """
