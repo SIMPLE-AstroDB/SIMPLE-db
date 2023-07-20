@@ -503,8 +503,8 @@ def test_modeled_parameters(db):
     assert len(unit_fail) == 0, f'Some parameter units did not resolve: {unit_fail}'
 
     # check no negative Mass, Radius, or Teff
-    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == "Radius" or 
-                                              db.ModeledParameters.c.parameter == "Mass" or 
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == "radius" or 
+                                              db.ModeledParameters.c.parameter == "mass" or 
                                               db.ModeledParameters.c.parameter == "Teff").astropy()
     t = t.filter(db.ModeledParameters.c.value < 0). \
         astropy()

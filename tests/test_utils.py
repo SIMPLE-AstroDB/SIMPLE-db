@@ -261,3 +261,41 @@ def test_ingest_instrument(db):
 # TODO: test for ingest_photometry
 
 # TODO: test for ingest_spectra
+
+def test_companion_relationships(db):
+# testing companion ingest
+## trying no companion 
+    tests_passed = 0
+    try:
+        ingest_companion_relationship(db, 'Fake 1', None )
+    except SimpleError as e:
+        print('Companionless source in CompanionRelationship BLOCKED (as expected)')
+        tests_passed += 1
+        pass
+
+    ## trying companion == source
+    try:
+        ingest_companion_relationship(db, 'Fake 1',  'Fake 1')
+    except SimpleError as e:
+        print('source == compnion_name in CompanionRelationship BLOCKED (as expected)')
+        tests_passed += 1
+        pass
+
+
+    ## trying negative separation
+    try:
+        ingest_companion_relationship(db, 'Fake 1', 'Bad Companion', projected_separation_arcsec = -5)
+    except SimpleError as e:
+        print('negative separation in CompanionRelationship BLOCKED (as expected)')
+        tests_passed += 1
+        pass
+
+    ## trying negative separation error
+    try:
+        ingest_companion_relationship(db, 'Fake 1', 'Bad Companion', projected_separation_error = -5)
+    except SimpleError as e:
+        print('negative separation in CompanionRelationship BLOCKED (as expected)')
+        tests_passed += 1
+        pass
+    
+    assert tests_passed== 4
