@@ -32,7 +32,6 @@ def add_ukidss_names(db):
 # You may need to add filters to the Photometry Filters table
 # https://github.com/SIMPLE-AstroDB/SIMPLE-db/blob/main/documentation/PhotometryFilters.md
 def add_filters(db):
-
     lco_telescope = [{'name': 'LCO'}]
     db.Telescopes.insert().execute(lco_telescope)
 
