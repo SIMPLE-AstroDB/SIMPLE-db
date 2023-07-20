@@ -502,6 +502,27 @@ def test_modeled_parameters(db):
 
     assert len(unit_fail) == 0, f'Some parameter units did not resolve: {unit_fail}'
 
+    # check no negative Mass, Radius, or Teff
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == "Radius" or 
+                                              db.ModeledParameters.c.parameter == "Mass" or 
+                                              db.ModeledParameters.c.parameter == "Teff").astropy()
+    t = t.filter(db.ModeledParameters.c.value < 0). \
+        astropy()
+    if len(t) > 0:
+        print('\n Negative value for Radius, Mass, or Teff not allowed.\n')
+        print(t)
+    assert len(t) == 0
+
+     # check no negative value error
+    t = db.query(db.ModeledParameters). \
+        filter(db.ModeledParameters.c.value_error != None). \
+        astropy()
+    t = t.filter(db.ModeledParameters.c.value_error < 0).astropy()
+    if len(t) > 0:
+        print('\n Negative projected separations')
+        print(t)
+    assert len(t) == 0
+
 
 def test_spectra(db):
     # Tests against the Spectra table
