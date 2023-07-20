@@ -59,13 +59,13 @@ def photometry_mko(db, data):
     mag = data['Y_MKO']
     mag_err = data['Yerr_MKO']
 
-    wircam_ref_list = ['Albe11', 'Delo08.961', 'Delo12', 'Dupu19']
+    wircam_ref_list = ['Albe11', 'Delo08.961', 'Delo12', 'Dupu19', 'Naud14']
     wircam_name_list = ['ULAS J115038.79+094942.9']
     wfcam_ref_list = ['Burn08', 'Burn14', 'Card15', 'Deac11.6319', 'Deac12.100', 'Deac17.1126', 'Lawr07', 'Lawr12',
-                      'Liu_13.20', 'Lodi07.372', 'Luca10']
+                      'Liu_13.20', 'Lodi07.372', 'Luca10', 'Pinf08']
     # irac_name_list = ['2MASS J00501994-3322402', '2MASS J11145133-2618235', '2MASS J12373919+6526148']
     niri_ref_list = ['Dupu15.102', 'Lach15', 'Legg13', 'Legg15', 'Legg16', 'Liu_12']
-    vista_ref_list = ['Edge16', 'Gauz12', 'Kell16', 'McMa13', 'Minn17', 'Lodi12.53', 'Lodi13.2474']
+    vista_ref_list = ['Edge16', 'Gauz12', 'Kell16', 'McMa13', 'Minn17', 'Lodi12.53', 'Lodi13.2474', 'Pena11', 'Pena12']
     gpi_ref_list = ['Garc17.162']
     visao_ref_list = ['Male14']
 
