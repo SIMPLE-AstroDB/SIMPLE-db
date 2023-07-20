@@ -18,14 +18,13 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 ingest_publication(db, doi = None, bibcode = None, publication = "Roth", 
                    description = "Rothermich in prep.", ignore_ads = True)
 
-RA =   "21 06 40.1664"
-DEC = "+25 07 28.99"
-ras= Angle(RA, u.hour).degree 
-decs=Angle(DEC, u.degree).degree
+
+ra_2106= Angle("21 06 40.1664", u.hour).degree 
+dec_2507=Angle("+25 07 28.99", u.degree).degree
 
 ingest_sources(db, ["CWISE J210640.16+250729.0"], references="Roth", 
-            ras= [Angle(RA, u.degree).degree], 
-            decs=[Angle(DEC, u.degree).degree], 
+            ras= [ra_2106], 
+            decs=[dec_2507], 
             search_db=False)
 
 #  Ingest other name for NLTT 1011B (one used in SIMBAD)
@@ -58,44 +57,7 @@ for row in companions:
         ref = row['ref']
     
     #  adding row
-    ingest_CompanionRelationship(db, source, companion_name, projected_separation_arcsec =projected_separation_arcsec, 
+    ingest_companion_relationship(db, source, companion_name, projected_separation_arcsec =projected_separation_arcsec, 
                                  relationship = relationship, ref = ref)
 
-
-
-
-# testing companion ingest
-## trying no companion 
-tests_passed = 0
-try:
-    ingest_CompanionRelationship(db, source, None )
-except SimpleError as e:
-    print('Companionless source in CompanionRelationship BLOCKED (as expected)')
-    tests_passed += 1
-    pass
-
-## trying companion == source
-try:
-    ingest_CompanionRelationship(db, source, source)
-except SimpleError as e:
-    print('source == compnion_name in CompanionRelationship BLOCKED (as expected)')
-    tests_passed += 1
-    pass
-
-
-## trying negative separation
-try:
-    ingest_CompanionRelationship(db, source, 'Bad Companion', projected_separation_arcsec = -5)
-except SimpleError as e:
-    print('negative separation in CompanionRelationship BLOCKED (as expected)')
-    tests_passed += 1
-    pass
-
-## trying negative separation error
-try:
-    ingest_CompanionRelationship(db, source, 'Bad Companion', projected_separation_error = -5)
-except SimpleError as e:
-    print('negative separation in CompanionRelationship BLOCKED (as expected)')
-    tests_passed += 1
-    pass
 
