@@ -32,29 +32,34 @@ def add_ukidss_names(db):
 # You may need to add filters to the Photometry Filters table
 # https://github.com/SIMPLE-AstroDB/SIMPLE-db/blob/main/documentation/PhotometryFilters.md
 def add_filters(db):
-    wircam_instrument = [{'name': 'Wircam',
-                          'reference': null()}]
+    wircam_instrument = [{'name': 'Wircam'}]
     db.Instruments.insert().execute(wircam_instrument)
 
-    niri_instrument = [{'name': 'NIRI',
-                        'reference': null()}]
+    niri_instrument = [{'name': 'NIRI'}]
     db.Instruments.insert().execute(niri_instrument)
+
+    gpi_instrument = [{'name': 'GPI'}]
+    db.Instruments.insert().execute(gpi_instrument)
+
+    visao_instrument = [{'name': 'VisAO'}]
+    db.Instruments.insert().execute(visao_instrument)
 
     cfht_telescope = [{'name': 'CFHT'}]
     db.Telescopes.insert().execute(cfht_telescope)
 
-    cfht_y = [{'band': 'Wircam.Y',
-               'ucd': 'em.IR.NIR',
-               'effective_wavelength': '10220.90',
-               'telescope': 'CFHT',
-               'width': '1084.17'}]
+    lco_telescope = [{'name': 'LCO'}]
+    db.Telescopes.insert().execute(lco_telescope)
 
-    db.PhotometryFilters.insert().execute(cfht_y)
+    wircam_y = [{'band': 'Wircam.Y',
+                 'ucd': 'em.IR.NIR',
+                 'effective_wavelength': '10220.90',
+                 'width': '1084.17'}]
+
+    db.PhotometryFilters.insert().execute(wircam_y)
 
     ufti_y = [{'band': 'UFTI.Y',
                'ucd': 'em.IR.NIR',
                'effective_wavelength': '10170.36',
-               'telescope': 'UKIRT',
                'width': '1036.05'}]
 
     db.PhotometryFilters.insert().execute(ufti_y)
@@ -62,10 +67,23 @@ def add_filters(db):
     niri_y = [{'band': 'NIRI.Y',
                'ucd': 'em.IR.NIR',
                'effective_wavelength': '10211.18',
-               'telescope': 'Gemini North',
                'width': '943.58'}]
 
     db.PhotometryFilters.insert().execute(niri_y)
+
+    gpi_y = [{'band': 'GPI.Y',
+              'ucd': 'em.IR.NIR',
+              'effective_wavelength': '10375.56',
+             'width': '1707.30'}]
+
+    db.PhotometryFilters.insert().execute(gpi_y)
+
+    visao_ys = [{'band': 'VisAO.Ys',
+                 'ucd': 'em.IR.NIR',
+                 'effective_wavelength': '9793.50',
+                 'width': '907.02'}]
+
+    db.PhotometryFilters.insert().execute(visao_ys)
 
 
 # Execute the ingests!
