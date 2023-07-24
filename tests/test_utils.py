@@ -266,21 +266,21 @@ def test_companion_relationships(db):
 # testing companion ingest
 ## trying no companion 
     with pytest.raises(SimpleError) as error_message:
-        ingest_companion_relationship(db, 'Fake 1', None )
+        ingest_companion_relationships(db, 'Fake 1', None )
         assert 'Companion Name must be provided' in str(error_message.value)
 
     ## trying companion == source
     with pytest.raises(SimpleError) as error_message:
-        ingest_companion_relationship(db, 'Fake 1',  'Fake 1')
+        ingest_companion_relationships(db, 'Fake 1',  'Fake 1')
         assert 'Companion Name cannot be the same as Source' in str(error_message.value)
 
     ## trying negative separation
     with pytest.raises(SimpleError) as error_message:
-        ingest_companion_relationship(db, 'Fake 1', 'Bad Companion', projected_separation_arcsec = -5)
+        ingest_companion_relationships(db, 'Fake 1', 'Bad Companion', projected_separation_arcsec = -5)
         assert 'Separation cannot be a negative value' in str(error_message.value)
 
     ## trying negative separation error
     with pytest.raises(SimpleError) as error_message:
-        ingest_companion_relationship(db, 'Fake 1', 'Bad Companion', projected_separation_error = -5)
+        ingest_companion_relationships(db, 'Fake 1', 'Bad Companion', projected_separation_error = -5)
         assert 'Separation error cannot be a negative value' in str(error_message.value)
     

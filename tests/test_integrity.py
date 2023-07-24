@@ -488,7 +488,7 @@ def test_modeled_parameters(db):
     assert len(t) == 0
 
     # Test units are astropy.unit resolvable
-    t = db.query(db.ModeledParameters.c.unit).filter(db.ModeledParameters.c.unit.is_not(None)).distinct().astropy()
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.unit.is_not(None)).distinct().astropy()
     unit_fail = []
     for x in t:
         unit = x['unit']
@@ -581,8 +581,8 @@ def test_remove_database(db):
 
 def test_companion_relationship(db):
     # There should be no entries without a companion name
-    t = db.query(db.CompanionRelationship.c.source). \
-           filter(db.CompanionRelationship.c.companion_name.is_(None)). \
+    t = db.query(db.CompanionRelationships.c.source). \
+           filter(db.CompanionRelationships.c.companion_name.is_(None)). \
            astropy()
     if len(t) > 0:
         print('\nEntries found without a companion name')
@@ -590,8 +590,8 @@ def test_companion_relationship(db):
     assert len(t) == 0
 
     # There should be no entries a companion name thats the same as the source
-    t = db.query(db.CompanionRelationship.c.source). \
-           filter(db.CompanionRelationship.c.companion_name == db.CompanionRelationship.c.source). \
+    t = db.query(db.CompanionRelationships.c.source). \
+           filter(db.CompanionRelationships.c.companion_name == db.CompanionRelationships.c.source). \
            astropy()
     if len(t) > 0:
         print('\nCompanion name cannot be source name')
@@ -600,10 +600,10 @@ def test_companion_relationship(db):
 
     # check no negative separations or error
     ## first separtation
-    t = db.query(db.CompanionRelationship). \
-        filter(db.CompanionRelationship.c.projected_separation_arcsec != None). \
+    t = db.query(db.CompanionRelationships). \
+        filter(db.CompanionRelationships.c.projected_separation_arcsec != None). \
         astropy()
-    t = t.filter(db.CompanionRelationship.c.projected_separation_arcsec < 0). \
+    t = t.filter(db.CompanionRelationships.c.projected_separation_arcsec < 0). \
         astropy()
     if len(t) > 0:
         print('\n Negative projected separations')
@@ -611,10 +611,10 @@ def test_companion_relationship(db):
     assert len(t) == 0
 
     ## separation error
-    t = db.query(db.CompanionRelationship). \
-        filter(db.CompanionRelationship.c.projected_separation_error != None). \
+    t = db.query(db.CompanionRelationships). \
+        filter(db.CompanionRelationships.c.projected_separation_error != None). \
         astropy()
-    t = t.filter(db.CompanionRelationship.c.projected_separation_error < 0). \
+    t = t.filter(db.CompanionRelationships.c.projected_separation_error < 0). \
         astropy()
     if len(t) > 0:
         print('\n Negative projected separations')
@@ -623,8 +623,8 @@ def test_companion_relationship(db):
 
     # test correct relationship 
     possible_relationships = ['Child', 'Sibling', 'Parent', 'Unresolved Parent']
-    t = db.query(db.CompanionRelationship). \
-        filter(db.CompanionRelationship.c.relationship not in possible_relationships). \
+    t = db.query(db.CompanionRelationships). \
+        filter(db.CompanionRelationships.c.relationship not in possible_relationships). \
         astropy()
     if len(t) > 0:
         print('\n relationship is of the souce to its companion \
@@ -636,15 +636,15 @@ def test_companion_relationship(db):
 def test_companion_relationship_uniqueness(db):
     # Verify that all souces and companion_names values are unique combinations
     ## first finding duplicate sources
-    sql_text = "SELECT CompanionRelationship.source FROM CompanionRelationship GROUP BY source " \
+    sql_text = "SELECT CompanionRelationships.source FROM CompanionRelationships GROUP BY source " \
                "HAVING (Count(*) > 1)" 
     duplicate_sources = db.sql_query(sql_text, fmt='astropy')
 
     ##checking duplicate sources have different companions 
     non_unique = []
     for source in duplicate_sources:
-        t = db.query(db.CompanionRelationship.c.companion_name)
-        filter(db.CompanionRelationship.c.source == source). \
+        t = db.query(db.CompanionRelationships.c.companion_name)
+        filter(db.CompanionRelationships.c.source == source). \
         astropy()
         duplicate_companions = [n for n, companion in enumerate(t) if companion in t[:n]]
 

@@ -1466,7 +1466,7 @@ def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
                    wavelength_units=w_unit, flux_units=flux_unit)
 
 #COMPANION RELATIONSHIP
-def ingest_companion_relationship(db, source, companion_name, projected_separation_arcsec = None, 
+def ingest_companion_relationships(db, source, companion_name, projected_separation_arcsec = None, 
                                  projected_separation_error = None, relationship = None, 
                                  comment = None, ref = None, other_companion_names = None):
     """

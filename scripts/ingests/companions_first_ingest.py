@@ -55,7 +55,7 @@ for row in companions:
         other_companion_names = row['other_companion_names']
 
     #  adding row
-    ingest_companion_relationship(db, source, companion_name, projected_separation_arcsec =projected_separation_arcsec, 
+    ingest_companion_relationships(db, source, companion_name, projected_separation_arcsec =projected_separation_arcsec, 
                                  relationship = relationship, ref = ref, other_companion_names= other_companion_names)
 
 
