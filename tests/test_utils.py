@@ -265,34 +265,22 @@ def test_ingest_instrument(db):
 def test_companion_relationships(db):
 # testing companion ingest
 ## trying no companion 
-    tests_passed = 0
     with pytest.raises(SimpleError) as error_message:
         ingest_companion_relationship(db, 'Fake 1', None )
-        assert 'some string' in str(error_message.value)
+        assert 'Companion Name must be provided' in str(error_message.value)
 
     ## trying companion == source
-    try:
+    with pytest.raises(SimpleError) as error_message:
         ingest_companion_relationship(db, 'Fake 1',  'Fake 1')
-    except SimpleError as e:
-        print('source == compnion_name in CompanionRelationship BLOCKED (as expected)')
-        tests_passed += 1
-        pass
-
+        assert 'Companion Name cannot be the same as Source' in str(error_message.value)
 
     ## trying negative separation
-    try:
+    with pytest.raises(SimpleError) as error_message:
         ingest_companion_relationship(db, 'Fake 1', 'Bad Companion', projected_separation_arcsec = -5)
-    except SimpleError as e:
-        print('negative separation in CompanionRelationship BLOCKED (as expected)')
-        tests_passed += 1
-        pass
+        assert 'Separation cannot be a negative value' in str(error_message.value)
 
     ## trying negative separation error
-    try:
+    with pytest.raises(SimpleError) as error_message:
         ingest_companion_relationship(db, 'Fake 1', 'Bad Companion', projected_separation_error = -5)
-    except SimpleError as e:
-        print('negative separation in CompanionRelationship BLOCKED (as expected)')
-        tests_passed += 1
-        pass
+        assert 'Separation error cannot be a negative value' in str(error_message.value)
     
-    assert tests_passed== 4
