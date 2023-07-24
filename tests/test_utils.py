@@ -266,12 +266,9 @@ def test_companion_relationships(db):
 # testing companion ingest
 ## trying no companion 
     tests_passed = 0
-    try:
+    with pytest.raises(SimpleError) as error_message:
         ingest_companion_relationship(db, 'Fake 1', None )
-    except SimpleError as e:
-        print('Companionless source in CompanionRelationship BLOCKED (as expected)')
-        tests_passed += 1
-        pass
+        assert 'some string' in str(error_message.value)
 
     ## trying companion == source
     try:
