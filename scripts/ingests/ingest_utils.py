@@ -1468,7 +1468,7 @@ def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
 #COMPANION RELATIONSHIP
 def ingest_companion_relationship(db, source, companion_name, projected_separation_arcsec = None, 
                                  projected_separation_error = None, relationship = None, 
-                                 comment = None, ref = None):
+                                 comment = None, ref = None, other_companion_names = None):
     """
     This function ingests a single row in to the CompanionRelationship table
 
@@ -1492,12 +1492,14 @@ def ingest_companion_relationship(db, source, companion_name, projected_separati
         Discovery references of sources
     comments: str (optional)
         Comments
+    other_companion_names: list of str (optional)
+        other names used to identify the companion 
 
     Returns
     -------
     None
 
-    Note: Relationships are not currently constrained but should be one of the following:
+    Note: Relationships are constrained to one of the following:
     - *Child*: The source is lower mass/fainter than the companion
     - *Sibling*: The source is similar to the companion
     - *Parent*: The source is higher mass/brighter than the companion
@@ -1505,6 +1507,18 @@ def ingest_companion_relationship(db, source, companion_name, projected_separati
          multiple system which includes the companion
 
  """
+    # checking relationship entered
+    possible_relationships = ['Child', 'Sibling', 'Parent', 'Unresolved Parent']
+    # check captialization
+    if relationship.title() != relationship:
+        logger.info(f"Relationship captilization changed from {relationship} to {relationship.title()} ")
+        relationship = relationship.title()
+    if relationship not in possible_relationships:
+        msg = f"Relationship given for {source}, {companion_name}: {relationship} NOT one of the constrained relationships \n {possible_relationships}"
+        logger.error(msg)
+        raise SimpleError(msg)
+         
+
     try:
         with db.engine.connect() as conn:
             conn.execute(db.CompanionRelationships.insert().values(
@@ -1514,7 +1528,8 @@ def ingest_companion_relationship(db, source, companion_name, projected_separati
                 'projected_separation_error':projected_separation_error, 
                 'relationship':relationship,
                 'reference': ref, 
-                'comments': comment}))
+                'comments': comment,
+                'other_companion_names': other_companion_names}))
             conn.commit()
         logger.info(f"ComapnionRelationship added: ", \
                     [source, companion_name, projected_separation_arcsec, \
