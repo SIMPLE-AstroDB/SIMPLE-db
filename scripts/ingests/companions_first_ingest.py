@@ -31,22 +31,16 @@ ingest_sources(db, ["CWISE J210640.16+250729.0"], references="Roth",
 #  code from deprecated utils does not work
 ingest_names(db, 'NLTT 1011B', '2MASS J00193275+4018576')
 
-# testing if duplicate is blocked
-try:
-    ingest_names(db, 'NLTT 1011B', '2MASS J00193275+4018576')
-except SimpleError as e:
-    print('DUPLICATE BLOCKED! (as expected)')
-    pass
-
 
 #  start of ingest 
 #  link to live google sheet
 link = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEOZ56agEsAAd6SHVrwXc4hIrTtlCnCNWMefGuKkAXBjius1LgKFbj8fgbL7e8bmLTJbbBIZgwPQrz/pub?gid=0&single=true&output=csv'
 #  
-columns = ['source', 'companion_name', 'projected_separation', 'projected_separation_error', 'relationship', 'comment', 'ref', 'in_Simple']
+columns = ['source', 'companion_name', 'projected_separation', 'projected_separation_error', 'relationship', 'comment', 'ref', 'other_companion_names']
 companions = Table.read(link, format='ascii', data_start=2, data_end=14, names=columns, guess=False,
                            fast_reader=False, delimiter=',')
-   
+
+
 for row in companions:
     #  collecting variables 
     source, companion_name, projected_separation_arcsec, relationship = row['source', 'companion_name', 'projected_separation','relationship']
@@ -55,9 +49,15 @@ for row in companions:
     ref = None
     if row['ref'] != '':
         ref = row['ref']
-    
+    # getting other name if there is one 
+    other_companion_names = None
+    if row['other_companion_names'] != '':
+        other_companion_names = row['other_companion_names']
+
     #  adding row
     ingest_companion_relationship(db, source, companion_name, projected_separation_arcsec =projected_separation_arcsec, 
-                                 relationship = relationship, ref = ref)
+                                 relationship = relationship, ref = ref, other_companion_names= other_companion_names)
+
+
 
 

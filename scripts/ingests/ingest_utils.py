@@ -1492,8 +1492,9 @@ def ingest_companion_relationship(db, source, companion_name, projected_separati
         Discovery references of sources
     comments: str (optional)
         Comments
-    other_companion_names: list of str (optional)
-        other names used to identify the companion 
+    other_companion_names: comma separated name (optional)
+        other names used to identify the companion
+        ex:  'HD 89744, NLTT 24128, GJ 9326'
 
     Returns
     -------
@@ -1524,10 +1525,11 @@ def ingest_companion_relationship(db, source, companion_name, projected_separati
     if other_companion_names == None:
         other_companion_names = companion_name
     else:
-        if companion_name not in other_companion_names:
-            other_companion_names.append(companion_name)
-        other_companion_names = ' ,'.join(other_companion_names)
-
+        companion_name_list = other_companion_names.split(', ')
+        if companion_name not in companion_name_list:
+            companion_name_list.append(companion_name)
+        other_companion_names = (',  ').join(companion_name_list)
+        
 
     try:
         with db.engine.connect() as conn:

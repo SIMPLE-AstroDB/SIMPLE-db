@@ -10,7 +10,7 @@ from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, \
     BigInteger, Enum, Date, DateTime, ForeignKeyConstraint
 from astrodbkit2.astrodb import Base
 from astrodbkit2.views import view
-from  sqlalchemy.types import ARRAY
+
 
 
 # -------------------------------------------------------------------------------------------------------------------
