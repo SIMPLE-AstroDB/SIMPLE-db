@@ -1519,6 +1519,16 @@ def ingest_companion_relationship(db, source, companion_name, projected_separati
         raise SimpleError(msg)
          
 
+    # check other names
+    ## make sure companion name is included in the list  
+    if other_companion_names == None:
+        other_companion_names = companion_name
+    else:
+        if companion_name not in other_companion_names:
+            other_companion_names.append(companion_name)
+        other_companion_names = ' ,'.join(other_companion_names)
+
+
     try:
         with db.engine.connect() as conn:
             conn.execute(db.CompanionRelationships.insert().values(
@@ -1531,7 +1541,7 @@ def ingest_companion_relationship(db, source, companion_name, projected_separati
                 'comments': comment,
                 'other_companion_names': other_companion_names}))
             conn.commit()
-        logger.info(f"ComapnionRelationship added: ", \
+        logger.info(f"ComapnionRelationship added: ",
                     [source, companion_name, projected_separation_arcsec, \
                     projected_separation_error, relationship, comment, ref])
     except sqlalchemy.exc.IntegrityError as e:

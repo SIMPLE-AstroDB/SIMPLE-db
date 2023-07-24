@@ -10,6 +10,7 @@ from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, \
     BigInteger, Enum, Date, DateTime, ForeignKeyConstraint
 from astrodbkit2.astrodb import Base
 from astrodbkit2.views import view
+from  sqlalchemy.types import ARRAY
 
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -306,6 +307,6 @@ class CompanionRelationships(Base):
                                                        # Options: Child, Sibling, Parent, Unresolved Parent
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'))
-    other_companion_names = Column(list) # other names of the companions 
+    other_companion_names = Column(String(10000)) # other names of the companions 
 
 
