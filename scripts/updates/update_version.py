@@ -15,11 +15,14 @@ print(db.query(db.Versions).table())
 
 # Add new version, add new entries as appropriate
 # Note that start_date and end_date are strings of the date in format YYYY-MM-DD
-data = [{'version': '2022.4',
-         'start_date': '2022-10-14',
-         'end_date': '2022-10-16',
-         'description': ''}]
-db.Versions.insert().execute(data)
+data = [{'version': '2023.2',
+         'start_date': '2023-07-11',
+         'end_date': '2023-07-25',
+         'description': 'Added JWST spectra for VHS 1256b'}]
+with db.engine.connect() as conn:
+    conn.execute(db.Versions.insert().values(data))
+    conn.commit()
+
 
 # Fetch data of latest release
 latest_date = db.query(db.Versions.c.end_date).order_by(db.Versions.c.end_date.desc()).limit(1).table()
@@ -27,11 +30,15 @@ latest_date = latest_date['end_date'][0]
 
 latest = db.query(db.Versions).filter(db.Versions.c.version == 'latest').count()
 if latest == 1:
-    db.Versions.delete().where(db.Versions.c.version == 'latest').execute()
+    with db.engine.connect() as conn:
+        conn.execute(db.Versions.delete().where(db.Versions.c.version == 'latest'))
+        conn.commit()
 
 # Add latest
 data = [{'version': 'latest', 'start_date': latest_date, 'description': 'Version in development'}]
-db.Versions.insert().execute(data)
+with db.engine.connect() as conn:
+    conn.execute(db.Versions.insert().values(data))
+    conn.commit()
 
 print(db.query(db.Versions).table())
 
