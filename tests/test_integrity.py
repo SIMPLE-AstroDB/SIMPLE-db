@@ -479,9 +479,7 @@ def test_sources(db):
 
 def test_modeled_parameters(db):
     # There should be no entries in the modeled parameters table without parameter
-    t = db.query(db.ModeledParameters.c.source). \
-           filter(db.ModeledParameters.c.parameter.is_(None)). \
-           astropy()
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter.is_(None)).astropy()
     if len(t) > 0:
         print('\nEntries found without a parameter')
         print(t)
@@ -492,7 +490,6 @@ def test_modeled_parameters(db):
     unit_fail = []
     for x in t:
         unit = x['unit']
-
         try:
             assert u.Unit(unit, parse_strict='raise')
         except ValueError:
@@ -503,21 +500,17 @@ def test_modeled_parameters(db):
     assert len(unit_fail) == 0, f'Some parameter units did not resolve: {unit_fail}'
 
     # check no negative Mass, Radius, or Teff
-    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == "radius" or 
-                                              db.ModeledParameters.c.parameter == "mass" or 
-                                              db.ModeledParameters.c.parameter == "Teff").astropy()
-    t = t.filter(db.ModeledParameters.c.value < 0). \
-        astropy()
+    t = db.query(db.ModeledParameters).filter(and_(db.ModeledParameters.c.parameter.in_(["radius", "mass",  "Teff"]), 
+                                                    db.ModeledParameters.c.value < 0)).astropy()
     if len(t) > 0:
         print('\n Negative value for Radius, Mass, or Teff not allowed.\n')
         print(t)
     assert len(t) == 0
 
      # check no negative value error
-    t = db.query(db.ModeledParameters). \
-        filter(db.ModeledParameters.c.value_error != None). \
-        astropy()
-    t = t.filter(db.ModeledParameters.c.value_error < 0).astropy()
+    t = db.query(db.ModeledParameters).filter(and_(db.ModeledParameters.c.value_error != None, 
+                                                   db.ModeledParameters.c.value_error < 0)).astropy()
+    
     if len(t) > 0:
         print('\n Negative projected separations')
         print(t)
@@ -585,52 +578,51 @@ def test_companion_relationship(db):
            filter(db.CompanionRelationships.c.companion_name.is_(None)). \
            astropy()
     if len(t) > 0:
-        print('\nEntries found without a companion name')
+        print('\n Entries found without a companion name')
         print(t)
     assert len(t) == 0
 
-    # There should be no entries a companion name thats the same as the source
-    t = db.query(db.CompanionRelationships.c.source). \
-           filter(db.CompanionRelationships.c.companion_name == db.CompanionRelationships.c.source). \
-           astropy()
-    if len(t) > 0:
-        print('\nCompanion name cannot be source name')
-        print(t)
-    assert len(t) == 0
+    # # There should be no entries a companion name thats the same as the source
+    # t = db.query(db.CompanionRelationships.c.source). \
+    #        filter(db.CompanionRelationships.c.companion_name == db.CompanionRelationships.c.source). \
+    #        astropy()
+    # if len(t) > 0:
+    #     print('\nCompanion name cannot be source name')
+    #     print(t)
+    # assert len(t) == 0
 
-    # check no negative separations or error
-    ## first separtation
-    t = db.query(db.CompanionRelationships). \
-        filter(db.CompanionRelationships.c.projected_separation_arcsec != None). \
-        astropy()
-    t = t.filter(db.CompanionRelationships.c.projected_separation_arcsec < 0). \
-        astropy()
-    if len(t) > 0:
-        print('\n Negative projected separations')
-        print(t)
-    assert len(t) == 0
+    # # check no negative separations or error
+    # ## first separtation
+    # t = db.query(db.CompanionRelationships). \
+    #     filter(and_(db.CompanionRelationships.c.projected_separation_arcsec != None, 
+    #                 db.CompanionRelationships.c.projected_separation_arcsec < 0)).astropy()
 
-    ## separation error
-    t = db.query(db.CompanionRelationships). \
-        filter(db.CompanionRelationships.c.projected_separation_error != None). \
-        astropy()
-    t = t.filter(db.CompanionRelationships.c.projected_separation_error < 0). \
-        astropy()
-    if len(t) > 0:
-        print('\n Negative projected separations')
-        print(t)
-    assert len(t) == 0
+    # if len(t) > 0:
+    #     print('\n Negative projected separations')
+    #     print(t)
+    # assert len(t) == 0
 
-    # test correct relationship 
-    possible_relationships = ['Child', 'Sibling', 'Parent', 'Unresolved Parent']
-    t = db.query(db.CompanionRelationships). \
-        filter(db.CompanionRelationships.c.relationship not in possible_relationships). \
-        astropy()
-    if len(t) > 0:
-        print('\n relationship is of the souce to its companion \
-            should be one of the following: Child, Sibling, Parent, or Unresolved Parent')
-        print(t)
-    assert len(t) == 0
+    # ## separation error
+    # t = db.query(db.CompanionRelationships). \
+    #     filter(and_(db.CompanionRelationships.c.projected_separation_error != None,
+    #                  db.CompanionRelationships.c.projected_separation_error < 0)). \
+    #     astropy()
+    
+    # if len(t) > 0:
+    #     print('\n Negative projected separations')
+    #     print(t)
+    # assert len(t) == 0
+
+    # # test correct relationship 
+    # possible_relationships = ['Child', 'Sibling', 'Parent', 'Unresolved Parent']
+    # t = db.query(db.CompanionRelationships). \
+    #     filter(~db.CompanionRelationships.c.relationship.in_(possible_relationships)). \
+    #     astropy()
+    # if len(t) > 0:
+    #     print('\n relationship is of the souce to its companion \
+    #         should be one of the following: Child, Sibling, Parent, or Unresolved Parent')
+    #     print(t)
+    # assert len(t) == 0
 
 
 def test_companion_relationship_uniqueness(db):

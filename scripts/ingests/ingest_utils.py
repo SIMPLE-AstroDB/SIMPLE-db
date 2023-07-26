@@ -1466,8 +1466,8 @@ def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
                    wavelength_units=w_unit, flux_units=flux_unit)
 
 #COMPANION RELATIONSHIP
-def ingest_companion_relationships(db, source, companion_name, projected_separation_arcsec = None, 
-                                 projected_separation_error = None, relationship = None, 
+def ingest_companion_relationships(db, source, companion_name, relationship,
+                                    projected_separation_arcsec = None, projected_separation_error = None, 
                                  comment = None, ref = None, other_companion_names = None):
     """
     This function ingests a single row in to the CompanionRelationship table
@@ -1478,21 +1478,21 @@ def ingest_companion_relationships(db, source, companion_name, projected_separat
         Database object created by astrodbkit2
     source: str
         Name of source as it appears in sources table
+    relationship: str 
+        relationship is of the souce to its companion
+        should be one of the following: Child, Sibling, Parent, or Unresolved Parent
+        see note
     companion_name: str
         SIMBAD resovable name of companion object
     projected_separation_arcsec: float (optional)
         Projected separtaion should be recorded in arc sec
     projected_separation_error: float (optional)
         Projected separtaion should be recorded in arc sec
-    relationship: str (optional)
-        relationship is of the souce to its companion
-        should be one of the following: Child, Sibling, Parent, or Unresolved Parent
-        see note
     references: str (optional)
         Discovery references of sources
     comments: str (optional)
         Comments
-    other_companion_names: comma separated name (optional)
+    other_companion_names: comma separated names (optional)
         other names used to identify the companion
         ex:  'HD 89744, NLTT 24128, GJ 9326'
 
@@ -1509,7 +1509,7 @@ def ingest_companion_relationships(db, source, companion_name, projected_separat
 
  """
     # checking relationship entered
-    possible_relationships = ['Child', 'Sibling', 'Parent', 'Unresolved Parent']
+    possible_relationships = ['Child', 'Sibling', 'Parent', 'Unresolved Parent', None]
     # check captialization
     if relationship.title() != relationship:
         logger.info(f"Relationship captilization changed from {relationship} to {relationship.title()} ")
