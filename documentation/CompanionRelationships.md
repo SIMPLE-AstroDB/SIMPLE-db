@@ -13,9 +13,10 @@ Columns marked with an asterisk (*) may not be empty.
 | relationship    | Relationship of source to companion. See Notes below. |  | String(100)  |   |
 | comments      | Free form comments |   | String(1000) |   |
 | reference     | Reference |   | String(30) | foreign: Publications.name |
+| comments      | Comma separated names  |   | String(1000) |   |
 
 ## Notes
-Relationships are not currently constrained but should be one of the following:
+Relationships are constrained but should be one of the following:
 - *Child*: The source is lower mass/fainter than the companion
 - *Sibling*: The source is similar to the companion
 - *Parent*: The source is higher mass/brighter than the companion
