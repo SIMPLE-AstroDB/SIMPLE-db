@@ -164,10 +164,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
                     n_skipped += 1
                     msg = f"{i}: Skipping: {source}. Coordinates are needed and could not be retrieved from SIMBAD. \n"
                     logger.warning(msg)
-                    if raise_error:
-                        raise SimpleError(msg)
-                    else:
-                        continue
+                    raise SimpleError(msg)
                 elif len(simbad_result_table) == 1:
                     simbad_coords = simbad_result_table['RA'][0] + ' ' + simbad_result_table['DEC'][0]
                     simbad_skycoord = SkyCoord(simbad_coords, unit=(u.hourangle, u.deg))
@@ -181,10 +178,8 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
                     n_skipped += 1
                     msg = f"{i}: Skipping: {source}. Coordinates are needed and could not be retrieved from SIMBAD. \n"
                     logger.warning(msg)
-                    if raise_error:
-                        raise SimpleError(msg)
-                    else:
-                        continue
+                    raise SimpleError(msg)
+                    
 
             logger.debug(f"{i}: Ingesting {source}. Not already in database. ")
         else:
@@ -1519,6 +1514,25 @@ def ingest_companion_relationships(db, source, companion_name, relationship,
         logger.error(msg)
         raise SimpleError(msg)
          
+    # source canot be same as companion
+    if source == companion_name:
+        msg = f"{source}: Source cannot be the same as companion name"
+        logger.error(msg)
+        raise SimpleError(msg)
+    
+    if source == companion_name:
+        msg = f"{source}: Source cannot be the same as companion name"
+        logger.error(msg)
+        raise SimpleError(msg)
+    
+    if projected_separation_arcsec != None and projected_separation_arcsec < 0:
+        msg = f"Projected separation: {projected_separation_arcsec}, cannot be negative"
+        logger.error(msg)
+        raise SimpleError(msg)
+    if projected_separation_error != None and projected_separation_error < 0:
+        msg = f"Projected separation error: {projected_separation_error}, cannot be negative"
+        logger.error(msg)
+        raise SimpleError(msg)
 
     # check other names
     ## make sure companion name is included in the list  
@@ -1544,8 +1558,8 @@ def ingest_companion_relationships(db, source, companion_name, relationship,
                 'other_companion_names': other_companion_names}))
             conn.commit()
         logger.info(f"ComapnionRelationship added: ",
-                    [source, companion_name, projected_separation_arcsec, \
-                    projected_separation_error, relationship, comment, ref])
+                    [source, companion_name, relationship, projected_separation_arcsec, \
+                    projected_separation_error, comment, ref])
     except sqlalchemy.exc.IntegrityError as e:
         if 'UNIQUE constraint failed:' in str(e):
             msg = "The companion may be a duplicate."
@@ -1553,9 +1567,9 @@ def ingest_companion_relationships(db, source, companion_name, relationship,
             raise SimpleError(msg)
         
         else:
-            msg = "The source may not exist in Sources table \n" \
-                "or the reference may not exist in the Publications table. " \
-                "Add it with add_publication function. \n"
+            msg = ("Make sure all require parameters are provided. \\"
+                "Other possible errors: source may not exist in Sources table \\" \
+                "or the reference may not exist in the Publications table. " )
             logger.error(msg)
             raise SimpleError(msg)
 
