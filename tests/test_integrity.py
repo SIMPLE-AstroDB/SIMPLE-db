@@ -565,13 +565,6 @@ def test_database_views(db):
     # Check view is not part of inventory
     assert 'ParallaxView' not in db.inventory('2MASSI J0019457+521317').keys()
                     
-def test_remove_database(db):
-    # Clean up temporary database
-    db.session.close()
-    db.engine.dispose()
-    if os.path.exists(DB_NAME):
-        os.remove(DB_NAME)
-
 def test_companion_relationship(db):
     # There should be no entries without a companion name
     t = db.query(db.CompanionRelationships.c.source). \
@@ -582,47 +575,47 @@ def test_companion_relationship(db):
         print(t)
     assert len(t) == 0
 
-    # # There should be no entries a companion name thats the same as the source
-    # t = db.query(db.CompanionRelationships.c.source). \
-    #        filter(db.CompanionRelationships.c.companion_name == db.CompanionRelationships.c.source). \
-    #        astropy()
-    # if len(t) > 0:
-    #     print('\nCompanion name cannot be source name')
-    #     print(t)
-    # assert len(t) == 0
+    # There should be no entries a companion name thats the same as the source
+    t = db.query(db.CompanionRelationships.c.source). \
+           filter(db.CompanionRelationships.c.companion_name == db.CompanionRelationships.c.source). \
+           astropy()
+    if len(t) > 0:
+        print('\nCompanion name cannot be source name')
+        print(t)
+    assert len(t) == 0
 
-    # # check no negative separations or error
-    # ## first separtation
-    # t = db.query(db.CompanionRelationships). \
-    #     filter(and_(db.CompanionRelationships.c.projected_separation_arcsec != None, 
-    #                 db.CompanionRelationships.c.projected_separation_arcsec < 0)).astropy()
+    # check no negative separations or error
+    ## first separtation
+    t = db.query(db.CompanionRelationships). \
+        filter(and_(db.CompanionRelationships.c.projected_separation_arcsec != None, 
+                    db.CompanionRelationships.c.projected_separation_arcsec < 0)).astropy()
 
-    # if len(t) > 0:
-    #     print('\n Negative projected separations')
-    #     print(t)
-    # assert len(t) == 0
+    if len(t) > 0:
+        print('\n Negative projected separations')
+        print(t)
+    assert len(t) == 0
 
-    # ## separation error
-    # t = db.query(db.CompanionRelationships). \
-    #     filter(and_(db.CompanionRelationships.c.projected_separation_error != None,
-    #                  db.CompanionRelationships.c.projected_separation_error < 0)). \
-    #     astropy()
+    ## separation error
+    t = db.query(db.CompanionRelationships). \
+        filter(and_(db.CompanionRelationships.c.projected_separation_error != None,
+                     db.CompanionRelationships.c.projected_separation_error < 0)). \
+        astropy()
     
-    # if len(t) > 0:
-    #     print('\n Negative projected separations')
-    #     print(t)
-    # assert len(t) == 0
+    if len(t) > 0:
+        print('\n Negative projected separations')
+        print(t)
+    assert len(t) == 0
 
-    # # test correct relationship 
-    # possible_relationships = ['Child', 'Sibling', 'Parent', 'Unresolved Parent']
-    # t = db.query(db.CompanionRelationships). \
-    #     filter(~db.CompanionRelationships.c.relationship.in_(possible_relationships)). \
-    #     astropy()
-    # if len(t) > 0:
-    #     print('\n relationship is of the souce to its companion \
-    #         should be one of the following: Child, Sibling, Parent, or Unresolved Parent')
-    #     print(t)
-    # assert len(t) == 0
+    # test correct relationship 
+    possible_relationships = ['Child', 'Sibling', 'Parent', 'Unresolved Parent']
+    t = db.query(db.CompanionRelationships). \
+        filter(~db.CompanionRelationships.c.relationship.in_(possible_relationships)). \
+        astropy()
+    if len(t) > 0:
+        print('\n relationship is of the souce to its companion \
+            should be one of the following: Child, Sibling, Parent, or Unresolved Parent')
+        print(t)
+    assert len(t) == 0
 
 
 def test_companion_relationship_uniqueness(db):
@@ -648,6 +641,7 @@ def test_companion_relationship_uniqueness(db):
     assert len(non_unique) == 0
 
 def test_names_uniqueness(db):
+
     # Verify that all Names.other_name values are unique
     sql_text = "SELECT Names.other_name FROM Names GROUP BY other_name " \
                "HAVING (Count(*) > 1)"
@@ -659,3 +653,11 @@ def test_names_uniqueness(db):
         print(duplicate_names)
 
     assert len(duplicate_names) == 0
+
+
+def test_remove_database(db):
+    # Clean up temporary database
+    db.session.close()
+    db.engine.dispose()
+    if os.path.exists(DB_NAME):
+        os.remove(DB_NAME)
