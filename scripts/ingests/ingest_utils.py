@@ -131,6 +131,8 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
             name_matches = []
         else:
             name_matches = None
+            ra = None
+            dec = None
 
         if len(name_matches) == 1 and search_db:  # Source is already in database
             n_existing += 1
@@ -143,6 +145,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
                 #add other name to names table
                 ingest_names(db, name_matches[0], source)
                 n_alt_names += 1
+            continue 
         elif len(name_matches) > 1 and search_db:  # Multiple source matches in the database
             n_multiples += 1
             msg1 = f"{i} Skipping {source} "
@@ -162,9 +165,14 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
                 simbad_result_table = Simbad.query_object(source)
                 if simbad_result_table is None:
                     n_skipped += 1
+                    ra = None
+                    dec = None
                     msg = f"{i}: Skipping: {source}. Coordinates are needed and could not be retrieved from SIMBAD. \n"
                     logger.warning(msg)
-                    raise SimpleError(msg)
+                    if raise_error:
+                        raise SimpleError(msg)
+                    else:
+                        continue
                 elif len(simbad_result_table) == 1:
                     simbad_coords = simbad_result_table['RA'][0] + ' ' + simbad_result_table['DEC'][0]
                     simbad_skycoord = SkyCoord(simbad_coords, unit=(u.hourangle, u.deg))
@@ -176,10 +184,14 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
                     logger.debug(msg)
                 else:
                     n_skipped += 1
+                    ra = None
+                    dec = None
                     msg = f"{i}: Skipping: {source}. Coordinates are needed and could not be retrieved from SIMBAD. \n"
                     logger.warning(msg)
-                    raise SimpleError(msg)
-                    
+                    if raise_error:
+                        raise SimpleError(msg)
+                    else:
+                        continue
 
             logger.debug(f"{i}: Ingesting {source}. Not already in database. ")
         else:
@@ -243,9 +255,7 @@ def ingest_sources(db, sources, references=None, ras=None, decs=None, comments=N
 
         # Try to add the source name to the Names table
         try:
-            with db.engine.connect() as conn:
-                ingest_names(db,  source, source)
-            logger.debug(f"Name added to database: {names_data}\n")
+            ingest_names(db, source, source)
             n_names += 1
         except sqlalchemy.exc.IntegrityError:
             msg = f"{i}: Could not add {names_data} to database"
