@@ -13,7 +13,7 @@ Columns marked with an asterisk (*) may not be empty.
 | relationship    | Relationship of source to companion. See Notes below. |  | String(100)  |   |
 | comments      | Free form comments |   | String(1000) |   |
 | reference     | Reference |   | String(30) | foreign: Publications.name |
-| comments      | Comma separated names  |   | String(1000) |   |
+| other_companion_names      | Comma separated names  |   | String(1000) |   |
 
 ## Notes
 Relationships are constrained but should be one of the following:
