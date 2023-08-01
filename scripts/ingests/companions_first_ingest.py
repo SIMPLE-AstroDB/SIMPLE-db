@@ -61,3 +61,6 @@ for row in companions:
 
 
 
+# WRITE THE JSON FILES
+if SAVE_DB:
+    db.save_database(directory='data/')
