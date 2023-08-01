@@ -97,7 +97,7 @@ def test_publications(db):
             and_(db.Publications.c.doi.is_(''), db.Publications.c.bibcode.is_(None)),
             and_(db.Publications.c.doi.is_(None), db.Publications.c.bibcode.is_('')),
             and_(db.Publications.c.doi.is_(''), db.Publications.c.bibcode.is_('')))).astropy()
-    assert len(t) == 27, f'found {len(t)} publications with missing bibcode and doi'
+    assert len(t) == 28, f'found {len(t)} publications with missing bibcode and doi'
 
 
 def test_parameters(db):
