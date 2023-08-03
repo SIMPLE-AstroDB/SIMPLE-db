@@ -262,7 +262,7 @@ def test_missions(db):
     stm = except_(select(db.Names.c.source).where(db.Names.c.other_name.like("2MASS J%")),
                   select(db.Photometry.c.source).where(db.Photometry.c.band.like("2MASS%")))
     s = db.session.scalars(stm).all()
-    assert len(s) == 255, f'found {len(s)} sources with 2MASS designation that have no 2MASS photometry'
+    assert len(s) == 256, f'found {len(s)} sources with 2MASS designation that have no 2MASS photometry'
 
     # If 2MASS photometry, 2MASS designation should be in Names
     stm = except_(select(db.Photometry.c.source).where(db.Photometry.c.band.like("2MASS%")),

@@ -12,6 +12,7 @@ from astrodbkit2.astrodb import Base
 from astrodbkit2.views import view
 
 
+
 # -------------------------------------------------------------------------------------------------------------------
 # Reference tables
 class Publications(Base):
@@ -256,6 +257,20 @@ class ModeledParameters(Base):
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'), primary_key=True)
 
 
+class CompanionRelationships(Base):
+    # Table to store information about companions
+    __tablename__ = 'CompanionRelationships'
+    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
+                    nullable=False, primary_key=True)
+    companion_name = Column(String(100), nullable=False, primary_key=True)
+    projected_separation_arcsec = Column(Float)
+    projected_separation_error = Column(Float)
+    relationship = Column(String(100), nullable=False) # Relationship of source to companion. 
+                                                       # Options: Child, Sibling, Parent, Unresolved Parent
+    comments = Column(String(1000))
+    reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'))
+    other_companion_names = Column(String(10000)) # other names of the companions 
+
 # -------------------------------------------------------------------------------------------------------------------
 # Views
 
@@ -292,3 +307,7 @@ PhotometryView = view(
     ).select_from(Photometry)
     .group_by(Photometry.source)
 )
+
+
+
+

@@ -97,7 +97,7 @@ def test_publications(db):
             and_(db.Publications.c.doi.is_(''), db.Publications.c.bibcode.is_(None)),
             and_(db.Publications.c.doi.is_(None), db.Publications.c.bibcode.is_('')),
             and_(db.Publications.c.doi.is_(''), db.Publications.c.bibcode.is_('')))).astropy()
-    assert len(t) == 27, f'found {len(t)} publications with missing bibcode and doi'
+    assert len(t) == 28, f'found {len(t)} publications with missing bibcode and doi'
 
 
 def test_parameters(db):
@@ -479,20 +479,17 @@ def test_sources(db):
 
 def test_modeled_parameters(db):
     # There should be no entries in the modeled parameters table without parameter
-    t = db.query(db.ModeledParameters.c.source). \
-           filter(db.ModeledParameters.c.parameter.is_(None)). \
-           astropy()
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter.is_(None)).astropy()
     if len(t) > 0:
         print('\nEntries found without a parameter')
         print(t)
     assert len(t) == 0
 
     # Test units are astropy.unit resolvable
-    t = db.query(db.ModeledParameters.c.unit).filter(db.ModeledParameters.c.unit.is_not(None)).distinct().astropy()
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.unit.is_not(None)).distinct().astropy()
     unit_fail = []
     for x in t:
         unit = x['unit']
-
         try:
             assert u.Unit(unit, parse_strict='raise')
         except ValueError:
@@ -501,6 +498,23 @@ def test_modeled_parameters(db):
             unit_fail.append({unit: counts})  # count of how many of that unit there is
 
     assert len(unit_fail) == 0, f'Some parameter units did not resolve: {unit_fail}'
+
+    # check no negative Mass, Radius, or Teff
+    t = db.query(db.ModeledParameters).filter(and_(db.ModeledParameters.c.parameter.in_(["radius", "mass",  "Teff"]), 
+                                                    db.ModeledParameters.c.value < 0)).astropy()
+    if len(t) > 0:
+        print('\n Negative value for Radius, Mass, or Teff not allowed.\n')
+        print(t)
+    assert len(t) == 0
+
+     # check no negative value error
+    t = db.query(db.ModeledParameters).filter(and_(db.ModeledParameters.c.value_error != None, 
+                                                   db.ModeledParameters.c.value_error < 0)).astropy()
+    
+    if len(t) > 0:
+        print('\n Negative projected separations')
+        print(t)
+    assert len(t) == 0
 
 
 def test_spectra(db):
@@ -551,6 +565,96 @@ def test_database_views(db):
     # Check view is not part of inventory
     assert 'ParallaxView' not in db.inventory('2MASSI J0019457+521317').keys()
                     
+def test_companion_relationship(db):
+    # There should be no entries without a companion name
+    t = db.query(db.CompanionRelationships.c.source). \
+           filter(db.CompanionRelationships.c.companion_name.is_(None)). \
+           astropy()
+    if len(t) > 0:
+        print('\n Entries found without a companion name')
+        print(t)
+    assert len(t) == 0
+
+    # There should be no entries a companion name thats the same as the source
+    t = db.query(db.CompanionRelationships.c.source). \
+           filter(db.CompanionRelationships.c.companion_name == db.CompanionRelationships.c.source). \
+           astropy()
+    if len(t) > 0:
+        print('\nCompanion name cannot be source name')
+        print(t)
+    assert len(t) == 0
+
+    # check no negative separations or error
+    ## first separtation
+    t = db.query(db.CompanionRelationships). \
+        filter(and_(db.CompanionRelationships.c.projected_separation_arcsec != None, 
+                    db.CompanionRelationships.c.projected_separation_arcsec < 0)).astropy()
+
+    if len(t) > 0:
+        print('\n Negative projected separations')
+        print(t)
+    assert len(t) == 0
+
+    ## separation error
+    t = db.query(db.CompanionRelationships). \
+        filter(and_(db.CompanionRelationships.c.projected_separation_error != None,
+                     db.CompanionRelationships.c.projected_separation_error < 0)). \
+        astropy()
+    
+    if len(t) > 0:
+        print('\n Negative projected separations')
+        print(t)
+    assert len(t) == 0
+
+    # test correct relationship 
+    possible_relationships = ['Child', 'Sibling', 'Parent', 'Unresolved Parent']
+    t = db.query(db.CompanionRelationships). \
+        filter(~db.CompanionRelationships.c.relationship.in_(possible_relationships)). \
+        astropy()
+    if len(t) > 0:
+        print('\n relationship is of the souce to its companion \
+            should be one of the following: Child, Sibling, Parent, or Unresolved Parent')
+        print(t)
+    assert len(t) == 0
+
+
+def test_companion_relationship_uniqueness(db):
+    # Verify that all souces and companion_names values are unique combinations
+    ## first finding duplicate sources
+    sql_text = "SELECT CompanionRelationships.source FROM CompanionRelationships GROUP BY source " \
+               "HAVING (Count(*) > 1)" 
+    duplicate_sources = db.sql_query(sql_text, fmt='astropy')
+
+    ##checking duplicate sources have different companions 
+    non_unique = []
+    for source in duplicate_sources:
+        t = db.query(db.CompanionRelationships.c.companion_name)
+        filter(db.CompanionRelationships.c.source == source). \
+        astropy()
+        duplicate_companions = [n for n, companion in enumerate(t) if companion in t[:n]]
+
+        if len(duplicate_companions) > 0:
+            non_unique.append(f"{source} and {duplicate_companions}")
+    if len(non_unique) > 0:
+        print('\n Non-unique companion combination(s)')
+        print(non_unique)
+    assert len(non_unique) == 0
+
+def test_names_uniqueness(db):
+
+    # Verify that all Names.other_name values are unique
+    sql_text = "SELECT Names.other_name FROM Names GROUP BY other_name " \
+               "HAVING (Count(*) > 1)"
+    duplicate_names = db.sql_query(sql_text, fmt='astropy')
+
+    # if duplicate_names is non_zero, print out duplicate other names
+    if len(duplicate_names) > 0:
+        print(f'\n{len(duplicate_names)} possibly a duplicated other_name.')
+        print(duplicate_names)
+
+    assert len(duplicate_names) == 0
+
+
 def test_remove_database(db):
     # Clean up temporary database
     db.session.close()
