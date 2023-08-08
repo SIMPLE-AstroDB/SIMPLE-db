@@ -262,7 +262,7 @@ def test_missions(db):
     stm = except_(select(db.Names.c.source).where(db.Names.c.other_name.like("2MASS J%")),
                   select(db.Photometry.c.source).where(db.Photometry.c.band.like("2MASS%")))
     s = db.session.scalars(stm).all()
-    assert len(s) == 255, f'found {len(s)} sources with 2MASS designation that have no 2MASS photometry'
+    assert len(s) == 256, f'found {len(s)} sources with 2MASS designation that have no 2MASS photometry'
 
     # If 2MASS photometry, 2MASS designation should be in Names
     stm = except_(select(db.Photometry.c.source).where(db.Photometry.c.band.like("2MASS%")),
@@ -322,11 +322,11 @@ def test_spectra(db):
 
     regime = 'nir'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 458, f'found {len(t)} spectra in the {regime} regime'
+    assert len(t) == 459, f'found {len(t)} spectra in the {regime} regime'
 
     regime = 'mir'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 203, f'found {len(t)} spectra in the {regime} regime'
+    assert len(t) == 204, f'found {len(t)} spectra in the {regime} regime'
 
     telescope = 'IRTF'
     t = db.query(db.Spectra).filter(db.Spectra.c.telescope == telescope).astropy()

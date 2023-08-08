@@ -261,3 +261,26 @@ def test_ingest_instrument(db):
 # TODO: test for ingest_photometry
 
 # TODO: test for ingest_spectra
+
+def test_companion_relationships(db):
+# testing companion ingest
+## trying no companion 
+    with pytest.raises(SimpleError) as error_message:
+        ingest_companion_relationships(db, 'Fake 1', None, "Sibling" )
+    assert "Make sure all require parameters are provided." in str(error_message.value)
+
+    ## trying companion == source
+    with pytest.raises(SimpleError) as error_message:
+        ingest_companion_relationships(db, 'Fake 1',  'Fake 1', "Sibling" )
+    assert "Source cannot be the same as companion name"  in str(error_message.value)
+
+    ## trying negative separation
+    with pytest.raises(SimpleError) as error_message:
+        ingest_companion_relationships(db, 'Fake 1', 'Bad Companion', "Sibling", projected_separation_arcsec = -5)
+    assert 'cannot be negative' in str(error_message.value)
+
+    ## trying negative separation error
+    with pytest.raises(SimpleError) as error_message:
+        ingest_companion_relationships(db, 'Fake 1', 'Bad Companion', "Sibling" , projected_separation_error = -5)
+    assert 'cannot be negative' in str(error_message.value)
+    
