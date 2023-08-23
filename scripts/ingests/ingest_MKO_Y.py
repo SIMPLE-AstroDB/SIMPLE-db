@@ -2,16 +2,6 @@ from scripts.ingests.ingest_utils import *
 from astropy.utils.exceptions import AstropyWarning
 import pandas as pd
 
-warnings.simplefilter('ignore', category=AstropyWarning)
-
-SAVE_DB = True  # save the data files in addition to modifying the .db file
-RECREATE_DB = True  # recreates the .db file from the data files
-
-UCS = pd.read_csv('scripts/ingests/UltracoolSheet-Main.csv')
-
-db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
-
-logger.setLevel(logging.INFO)  # Can also set to debug
 
 def references(data_ref):
     # changes reference of the data sheet in the appropriate format used in database
@@ -63,12 +53,14 @@ def references(data_ref):
     return ref
 
 
-def photometry_mko(db, data):
+def photometry_mko(db, entry):
     # uses reference to determine the instrument used for photometry
-    ref = references(data['ref_Y_MKO'])
+    band = ''
+    tel = ''
+    ref = references(entry['ref_Y_MKO'])
     name_skip = []
-    mag = data['Y_MKO']
-    mag_err = data['Yerr_MKO']
+    mag = entry['Y_MKO']
+    mag_err = entry['Yerr_MKO']
 
     wircam_ref_list = ['Albe11', 'Delo08.961', 'Delo12', 'Dupu19', 'Naud14']
     wircam_name_list = ['ULAS J115038.79+094942.9']
@@ -82,7 +74,7 @@ def photometry_mko(db, data):
     visao_ref_list = ['Male14']
     ufti_name_list = ['ULAS J133502.11+150653.5']
 
-    if ref in wircam_ref_list or data['name'] in wircam_name_list:
+    if ref in wircam_ref_list or entry['name'] in wircam_name_list:
         band = 'Wircam.Y'
         tel = 'CFHT'
     if ref in wfcam_ref_list:
@@ -101,40 +93,44 @@ def photometry_mko(db, data):
         band = 'VisAO.Ys'
         tel = 'LCO'
     if ref == 'Burn09':
-        # data taken from table in reference
+        # entry taken from table in reference
         mag = 19.020
         mag_err = 0.080
         band = 'WFCAM.Y'
         tel = 'UKIRT'
     if ref == 'Burn13':
-        if data['name'] in ufti_name_list:
+        if entry['name'] in ufti_name_list:
             band = 'UFTI.Y'
             tel = 'UKIRT'
         else:
             band = 'WFCAM.Y'
             tel = 'UKIRT'
     if ref == 'Deac14.119':
-        if data['name'] in wfcam_name_list:
+        if entry['name'] in wfcam_name_list:
             band = 'WFCAM.Y'
             tel = 'UKIRT'
         else:
             band = 'VISTA.Y'
             tel = 'VISTA'
     else:
-        name_skip.append(data['name'])
+        name_skip.append(entry['name'])
 
-    if data['name'] not in name_skip:
-        ingest_photometry(db=db, sources=data['name'], bands=band, magnitudes=mag,
+    if entry['name'] not in name_skip:
+        ingest_photometry(db=db, sources=entry['name'], bands=band, magnitudes=mag,
                           magnitude_errors=mag_err, telescope=tel, reference=ref)
 
 
 # Adding UKIDSS names
-def add_ukidss_names(db):
+def add_ukidss_names(db, entry):
     if entry['designation_ukidss'] == 'null':
         pass
     else:
-        other_name_data = [{'source': entry['name'], 'other_name': entry['designation_ukidss']}]
-        db.Names.insert().execute(other_name_data)
+        # other_name_data = [{'source': entry['name'], 'other_name': entry['designation_ukidss']}]
+        try:
+            ingest_names(db, entry['name'], entry['designation_ukidss'])
+        except SimpleError:
+            pass
+        # conn.execute(db.Names.insert().values(other_name_data))
 
     # if entry['designation_WISE'] == 'null':
     #     pass
@@ -146,68 +142,93 @@ def add_ukidss_names(db):
 # You may need to add filters to the Photometry Filters table
 # https://github.com/SIMPLE-AstroDB/SIMPLE-db/blob/main/documentation/PhotometryFilters.md
 def add_filters(db):
-    lco_telescope = [{'name': 'LCO'}]
-    db.Telescopes.insert().execute(lco_telescope)
+    with db.engine.connect() as conn:
+        lco_telescope = [{'telescope': 'LCO'}]
+        conn.execute(db.Telescopes.insert().values(lco_telescope))
 
-    wircam_instrument = [{'name': 'Wircam',
-                          'mode': 'Imaging',
-                          'telescope': 'CFHT'}]
-    db.Instruments.insert().execute(wircam_instrument)
+        wircam_instrument = [{'instrument': 'Wircam',
+                              'mode': 'Imaging',
+                              'telescope': 'CFHT'}]
+        conn.execute(db.Instruments.insert().values(wircam_instrument))
 
-    niri_instrument = [{'name': 'NIRI',
-                        'mode': 'Imaging',
-                        'telescope': 'Gemini North'}]
-    db.Instruments.insert().execute(niri_instrument)
+        niri_instrument = [{'instrument': 'NIRI',
+                            'mode': 'Imaging',
+                            'telescope': 'Gemini North'}]
+        conn.execute(db.Instruments.insert().values(niri_instrument))
 
-    gpi_instrument = [{'name': 'GPI',
-                       'mode': 'Imaging',
-                       'telescope': 'Gemini South'}]
-    db.Instruments.insert().execute(gpi_instrument)
+        gpi_instrument = [{'instrument': 'GPI',
+                           'mode': 'Imaging',
+                           'telescope': 'Gemini South'}]
+        conn.execute(db.Instruments.insert().values(gpi_instrument))
 
-    visao_instrument = [{'name': 'VisAO',
-                         'mode': 'Imaging',
-                         'telescope': 'LCO'}]
-    db.Instruments.insert().execute(visao_instrument)
+        visao_instrument = [{'instrument': 'VisAO',
+                             'mode': 'Imaging',
+                             'telescope': 'LCO'}]
+        conn.execute(db.Instruments.insert().values(visao_instrument))
 
-    wircam_y = [{'band': 'Wircam.Y',
-                 'ucd': 'em.IR.NIR',
-                 'effective_wavelength': '10220.90',
-                 'width': '1084.17'}]
+        wircam_y = [{'band': 'Wircam.Y',
+                     'ucd': 'em.IR.NIR',
+                     'effective_wavelength': '10220.90',
+                     'width': '1084.17'}]
 
-    db.PhotometryFilters.insert().execute(wircam_y)
+        conn.execute(db.PhotometryFilters.insert().values(wircam_y))
 
-    niri_y = [{'band': 'NIRI.Y',
-               'ucd': 'em.IR.NIR',
-               'effective_wavelength': '10211.18',
-               'width': '943.58'}]
+        niri_y = [{'band': 'NIRI.Y',
+                   'ucd': 'em.IR.NIR',
+                   'effective_wavelength': '10211.18',
+                   'width': '943.58'}]
 
-    db.PhotometryFilters.insert().execute(niri_y)
+        conn.execute(db.PhotometryFilters.insert().values(niri_y))
 
-    gpi_y = [{'band': 'GPI.Y',
-              'ucd': 'em.IR.NIR',
-              'effective_wavelength': '10375.56',
-              'width': '1707.30'}]
+        gpi_y = [{'band': 'GPI.Y',
+                  'ucd': 'em.IR.NIR',
+                  'effective_wavelength': '10375.56',
+                  'width': '1707.30'}]
 
-    db.PhotometryFilters.insert().execute(gpi_y)
+        conn.execute(db.PhotometryFilters.insert().values(gpi_y))
 
-    visao_ys = [{'band': 'VisAO.Ys',
-                 'ucd': 'em.IR.NIR',
-                 'effective_wavelength': '9793.50',
-                 'width': '907.02'}]
+        visao_ys = [{'band': 'VisAO.Ys',
+                     'ucd': 'em.IR.NIR',
+                     'effective_wavelength': '9793.50',
+                     'width': '907.02'}]
 
-    db.PhotometryFilters.insert().execute(visao_ys)
+        conn.execute(db.PhotometryFilters.insert().values(visao_ys))
+
+        conn.commit()
+    return
 
 
-# Execute the ingests!
-add_filters(db)
-for i in range(len(UCS)):
-    entry = UCS.iloc[i]
-    if entry['Y_MKO'] == 'NaN' or entry['Yerr_MKO'] == 'NaN':
-        pass
-    else:
-        add_ukidss_names(db)
-        photometry_mko(db, entry)
+def main():
+    db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
-# WRITE THE JSON FILES
-if SAVE_DB:
-    db.save_database(directory='data/')
+    if RECREATE_DB:
+        db.load_database('data/')
+
+    # Execute the ingests!
+    add_filters(db)
+    for i in range(len(UCS)):
+        entry = UCS.iloc[i]
+
+        if entry['Y_MKO'] == 'NaN' or entry['Yerr_MKO'] == 'NaN':
+            pass
+
+        else:
+            add_ukidss_names(db, entry)
+            photometry_mko(db, entry)
+
+    # WRITE THE JSON FILES
+    if SAVE_DB:
+        db.save_database(directory='data/')
+    return
+
+
+if __name__ == '__main__':
+    warnings.simplefilter('ignore', category=AstropyWarning)
+    logger.setLevel(logging.INFO)  # Can also set to debug
+
+    SAVE_DB = True  # save the data files in addition to modifying the .db file
+    RECREATE_DB = True  # recreates the .db file from the data files
+
+    UCS = pd.read_csv('scripts/ingests/UltracoolSheet-Main.csv')
+
+    main()
