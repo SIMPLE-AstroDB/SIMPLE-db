@@ -2,6 +2,17 @@ from scripts.ingests.ingest_utils import *
 from astropy.utils.exceptions import AstropyWarning
 import pandas as pd
 
+warnings.simplefilter('ignore', category=AstropyWarning)
+
+SAVE_DB = False  # save the data files in addition to modifying the .db file
+RECREATE_DB = True  # recreates the .db file from the data files
+
+df = pd.read_csv('scripts/ingests/UltracoolSheet-Main.csv')
+
+db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
+
+logger.setLevel(logging.INFO)  # Can also set to debug
+
 
 def references(data_ref):
     # changes reference of the data sheet in the appropriate format used in database
@@ -53,98 +64,113 @@ def references(data_ref):
     return ref
 
 
-def photometry_mko(db, entry):
-    # uses reference to determine the instrument used for photometry
-    band = ''
-    tel = ''
-    ref = references(entry['ref_Y_MKO'])
-    name_skip = []
-    mag = entry['Y_MKO']
-    mag_err = entry['Yerr_MKO']
+def photometry_mko(data):
+    # Uses reference to determine the band and telescope used for photometry
+    ref = references(data['ref_Y_MKO'])
+    mag = data['Y_MKO']
+    mag_err = data['Yerr_MKO']
+    band = None
+    tel = None
 
-    wircam_ref_list = ['Albe11', 'Delo08.961', 'Delo12', 'Dupu19', 'Naud14']
+    wircam_ref_list = ['Albe11', 'Delo08.961', 'Delo12', 'Dupu19', 'Liu_16', 'Naud14']
     wircam_name_list = ['ULAS J115038.79+094942.9']
     wfcam_ref_list = ['Burn08', 'Burn14', 'Card15', 'Deac11.6319', 'Deac12.100', 'Deac17.1126', 'Lawr07', 'Lawr12',
                       'Liu_13.20', 'Lodi07.372', 'Luca10', 'Pinf08', 'Warr07.1400']
     wfcam_name_list = ['HD 253662B', 'NLTT 27966B']
-    niri_ref_list = ['Dupu15.102', 'Lach15', 'Legg13', 'Legg15', 'Legg16', 'Liu_12']
+    niri_ref_list = ['Dupu15.102', 'Legg13', 'Legg15', 'Legg16', 'Liu_12']
     vista_ref_list = ['Edge16', 'Gauz12', 'Kell16', 'McMa13', 'Minn17', 'Lodi12.53', 'Lodi13.2474', 'Pena11', 'Pena12',
                       'Smit18']
     gpi_ref_list = ['Garc17.162']
     visao_ref_list = ['Male14']
-    ufti_name_list = ['ULAS J133502.11+150653.5']
+    ufti_name_list = ['ULAS J133502.11+150653.5', 'ULAS J115338.74-014724.1', 'ULAS J120257.05+090158.8',
+                      'ULAS J120744.65+133902.7', 'ULAS J123327.45+121952.2', 'ULAS J130217.21 + 130851.2',
+                      'ULAS J131943.77 + 120900.2', 'ULAS J134940.81 + 091833.3', 'ULAS J135607.41 + 085345.2',
+                      'ULAS J144555.24 + 125735.1', 'ULAS J145935.25 + 085751.2', 'ULAS J230601.02 + 130225.0',
+                      'ULAS J231557.61 + 132256.2', 'ULAS J232035.28+144829.8', 'ULAS J232123.79+135454.9',
+                      'ULAS J232802.03+134544.8', 'ULAS J234827.94+005220.5']
 
-    if ref in wircam_ref_list or entry['name'] in wircam_name_list:
+    if ref in wircam_ref_list or data['name'] in wircam_name_list:
         band = 'Wircam.Y'
         tel = 'CFHT'
-    if ref in wfcam_ref_list:
+    elif ref in wfcam_ref_list:
         band = 'WFCAM.Y'
         tel = 'UKIRT'
-    if ref in niri_ref_list:
+    elif ref in niri_ref_list:
         band = 'NIRI.Y'
         tel = 'Gemini North'
-    if ref in vista_ref_list:
+    elif ref in vista_ref_list:
         band = 'VISTA.Y'
         tel = 'VISTA'
-    if ref in gpi_ref_list:
+    elif ref in gpi_ref_list:
         band = 'GPI.Y'
         tel = 'Gemini South'
-    if ref in visao_ref_list:
+    elif ref in visao_ref_list:
         band = 'VisAO.Ys'
         tel = 'LCO'
-    if ref == 'Burn09':
-        # entry taken from table in reference
-        mag = 19.020
-        mag_err = 0.080
+    elif ref == 'Burn09':
+        # Data taken from table in reference
+        mag = '19.020'
+        mag_err = '0.080'
         band = 'WFCAM.Y'
         tel = 'UKIRT'
-    if ref == 'Burn13':
-        if entry['name'] in ufti_name_list:
+    elif ref == 'Burn10.1885' or ref == 'Burn13':
+        if data['name'] in ufti_name_list:
             band = 'UFTI.Y'
             tel = 'UKIRT'
         else:
             band = 'WFCAM.Y'
             tel = 'UKIRT'
-    if ref == 'Deac14.119':
-        if entry['name'] in wfcam_name_list:
+    elif ref == 'Deac14.119':
+        if data['name'] in wfcam_name_list:
             band = 'WFCAM.Y'
             tel = 'UKIRT'
         else:
             band = 'VISTA.Y'
             tel = 'VISTA'
-    else:
-        name_skip.append(entry['name'])
 
-    if entry['name'] not in name_skip:
-        ingest_photometry(db=db, sources=entry['name'], bands=band, magnitudes=mag,
-                          magnitude_errors=mag_err, telescope=tel, reference=ref)
+    return data['name'], band, str(mag), str(mag_err), tel, ref
+
+def ingest_mko(db,data):
+    source, band, mag, mag_err, tel, ref = photometry_mko(data)
+    if band or tel is not None:
+        photometry_data = [{'source': source,
+                            'band': band,
+                            'magnitude': mag,
+                            'magnitude_error': mag_err,
+                            'telescope': tel,
+                            'reference': ref}]
+        try:
+            with db.engine.connect() as conn:
+                conn.execute(db.Photometry.insert().values(photometry_data))
+                conn.commit()
+        except sqlalchemy.exc.IntegrityError as e:
+            if 'UNIQUE constraint failed:' in str(e):
+                logger.warning('Duplicate')
+            elif 'FOREIGN KEY constraint failed' in str(e):
+                logger.error(f'Cannot ingest source {source}')
+            else:
+                logger.error(str(e))
 
 
 # Adding UKIDSS names
-def add_ukidss_names(db, entry):
-    if entry['designation_ukidss'] == 'null':
-        pass
-    else:
-        # other_name_data = [{'source': entry['name'], 'other_name': entry['designation_ukidss']}]
+def add_ukidss_names(db, data):
+    if pd.notna(data['designation_ukidss']):
+        other_name_data = [{'source': data['name'], 'other_name': data['designation_ukidss']}]
         try:
-            ingest_names(db, entry['name'], entry['designation_ukidss'])
-        except SimpleError:
-            pass
-        # conn.execute(db.Names.insert().values(other_name_data))
-
-    # if entry['designation_WISE'] == 'null':
-    #     pass
-    # else:
-    #     wise_name = [{'source': entry['name'], 'other_name': entry['designation_WISE']}]
-    #     db.Names.insert().execute(wise_name)
-
+            with db.engine.connect() as conn:
+                conn.execute(db.Names.insert().values(other_name_data))
+                conn.commit()
+        except sqlalchemy.exc.IntegrityError as e:
+            if 'UNIQUE constraint failed:' in str(e):
+                logger.warning('This name is already in the database')
+            else:
+                logger.error(str(e))
 
 # You may need to add filters to the Photometry Filters table
 # https://github.com/SIMPLE-AstroDB/SIMPLE-db/blob/main/documentation/PhotometryFilters.md
 def add_filters(db):
     with db.engine.connect() as conn:
-        lco_telescope = [{'telescope': 'LCO'}]
-        conn.execute(db.Telescopes.insert().values(lco_telescope))
+        conn.execute(db.Telescopes.insert().values([{'telescope': 'LCO'}]))
 
         wircam_instrument = [{'instrument': 'Wircam',
                               'mode': 'Imaging',
@@ -193,42 +219,20 @@ def add_filters(db):
                      'width': '907.02'}]
 
         conn.execute(db.PhotometryFilters.insert().values(visao_ys))
-
         conn.commit()
-    return
 
 
-def main():
-    db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
+# Execute the ingests!
+add_filters(db)
+ingest_sources(db, sources=df['name'], references=df['ref_discovery'], ras=df['ra_j2000_formula'],
+               decs=df['dec_j2000_formula'], epochs='2000', raise_error=False)
 
-    if RECREATE_DB:
-        db.load_database('data/')
+for i in range(len(df)):
+    entry = df.iloc[i]
+    if pd.notnull([entry['Y_MKO'], entry['Yerr_MKO']]).all():
+        ingest_mko(db, entry)
+        add_ukidss_names(db, entry)
 
-    # Execute the ingests!
-    add_filters(db)
-    for i in range(len(UCS)):
-        entry = UCS.iloc[i]
-
-        if entry['Y_MKO'] == 'NaN' or entry['Yerr_MKO'] == 'NaN':
-            pass
-
-        else:
-            add_ukidss_names(db, entry)
-            photometry_mko(db, entry)
-
-    # WRITE THE JSON FILES
-    if SAVE_DB:
-        db.save_database(directory='data/')
-    return
-
-
-if __name__ == '__main__':
-    warnings.simplefilter('ignore', category=AstropyWarning)
-    logger.setLevel(logging.INFO)  # Can also set to debug
-
-    SAVE_DB = True  # save the data files in addition to modifying the .db file
-    RECREATE_DB = True  # recreates the .db file from the data files
-
-    UCS = pd.read_csv('scripts/ingests/UltracoolSheet-Main.csv')
-
-    main()
+# WRITE THE JSON FILES
+if SAVE_DB:
+    db.save_database(directory='data/')
