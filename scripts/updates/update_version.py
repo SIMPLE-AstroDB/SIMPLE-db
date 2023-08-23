@@ -15,10 +15,10 @@ print(db.query(db.Versions).table())
 
 # Add new version, add new entries as appropriate
 # Note that start_date and end_date are strings of the date in format YYYY-MM-DD
-data = [{'version': '2023.3',
-         'start_date': '2023-07-25',
-         'end_date': '2023-08-03',
-         'description': 'Added Companions Table'}]
+data = [{'version': '2023.4',
+         'start_date': '2023-08-03',
+         'end_date': '2023-08-23',
+         'description': 'Added Y Photometry'}]
 with db.engine.connect() as conn:
     conn.execute(db.Versions.insert().values(data))
     conn.commit()
