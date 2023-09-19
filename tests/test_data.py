@@ -3,12 +3,14 @@
 import os
 import pytest
 import sys
+import requests
 
 sys.path.append('.')
 from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database
 from sqlalchemy import except_, select, and_
 from . import REFERENCE_TABLES
+from scripts.ingests.utils import check_internet_connection
 
 DB_NAME = 'temp.db'
 DB_PATH = 'data'
@@ -366,7 +368,24 @@ def test_spectra(db):
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
     assert len(t) == 20, f'found {len(t)} spectra from {ref}'
 
+@pytest.mark.xfail()
+def test_spectra_urls(db):
+    spectra_urls = db.query(db.Spectra.c.spectrum).astropy()
+    broken_urls = []
+    codes = []
+    internet = check_internet_connection()
+    if internet:
+        for spectrum_url in spectra_urls['spectrum']:
+            request_response = requests.head(spectrum_url)
+            status_code = request_response.status_code  
+            # The website is up if the status code is 200
+            # cuny academic commons links give 301 status code
+            if status_code != 200 and status_code != 301:
+                broken_urls.append(spectrum_url)
+                codes.append(status_code)
+    assert len(broken_urls) == 0, f'found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}'
 
+    
 def test_spectral_types(db):
     # Test to verify existing counts of spectral types grouped by regime
     regime = 'optical'
