@@ -4,7 +4,7 @@ import pandas as pd
 
 warnings.simplefilter('ignore', category=AstropyWarning)
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 
 df = pd.read_csv('scripts/ingests/UltracoolSheet-Main.csv')
