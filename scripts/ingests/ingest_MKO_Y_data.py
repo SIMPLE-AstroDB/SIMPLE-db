@@ -210,6 +210,15 @@ for i in range(len(df)):
         ingest_mko(db, entry)
         add_ukidss_names(db, entry)
 
+# found 1 photometry measurements for GPI.Y
+# found 21 photometry measurements for NIRI.Y
+# found 13 photometry measurements for UFTI.Y
+# found 29 photometry measurements for Wircam.Y
+# found 854 photometry measurements for WFCAM.Y
+# found 1 photometry measurements for VisAO.Ys
+# found 59 photometry measurements for VISTA.Y
+# 969 entries detected with test
+
 # WRITE THE JSON FILES
 if SAVE_DB:
     db.save_database(directory='data/')
