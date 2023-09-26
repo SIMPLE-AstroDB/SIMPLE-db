@@ -109,8 +109,8 @@ def photometry_mko(data):
         tel = 'LCO'
     elif ref == 'Burn09':
         # Data taken from table in reference
-        mag = '19.020'
-        mag_err = '0.080'
+        mag = 19.020
+        mag_err = 0.080
         band = 'WFCAM.Y'
         tel = 'UKIRT'
     elif ref == 'Burn10.1885' or ref == 'Burn13':
@@ -134,6 +134,7 @@ def photometry_mko(data):
 def ingest_mko(db, data):
     source, band, mag, mag_err, tel, ref = photometry_mko(data)
     if band or tel is not None:
+        print(source, band, mag, mag_err, tel, ref)
         ingest_photometry(db=db, sources=source, bands=band, magnitudes=mag, magnitude_errors=mag_err,
                           reference=ref, telescope=tel, raise_error=False)
 
@@ -207,7 +208,7 @@ for i in range(len(df)):
     entry = df.iloc[i]
     if pd.notnull([entry['Y_MKO'], entry['Yerr_MKO']]).all():
         ingest_mko(db, entry)
-        # add_ukidss_names(db, entry)
+        add_ukidss_names(db, entry)
 
 # WRITE THE JSON FILES
 if SAVE_DB:
