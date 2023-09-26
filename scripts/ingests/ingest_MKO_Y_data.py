@@ -135,16 +135,18 @@ def ingest_mko(db, data):
     source, band, mag, mag_err, tel, ref = photometry_mko(data)
     if band or tel is not None:
         ingest_photometry(db=db, sources=source, bands=band, magnitudes=mag, magnitude_errors=mag_err,
-                          reference=ref, telescope=tel)
+                          reference=ref, telescope=tel, raise_error=False)
 
 
 # Adding UKIDSS names
 def add_ukidss_names(db, data):
     if pd.notna(data['designation_ukidss']):
-        ingest_names(db, source=data['name'], other_name=data['designation_ukidss'])
+        try:
+            ingest_names(db, data['name'], data['designation_ukidss'])
+        except SimpleError:
+            pass
 
-# You may need to add filters to the Photometry Filters table
-# https://github.com/SIMPLE-AstroDB/SIMPLE-db/blob/main/documentation/PhotometryFilters.md
+
 def add_filters(db):
     with db.engine.connect() as conn:
         conn.execute(db.Telescopes.insert().values([{'telescope': 'LCO'}]))
@@ -205,7 +207,7 @@ for i in range(len(df)):
     entry = df.iloc[i]
     if pd.notnull([entry['Y_MKO'], entry['Yerr_MKO']]).all():
         ingest_mko(db, entry)
-        add_ukidss_names(db, entry)
+        # add_ukidss_names(db, entry)
 
 # WRITE THE JSON FILES
 if SAVE_DB:
