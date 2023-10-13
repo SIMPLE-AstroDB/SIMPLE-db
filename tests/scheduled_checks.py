@@ -2,16 +2,16 @@ import os
 import pytest
 import sys
 import requests
-
-sys.path.append('.')
-from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database
-from sqlalchemy import except_, select, and_
-from . import REFERENCE_TABLES
 from scripts.ingests.utils import check_internet_connection
 
-DB_NAME = 'temp.db'
-DB_PATH = 'data'
+sys.path.append(".")
+from simple.schema import *
+from . import REFERENCE_TABLES
+
+
+DB_NAME = "temp.db"
+DB_PATH = "data"
 
 
 # Load the database for use in individual tests
@@ -22,20 +22,27 @@ def db():
 
     if os.path.exists(DB_NAME):
         os.remove(DB_NAME)
-    connection_string = 'sqlite:///' + DB_NAME
+    connection_string = "sqlite:///" + DB_NAME
     create_database(connection_string)
     assert os.path.exists(DB_NAME)
 
     # Connect to the new database and confirm it has the Sources table
     db = Database(connection_string, reference_tables=REFERENCE_TABLES)
     assert db
-    assert 'source' in [c.name for c in db.Sources.columns]
+    assert "source" in [c.name for c in db.Sources.columns]
 
     # Load data into an in-memory sqlite database first, for performance
-    temp_db = Database('sqlite://', reference_tables=REFERENCE_TABLES)  # creates and connects to a temporary in-memory database
-    temp_db.load_database(DB_PATH, verbose=False)  # loads the data from the data files into the database
-    temp_db.dump_sqlite(DB_NAME)  # dump in-memory database to file
-    db = Database('sqlite:///' + DB_NAME, reference_tables=REFERENCE_TABLES)  # replace database object with new file version
+
+    # create and connects to a temporary in-memory database
+    temp_db = Database("sqlite://", reference_tables=REFERENCE_TABLES)
+
+    # load the data from the data files into the database
+    temp_db.load_database(DB_PATH, verbose=False)
+
+    # dump in-memory database to file
+    temp_db.dump_sqlite(DB_NAME)
+    # replace database object with new file version
+    db = Database("sqlite:///" + DB_NAME, reference_tables=REFERENCE_TABLES)
 
     return db
 
@@ -46,12 +53,14 @@ def test_spectra_urls(db):
     codes = []
     internet = check_internet_connection()
     if internet:
-        for spectrum_url in spectra_urls['spectrum']:
+        for spectrum_url in spectra_urls["spectrum"]:
             request_response = requests.head(spectrum_url)
-            status_code = request_response.status_code  
+            status_code = request_response.status_code
             # The website is up if the status code is 200
             # cuny academic commons links give 301 status code
             if status_code != 200 and status_code != 301:
                 broken_urls.append(spectrum_url)
                 codes.append(status_code)
-    assert len(broken_urls) == 149, f'found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}'
+    assert (
+        len(broken_urls) == 149
+    ), f"found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}"
