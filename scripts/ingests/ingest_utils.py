@@ -886,8 +886,8 @@ def ingest_proper_motions(db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs,
 
 
 # PHOTOMETRY
-def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, reference, ucds=None,
-                      telescope=None, instrument=None, epoch=None, comments=None, raise_error=True):
+def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, reference,
+                      telescope=None, epoch=None, comments=None, raise_error=True):
     """
     TODO: Write Docstring
 
@@ -899,9 +899,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
     magnitudes: list[float]
     magnitude_errors: list[float]
     reference: str or list[str]
-    ucds: str or list[str], optional
     telescope: str or list[str]
-    instrument: str or list[str]
     epoch: list[float], optional
     comments: list[str], optional
     raise_error: bool, optional
@@ -920,7 +918,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
         n_sources = len(sources)
 
     # Convert single element input values into lists
-    input_values = [bands, reference, telescope, instrument, ucds]
+    input_values = [bands, reference, telescope]
     for i, input_value in enumerate(input_values):
         if isinstance(input_value, str):
             input_value = [input_value] * n_sources
@@ -928,7 +926,7 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
             input_value = [None] * n_sources
         input_values[i] = input_value
 
-    bands, reference, telescope, instrument, ucds = input_values
+    bands, reference, telescope = input_values
 
     input_float_values = [magnitudes, magnitude_errors]
     for i, input_value in enumerate(input_float_values):
@@ -969,11 +967,9 @@ def ingest_photometry(db, sources, bands, magnitudes, magnitude_errors, referenc
         # Construct data to be added
         photometry_data = [{'source': db_name,
                             'band': bands[i],
-                            'ucd': ucds[i],
                             'magnitude': str(magnitudes[i]),  # Convert to string to maintain significant digits
                             'magnitude_error': mag_error,
                             'telescope': telescope[i],
-                            'instrument': instrument[i],
                             'epoch': epoch,
                             'comments': comments,
                             'reference': reference[i]}]

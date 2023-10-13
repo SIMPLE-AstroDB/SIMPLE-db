@@ -256,6 +256,34 @@ def test_photometry_bands(db):
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
     assert len(t) == 1762, f'found {len(t)} photometry measurements for {band}'
 
+    band = 'GPI.Y'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 1, f'found {len(t)} photometry measurements for {band}'
+
+    band = 'NIRI.Y'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 21, f'found {len(t)} photometry measurements for {band}'
+
+    band = 'UFTI.Y'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 13, f'found {len(t)} photometry measurements for {band}'
+
+    band = 'Wircam.Y'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 29, f'found {len(t)} photometry measurements for {band}'
+
+    band = 'WFCAM.Y'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 854, f'found {len(t)} photometry measurements for {band}'
+
+    band = 'VisAO.Ys'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 1, f'found {len(t)} photometry measurements for {band}'
+
+    band = 'VISTA.Y'
+    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
+    assert len(t) == 59, f'found {len(t)} photometry measurements for {band}'
+
 
 def test_missions(db):
     # If 2MASS designation in Names, 2MASS photometry should exist
@@ -574,3 +602,17 @@ def test_modeledparameters(db):
     ref = 'Fili15'
     t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.reference == ref).astropy()
     assert len(t) == 696, f'found {len(t)} modeled parameters with {ref} reference'
+
+
+def test_photometrymko_y(db):
+    # Test for Y photometry entries added for references
+    bands_list = ['Wircam.Y', 'WFCAM.Y', 'NIRI.Y', 'VISTA.Y', 'GPI.Y', 'VisAO.Ys', 'UFTI.Y']
+    ref_list = ['Albe11', 'Burn08', 'Burn09', 'Burn10.1885', 'Burn13', 'Burn14', 'Card15', 'Deac11.6319', 'Deac12.100',
+                'Deac14.119', 'Deac17.1126', 'Delo08.961', 'Delo12', 'Dupu12.19', 'Dupu15.102', 'Dupu19 ', 'Edge16',
+                'Garc17.162', 'Gauz12 ', 'Kell16', 'Lawr07', 'Lawr12', 'Legg13', 'Legg15', 'Legg16', 'Liu_12',
+                'Liu_13.20', 'Liu_16', 'Lodi07.372', 'Lodi12.53', 'Lodi13.2474', 'Luca10', 'Male14', 'McMa13',
+                'Minn17', 'Naud14', 'Pena11', 'Pena12', 'Pinf08', 'Smit18', 'Warr07.1400']
+
+    t = db.query(db.Photometry).filter(and_(db.Photometry.c.band.in_(bands_list),
+                                            db.Photometry.c.reference.in_(ref_list))).astropy()
+    assert len(t) == 969, f'found {len(t)} Y photometry entries'
