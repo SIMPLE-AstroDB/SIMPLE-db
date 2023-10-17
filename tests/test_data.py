@@ -206,84 +206,35 @@ def test_parallax_refs(db):
     assert len(t) == 1104, f'found {len(t)} adopted parallax reference entries for {ref}'
 
 
-def test_photometry_bands(db):
+@pytest.mark.parametrize('band, value', [
+    ('GAIA2.G', 1266),
+    ('GAIA2.Grp', 1106),
+    ('GAIA3.G', 1256),
+    ('GAIA3.Grp', 1261),
+    ('WISE.W1', 460),
+    ('WISE.W2', 460),
+    ('WISE.W3', 457),
+    ('WISE.W4', 450),
+    ('2MASS.J', 1802),
+    ('2MASS.H', 1791),
+    ('2MASS.Ks', 1762),
+    ('GPI.Y', 1),
+    ('NIRI.Y', 21),
+    ('UFTI.Y', 13),
+    ('Wircam.Y', 29),
+    ('WFCAM.Y', 854),
+    ('VisAO.Ys', 1),
+    ('VISTA.Y', 59),
+])
+def test_photometry_bands(db, band, value):
     # To refresh these counts:
     # from sqlalchemy import func
     # db.query(db.Photometry.c.band, func.count(db.Photometry.c.band).label('count')).\
     #     group_by(db.Photometry.c.band).\
     #     astropy()
 
-    band = 'GAIA2.G'
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1266, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'GAIA2.Grp'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1106, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'GAIA3.G'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1256, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'GAIA3.Grp'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1261, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'WISE.W1'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 460, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'WISE.W2'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 460, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'WISE.W3'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 457, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'WISE.W4'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 450, f'found {len(t)} photometry measurements for {band}'
-
-    band = '2MASS.J'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1802, f'found {len(t)} photometry measurements for {band}'
-
-    band = '2MASS.H'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1791, f'found {len(t)} photometry measurements for {band}'
-
-    band = '2MASS.Ks'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1762, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'GPI.Y'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'NIRI.Y'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 21, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'UFTI.Y'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 13, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'Wircam.Y'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 29, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'WFCAM.Y'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 854, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'VisAO.Ys'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'VISTA.Y'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 59, f'found {len(t)} photometry measurements for {band}'
+    assert len(t) == value, f'found {len(t)} photometry measurements for {band}'
 
 
 def test_missions(db):
