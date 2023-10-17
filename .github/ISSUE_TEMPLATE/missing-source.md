@@ -15,4 +15,4 @@ Please provide as much information about the source as possible.
 
 # Why is this source interesting?
 
-# References for source
+# Discovery Paper or other relevant references for source
