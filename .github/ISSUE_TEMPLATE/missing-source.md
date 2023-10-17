@@ -11,7 +11,7 @@ Please provide as much information about the source as possible.
 
 # Source name and/or coordinates
 
-# SIMBAD link to source
+# SIMBAD link to source (if available)
 
 # Why is this source interesting?
 
