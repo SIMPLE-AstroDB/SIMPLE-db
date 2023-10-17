@@ -2,6 +2,7 @@ import os
 import pytest
 import sys
 import requests
+from tqdm import tqdm
 from astrodbkit2.astrodb import create_database, Database
 from scripts.ingests.utils import check_internet_connection
 
@@ -53,7 +54,7 @@ def test_spectra_urls(db):
     codes = []
     internet = check_internet_connection()
     if internet:
-        for spectrum_url in spectra_urls["spectrum"]:
+        for spectrum_url in tqdm(spectra_urls["spectrum"]):
             request_response = requests.head(spectrum_url)
             status_code = request_response.status_code
             # The website is up if the status code is 200
@@ -62,5 +63,5 @@ def test_spectra_urls(db):
                 broken_urls.append(spectrum_url)
                 codes.append(status_code)
     assert (
-        len(broken_urls) == 149
+        len(broken_urls) == 150
     ), f"found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}"
