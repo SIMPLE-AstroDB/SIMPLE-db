@@ -29,4 +29,4 @@ jobs:
 
     - name: Test with pytest
       run: |
-        pytest -srA tests/scheduled_checks.py
+        pytest -s -rpP tests/scheduled_checks.py
