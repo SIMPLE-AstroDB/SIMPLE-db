@@ -3,12 +3,13 @@
 import os
 import pytest
 import sys
+from astrodbkit2.astrodb import create_database, Database
+from sqlalchemy import except_, select, and_
 
 sys.path.append('.')
 from simple.schema import *
-from astrodbkit2.astrodb import create_database, Database
-from sqlalchemy import except_, select, and_
 from . import REFERENCE_TABLES
+
 
 DB_NAME = 'temp.db'
 DB_PATH = 'data'
@@ -448,6 +449,7 @@ def test_spectral_types(db):
     n_spectral_types = db.query(db.SpectralTypes).count()
     assert len(m_dwarfs) + len(l_dwarfs) + len(t_dwarfs) + len(y_dwarfs) == n_spectral_types
 
+
 # Individual ingest tests
 # -----------------------------------------------------------------------------------------
 def test_Manj19_data(db):
@@ -533,7 +535,7 @@ def test_Kirk19_ingest(db):
 
     # Test spectral types added
 
-    # Test parallaxes 
+    # Test parallaxes
     ref = 'Kirk19'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
     assert len(t) == 23, f'found {len(t)} parallax entries for {ref}'
@@ -596,6 +598,7 @@ def test_suar22_ingest(db):
     # Test for Suar22 spectra added
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
     assert len(t) == 112, f'found {len(t)} spectra entries for {ref}'
+
 
 def test_modeledparameters(db):
     # Test to verify existing counts of modeled parameters
