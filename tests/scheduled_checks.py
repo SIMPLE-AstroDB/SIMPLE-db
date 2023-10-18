@@ -62,7 +62,8 @@ def test_spectra_urls(db):
             if status_code != 200 and status_code != 301:
                 broken_urls.append(spectrum_url)
                 codes.append(status_code)
-    print(f"found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}")
-    assert (39 <= len(broken_urls) <= 40
-    ), f"found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}"
     
+    # Display broken spectra regardless if it's the number we expect or not
+    print(f"found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}")
+    
+    assert (39 <= len(broken_urls) <= 40)
