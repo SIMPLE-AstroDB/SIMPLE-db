@@ -33,6 +33,17 @@ ingest_sources(db, ["[VCS2020] BDR J1750+3809"], references="Veda20",
 #  code from deprecated utils does not work
 ingest_names(db, '[VCS2020] BDR J1750+3809', 'BDR J1750+3809')
 
+
+# SPECTRAL TYPES
+# The spectral type of T6.5 is based on data in the nir regime.
+# Will also want to ingest the photometry from Table 1
+ingest_spectral_types(db, sources = (" "),
+                          spectral_types = ("T6.5"),
+                          references = (" "),
+                          regimes = (" "), 
+                          spectral_type_error=None,
+                          comments=None)
+
 # WRITE THE JSON FILES
 if SAVE_DB:
     db.save_database(directory='data/')
