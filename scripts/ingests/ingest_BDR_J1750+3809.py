@@ -35,8 +35,7 @@ ingest_names(db, '[VCS2020] BDR J1750+3809', 'BDR J1750+3809')
 
 
 # SPECTRAL TYPES
-# The spectral type of T6.5 is based on data in the nir regime.
-# Will also want to ingest the photometry from Table 1
+# The spectral type of T6.5 is based on data in the nir regime
 ingest_spectral_types(db, sources = ["[VCS2020] BDR J1750+3809"],
                           spectral_types = "T6.5",
                           references = "Veda20",
@@ -46,7 +45,7 @@ ingest_spectral_types(db, sources = ["[VCS2020] BDR J1750+3809"],
 
 # PROPER MOTIONS
 ingest_proper_motions(db, sources = ["[VCS2020] BDR J1750+3809"], 
-                          pm_ras = "-120", #needs to be -120
+                          pm_ras = ["-120"], 
                           pm_ra_errs = "30", #In database, listed as mu_ra_errors
                           pm_decs = "200", 
                           pm_dec_errs = "30", 
