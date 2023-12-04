@@ -359,7 +359,7 @@ def test_spectral_types(db):
 
     regime = 'nir'
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 380, f'found {len(t)} spectral types in the {regime} regime'
+    assert len(t) == 381, f'found {len(t)} spectral types in the {regime} regime'
 
     regime = 'nir_UCD'
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
@@ -386,16 +386,16 @@ def test_spectral_types(db):
     l_dwarfs = db.query(db.SpectralTypes).filter(
         and_(db.SpectralTypes.c.spectral_type_code >= 70,
              db.SpectralTypes.c.spectral_type_code < 80)).astropy()
-    assert len(l_dwarfs) == 1963, f'found {len(t)} L spectral types'
+    assert len(l_dwarfs) == 1963, f'found {len(l_dwarfs)} L spectral types'
 
     t_dwarfs = db.query(db.SpectralTypes).filter(
         and_(db.SpectralTypes.c.spectral_type_code >= 80,
              db.SpectralTypes.c.spectral_type_code < 90)).astropy()
-    assert len(t_dwarfs) == 998, f'found {len(t)} T spectral types'
+    assert len(t_dwarfs) == 999, f'found {len(t_dwarfs)} T spectral types'
 
     y_dwarfs = db.query(db.SpectralTypes).filter(
         and_(db.SpectralTypes.c.spectral_type_code >= 90)).astropy()
-    assert len(y_dwarfs) == 79, f'found {len(t)} Y spectral types'
+    assert len(y_dwarfs) == 79, f'found {len(y_dwarfs)} Y spectral types'
 
     n_spectral_types = db.query(db.SpectralTypes).count()
     assert len(m_dwarfs) + len(l_dwarfs) + len(t_dwarfs) + len(y_dwarfs) == n_spectral_types
