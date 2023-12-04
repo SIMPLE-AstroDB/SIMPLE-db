@@ -45,12 +45,13 @@ ingest_spectral_types(db, sources = ["[VCS2020] BDR J1750+3809"],
 
 # PROPER MOTIONS
 ingest_proper_motions(db, sources = ["[VCS2020] BDR J1750+3809"], 
-                          pm_ras = ["-120"], 
-                          pm_ra_errs = ["30"],
-                          pm_decs = ["200"], 
-                          pm_dec_errs = ["30"], 
+                          pm_ras = [-120], 
+                          pm_ra_errs = [30],
+                          pm_decs = [200], 
+                          pm_dec_errs = [30], 
                           pm_references = "Veda20")
 
 # WRITE THE JSON FILES
 if SAVE_DB:
     db.save_database(directory='data/')
+    
