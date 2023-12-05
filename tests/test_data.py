@@ -183,7 +183,7 @@ def test_proper_motion_refs(db):
 def test_parallax_refs(db):
     # Test total odopted measuruments
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.adopted == 1).astropy()
-    assert len(t) == 1442, f'found {len(t)} adopted parallax measuruments.'
+    assert len(t) == 1443, f'found {len(t)} adopted parallax measuruments.'
 
     ref = 'GaiaDR3'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
@@ -266,7 +266,7 @@ def test_missions(db):
     stm = except_(select(db.Names.c.source).where(db.Names.c.other_name.like("WISE%")),
                   select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")))
     s = db.session.scalars(stm).all()
-    assert len(s) == 479, f'found {len(s)} sources with WISE designation that have no WISE photometry'
+    assert len(s) == 480, f'found {len(s)} sources with WISE designation that have no WISE photometry'
 
     # If Wise photometry, Wise designation should be in Names
     stm = except_(select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")),
