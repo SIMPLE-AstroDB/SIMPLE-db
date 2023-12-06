@@ -40,6 +40,14 @@ ingest_parallaxes(db,
                   plx_refs = "Lodi22", 
                   comments=None)
 
+# PROPER MOTIONS
+ingest_proper_motions(db, sources = ["CWISEP J181006.00-101001.1"], 
+                          pm_ras = [-1027], 
+                          pm_ra_errs = [3.5],
+                          pm_decs = [-246.4], 
+                          pm_dec_errs = [3.6], 
+                          pm_references = "Schn20")
+
 # WRITE THE JSON FILES
 if SAVE_DB:
     db.save_database(directory='data/')
