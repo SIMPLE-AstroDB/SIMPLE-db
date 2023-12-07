@@ -48,6 +48,54 @@ ingest_proper_motions(db, sources = ["CWISEP J181006.00-101001.1"],
                           pm_dec_errs = [3.6], 
                           pm_references = "Schn20")
 
+
+#Ingest Functions for Modeled Parameters (Gravity, Metallicity, Radius, Mass)
+#Creating list of dictionaries for each value in table 6 formatted for modeled parameters
+
+#Lines 54 to 73 can be rewritten by hand
+
+ingest_modeled_parameters_dict = [{ 
+                                    'Gravity':
+                                       {'value': [5.0],
+                                        'value_error': [0.25],
+                                        'parameter': "Radius", 'unit': 'dex',
+                                        'reference': "Lodi22"}, 
+                                        
+                                   'Metallicity':
+                                       {'value': [-1.5],
+                                        'value_error': [0.5],
+                                        'parameter': "Metallicity", 'unit': 'dex',
+                                        'reference': "Lodi22"},
+                                   'Radius':
+                                       {'value': [0.067],
+                                        'value_error': [0.032], #Highest value error was picked between +0.032 & -0.020 listed
+                                        'parameter': "Radius", 'unit': 'R_jup',
+                                        'reference': "Lodi22"},
+                                   'Mass':
+                                       {'value': [17],
+                                        'value_error': [56], #Highest value error was picked between +56 & -12 listed
+                                        'parameter': "mass", 'unit': 'M_jup',
+                                        'reference': "Lodi22"}
+                                  }]
+                                    
+
+
+
+#Lines 98 - 106 needed after created own dict parameters 
+source = "CWISEP J181006.00-101001.1"
+value_types = ['Gravity', 'Metallicity', 'Radius', 'Mass']
+with db.engine.connect() as conn:
+    for row in ingest_modeled_parameters_dict:
+        row_dict = []
+        for value_type in value_types:
+            if row[value_type]['value'] is not None: # Checking that there's a value
+                conn.execute(db.ModeledParameters.insert().values({'source': row['source'], 'reference': 'Lodi22', **row[value_type]}))
+
+    conn.commit() 
+
+#KeyError with 'source'
+
+
 # WRITE THE JSON FILES
 if SAVE_DB:
     db.save_database(directory='data/')
