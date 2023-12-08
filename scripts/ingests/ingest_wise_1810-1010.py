@@ -7,7 +7,7 @@ import astropy.units as u
 from astropy.coordinates import Angle
 
 
-SAVE_DB = True  # save the data files in addition to modifying the .db file
+SAVE_DB = False  # True: save the data files(json) in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 # LOAD THE DATABASE
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
@@ -16,32 +16,37 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 # Ingest wise_1810-1010 and its reference
 #doi- 10.3847/1538-4357/ab9a40  and  10.1051/0004-6361/202243516
 #bibcode of coordinates reference- 2020ApJ...898...77S  and  2022A&A...663A..84L
-ingest_publication(db, doi = "10.3847/1538-4357/ab9a40")
+def add_publications(db):
 
-ingest_publication(db, doi = "10.1051/0004-6361/202243516")
+    ingest_publications(db, doi = "10.3847/1538-4357/ab9a40")
 
-ra_1810= Angle("18 10 06.18", u.hour).degree  
-dec_1010=Angle("-10 10 00.5", u.degree).degree
+    ingest_publications(db, doi = "10.1051/0004-6361/202243516")
 
-ingest_sources(db, ["CWISEP J181006.00-101001.1"], references=["Schn20"], 
+def add_sources(db):
+
+    ra_1810= Angle("18 10 06.18", u.hour).degree  
+    dec_1010=Angle("-10 10 00.5", u.degree).degree
+
+    ingest_sources(db, ["CWISEP J181006.00-101001.1"], references=["Schn20"], 
                ras= [ra_1810], 
                decs=[dec_1010], 
                search_db=False)
 
-#  Ingest other name for Wise 1810-1010 (one used in SIMBAD)
-#  code from deprecated utils does not work
-ingest_names(db, 'CWISEP J181006.00-101001.1', 'Wise 1810-1010')
 
-# PARALLAXES
-ingest_parallaxes(db, 
+    #  Ingest other name for Wise 1810-1010 (one used in SIMBAD)
+    #  code from deprecated utils does not work
+    ingest_names(db, 'CWISEP J181006.00-101001.1', 'Wise 1810-1010')
+
+def add_parallaxes(db):
+    ingest_parallaxes(db, 
                   sources = ["CWISEP J181006.00-101001.1"], 
                   plxs = [112.5], 
                   plx_errs = [8.1], 
                   plx_refs = "Lodi22", 
                   comments=None)
 
-# PROPER MOTIONS
-ingest_proper_motions(db, sources = ["CWISEP J181006.00-101001.1"], 
+def add_proper_motions(db):
+    ingest_proper_motions(db, sources = ["CWISEP J181006.00-101001.1"], 
                           pm_ras = [-1027], 
                           pm_ra_errs = [3.5],
                           pm_decs = [-246.4], 
@@ -50,51 +55,53 @@ ingest_proper_motions(db, sources = ["CWISEP J181006.00-101001.1"],
 
 
 #Ingest Functions for Modeled Parameters (Gravity, Metallicity, Radius, Mass)
-#Creating list of dictionaries for each value in table 6 formatted for modeled parameters
-
-#Lines 54 to 73 can be rewritten by hand
-
-ingest_modeled_parameters_dict = [{ 
+#Creating list of dictionaries for each value formatted for modeled parameters
+def add_modeled_parameters_dict(db):
+    ingest_modeled_parameters_dict = [{ 
                                     'Gravity':
-                                       {'value': [5.0],
-                                        'value_error': [0.25],
-                                        'parameter': "Radius", 'unit': 'dex',
+                                       {'value': 5.0,
+                                        'value_error': 0.25,
+                                        'parameter': "Radius", 
+                                        'unit': 'dex',
                                         'reference': "Lodi22"}, 
                                         
                                    'Metallicity':
-                                       {'value': [-1.5],
-                                        'value_error': [0.5],
-                                        'parameter': "Metallicity", 'unit': 'dex',
+                                       {'value': -1.5,
+                                        'value_error': 0.5,
+                                        'parameter': "Metallicity", 
+                                        'unit': 'dex',
                                         'reference': "Lodi22"},
                                    'Radius':
-                                       {'value': [0.067],
-                                        'value_error': [0.032], #Highest value error was picked between +0.032 & -0.020 listed
-                                        'parameter': "Radius", 'unit': 'R_jup',
+                                       {'value': 0.067,
+                                        'value_error': 0.032, #Highest value error was picked between +0.032 & -0.020 listed
+                                        'parameter': "Radius", 
+                                        'unit': 'R_jup',
                                         'reference': "Lodi22"},
                                    'Mass':
-                                       {'value': [17],
-                                        'value_error': [56], #Highest value error was picked between +56 & -12 listed
-                                        'parameter': "mass", 'unit': 'M_jup',
+                                       {'value': 17,
+                                        'value_error': 56, #Highest value error was picked between +56 & -12 listed
+                                        'parameter': "mass", 
+                                        'unit': 'M_jup',
                                         'reference': "Lodi22"}
-                                  }]
-                                    
+                                     }]
+                                   
+    source = "CWISEP J181006.00-101001.1"
+    value_types = ['Gravity', 'Metallicity', 'Radius', 'Mass']
+    with db.engine.connect() as conn:
+        for row in ingest_modeled_parameters_dict:
+            row_dict = []
+            for value_type in value_types:
+                if row[value_type]['value'] is not None: # Checking that there's a value
+                    conn.execute(db.ModeledParameters.insert().values({'source': source, 'reference': 'Lodi22', **row[value_type]}))
 
+                conn.commit() 
 
-
-#Lines 98 - 106 needed after created own dict parameters 
-source = "CWISEP J181006.00-101001.1"
-value_types = ['Gravity', 'Metallicity', 'Radius', 'Mass']
-with db.engine.connect() as conn:
-    for row in ingest_modeled_parameters_dict:
-        row_dict = []
-        for value_type in value_types:
-            if row[value_type]['value'] is not None: # Checking that there's a value
-                conn.execute(db.ModeledParameters.insert().values({'source': row['source'], 'reference': 'Lodi22', **row[value_type]}))
-
-    conn.commit() 
-
-#KeyError with 'source'
-
+#Call functions/ Comment out when not needed
+add_publications(db)
+add_sources(db)
+add_parallaxes(db)
+add_proper_motions(db)
+add_modeled_parameters_dict(db)
 
 # WRITE THE JSON FILES
 if SAVE_DB:
