@@ -1,4 +1,4 @@
-# script ingest first data into companion tables
+# Script ingest first data into companion tables
 
 from scripts.ingests.ingest_utils import *
 from scripts.ingests.utils import *
@@ -16,9 +16,9 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 # Ingest wise_1810-1010 and its reference
 #doi- 10.3847/1538-4357/ab9a40  and  10.1051/0004-6361/202243516
 #bibcode of coordinates reference- 2020ApJ...898...77S  and  2022A&A...663A..84L
-def add_publications(db):
+def add_publication(db):
 
-    ingest_publication(db, doi = "10.3847/1538-4357/ab9a40")
+    ingest_publications(db, doi = "10.3847/1538-4357/ab9a40")
 
     ingest_publication(db, doi = "10.1051/0004-6361/202243516")
 
