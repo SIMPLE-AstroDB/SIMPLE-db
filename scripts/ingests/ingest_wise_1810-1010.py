@@ -87,9 +87,11 @@ def add_modeled_parameters_dict(db):
                                         'reference': "Lodi22"},
 
                                     'Effective Temperature':
-                                       {'value': 1000,
-                                        'parameter': "temperature", 
-                                        'unit': 'K'}
+                                       {'value': 800,
+                                        'value_error': 100,
+                                        'parameter': "T eff", 
+                                        'unit': 'K',
+                                        'reference': "Lodi22"}
                                  }]   
                                     
     source = "CWISEP J181006.00-101001.1"
