@@ -17,7 +17,7 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 #doi- 10.3847/1538-4357/ab9a40  and  10.1051/0004-6361/202243516
 #bibcode of coordinates reference- 2020ApJ...898...77S  and  2022A&A...663A..84L
 def add_publication(db):
-
+    
     ingest_publication(db, doi = "10.3847/1538-4357/ab9a40")
 
     ingest_publication(db, doi = "10.1051/0004-6361/202243516")
