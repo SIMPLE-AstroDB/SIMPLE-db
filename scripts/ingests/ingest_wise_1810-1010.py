@@ -17,8 +17,8 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 #doi- 10.3847/1538-4357/ab9a40  and  10.1051/0004-6361/202243516
 #bibcode of coordinates reference- 2020ApJ...898...77S  and  2022A&A...663A..84L
 def add_publication(db):
-    
-    ingest_publication(db, doi = "10.3847/1538-4357/ab9a40")
+
+    #ingest_publication(db, doi = "10.3847/1538-4357/ab9a40")
 
     ingest_publication(db, doi = "10.1051/0004-6361/202243516")
 
@@ -61,20 +61,20 @@ def add_modeled_parameters_dict(db):
                                     'Gravity':
                                        {'value': 5.0,
                                         'value_error': 0.25,
-                                        'parameter': "Radius", 
+                                        'parameter': "log g", 
                                         'unit': 'dex',
                                         'reference': "Lodi22"}, 
                                         
                                    'Metallicity':
                                        {'value': -1.5,
                                         'value_error': 0.5,
-                                        'parameter': "Metallicity", 
+                                        'parameter': "metallicity", 
                                         'unit': 'dex',
                                         'reference': "Lodi22"},
                                    'Radius':
                                        {'value': 0.067,
                                         'value_error': 0.032, #Highest value error was picked between +0.032 & -0.020 listed
-                                        'parameter': "Radius", 
+                                        'parameter': "radius", 
                                         'unit': 'R_jup',
                                         'reference': "Lodi22"},
                                    'Mass':
@@ -89,7 +89,7 @@ def add_modeled_parameters_dict(db):
     value_types = ['Gravity', 'Metallicity', 'Radius', 'Mass']
     with db.engine.connect() as conn:
         for row in ingest_modeled_parameters:
-            row_dict = []
+
             for value_type in value_types:
                 if row[value_type]['value'] is not None: # Checking that there's a value
                     conn.execute(db.ModeledParameters.insert().values({'source': source, 'reference': 'Lodi22', **row[value_type]}))
@@ -101,7 +101,7 @@ def add_modeled_parameters_dict(db):
 #add_sources(db)
 add_parallaxes(db)
 add_proper_motions(db)
-#add_modeled_parameters_dict(db)
+add_modeled_parameters_dict(db)
 
 # WRITE THE JSON FILES
 if SAVE_DB:
