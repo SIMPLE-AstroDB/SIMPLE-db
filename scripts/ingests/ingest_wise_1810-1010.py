@@ -64,29 +64,36 @@ def add_modeled_parameters_dict(db):
                                         'parameter': "log g", 
                                         'unit': 'dex',
                                         'reference': "Lodi22"}, 
-                                        
+
                                    'Metallicity':
                                        {'value': -1.5,
                                         'value_error': 0.5,
                                         'parameter': "metallicity", 
                                         'unit': 'dex',
                                         'reference': "Lodi22"},
+
                                    'Radius':
                                        {'value': 0.067,
                                         'value_error': 0.032, #Highest value error was picked between +0.032 & -0.020 listed
                                         'parameter': "radius", 
                                         'unit': 'R_jup',
                                         'reference': "Lodi22"},
+
                                    'Mass':
                                        {'value': 17,
                                         'value_error': 56, #Highest value error was picked between +56 & -12 listed
                                         'parameter': "mass", 
                                         'unit': 'M_jup',
-                                        'reference': "Lodi22"}
-                                     }]
-                                   
+                                        'reference': "Lodi22"},
+
+                                    'Effective Temperature':
+                                       {'value': 1000,
+                                        'parameter': "temperature", 
+                                        'unit': 'K'}
+                                 }]   
+                                    
     source = "CWISEP J181006.00-101001.1"
-    value_types = ['Gravity', 'Metallicity', 'Radius', 'Mass']
+    value_types = ['Gravity', 'Metallicity', 'Radius', 'Mass', 'Effective Temperature']
     with db.engine.connect() as conn:
         for row in ingest_modeled_parameters:
 
