@@ -7,7 +7,7 @@ import astropy.units as u
 from astropy.coordinates import Angle
    
 
-SAVE_DB = False  # True: save the data files(json) in addition to modifying the .db file
+SAVE_DB = True  # True: save the data files(json) in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 # LOAD THE DATABASE
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
@@ -18,7 +18,7 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 #bibcode of coordinates reference- 2020ApJ...898...77S  and  2022A&A...663A..84L
 def add_publication(db):
 
-    ingest_publications(db, doi = "10.3847/1538-4357/ab9a40")
+    ingest_publication(db, doi = "10.3847/1538-4357/ab9a40")
 
     ingest_publication(db, doi = "10.1051/0004-6361/202243516")
 
@@ -57,7 +57,7 @@ def add_proper_motions(db):
 #Ingest Functions for Modeled Parameters (Gravity, Metallicity, Radius, Mass)
 #Creating list of dictionaries for each value formatted for modeled parameters
 def add_modeled_parameters_dict(db):
-    ingest_modeled_parameters_dict = [{ 
+    ingest_modeled_parameters = [{ 
                                     'Gravity':
                                        {'value': 5.0,
                                         'value_error': 0.25,
@@ -88,7 +88,7 @@ def add_modeled_parameters_dict(db):
     source = "CWISEP J181006.00-101001.1"
     value_types = ['Gravity', 'Metallicity', 'Radius', 'Mass']
     with db.engine.connect() as conn:
-        for row in ingest_modeled_parameters_dict:
+        for row in ingest_modeled_parameters:
             row_dict = []
             for value_type in value_types:
                 if row[value_type]['value'] is not None: # Checking that there's a value
@@ -97,11 +97,11 @@ def add_modeled_parameters_dict(db):
                 conn.commit() 
 
 #Call functions/ Comment out when not needed
-add_publications(db)
-add_sources(db)
+#add_publication(db)
+#add_sources(db)
 add_parallaxes(db)
 add_proper_motions(db)
-add_modeled_parameters_dict(db)
+#add_modeled_parameters_dict(db)
 
 # WRITE THE JSON FILES
 if SAVE_DB:
