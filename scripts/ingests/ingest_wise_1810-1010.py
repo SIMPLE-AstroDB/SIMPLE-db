@@ -18,7 +18,7 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 #bibcode of coordinates reference- 2020ApJ...898...77S  and  2022A&A...663A..84L
 def add_publication(db):
 
-    #ingest_publication(db, doi = "10.3847/1538-4357/ab9a40")
+    ingest_publication(db, doi = "10.3847/1538-4357/ab9a40")
 
     ingest_publication(db, doi = "10.1051/0004-6361/202243516")
 
@@ -81,12 +81,13 @@ def add_modeled_parameters_dict(db):
 
                                    'Mass':
                                        {'value': 17,
-                                        'value_error': 56, #Highest value error was picked between +56 & -12 listed
+                                        'value_error': null, #Highest value error was picked between +56 & -12 listed
                                         'parameter': "mass", 
                                         'unit': 'M_jup',
+                                        'comments': "17[+56, -12]",
                                         'reference': "Lodi22"},
 
-                                    'Effective Temperature':
+                                    'Effective temperature':
                                        {'value': 800,
                                         'value_error': 100,
                                         'parameter': "T eff", 
@@ -110,7 +111,7 @@ def add_modeled_parameters_dict(db):
 #add_sources(db)
 add_parallaxes(db)
 add_proper_motions(db)
-add_modeled_parameters_dict(db)
+#add_modeled_parameters_dict(db)
 
 # WRITE THE JSON FILES
 if SAVE_DB:
