@@ -557,6 +557,16 @@ def test_modeledparameters(db):
     t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.reference == ref).astropy()
     assert len(t) == 696, f'found {len(t)} modeled parameters with {ref} reference'
 
+    #Test to verify T eff counts
+    ref = 'T eff'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == ref).astropy()
+    assert len(t) == 174, f'found {len(t)} modeled parameters with {ref} parameter'
+
+    #Test to verify Lodi reference counts
+    ref = 'Lodi22'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.reference == ref).astropy()
+    assert len(t) == 4, f'found {len(t)} modeled parameters with {ref} reference'
+
 
 def test_photometrymko_y(db):
     # Test for Y photometry entries added for references
