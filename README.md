@@ -81,4 +81,4 @@ The schema for the SIMPLE database is described
 in the [Documentation](documentation) and can be found in `simple/schema.py`.
 
 A graphical representation of the SIMPLE schema:
-![schema](documentation/figures/schema.png)
+<img src="https://github.com/kelle/SIMPLE-db/blob/new-schema/documentation/figures/schema2023.png?raw=true" width=75%>
