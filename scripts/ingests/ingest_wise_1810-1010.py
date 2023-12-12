@@ -92,7 +92,7 @@ def add_modeled_parameters_dict(db):
                                         'value_error': 100,
                                         'parameter': "T eff", 
                                         'unit': 'K',
-                                        'reference': "Lodi22"}  
+                                        'reference': "Lodi22"}   
                                  }]   
                                     
     source = "CWISEP J181006.00-101001.1"
