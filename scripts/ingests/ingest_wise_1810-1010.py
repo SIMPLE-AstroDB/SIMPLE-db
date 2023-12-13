@@ -7,7 +7,7 @@ import astropy.units as u
 from astropy.coordinates import Angle
    
 
-SAVE_DB = True  # True: save the data files(json) in addition to modifying the .db file
+SAVE_DB = False  # True: save the data files(json) in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 # LOAD THE DATABASE
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
@@ -96,7 +96,8 @@ def add_modeled_parameters_dict(db):
                                  }]   
                                     
     source = "CWISEP J181006.00-101001.1"
-    value_types = ['Gravity', 'Metallicity', 'Radius', 'Mass', 'Effective Temperature']
+    #value_types = ['Gravity', 'Metallicity', 'Radius', 'Mass', 'Effective temperature']
+    value_types = ['Effective temperature']
     with db.engine.connect() as conn:
         for row in ingest_modeled_parameters:
 
@@ -109,9 +110,10 @@ def add_modeled_parameters_dict(db):
 #Call functions/ Comment out when not needed
 #add_publication(db)
 #add_sources(db)
-add_parallaxes(db)
-add_proper_motions(db)
-#add_modeled_parameters_dict(db)
+#add_parallaxes(db)
+#add_proper_motions(db)
+add_modeled_parameters_dict(db)
+db.inventory('CWISEP J181006.00-101001.1', pretty_print=True)
 
 # WRITE THE JSON FILES
 if SAVE_DB:
