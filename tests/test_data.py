@@ -557,15 +557,35 @@ def test_modeledparameters(db):
     t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.reference == ref).astropy()
     assert len(t) == 696, f'found {len(t)} modeled parameters with {ref} reference'
 
-    #Test to verify T eff counts
-    ref = 'T eff'
-    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == ref).astropy()
-    assert len(t) == 174, f'found {len(t)} modeled parameters with {ref} parameter'
+    #Test to verify log g counts
+    param = 'log g'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 175, f'found {len(t)} modeled parameters with {param} parameter'
 
-    #Test to verify Lodi reference counts
+    #Test to verify metallicity counts
+    param = 'metallicity'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 1, f'found {len(t)} modeled parameters with {param} parameter'
+
+    #Test to verify radius counts
+    param = 'radius'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 175, f'found {len(t)} modeled parameters with {param} parameter'
+
+    #Test to verify mass counts
+    param = 'mass'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 175, f'found {len(t)} modeled parameters with {param} parameter'
+
+    #Test to verify T eff counts
+    param = 'T eff'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 175, f'found {len(t)} modeled parameters with {param} parameter'
+
+    #Test to verify Lodi22 reference counts
     ref = 'Lodi22'
     t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.reference == ref).astropy()
-    assert len(t) == 4, f'found {len(t)} modeled parameters with {ref} reference'
+    assert len(t) == 5, f'found {len(t)} modeled parameters with {ref} reference'
 
 
 def test_photometrymko_y(db):
