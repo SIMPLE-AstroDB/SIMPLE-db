@@ -1,6 +1,6 @@
 from scripts.ingests.ingest_utils import *
 from scripts.ingests.utils import *
-from astropy.io import ascii
+from astropy.io.ascii import ascii
 import astropy.units as u
 from astropy.coordinates import Angle
 
