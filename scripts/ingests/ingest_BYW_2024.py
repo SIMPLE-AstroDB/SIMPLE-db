@@ -11,17 +11,14 @@ db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
 
 # live google sheet
-link = "https://docs.google.com/spreadsheets/d/1JFa8F4Ngzp3qAW8NOBurkz4bMKo9zXYeF6N1vMtqDZs/edit#gid=0"
+link = "https://docs.google.com/spreadsheets/d/1JFa8F4Ngzp3qAW8NOBurkz4bMKo9zXYeF6N1vMtqDZs/pub?output=csv"
 
 columns = ['source', 'ra', 'dec', 'epoch', 'equinox', 'shortname', 'reference', 'other_ref', 'comments']
-byw_table = ascii.read(link, format='ascii', data_start=2, data_end=90, header_start=1, names=columns, guess=False,
+byw_table = ascii.read(link, format='ecsv', data_start=2, data_end=90, header_start=1, names=columns, guess=False,
                            fast_reader=False, delimiter=',')
 
 data_columns = ['Source', 'RA', 'Dec', 'Epoch', 'Equinox', 'Shortname', 'Reference', 'Other_ref', 'Comments']  # columns with wanted data values
 
-# replacing empty values ('cdots') with None
-for column in data_columns:
-    byw_table[column][np.where(byw_table[column] == 'cdots')] = None
 
 def ingest_source(db):
 
