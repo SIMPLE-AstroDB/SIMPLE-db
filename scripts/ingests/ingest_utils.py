@@ -1457,9 +1457,10 @@ def ingest_companion_relationships(db, source, companion_name, relationship,
             raise SimpleError(msg)
 
 
-def ingest_source(db, source, reference=None, ra=None, dec=None, epoch=None, equinox=None,
-                  other_reference=None, comment=None,
-                  raise_error=True, search_db=True):
+def ingest_source(db, source, reference: str = None, ra: float = None, dec: float = None, 
+                  epoch: str = None, equinox: str = None,
+                  other_reference: str = None, comment: str = None,
+                  raise_error: bool = True, search_db: bool = True):
     """
     Parameters
     ----------
@@ -1493,7 +1494,7 @@ def ingest_source(db, source, reference=None, ra=None, dec=None, epoch=None, equ
     None
 
     """
-    
+
     if ra is None and dec is None:
         coords_provided = False
     else:
@@ -1501,8 +1502,7 @@ def ingest_source(db, source, reference=None, ra=None, dec=None, epoch=None, equ
         ra = ra
         dec = dec
         epoch = epoch
-        equinox = equinox
-   
+        equinox = equinox   
     logger.debug(f"coords_provided:{coords_provided}")
 
     # Find out if source is already in database or not
@@ -1524,7 +1524,7 @@ def ingest_source(db, source, reference=None, ra=None, dec=None, epoch=None, equ
 
         # Figure out if source name provided is an alternate name
         db_source_matches = db.search_object(source, output_table='Sources', fuzzy_search=False)
-        
+
         # Try to add alternate source name to Names table
         if len(db_source_matches) == 0:
             alt_names_data = [{'source': name_matches[0], 'other_name': source}]
@@ -1541,7 +1541,6 @@ def ingest_source(db, source, reference=None, ra=None, dec=None, epoch=None, equ
                 else:
                     return
         return  # Source is already in database, nothing new to ingest
-        
     # Multiple source matches in the database so unable to ingest source
     elif len(name_matches) > 1 and search_db:  
         msg1 = f"   Not ingesting {source}."
@@ -1551,8 +1550,8 @@ def ingest_source(db, source, reference=None, ra=None, dec=None, epoch=None, equ
             raise SimpleError(msg)
         else:
             return
-    
-     # No match in the database, INGEST!
+
+    #  No match in the database, INGEST!
     elif len(name_matches) == 0 or not search_db: 
 
          # Make sure reference is provided and in References table
@@ -1580,7 +1579,7 @@ def ingest_source(db, source, reference=None, ra=None, dec=None, epoch=None, equ
         if not coords_provided:
             # Try to get coordinates from SIMBAD
             simbad_result_table = Simbad.query_object(source)
-           
+
             if simbad_result_table is None:
                 msg = f"Not ingesting {source}. Coordinates are needed and could not be retrieved from SIMBAD. \n"
                 logger.warning(msg)
@@ -1607,7 +1606,6 @@ def ingest_source(db, source, reference=None, ra=None, dec=None, epoch=None, equ
                     return
 
        
-
     # Just in case other conditionals not met    
     else:
         msg = f"Unexpected condition encountered ingesting {source}"
@@ -1624,7 +1622,7 @@ def ingest_source(db, source, reference=None, ra=None, dec=None, epoch=None, equ
                     'epoch': epoch,
                     'equinox': equinox,
                     'other_references': other_reference,
-                    'comments': comment }]
+                    'comments': comment}]
     names_data = [{'source': source,
                     'other_name': source}]
 
@@ -1637,7 +1635,9 @@ def ingest_source(db, source, reference=None, ra=None, dec=None, epoch=None, equ
         logger.info(f"Added {source}")
         logger.debug(msg)
     except sqlalchemy.exc.IntegrityError:
-        msg  = f"Not ingesting {source}. Not sure why. \n"
+        msg  = f"Not ingesting {source}. Not sure why. \n" \
+                "The reference may not exist in Publications table. \n" \
+                "Add it with ingest_publication function. \n"
         msg2 = f"   {str(source_data)} "
         logger.warning(msg)
         logger.debug(msg2)
