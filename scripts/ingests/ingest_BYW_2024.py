@@ -2,8 +2,6 @@ from scripts.ingests.ingest_utils import *
 from scripts.ingests.utils import *
 from astropy.io import ascii
 import astropy.units as u
-import pandas as pd
-import csv
 import requests
 from io import StringIO
 from astropy.coordinates import Angle
