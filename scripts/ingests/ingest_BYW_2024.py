@@ -55,35 +55,49 @@ byw_table = ascii.read(link, format='csv', data_start=1, data_end=90, header_sta
 #print result astropy table
 print(byw_table)
 
+#Loop over the byw table and print source name ra, dec, at each row. 
+#Change all references to Roth; search and replace 
+#Individually ingest other_ref sources as publications, then use those 3 to modify the 3 sources to be ingested in the loop
+
 
 #Individual source ingest attempt...
 def ingest_source_one(db):
 
-    ingest_source(db, source = ["CWISE J000021.45-481314.9"], 
-                  reference = "Rothermich", 
-                  ra = [0.0893808], 
-                  dec = [-48.2208077], 
-                  epoch = [2015.4041], 
+    ingest_source(db, source = "CWISE J000021.45-481314.9", 
+                  reference = "Roth", 
+                  ra = 0.0893808, 
+                  dec = -48.2208077, 
+                  epoch = 2015.4041, 
                   equinox = "ICRS", 
                   raise_error=True, 
                   search_db=True, 
                   other_reference=None, 
                   comment=None)
     
+    ingest_source(db, source = "CWISE J002029.72-153527.5", 
+                  reference = "Roth", 
+                  ra = 5.1238388, 
+                  dec = -15.5909815, 
+                  epoch = 2015.4041, 
+                  equinox = "ICRS", 
+                  raise_error=True, 
+                  search_db=True, 
+                  other_reference=None, 
+                  comment=None)
 
 
 #All sources ingest attempt...
-def ingest_all_sources(db):
-    ingest_sources(db, sources = [" "], 
-                   references=None, 
-                   ras=None, 
-                   decs=None, 
-                   comments=None, 
-                   epochs=None,
-                   equinoxes=None, 
-                   other_references=None, 
-                   raise_error=True, 
-                   search_db=True)   
+#def ingest_all_sources(db):
+#    ingest_sources(db, sources = [" "], 
+#                   references=None, 
+#                   ras=None, 
+#                   decs=None, 
+#                   comments=None, 
+#                   epochs=None,
+#                   equinoxes=None, 
+#                   other_references=None, 
+#                   raise_error=True, 
+#                   search_db=True)   
 
 #calling functions    
 ingest_source_one(db)    
