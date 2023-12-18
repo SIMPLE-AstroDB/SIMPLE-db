@@ -1457,9 +1457,42 @@ def ingest_companion_relationships(db, source, companion_name, relationship,
             raise SimpleError(msg)
 
 
-def ingest_source(db, source, reference=None, ra=None, dec=None, epoch=None, equinox=None, 
-                  raise_error=True, search_db=True, other_reference=None, comment=None):
-    # TODO: ADD DOCSTRING
+def ingest_source(db, source, reference=None, ra=None, dec=None, epoch=None, equinox=None,
+                  other_reference=None, comment=None,
+                  raise_error=True, search_db=True):
+    """
+    Parameters
+    ----------
+    db: astrodbkit2.astrodb.Database
+        Database object created by astrodbkit2
+    sources: str
+        Names of sources
+    references: str 
+        Discovery references of sources
+    ras: float, optional
+        Right ascensions of sources. Decimal degrees.
+    decs: float, optional
+        Declinations of sources. Decimal degrees.
+    comments: string, optional
+        Comments
+    epochs: str, optional
+        Epochs of coordinates
+    equinoxes: str, optional
+        Equinoxes of coordinates
+    other_references: str
+    raise_error: bool, optional
+        True (default): Raise an error if a source cannot be ingested
+        False: Log a warning but skip sources which cannot be ingested
+    search_db: bool, optional
+        True (default): Search database to see if source is already ingested
+        False: Ingest source without searching the database
+
+    Returns
+    -------
+
+    None
+
+    """
     
     if ra is None and dec is None:
         coords_provided = False
