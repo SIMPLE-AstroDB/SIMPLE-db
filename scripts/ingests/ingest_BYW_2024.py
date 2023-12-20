@@ -1,108 +1,69 @@
 from scripts.ingests.ingest_utils import *
 from scripts.ingests.utils import *
 from astropy.io import ascii
-import astropy.units as u
-import requests
-from io import StringIO
-from astropy.coordinates import Angle
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 # LOAD THE DATABASE
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
-#Attempt 1
-#csv_file_path = "C:\Users\LRamon\Documents\Austin-BYW-Benchmark-Sources.-.Sheet1.csv"
-
-#with open(csv_file_path, 'r') as file:
-    # Create a CSV reader object with dictionary-like behavior
-    #csv_reader = csv.DictReader(file)
-
-    # Iterate through each row in the CSV file
-    #for row in csv_reader:
-        # Each 'row' variable represents a dictionary with column names as keys
-     #   print(row)
-
-
-
-# live google sheet (Attempt 2)
-#sheet_id = '1JFa8F4Ngzp3qAW8NOBurkz4bMKo9zXYeF6N1vMtqDZs'
-#df = pd.read_csv(f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv")
-#print(df)
-
-
-#(Attempt 3)
+# Load Google sheet
 sheet_id = '1JFa8F4Ngzp3qAW8NOBurkz4bMKo9zXYeF6N1vMtqDZs'
 link = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
 
-# Fetch the content from the URL
-response = requests.get(link)
-data = response.text
-
-# Use io.StringIO to create a file-like object
-data_file = StringIO(data)
-
-#define the column names
-columns = ['source', 'ra', 'dec', 'epoch', 'equinox', 'shortname', 'reference', 'other_ref', 'comments']
-
 #read the csv data into an astropy table
 #ascii.read attempts to read data from local files rather from URLs so using a library like requests helps get data and create object that can be passed to ascii.read
-byw_table = ascii.read(link, format='csv', data_start=1, data_end=90, header_start=1, names=columns, guess=False, fast_reader=False, delimiter=',')
-
-#data_columns = ['Source', 'RA', 'Dec', 'Epoch', 'Equinox', 'Shortname', 'Reference', 'Other_ref', 'Comments']  # columns with wanted data values
-#byw_table.rename_columns(data_columns)
+byw_table = ascii.read(link, format='csv', data_start=1,  header_start=0, guess=False, fast_reader=False, delimiter=',')
 
 #print result astropy table
-print(byw_table)
-
-#Loop over the byw table and print source name ra, dec, at each row. 
-#Change all references to Roth; search and replace 
-#Individually ingest other_ref sources as publications, then use those 3 to modify the 3 sources to be ingested in the loop
+print(byw_table.info)
 
 
-#Individual source ingest attempt...
-def ingest_source_one(db):
+#Loop through each row in byw table and print data: source name ra, dec. 
+def ingest_all_sources(db):   
+    for row in byw_table:  # skip the header row - [1:10]runs only first 10 rows
 
-    ingest_source(db, source = "CWISE J000021.45-481314.9", 
-                  reference = "Roth", 
-                  ra = 0.0893808, 
-                  dec = -48.2208077, 
-                  epoch = 2015.4041, 
-                  equinox = "ICRS", 
-                  raise_error=True, 
-                  search_db=True, 
-                  other_reference=None, 
-                  comment=None)
+        # Print byw source information
+        print("BYW Source Information:")
+        #for key, value in row_dict.items():
+        #print(f"{key}: {value}")
+
+        for col_name in row.colnames:
+            print(f"{col_name}: {row[col_name]}")
+             
+ 
+        ingest_source(db, source = row['Source'], 
+                    reference= row['Reference'], 
+                    ra= row['RA'], 
+                    dec= row['Dec'], 
+                    comment= row['Comments'], 
+                    epoch= row['Epoch'],
+                    equinox= row['Equinox'], 
+                    other_reference= row['Other_ref'], 
+                    raise_error=True, 
+                    search_db=True) 
+        #print(row['ra'])
+        #print(row_dict['ra'])
+
+        # Add a separator between rows for better readability
+        print("-" * 20)
+
+
+#Ingested other_ref sources as publications
+# Skrzypek et al. 2016, Marocco et al. 2015(Online Catalog), Kirkpatrick et al. 2021
+#Ingest reference name: Skrz16, Maro15, Kirk21     
     
-    ingest_source(db, source = "CWISE J002029.72-153527.5", 
-                  reference = "Roth", 
-                  ra = 5.1238388, 
-                  dec = -15.5909815, 
-                  epoch = 2015.4041, 
-                  equinox = "ICRS", 
-                  raise_error=True, 
-                  search_db=True, 
-                  other_reference=None, 
-                  comment=None)
+def add_publication(db):
 
+    ingest_publication(db, doi = "10.26093/cds/vizier.35890049", bibcode = "2016yCat..35890049S")
 
-#All sources ingest attempt...
-#def ingest_all_sources(db):
-#    ingest_sources(db, sources = [" "], 
-#                   references=None, 
-#                   ras=None, 
-#                   decs=None, 
-#                   comments=None, 
-#                   epochs=None,
-#                   equinoxes=None, 
-#                   other_references=None, 
-#                   raise_error=True, 
-#                   search_db=True)   
+    ingest_publication(db, doi = "10.1093/mnras/stv530", bibcode = "2015MNRAS.449.3651M")
+
+    ingest_publication(db, doi = "10.3847/1538-4365/abd107", bibcode = "2021ApJS..253....7K")  
 
 #calling functions    
-ingest_source_one(db)    
-OR
-#ingest_all_sources(db)    
+#add_publication(db)      
+ingest_all_sources(db)    
     
 db.inventory('CWISE J000021.45-481314.9', pretty_print=True)
 
