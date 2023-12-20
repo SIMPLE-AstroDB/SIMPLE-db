@@ -18,7 +18,14 @@ import requests
 import logging
 from sqlalchemy import or_, and_
 import sqlalchemy.exc
-from scripts.ingests.utils import SimpleError, find_source_in_db, find_publication, check_internet_connection
+from scripts.ingests.utils import (
+    SimpleError,
+    find_source_in_db,
+    find_publication,
+    check_internet_connection,
+)
+
+# TODO: add __all__ to all modules
 
 logger = logging.getLogger("SIMPLE")
 
@@ -647,7 +654,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
     n_added = 0
 
     # loop through sources with parallax data to ingest
-    for i, source in enumerate(sources):    
+    for i, source in enumerate(sources):
         db_name = find_source_in_db(db, source)
 
         if len(db_name) != 1:
@@ -664,7 +671,7 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
         )
 
         if source_plx_data is None or len(source_plx_data) == 0:
-            # if there's no other measurements in the database, 
+            # if there's no other measurements in the database,
             # set new data Adopted = True
             adopted = True
             # old_adopted = None  # not used
@@ -865,7 +872,7 @@ def ingest_proper_motions(
                         conn.commit()
             else:
                 adopted = False
-                # if no previous adopted measurement, 
+                # if no previous adopted measurement,
                 # set adopted to the measurement with the smallest errors
                 if (
                     not adopted
