@@ -3,6 +3,7 @@ import pytest
 import sys
 import math
 import os
+
 sys.path.append(".")
 from scripts.ingests.utils import *
 from scripts.ingests.ingest_utils import *
@@ -186,6 +187,19 @@ def test_ingest_sources(db):
     with pytest.raises(SimpleError) as error_message:
         ingest_sources(db, ["NotinSimbad"], references="Ref 1", raise_error=True)
         assert "Coordinates are needed" in str(error_message.value)
+
+
+def test_ingest_source():
+    with pytest.raises(SimpleError) as error_message:
+        ingest_source(
+            db,
+            "Fake7",
+            ra=11.0673755,
+            dec=18.352889,
+            reference="Ref 1",
+            raise_error=True,
+        )
+        assert "already exists" in str(error_message.value)
 
 
 def test_convert_spt_string_to_code():
