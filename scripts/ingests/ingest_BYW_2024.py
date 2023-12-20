@@ -35,11 +35,9 @@ def ingest_all_sources(db):
         ingest_source(db, source = row['Source'], 
                     reference= row['Reference'], 
                     ra= row['RA'], 
-                    dec= row['Dec'], 
-                    comment= row['Comments'], 
+                    dec= row['Dec'],  
                     epoch= row['Epoch'],
-                    equinox= row['Equinox'], 
-                    other_reference= row['Other_ref'], 
+                    equinox= row['Equinox'],
                     raise_error=True, 
                     search_db=True) 
         #print(row['ra'])
