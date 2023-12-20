@@ -21,13 +21,14 @@ import astropy.units as u
 import socket
 from scripts import REFERENCE_TABLES
 
-# TODO:  add __all__ to limit what is imported with *
-__all__ = ["SimpleError", 
-           "load_simpledb", 
-           "find_source_in_db", 
-           "find_publication",
-           "ingest_publication",
-           "check_internet_connection"]
+__all__ = [
+    "SimpleError",
+    "load_simpledb",
+    "find_source_in_db",
+    "find_publication",
+    "ingest_publication",
+    "check_internet_connection",
+]
 
 warnings.filterwarnings("ignore", module="astroquery.simbad")
 logger = logging.getLogger("SIMPLE")
