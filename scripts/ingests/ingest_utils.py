@@ -1926,10 +1926,8 @@ def ingest_source(
     logger.debug(f"name_matches: {name_matches}")
 
     # Source is already in database
+    # Checking out alternate names
     if len(name_matches) == 1 and search_db:
-        msg = f"Not ingesting {source}. Already in database as {name_matches[0]}. \n "
-        logger.info(msg)
-
         # Figure out if source name provided is an alternate name
         db_source_matches = db.search_object(
             source, output_table="Sources", fuzzy_search=False
@@ -1950,7 +1948,14 @@ def ingest_source(
                     raise SimpleError(msg + "\n" + str(e))
                 else:
                     return
-        return  # Source is already in database, nothing new to ingest
+
+        msg = f"Not ingesting {source}. Already in database as {name_matches[0]}. \n "
+        if raise_error:
+            raise SimpleError(msg)
+        else:
+            logger.info(msg)
+            return  # Source is already in database, nothing new to ingest
+
     # Multiple source matches in the database so unable to ingest source
     elif len(name_matches) > 1 and search_db:
         msg1 = f"   Not ingesting {source}."
