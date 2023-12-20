@@ -29,7 +29,7 @@ print(byw_table.info)
 
 # Loop through each row in byw table and print data: source name ra, dec.
 def ingest_all_sources(db):
-    for row in byw_table:  # skip the header row - [1:10]runs only first 10 rows
+    for row in byw_table[72:]:  # skip the header row - [1:10]runs only first 10 rows
         # Print byw source information
         print("BYW Source Information:")
         # for key, value in row_dict.items():
@@ -80,6 +80,11 @@ def fix_blobs(db):
             .where(db.Sources.c.reference == "Roth")
             .values(other_references=None, comments=None)
         )
+
+
+def delete_roth_sources(db):
+    with db.engine.begin() as conn:
+        conn.execute(db.Sources.delete().where(db.Sources.c.reference == "Roth"))
 
 
 # calling functions
