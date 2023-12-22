@@ -25,7 +25,18 @@ from scripts.ingests.utils import (
     check_internet_connection,
 )
 
-# TODO: add __all__ to all modules
+__all__ = [
+    "ingest_names",
+    "ingest_source",
+    "ingest_sources",
+    "ingest_spectral_types",
+    "ingest_parallaxes",
+    "ingest_proper_motions",
+    "ingest_photometry",
+    "ingest_spectra",
+    "ingest_instrument",
+    "find_survey_name_in_simbad",
+]
 
 logger = logging.getLogger("SIMPLE")
 
@@ -150,20 +161,20 @@ def ingest_sources(
         other_references,
     ) = input_values
 
-    n_added = 0
-    n_existing = 0
-    n_names = 0
-    n_alt_names = 0
-    n_skipped = 0
-    n_multiples = 0
+    # TODO: figure out counting
+    # n_added = 0
+    # n_existing = 0
+    # n_names = 0
+    # n_alt_names = 0
+    # n_skipped = 0
+    # n_multiples = 0
 
     if n_sources > 1:
         logger.info(f"Trying to add {n_sources} sources")
 
     # Loop over each source and decide to ingest, skip, or add alt name
     for source_counter, source in enumerate(sources):
-        # ingest_source function starts here
-        # TODO: figure out counter
+       
         logger.debug(f"{source_counter}: Trying to ingest {source}")
 
         reference = references[source_counter]
@@ -213,7 +224,9 @@ def ingest_sources(
     #     logger.info(f"Names added to database: {n_names} \n")
     #     logger.info(f"Sources already in database: {n_existing}")
     #     logger.info(f"Alt Names added to database: {n_alt_names}")
-    #     logger.info(f"Sources NOT added to database because multiple matches: {n_multiples}")
+    #     logger.info(
+    #         f"Sources NOT added to database because multiple matches: {n_multiples}"
+    #     )
     #     logger.info(f"Sources NOT added to database: {n_skipped} \n")
 
     # if n_added != n_names:
@@ -1915,15 +1928,17 @@ def ingest_source(
 
     # Find out if source is already in database or not
     if coords_provided and search_db:
+        logger.debug(f"Checking database for: {source} at ra: {ra}, dec: {dec}")
         name_matches = find_source_in_db(db, source, ra=ra, dec=dec)
     elif search_db:
+        logger.debug(f"Checking database for: {source}")
         name_matches = find_source_in_db(db, source)
     elif not search_db:
         name_matches = []
     else:
         name_matches = None
 
-    logger.debug(f"name_matches: {name_matches}")
+    logger.debug(f"Source matches in database: {name_matches}")
 
     # Source is already in database
     # Checking out alternate names
@@ -1940,7 +1955,7 @@ def ingest_source(
                 with db.engine.connect() as conn:
                     conn.execute(db.Names.insert().values(alt_names_data))
                     conn.commit()
-                logger.debug(f"   Name added to database: {alt_names_data}\n")
+                logger.info(f"   Name added to database: {alt_names_data}\n")
             except sqlalchemy.exc.IntegrityError as e:
                 msg = f"   Could not add {alt_names_data} to database"
                 logger.warning(msg)

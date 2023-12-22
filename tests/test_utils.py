@@ -1,20 +1,34 @@
-# Test to verify functions in utils
 import pytest
-import sys
 import math
 import os
-
-sys.path.append(".")
-from scripts.ingests.utils import *
-from scripts.ingests.ingest_utils import *
-from simple.schema import *
 from astrodbkit2.astrodb import create_database, Database
 from astropy.table import Table
 from sqlalchemy import and_
+from scripts.ingests.utils import (
+    SimpleError,
+    find_publication,
+    ingest_publication,
+)
+from scripts.ingests.ingest_utils import (
+    convert_spt_string_to_code,
+    ingest_companion_relationships,
+    ingest_source,
+    ingest_sources,
+    ingest_parallaxes,
+    ingest_spectral_types,
+    ingest_instrument,
+    ingest_proper_motions,
+)
+from simple.schema import *
+import logging
+
+
+logger = logging.getLogger("SIMPLE")
+logger.setLevel(logging.DEBUG)
+
 
 DB_NAME = "temp.db"
 DB_PATH = "data"
-logger.setLevel(logging.INFO)
 
 
 # Load the database for use in individual tests
@@ -110,35 +124,32 @@ def test_setup_db(db):
     return db
 
 
+@pytest.mark.filterwarnings(
+    "ignore::UserWarning"
+)  # suppress astroquery SIMBAD warnings
 def test_ingest_sources(db):
     # TODO: Test adding an alt name
     source_data1 = Table(
         [
             {
-                "source": "Fake 1",
-                "ra": 9.0673755,
-                "dec": 18.352889,
+                "source": "Apple",
+                "ra": 10.0673755,
+                "dec": 17.352889,
                 "reference": "Ref 1",
             },
             {
-                "source": "Fake 6",
-                "ra": 10.0673755,
-                "dec": 18.352889,
+                "source": "Orange",
+                "ra": 12.0673755,
+                "dec": -15.352889,
                 "reference": "Ref 2",
             },
             {
-                "source": "Fake 7",
-                "ra": 11.0673755,
-                "dec": 18.352889,
+                "source": "Banana",
+                "ra": 119.0673755,
+                "dec": -28.352889,
                 "reference": "Ref 1",
             },
         ]
-    )
-    source_data5 = Table(
-        [{"source": "Fake 5", "ra": 9.06799, "dec": 18.352889, "reference": ""}]
-    )
-    source_data8 = Table(
-        [{"source": "Fake 8", "ra": 9.06799, "dec": 18.352889, "reference": "Ref 4"}]
     )
 
     ingest_sources(
@@ -149,51 +160,66 @@ def test_ingest_sources(db):
         references=source_data1["reference"],
         raise_error=True,
     )
+    assert db.query(db.Sources).filter(db.Sources.c.source == "Apple").count() == 1
+    assert db.query(db.Sources).filter(db.Sources.c.source == "Orange").count() == 1
+    assert db.query(db.Sources).filter(db.Sources.c.source == "Banana").count() == 1
 
-    ingest_sources(db, ["Barnard Star"], references="Ref 2", raise_error=True)
+
+@pytest.mark.filterwarnings(
+    "ignore::UserWarning"
+)  # suppress astroquery SIMBAD warnings
+def test_ingest_source(db):
+    ingest_source(db, "Barnard Star", reference="Ref 2", raise_error=True)
+
     Barnard_star = (
         db.query(db.Sources).filter(db.Sources.c.source == "Barnard Star").astropy()
     )
     assert len(Barnard_star) == 1
-    assert math.isclose(Barnard_star["ra"], 269.452, abs_tol=0.001)
-    assert math.isclose(Barnard_star["dec"], 4.6933, abs_tol=0.001)
+    assert math.isclose(Barnard_star["ra"][0], 269.452, abs_tol=0.001)
+    assert math.isclose(Barnard_star["dec"][0], 4.6933, abs_tol=0.001)
 
-    assert db.query(db.Sources).filter(db.Sources.c.source == "Fake 1").count() == 1
-    assert db.query(db.Sources).filter(db.Sources.c.source == "Fake 6").count() == 1
-    assert db.query(db.Sources).filter(db.Sources.c.source == "Fake 7").count() == 1
-
+    source_data8 = {
+        "source": "Fake 8",
+        "ra": 9.06799,
+        "dec": 18.352889,
+        "reference": "Ref 4",
+    }
     with pytest.raises(SimpleError) as error_message:
-        ingest_sources(
+        ingest_source(
             db,
             source_data8["source"],
-            ras=source_data8["ra"],
-            decs=source_data5["dec"],
-            references=source_data8["reference"],
+            ra=source_data8["ra"],
+            dec=source_data8["dec"],
+            reference=source_data8["reference"],
             raise_error=True,
         )
         assert "not in Publications table" in str(error_message.value)
 
+    source_data5 = {
+        "source": "Fake 5",
+        "ra": 9.06799,
+        "dec": 18.352889,
+        "reference": "",
+    }
     with pytest.raises(SimpleError) as error_message:
-        ingest_sources(
+        ingest_source(
             db,
             source_data5["source"],
-            ras=source_data5["ra"],
-            decs=source_data5["dec"],
-            references=source_data5["reference"],
+            ra=source_data5["ra"],
+            dec=source_data5["dec"],
+            reference=source_data5["reference"],
             raise_error=True,
         )
         assert "blank" in str(error_message.value)
 
     with pytest.raises(SimpleError) as error_message:
-        ingest_sources(db, ["NotinSimbad"], references="Ref 1", raise_error=True)
+        ingest_source(db, "NotinSimbad", reference="Ref 1", raise_error=True)
         assert "Coordinates are needed" in str(error_message.value)
 
-
-def test_ingest_source():
     with pytest.raises(SimpleError) as error_message:
         ingest_source(
             db,
-            "Fake7",
+            "Fake 1",
             ra=11.0673755,
             dec=18.352889,
             reference="Ref 1",
@@ -279,13 +305,13 @@ def test_ingest_spectral_types(db):
         ]
     )
 
-    data2 = Table(
-        [
-            {"source": "Fake 1", "spectral_type": "M5.6", "reference": "Ref 1"},
-            {"source": "Fake 2", "spectral_type": "T0.1", "reference": "Ref 1"},
-            {"source": "Fake 3", "spectral_type": "Y2pec", "reference": "Ref 2"},
-        ]
-    )
+    # data2 = Table(
+    #     [
+    #         {"source": "Fake 1", "spectral_type": "M5.6", "reference": "Ref 1"},
+    #         {"source": "Fake 2", "spectral_type": "T0.1", "reference": "Ref 1"},
+    #         {"source": "Fake 3", "spectral_type": "Y2pec", "reference": "Ref 2"},
+    #     ]
+    # )
 
     data3 = Table(
         [
@@ -387,8 +413,10 @@ def test_ingest_instrument(db):
     # tel_test = 'test2'
     # inst_test = 'test3'
     # ingest_instrument(db, telescope=tel_test, instrument=inst_test)
-    # telescope_db = db.query(db.Telescopes).filter(db.Telescopes.c.telescope == tel_test).table()
-    # instrument_db = db.query(db.Instruments).filter(db.Instruments.c.instrument == inst_test).table()
+    # telescope_db = db.query(db.Telescopes).
+    #   filter(db.Telescopes.c.telescope == tel_test).table()
+    # instrument_db = db.query(db.Instruments).
+    #   filter(db.Instruments.c.instrument == inst_test).table()
     # assert len(telescope_db) == 1
     # assert telescope_db['telescope'][0] == tel_test
     # assert len(instrument_db) == 1
@@ -463,24 +491,24 @@ def test_ingest_instrument(db):
 
 def test_companion_relationships(db):
     # testing companion ingest
-    ## trying no companion
+    # trying no companion
     with pytest.raises(SimpleError) as error_message:
         ingest_companion_relationships(db, "Fake 1", None, "Sibling")
     assert "Make sure all require parameters are provided." in str(error_message.value)
 
-    ## trying companion == source
+    # trying companion == source
     with pytest.raises(SimpleError) as error_message:
         ingest_companion_relationships(db, "Fake 1", "Fake 1", "Sibling")
     assert "Source cannot be the same as companion name" in str(error_message.value)
 
-    ## trying negative separation
+    # trying negative separation
     with pytest.raises(SimpleError) as error_message:
         ingest_companion_relationships(
             db, "Fake 1", "Bad Companion", "Sibling", projected_separation_arcsec=-5
         )
     assert "cannot be negative" in str(error_message.value)
 
-    ## trying negative separation error
+    # trying negative separation error
     with pytest.raises(SimpleError) as error_message:
         ingest_companion_relationships(
             db, "Fake 1", "Bad Companion", "Sibling", projected_separation_error=-5

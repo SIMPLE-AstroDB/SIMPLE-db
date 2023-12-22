@@ -182,6 +182,10 @@ def find_source_in_db(db, source, ra=None, dec=None, search_radius=60.0):
             logger.debug(msg)
             # Search database around that coordinate
             radius = u.Quantity(search_radius, unit="arcsec")
+            msg2 = (
+                f"Finding SIMBAD matches around {simbad_skycoord} with radius {radius}"
+            )
+            logger.debug(msg2)
             db_name_matches = db.query_region(simbad_skycoord, radius=radius)
 
     if len(db_name_matches) == 1:
