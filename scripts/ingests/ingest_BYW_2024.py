@@ -3,7 +3,7 @@ from scripts.ingests.utils import *
 from astropy.io import ascii
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = False  # recreates the .db file from the data files
+RECREATE_DB = True  # recreates the .db file from the data files
 # LOAD THE DATABASE
 db = load_simpledb("SIMPLE.db", recreatedb=RECREATE_DB)
 
@@ -29,7 +29,7 @@ print(byw_table.info)
 
 # Loop through each row in byw table and print data: source name ra, dec.
 def ingest_all_sources(db):
-    for row in byw_table[72:]:  # skip the header row - [1:10]runs only first 10 rows
+    for row in byw_table[1:90]:  # skip the header row - [1:10]runs only first 10 rows
         # Print byw source information
         print("BYW Source Information:")
         # for key, value in row_dict.items():
@@ -55,12 +55,35 @@ def ingest_all_sources(db):
         # Add a separator between rows for better readability
         print("-" * 20)
 
+#Call sources function
+ingest_all_sources(db)
+
+
+#Ingest shortnames as other names to source
+#Loop through data 
+def ingest_all_shortnames(db):
+    for row in byw_table[55:]:  # skip the header row - [1:10]runs only first 10 rows
+
+        # Print byw source information
+        print("BYW Source Information:")
+        
+        for col_name in row.colnames:
+            print(f"{col_name}: {row[col_name]}")
+
+        ingest_names(db, 
+                 source=row["Source"], 
+                 other_name=row["Shortname"]
+        )
+
+        print("-" * 20)
+
+#Call shortnames function
+ingest_all_shortnames(db)
+
 
 # Ingested other_ref sources as publications
 # Skrzypek et al. 2016, Marocco et al. 2015(Online Catalog), Kirkpatrick et al. 2021
 # Ingest reference name: Skrz16, Maro15, Kirk21
-
-
 def add_publication(db):
     ingest_publication(
         db, doi="10.26093/cds/vizier.35890049", bibcode="2016yCat..35890049S"
@@ -72,6 +95,8 @@ def add_publication(db):
         db, doi="10.3847/1538-4365/abd107", bibcode="2021ApJS..253....7K"
     )
 
+#Call publications function
+# add_publication(db)
 
 def fix_blobs(db):
     with db.engine.begin() as conn:
@@ -87,9 +112,7 @@ def delete_roth_sources(db):
         conn.execute(db.Sources.delete().where(db.Sources.c.reference == "Roth"))
 
 
-# calling functions
-# add_publication(db)
-ingest_all_sources(db)
+
 
 db.inventory("CWISE J000021.45-481314.9", pretty_print=True)
 
