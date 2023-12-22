@@ -116,6 +116,10 @@ def test_discovery_references(db):
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 91, f'found {len(t)} discovery reference entries for {ref}'
 
+    ref = 'Roth'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 83, f'found {len(t)} discovery reference entries for {ref}'
+
 
 def test_proper_motion_refs(db):
     """
