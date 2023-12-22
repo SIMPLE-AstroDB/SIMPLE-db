@@ -32,8 +32,7 @@ def ingest_all_sources(db):
     for row in byw_table[1:90]:  # skip the header row - [1:10]runs only first 10 rows
         # Print byw source information
         print("BYW Source Information:")
-        # for key, value in row_dict.items():
-        # print(f"{key}: {value}")
+
 
         for col_name in row.colnames:
             print(f"{col_name}: {row[col_name]}")
@@ -49,8 +48,7 @@ def ingest_all_sources(db):
             raise_error=True,
             search_db=True,
         )
-        # print(row['ra'])
-        # print(row_dict['ra'])
+    
 
         # Add a separator between rows for better readability
         print("-" * 20)
@@ -62,7 +60,7 @@ ingest_all_sources(db)
 #Ingest shortnames as other names to source
 #Loop through data 
 def ingest_all_shortnames(db):
-    for row in byw_table[55:]:  # skip the header row - [1:10]runs only first 10 rows
+    for row in byw_table[1:90]:  
 
         # Print byw source information
         print("BYW Source Information:")
