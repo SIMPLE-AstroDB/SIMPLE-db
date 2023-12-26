@@ -187,7 +187,7 @@ def test_proper_motion_refs(db):
 def test_parallax_refs(db):
     # Test total odopted measuruments
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.adopted == 1).astropy()
-    assert len(t) == 1443, f'found {len(t)} adopted parallax measuruments.'
+    assert len(t) == 1444, f'found {len(t)} adopted parallax measuruments.'
 
     ref = 'GaiaDR3'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
