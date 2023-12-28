@@ -35,7 +35,7 @@ print(bard14_table.info)
 
 #Loop through data and ingest spectra
 def ingest_all_spectra(db):
-    for row in bard14_table[1:19]:  
+    for row in bard14_table[0:19]:  
 
         # Print spectra information
         print("Spectra Information:")
@@ -67,7 +67,7 @@ def ingest_all_spectra(db):
 #Sheet has ra, sec and aperture not in db
 
 # Add a separator between rows for better readability
-print("-" * 20)
+    print("-" * 50)
 
 #Call spectral types function
 ingest_all_spectra(db)
