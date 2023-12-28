@@ -1,6 +1,7 @@
 from scripts.ingests.ingest_utils import *
 from scripts.ingests.utils import *
 from astropy.table import Table
+from astropy.io import ascii
 import astropy.units as u
 from astropy.coordinates import Angle
    
@@ -10,48 +11,68 @@ RECREATE_DB = True  # recreates the .db file from the data files
 # LOAD THE DATABASE
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
 
-#Find how to read data from folder
-bard14 = ascii.read()
+#bard14 url : https://docs.google.com/spreadsheets/d/11o5NRGA7jSbHKaTNK7SJnu_DTECjsyZ6rY3rcznYsJk/edit#gid=0
 
-# Read in file as Astropy table (Not sure how to ingest a folder, dont use csv)
-# file = 'bard14.csv'
-file = 'bard14.csv'
-data = Table.read('scripts/ingests/' + file)
+SHEET_ID = '11o5NRGA7jSbHKaTNK7SJnu_DTECjsyZ6rY3rcznYsJk'
+SHEET_NAME = 'bard14'
+full = 'all'
 
-# print result astropy table
-print(bard14.info)
+url = f'https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv&sheet={full}'
 
-#Ingest spectral types 
-#Loop through data 
-def ingest_all_spectral_types(db):
-    for row in file[1:90]:  
+bard14_table = ascii.read(
+    url,
+    format="csv",
+    data_start=1,
+    header_start=0,
+    guess=False,
+    fast_reader=False, 
+    delimiter=",",
+)
 
-        # Print spectral type information
-        print("Spectral Type Information:")
+#print result table
+print(bard14_table.info)
+
+
+#Loop through data and ingest spectra
+def ingest_all_spectra(db):
+    for row in bard14_table[1:19]:  
+
+        # Print spectra information
+        print("Spectra Information:")
         
         for col_name in row.colnames:
             print(f"{col_name}: {row[col_name]}")
 
 
-        print("-" * 20)
+# Ingest SPECTRAL TYPES, loop through data
+    ingest_spectra(db, 
+            sources = "Source", 
+            spectrum= "Spectrum",
+            original_spectrum= "Original Spectrum",
+            regimes = "regime",
+            telescope= "telescope",
+            instrument= "instrument",
+            mode= "mode",
+            observation_date= "observation date",
+            spectrum_comments= "spectrum comments",
+            spectrum_reference= "spectrum reference",
+            ra= "ra",
+            dec= "dec",
+            aperture= "aperture",
+            raise_error=True,
+            search_db= True, 
+    )
+#DB Table has local spectrum, comments(spectrum comments on sheet), reference(spectrum reference on sheet)
+#reference and other_references as categories not listed on sheet
+#Sheet has ra, sec and aperture not in db
+
+# Add a separator between rows for better readability
+print("-" * 20)
 
 #Call spectral types function
-ingest_all_spectral_types(db)
+ingest_all_spectra(db)
 
 
-# Ingest SPECTRAL TYPES, loop through data
-ingest_spectral_types(db, 
-                          sources = " ", 
-                          spectral_types= " ", 
-                          references = " ", 
-                          regimes = " ", 
-                          spectral_type_error=None,
-                          comments=None)
-
-#Idea to open a fits file
-#from astropy.io import fits
-#fits_image_filename = fits.util.get_testdata_filepath('test0.fits')
-#hdul = fits.open(fits_image_filename)
 
 # WRITE THE JSON FILES
 if SAVE_DB:
