@@ -35,7 +35,7 @@ print(bard14_table.info)
 
 #Loop through data and update spectra
 #def updating_spectra(db):
- #   for row in bard14_table[0:19]:  
+#for row in bard14_table[0:19]:  
 
         # Print spectra information
  #       print("Spectra Information:")
@@ -48,15 +48,21 @@ print(bard14_table.info)
 
 #Ingest spectra loop 2
             
-def update_all_spectra(db):
+#def update_all_spectra(db):
     #updating_spectra(db)
-
-    with db.engine.begin() as conn:
-        for entry in update_all_spectra:
-            source_value = entry['Source']
-            spectrum_value = entry['Spectrum']
-            original_spectrum_value = entry['Original Spectrum']
+#    with db.engine.begin() as conn:
+#        for entry in update_all_spectra:
+#            source_value = entry['Source']
+#            spectrum_value = entry['Spectrum']
+#            original_spectrum_value = entry['Original Spectrum']
           
+#function to update all spectra in the database
+def update_all_spectra(db):
+    with db.engine.begin() as conn:
+        for index, row in bard14_table.iterrows():
+            source_value = row['Source']
+            spectrum_value = row['Spectrum']
+            original_spectrum_value = row['Original Spectrum']          
 
 
 #update data in loop
