@@ -4,7 +4,7 @@ from astropy.io import ascii
 import requests
    
 
-SAVE_DB = True  # True: save the data files(json) in addition to modifying the .db file
+SAVE_DB = False  # True: save the data files(json) in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 # LOAD THE DATABASE
 db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
@@ -49,8 +49,10 @@ def update_all_spectra(db):
 
 
         # The website is up if the status code is 200 (checking validity of links)
-        request_response = requests.head(spectrum_value, original_spectrum_value)
-        status_code = (request_response.status_code)
+        request_response1 = requests.head(spectrum_value)
+        request_response2 = requests.head(original_spectrum_value)
+        status_code = (request_response1.status_code)
+        status_code = (request_response2.status_code)
 
         if status_code != 200: 
             msg = f"Link invalid:{spectrum_value}"
