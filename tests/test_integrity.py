@@ -1,8 +1,5 @@
 # Test to verify database integrity
-
 import os
-from operator import and_
-
 import pytest
 from . import REFERENCE_TABLES
 from sqlalchemy import func, and_  # , select, except_
@@ -672,6 +669,23 @@ def test_spectra(db):
         print(t)
     assert len(t) == 0
 
+    # All spectra should have a unique filename
+    sql_text = (
+        "SELECT Spectra.spectrum, Spectra.source "
+        "FROM Spectra "
+        "GROUP BY spectrum "
+        "HAVING (Count(*) > 1)"
+    )
+    duplicate_spectra = db.sql_query(sql_text, fmt="astropy")
+
+    # if duplicate spectra is non_zero, print out duplicate names
+    if len(duplicate_spectra) > 0:
+        print(f"\n{len(duplicate_spectra)} duplicated spectra")
+        print(duplicate_spectra)
+        print(duplicate_spectra["source"])
+
+    assert len(duplicate_spectra) == 0
+
 
 def test_special_characters(db):
     # This test asserts that no special unicode characters are in the database
@@ -683,7 +697,7 @@ def test_special_characters(db):
         "\u00ed",
         "\u00e1",
         "\u00fa",
-        "\u0000"
+        "\u0000",
     ]
     for char in bad_characters:
         data = db.search_string(char)
