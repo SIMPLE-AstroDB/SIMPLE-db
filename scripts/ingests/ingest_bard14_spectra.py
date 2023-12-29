@@ -49,16 +49,14 @@ def update_all_spectra(db):
 
 
         # The website is up if the status code is 200 (checking validity of links)
-        request_response = requests.head(spectrum_value)
+        request_response = requests.head(spectrum_value, original_spectrum_value)
         status_code = (request_response.status_code)
 
         if status_code != 200: 
             msg = f"Link invalid:{spectrum_value}"
-            raise SimpleError(msg)  
-
-        if status_code != 200: 
-            msg = f"Link invalid:{original_spectrum_value}"
-            raise SimpleError(msg) 
+            msg2 = f"Link invalid:{original_spectrum_value}"
+            raise SimpleError(msg, msg2)  
+            
             
 
         print(status_code) 
