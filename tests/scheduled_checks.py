@@ -66,4 +66,4 @@ def test_spectra_urls(db):
     # Display broken spectra regardless if it's the number we expect or not
     print(f"found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}")
     
-    assert (39 <= len(broken_urls) <= 40)
+    assert (4 <= len(broken_urls) <= 4)
