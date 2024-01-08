@@ -10,7 +10,7 @@ db = load_simpledb("SIMPLE.sqlite", recreatedb=RECREATE_DB)
 
 # Load Ultracool sheet
 sheet_id = "1i98ft8g5mzPp2DNno0kcz4B9nzMxdpyz5UquAVhz-U8"
-link = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
+# link = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
 link = "scripts/ultracool_sheet/UltracoolSheet - Main_010824.csv"
 
 # read the csv data into an astropy table
@@ -39,11 +39,11 @@ for source in uc_sheet_table[0:100]:
 
     # convert SIMPLE source name to URL
     if len(match) == 0:
-        print("No match found for ", uc_sheet_name)
-        raise ValueError
+        msg = f"No match found for {uc_sheet_name}"
+        raise ValueError(msg)
     elif len(match) > 1:
-        print("Multiple matches found for ", uc_sheet_name)
-        raise ValueError
+        msg = f"Multiple matches found for {uc_sheet_name}"
+        raise ValueError(msg)
     elif len(match) == 1:
         simple_source = match[0]
         print(f"Match found for {uc_sheet_name}: {simple_source}")
