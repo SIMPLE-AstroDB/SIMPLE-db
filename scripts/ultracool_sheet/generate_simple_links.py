@@ -1,0 +1,81 @@
+#  from scripts.ingests.ingest_utils import *
+from scripts.ingests.utils import load_simpledb, find_source_in_db
+from astropy.io import ascii
+import urllib.request
+from astropy.table import Table
+
+
+RECREATE_DB = False
+db = load_simpledb("SIMPLE.sqlite", recreatedb=RECREATE_DB)
+
+# Load Ultracool sheet
+sheet_id = "1i98ft8g5mzPp2DNno0kcz4B9nzMxdpyz5UquAVhz-U8"
+link = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
+link = "scripts/ultracool_sheet/UltracoolSheet - Main_010824.csv"
+
+# read the csv data into an astropy table
+uc_sheet_table = ascii.read(
+    link,
+    format="csv",
+    data_start=1,
+    header_start=0,
+    guess=False,
+    fast_reader=False,
+    delimiter=",",
+)
+
+# Match sources in Ultracool sheet to sources in SIMPLE
+uc_names = []
+simple_urls = []
+simple_sources = []
+for source in uc_sheet_table[0:100]:
+    uc_sheet_name = source["name"]
+    match = find_source_in_db(
+        db,
+        uc_sheet_name,
+        ra=source["ra_j2000_formula"],
+        dec=source["dec_j2000_formula"],
+    )
+
+    # convert SIMPLE source name to URL
+    if len(match) == 0:
+        print("No match found for ", uc_sheet_name)
+        raise ValueError
+    elif len(match) > 1:
+        print("Multiple matches found for ", uc_sheet_name)
+        raise ValueError
+    elif len(match) == 1:
+        simple_source = match[0]
+        print(f"Match found for {uc_sheet_name}: {simple_source}")
+    else:
+        raise ValueError("Unexpected state")
+
+    # URLify source name
+    source_url = simple_source.strip().replace(" ", "%21")
+    url = "https://simple-bd-archive.org/load_solo/" + source_url
+    # u rl = "https://simple-bd-archive.org/solo_result/" + source_url
+
+    # TODO: THIS DOESN'T WORK!!! Even bad URLs return 200
+    # test the URL
+    url_status = 200
+    # url_status = urllib.request.urlopen(url).getcode()
+    if url_status != 200:
+        raise ValueError("URL not valid for ", uc_sheet_name, simple_source, url)
+    else:
+        print("URL valid for ", uc_sheet_name, simple_source, url)
+
+    uc_names.append(uc_sheet_name)
+    simple_sources.append(simple_source)
+    simple_urls.append(url)
+
+# write the results to a file
+results_table = Table(
+    [uc_names, simple_sources, simple_urls],
+    names=["Ultracool Sheet Name", "SIMPLE Source Name", "SIMPLE URL"],
+)
+results_table.write(
+    "scripts/ultracool_sheet/uc_sheet_simple_urls.csv",
+    delimiter=",",
+    overwrite=True,
+    format="ascii.ecsv",
+)
