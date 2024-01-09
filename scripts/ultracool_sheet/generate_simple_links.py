@@ -1,7 +1,8 @@
 #  from scripts.ingests.ingest_utils import *
 from scripts.ingests.utils import load_simpledb, find_source_in_db
 from astropy.io import ascii
-import urllib.request
+from urllib.parse import quote
+import requests
 from astropy.table import Table
 
 
@@ -51,14 +52,13 @@ for source in uc_sheet_table[0:100]:
         raise ValueError("Unexpected state")
 
     # URLify source name
-    source_url = simple_source.strip().replace(" ", "%21")
-    url = "https://simple-bd-archive.org/load_solo/" + source_url
-    # u rl = "https://simple-bd-archive.org/solo_result/" + source_url
+    source_url = quote(simple_source)
+    url = "https://simple-bd-archive.org/solo_result/" + source_url
 
     # TODO: THIS DOESN'T WORK!!! Even bad URLs return 200
     # test the URL
-    url_status = 200
-    # url_status = urllib.request.urlopen(url).getcode()
+    # url_status = 200
+    url_status = requests.get(url).status_code
     if url_status != 200:
         raise ValueError("URL not valid for ", uc_sheet_name, simple_source, url)
     else:
