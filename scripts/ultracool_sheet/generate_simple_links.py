@@ -12,6 +12,7 @@ db = load_simpledb("SIMPLE.sqlite", recreatedb=RECREATE_DB)
 sheet_id = "1i98ft8g5mzPp2DNno0kcz4B9nzMxdpyz5UquAVhz-U8"
 # link = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
 link = "scripts/ultracool_sheet/UltracoolSheet - Main_010824.csv"
+link = "UltracoolSheet - PRIVATE - Sheet26"
 
 # read the csv data into an astropy table
 uc_sheet_table = ascii.read(
@@ -28,7 +29,7 @@ uc_sheet_table = ascii.read(
 uc_names = []
 simple_urls = []
 simple_sources = []
-for source in uc_sheet_table[2368:]:
+for source in uc_sheet_table[2390:]:
     uc_sheet_name = source["name"]
     match = find_source_in_db(
         db,
@@ -62,16 +63,15 @@ for source in uc_sheet_table[2368:]:
     url_status = requests.head(url).status_code
     if url_status == 404:
         msg = f"URL not valid for {uc_sheet_name} {simple_source} at {url}"
-        logger.error(msg)  
-        raise SimpleError(msg)  
+        logger.error(msg)
+        raise SimpleError(msg)
     elif url_status != 200:
-        logger.warning(f"URL not valid for {uc_sheet_name} {simple_source} at {url} 
-                       but with HTTP status {url_status}")
+        logger.warning(
+            f"URL not valid for {uc_sheet_name} {simple_source} at {url} \
+                       but with HTTP status {url_status}"
+        )
     else:
         logger.info(f"URL valid for {uc_sheet_name} {simple_source} at {url}")
-
-    #  ('URL not valid for ', 'AB Pic b', 'HD 44627B', 'https://simple-bd-archive.org/solo_result/HD%2044627B')
-    #  ('URL not valid for ', '2MASSI J1707333+430130', '2MASS J17073334+4301304', 'https://simple-bd-archive.org/solo_result/2MASS%20J17073334%2B4301304')
 
     uc_names.append(uc_sheet_name)
     simple_sources.append(simple_source)
