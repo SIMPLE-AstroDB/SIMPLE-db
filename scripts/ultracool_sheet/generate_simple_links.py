@@ -28,7 +28,7 @@ uc_sheet_table = ascii.read(
 uc_names = []
 simple_urls = []
 simple_sources = []
-for source in uc_sheet_table:
+for source in uc_sheet_table[1647:]:
     uc_sheet_name = source["name"]
     match = find_source_in_db(
         db,
@@ -55,11 +55,13 @@ for source in uc_sheet_table:
     url = "https://simple-bd-archive.org/solo_result/" + source_url
 
     # test the URL to make sure it is valid
-    url_status = requests.get(url).status_code
+    url_status = requests.head(url).status_code
     if url_status != 200:
         raise ValueError("URL not valid for ", uc_sheet_name, simple_source, url)
     else:
         print("URL valid for ", uc_sheet_name, simple_source, url)
+
+    #  ('URL not valid for ', 'AB Pic b', 'HD 44627B', 'https://simple-bd-archive.org/solo_result/HD%2044627B')
 
     uc_names.append(uc_sheet_name)
     simple_sources.append(simple_source)
