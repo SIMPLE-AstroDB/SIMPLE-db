@@ -41,7 +41,8 @@ for row in calamari_table:
 
     # check the target in the row is in the DB
     result = find_source_in_db(db, name, ra=RA, dec=Dec)
-
+    print(name, result)
+    
     # add the target to its assigned list
     if len(result) > 0: # if it is in the database
         found_list.append(name)
@@ -51,6 +52,7 @@ for row in calamari_table:
 
 print(found_list)
 print(not_found_list)
+
 
 #Ingest missing sources (8 sources) also not found in SIMBAD
 #Need to ingest names, sources, publications, companion relationships
@@ -76,39 +78,43 @@ with calamari_table:
 
 #different idea
 def add_sources(db):
+    #line 43
+    ingest_source(db, "2MASS J19073307+3015304", reference="Gaia DR3")
 
-    ingest_sources(db, ["J19073307+3015304"], references="", 
-            ras= ["286.8885"], 
-            decs=["30.25893"], 
+    #line 42        
+    ingest_source(db, "2MASS J18005854+1505198", reference="Gaia DR3, Marocco+2020",
+            ra= "270.2437", 
+            dec="15.08843", 
             search_db=False)
-    ingest_sources(db, ["J18005854+1505198"], references="", 
-            ras= [], 
-            decs=[], 
+    #line 25        
+    ingest_source(db, "2MASS J11102921-2925186", reference="Gaia DR3, Marocco+2020", 
+            ra= ["167.621714"], 
+            dec=["-29.4221669"], 
             search_db=False)
-    ingest_sources(db, ["J11102921-2925186"], references="", 
-            ras= [], 
-            decs=[], 
+    #line 31
+    ingest_source(db, "ULAS J13300249+0914321", reference="Gaia DR3, Marocco+2017", 
+            ra= ["202.5102524"], 
+            dec=["9.2422718"], 
             search_db=False)
-    ingest_sources(db, ["ULAS J13300249+0914321"], references="", 
-            ras= [], 
-            decs=[], 
+    #line 27
+    ingest_source(db, "WISE J124332.17+600126.6", reference="Faherty+2022", 
+            ra= ["190.88386"], 
+            dec=["60.023957"], 
             search_db=False)
-    ingest_sources(db, ["WISE J124332.17+600126.6"], references="", 
-            ras= [], 
-            decs=[], 
+    #line 7
+    ingest_source(db, "ULAS J014016.91+015054.7", reference="Burningham+2018, Faherty+2022", 
+            ra= ["25.071311"], 
+            dec=["1.8484382"], 
             search_db=False)
-    ingest_sources(db, ["ULAS J014016.91+015054.7"], references="", 
-            ras= [], 
-            decs=[], 
+    #line 6
+    ingest_source(db, "HD 4747B", reference="Crepp+2016", 
+            ra= "12.361505", 
+            dec= "-23.212463", 
             search_db=False)
-    ingest_sources(db, ["HD 4747 B"], references="", 
-            ras= [], 
-            decs=[], 
-            search_db=False)
-    
-    ingest_sources(db, ["HD 33632 Ab"], references="", 
-            ras= [], 
-            decs=[], 
+    #line 14
+    ingest_source(db, "HD 33632Ab", reference="Currie+2020", 
+            ra= "78.3208", 
+            dec="37.2808", 
             search_db=False)
 
 
