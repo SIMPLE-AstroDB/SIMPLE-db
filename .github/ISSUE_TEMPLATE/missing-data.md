@@ -1,5 +1,5 @@
 ---
-name: Missing Data
+name: Missing Data 2
 about: Report data which needs to be added to the database
 title: 'Data ingest request from: <publication>'''
 labels: data ingestion
