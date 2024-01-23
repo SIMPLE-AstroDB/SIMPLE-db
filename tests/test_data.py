@@ -116,6 +116,10 @@ def test_discovery_references(db):
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 91, f'found {len(t)} discovery reference entries for {ref}'
 
+    ref = 'Roth'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 83, f'found {len(t)} discovery reference entries for {ref}'
+
 
 def test_proper_motion_refs(db):
     """
@@ -183,7 +187,7 @@ def test_proper_motion_refs(db):
 def test_parallax_refs(db):
     # Test total odopted measuruments
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.adopted == 1).astropy()
-    assert len(t) == 1442, f'found {len(t)} adopted parallax measuruments.'
+    assert len(t) == 1444, f'found {len(t)} adopted parallax measuruments.'
 
     ref = 'GaiaDR3'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
@@ -207,12 +211,12 @@ def test_parallax_refs(db):
 
 
 @pytest.mark.parametrize('band, value', [
-    ('GAIA2.G', 1266),
-    ('GAIA2.Grp', 1106),
+    ('GAIA2.G', 1267),
+    ('GAIA2.Grp', 1107),
     ('GAIA3.G', 1256),
     ('GAIA3.Grp', 1261),
-    ('WISE.W1', 460),
-    ('WISE.W2', 460),
+    ('WISE.W1', 461),
+    ('WISE.W2', 461),
     ('WISE.W3', 457),
     ('WISE.W4', 450),
     ('2MASS.J', 1802),
@@ -254,7 +258,7 @@ def test_missions(db):
     stm = except_(select(db.Names.c.source).where(db.Names.c.other_name.like("Gaia%")),
                   select(db.Photometry.c.source).where(db.Photometry.c.band.like("GAIA%")))
     s = db.session.scalars(stm).all()
-    assert len(s) == 1, f'found {len(s)} sources with Gaia designation that have no GAIA photometry'
+    assert len(s) == 0, f'found {len(s)} sources with Gaia designation that have no GAIA photometry'
 
     # If Gaia photometry, Gaia designation should be in Names
     stm = except_(select(db.Photometry.c.source).where(db.Photometry.c.band.like("GAIA%")),
@@ -266,13 +270,13 @@ def test_missions(db):
     stm = except_(select(db.Names.c.source).where(db.Names.c.other_name.like("WISE%")),
                   select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")))
     s = db.session.scalars(stm).all()
-    assert len(s) == 479, f'found {len(s)} sources with WISE designation that have no WISE photometry'
+    assert len(s) == 480, f'found {len(s)} sources with WISE designation that have no WISE photometry'
 
     # If Wise photometry, Wise designation should be in Names
     stm = except_(select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")),
                   select(db.Names.c.source).where(db.Names.c.other_name.like("WISE%")))
     s = db.session.scalars(stm).all()
-    assert len(s) == 388, f'found {len(s)} sources with WISE photometry and no Wise designation in Names'
+    assert len(s) == 389, f'found {len(s)} sources with WISE photometry and no Wise designation in Names'
 
     # If Gaia EDR3 pm, Gaia EDR3 designation should be in Names
     stm = except_(select(db.ProperMotions.c.source).where(db.ProperMotions.c.reference.like("GaiaEDR3%")),
@@ -556,6 +560,36 @@ def test_modeledparameters(db):
     ref = 'Fili15'
     t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.reference == ref).astropy()
     assert len(t) == 696, f'found {len(t)} modeled parameters with {ref} reference'
+
+    #Test to verify log g counts
+    param = 'log g'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 176, f'found {len(t)} modeled parameters with {param} parameter'
+
+    #Test to verify metallicity counts
+    param = 'metallicity'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 2, f'found {len(t)} modeled parameters with {param} parameter'
+
+    #Test to verify radius counts
+    param = 'radius'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 175, f'found {len(t)} modeled parameters with {param} parameter'
+
+    #Test to verify mass counts
+    param = 'mass'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 176, f'found {len(t)} modeled parameters with {param} parameter'
+
+    #Test to verify T eff counts
+    param = 'T eff'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 176, f'found {len(t)} modeled parameters with {param} parameter'
+
+    #Test to verify Lodi22 reference counts
+    ref = 'Lodi22'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.reference == ref).astropy()
+    assert len(t) == 5, f'found {len(t)} modeled parameters with {ref} reference'
 
 
 def test_photometrymko_y(db):
