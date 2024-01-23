@@ -115,7 +115,7 @@ def add_sources(db):
     ingest_source(db, "HD 33632Ab", reference="Currie+2020", 
             ra= "78.3208", 
             dec="37.2808", 
-            search_db=False)
+            search_db=False) 
 
 
 # WRITE THE JSON FILES
