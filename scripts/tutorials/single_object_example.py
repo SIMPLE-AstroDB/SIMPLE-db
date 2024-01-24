@@ -8,7 +8,8 @@ connection_string = "sqlite:///SIMPLE.sqlite"  # SQLite
 db = Database(connection_string)
 
 # If brand new database, run the following
-# NOTE: Some databases, like Postgres, will need an empty database created first before running this
+# NOTE: Some databases, like Postgres, will need an empty database
+# created first before running this
 from schema.schema import *
 
 create_database(connection_string)
@@ -21,7 +22,8 @@ publications_data = [
         "name": "Schm10",
         "bibcode": "2010AJ....139.1808S",
         "doi": "10.1088/0004-6256/139/5/1808",
-        "description": "Colors and Kinematics of L Dwarfs From the Sloan Digital Sky Survey",
+        "description": "Colors and Kinematics of L Dwarfs From the "
+        "Sloan Digital Sky Survey",
     },
     {
         "name": "Cutr12",
