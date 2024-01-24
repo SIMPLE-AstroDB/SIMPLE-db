@@ -9,7 +9,7 @@ from scripts.ingests.utils import (
     find_publication,
     ingest_publication,
 )
-from scripts.ingests.ingest_utils import (
+from scripts.ingests.simple_utils import (
     convert_spt_string_to_code,
     ingest_companion_relationships,
     ingest_source,
@@ -19,7 +19,7 @@ from scripts.ingests.ingest_utils import (
     ingest_instrument,
     ingest_proper_motions,
 )
-from simple.schema import *
+from schema.schema import *
 import logging
 
 

@@ -7,7 +7,7 @@ from astrodbkit2.astrodb import create_database, Database
 from scripts.ingests.utils import check_internet_connection
 
 sys.path.append(".")
-from simple.schema import *
+from schema.schema import *
 from . import REFERENCE_TABLES
 
 
@@ -62,8 +62,8 @@ def test_spectra_urls(db):
             if status_code != 200 and status_code != 301:
                 broken_urls.append(spectrum_url)
                 codes.append(status_code)
-    
+
     # Display broken spectra regardless if it's the number we expect or not
     print(f"found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}")
-    
-    assert (4 <= len(broken_urls) <= 4)
+
+    assert 4 <= len(broken_urls) <= 4
