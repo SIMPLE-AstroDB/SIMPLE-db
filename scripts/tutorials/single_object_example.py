@@ -4,7 +4,7 @@ from astrodbkit2.astrodb import Database, create_database
 
 # Establish connection to database
 connection_string = "postgresql://localhost/SIMPLE"  # Postgres
-connection_string = "sqlite:///SIMPLE.db"  # SQLite
+connection_string = "sqlite:///SIMPLE.sqlite"  # SQLite
 db = Database(connection_string)
 
 # If brand new database, run the following

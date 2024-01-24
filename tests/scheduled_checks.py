@@ -4,14 +4,14 @@ import sys
 import requests
 from tqdm import tqdm
 from astrodbkit2.astrodb import create_database, Database
-from scripts.ingests.utils import check_internet_connection
+from astrodb_scripts import check_internet_connection
 
 sys.path.append(".")
 from schema.schema import *
 from . import REFERENCE_TABLES
 
 
-DB_NAME = "temp.db"
+DB_NAME = "temp.sqlite"
 DB_PATH = "data"
 
 

@@ -11,7 +11,7 @@ from astroquery.simbad import Simbad
 from astrodbkit2.utils import _name_formatter
 
 
-DB_NAME = "temp.db"
+DB_NAME = "temp.sqlite"
 DB_PATH = "data"
 
 

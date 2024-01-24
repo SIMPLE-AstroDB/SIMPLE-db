@@ -11,7 +11,7 @@ from schema.schema import *
 from . import REFERENCE_TABLES
 
 
-DB_NAME = "temp.db"
+DB_NAME = "temp.sqlite"
 DB_PATH = "data"
 
 
