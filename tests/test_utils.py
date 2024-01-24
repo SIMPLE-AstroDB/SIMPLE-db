@@ -4,19 +4,19 @@ import os
 from astrodbkit2.astrodb import create_database, Database
 from astropy.table import Table
 from sqlalchemy import and_
-from scripts.ingests.utils import (
-    SimpleError,
+from astrodb_scripts import (
+    AstroDBError,
     find_publication,
     ingest_publication,
+    ingest_source,
+    ingest_sources,
+    ingest_instrument,
 )
 from scripts.ingests.simple_utils import (
     convert_spt_string_to_code,
     ingest_companion_relationships,
-    ingest_source,
-    ingest_sources,
     ingest_parallaxes,
     ingest_spectral_types,
-    ingest_instrument,
     ingest_proper_motions,
 )
 from schema.schema import *
@@ -184,7 +184,7 @@ def test_ingest_source(db):
         "dec": 18.352889,
         "reference": "Ref 4",
     }
-    with pytest.raises(SimpleError) as error_message:
+    with pytest.raises(AstroDBError) as error_message:
         ingest_source(
             db,
             source_data8["source"],
@@ -201,7 +201,7 @@ def test_ingest_source(db):
         "dec": 18.352889,
         "reference": "",
     }
-    with pytest.raises(SimpleError) as error_message:
+    with pytest.raises(AstroDBError) as error_message:
         ingest_source(
             db,
             source_data5["source"],
@@ -212,11 +212,11 @@ def test_ingest_source(db):
         )
         assert "blank" in str(error_message.value)
 
-    with pytest.raises(SimpleError) as error_message:
+    with pytest.raises(AstroDBError) as error_message:
         ingest_source(db, "NotinSimbad", reference="Ref 1", raise_error=True)
         assert "Coordinates are needed" in str(error_message.value)
 
-    with pytest.raises(SimpleError) as error_message:
+    with pytest.raises(AstroDBError) as error_message:
         ingest_source(
             db,
             "Fake 1",
@@ -354,7 +354,7 @@ def test_ingest_spectral_types(db):
     assert results["spectral_type_string"][0] == "Y2pec"
     assert results["spectral_type_code"][0] == [92]
     # testing for publication error
-    with pytest.raises(SimpleError) as error_message:
+    with pytest.raises(AstroDBError) as error_message:
         ingest_spectral_types(
             db,
             data3["source"],
@@ -391,7 +391,7 @@ def test_find_publication(db):
 
 def test_ingest_publication(db):
     # should fail if trying to add a duplicate record
-    with pytest.raises(SimpleError) as error_message:
+    with pytest.raises(AstroDBError) as error_message:
         ingest_publication(db, publication="Ref 1", bibcode="2020MNRAS.496.1922B")
     assert " similar publication already exists" in str(error_message.value)
     # TODO - Mock environment  where ADS_TOKEN is not set. #117
@@ -470,14 +470,14 @@ def test_ingest_instrument(db):
 
     #  TESTS WHICH SHOULD FAIL
     #  test with no variables provided
-    with pytest.raises(SimpleError) as error_message:
+    with pytest.raises(AstroDBError) as error_message:
         ingest_instrument(db)
     assert "Telescope, Instrument, and Mode must be provided" in str(
         error_message.value
     )
 
     #  test with mode but no instrument or telescope
-    with pytest.raises(SimpleError) as error_message:
+    with pytest.raises(AstroDBError) as error_message:
         ingest_instrument(db, mode="test")
     assert "Telescope, Instrument, and Mode must be provided" in str(
         error_message.value
@@ -492,24 +492,24 @@ def test_ingest_instrument(db):
 def test_companion_relationships(db):
     # testing companion ingest
     # trying no companion
-    with pytest.raises(SimpleError) as error_message:
+    with pytest.raises(AstroDBError) as error_message:
         ingest_companion_relationships(db, "Fake 1", None, "Sibling")
     assert "Make sure all require parameters are provided." in str(error_message.value)
 
     # trying companion == source
-    with pytest.raises(SimpleError) as error_message:
+    with pytest.raises(AstroDBError) as error_message:
         ingest_companion_relationships(db, "Fake 1", "Fake 1", "Sibling")
     assert "Source cannot be the same as companion name" in str(error_message.value)
 
     # trying negative separation
-    with pytest.raises(SimpleError) as error_message:
+    with pytest.raises(AstroDBError) as error_message:
         ingest_companion_relationships(
             db, "Fake 1", "Bad Companion", "Sibling", projected_separation_arcsec=-5
         )
     assert "cannot be negative" in str(error_message.value)
 
     # trying negative separation error
-    with pytest.raises(SimpleError) as error_message:
+    with pytest.raises(AstroDBError) as error_message:
         ingest_companion_relationships(
             db, "Fake 1", "Bad Companion", "Sibling", projected_separation_error=-5
         )
