@@ -128,9 +128,9 @@ def ingest_spectra(
     for i, source in enumerate(sources):
         # TODO: check that spectrum can be read by astrodbkit
 
-        if ma.is_masked(original_spectra[i]) or isinstance(original_spectra,None)
-            # else original_spectra[i],
-         # if ma.is_masked(local_spectra[i]) else local_spectra[i],
+        # if ma.is_masked(original_spectra[i]) or isinstance(original_spectra,None)
+        # else original_spectra[i],
+        # if ma.is_masked(local_spectra[i]) else local_spectra[i],
         # if ma.is_masked(instruments[i]) else instruments[i],
         # if ma.is_masked(modes[i]) else modes[i]
         # if ma.is_masked(comments[i]) else comments[i]
@@ -324,12 +324,12 @@ def ingest_spectrum(
         {
             "source": db_name,
             "spectrum": spectrum,
-            "original_spectrum": original_spectrum, 
-            "local_spectrum": local_spectrum, 
+            "original_spectrum": original_spectrum,
+            "local_spectrum": local_spectrum,
             "regime": regime,
             "telescope": telescope,
-            "instrument": instrument, 
-            "mode": mode ,
+            "instrument": instrument,
+            "mode": mode,
             "observation_date": obs_date,
             "comments": comments,
             "reference": reference,
