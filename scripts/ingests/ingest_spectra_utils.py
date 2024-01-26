@@ -1,3 +1,14 @@
+import logging
+import os
+import requests
+import numpy.ma as ma
+from astropy.io import fits
+import pandas as pd  # used for to_datetime conversion
+import dateutil  # used to convert obs date to datetime object
+import sqlalchemy.exc
+
+# from astrodb_scripts import (
+#    AstroDBError
 from scripts.ingests.utils import (
     SimpleError,
     find_source_in_db,
@@ -5,10 +16,10 @@ from scripts.ingests.utils import (
     check_internet_connection,
 )
 
-__all__ = [
-    "ingest_spectra",
-    "ingest_spectrum",
-]
+__all__ = ["ingest_spectra", "ingest_spectrum", "ingest_spectrum_from_fits"]
+
+
+logger = logging.getLogger("AstroDB")
 
 
 def ingest_spectra(
@@ -117,6 +128,14 @@ def ingest_spectra(
     for i, source in enumerate(sources):
         # TODO: check that spectrum can be read by astrodbkit
 
+        if ma.is_masked(original_spectra[i]) or isinstance(original_spectra,None)
+            # else original_spectra[i],
+         # if ma.is_masked(local_spectra[i]) else local_spectra[i],
+        # if ma.is_masked(instruments[i]) else instruments[i],
+        # if ma.is_masked(modes[i]) else modes[i]
+        # if ma.is_masked(comments[i]) else comments[i]
+        # if ma.is_masked(other_references[i]) else other_references[i]
+
         ingest_spectrum(
             db,
             source,
@@ -175,11 +194,23 @@ def ingest_spectra(
     return
 
 
-def ingest_spectrum(db, source, spectrum, regime, telescope, instrument, mode,
-                    obs_date, reference, original_spectrum=None, 
-                    wavelength_units, flux_units, comments = None, other_references=None, 
-                    local_spectrum=None, raise_error=True):
-    """ 
+def ingest_spectrum(
+    db,
+    source,
+    spectrum,
+    regime,
+    telescope,
+    instrument,
+    mode,
+    obs_date,
+    reference,
+    original_spectrum=None,
+    comments=None,
+    other_references=None,
+    local_spectrum=None,
+    raise_error=True,
+):
+    """
     Parameters
     ----------
     db: astrodbkit2.astrodb.Database
@@ -196,6 +227,10 @@ def ingest_spectrum(db, source, spectrum, regime, telescope, instrument, mode,
 
     # Get source name as it appears in the database
     db_name = find_source_in_db(db, source)
+    skipped = False
+    dupe = False
+    missing_instrument = False
+    no_obs_date = False
 
     if len(db_name) != 1:
         msg = f"No unique source match for {source} in the database"
@@ -212,7 +247,7 @@ def ingest_spectrum(db, source, spectrum, regime, telescope, instrument, mode,
             request_response.status_code
         )  # The website is up if the status code is 200
         if status_code != 200:
-            n_skipped += 1
+            skipped = True
             msg = (
                 "The spectrum location does not appear to be valid: \n"
                 f"spectrum: {spectrum} \n"
@@ -228,7 +263,7 @@ def ingest_spectrum(db, source, spectrum, regime, telescope, instrument, mode,
             request_response1 = requests.head(original_spectrum)
             status_code1 = request_response1.status_code
             if status_code1 != 200:
-                n_skipped += 1
+                skipped = True
                 msg = (
                     "The spectrum location does not appear to be valid: \n"
                     f"spectrum: {original_spectrum} \n"
@@ -256,58 +291,49 @@ def ingest_spectrum(db, source, spectrum, regime, telescope, instrument, mode,
         missing_obs_msg = (
             f"Skipping spectrum with missing observation date: {source} \n"
         )
-        missing_row_spe = f"{source, obs_dates[i], references[i]} \n"
+        missing_row_spe = f"{source, obs_date, reference} \n"
         logger.info(missing_obs_msg)
         logger.debug(missing_row_spe)
-        n_blank += 1
-        continue
+        no_obs_date = True
     else:
         try:
             obs_date = pd.to_datetime(
-                obs_dates[i]
+                obs_date
             )  # TODO: Another method that doesn't require pandas?
         except ValueError:
-            n_skipped += 1
+            skipped = True
             if raise_error:
-                msg = f"{source}: Can't convert obs date to Date Time object: {obs_dates[i]}"
+                msg = (
+                    f"{source}: Can't convert obs date to Date Time object: {obs_date}"
+                )
                 logger.error(msg)
                 raise SimpleError
         except dateutil.parser._parser.ParserError:
-            n_skipped += 1
+            skipped = True
             if raise_error:
-                msg = f"{source}: Can't convert obs date to Date Time object: {obs_dates[i]}"
+                msg = (
+                    f"{source}: Can't convert obs date to Date Time object: {obs_date}"
+                )
                 logger.error(msg)
                 raise SimpleError
             else:
-                msg = f"Skipping {source} Can't convert obs date to Date Time object: {obs_dates[i]}"
+                msg = f"Skipping {source} Can't convert obs date to Date Time object: {obs_date}"
                 logger.warning(msg)
-            continue
 
-    # TODO: make it possible to ingest units and order
     row_data = [
         {
             "source": db_name,
-            "spectrum": spectra[i],
-            "original_spectrum": None,  # if ma.is_masked(original_spectra[i]) or isinstance(original_spectra,None)
-            # else original_spectra[i],
-            "local_spectrum": None,  # if ma.is_masked(local_spectra[i]) else local_spectra[i],
-            "regime": regimes[i],
-            "telescope": telescopes[i],
-            "instrument": None if ma.is_masked(instruments[i]) else instruments[i],
-            "mode": None if ma.is_masked(modes[i]) else modes[i],
+            "spectrum": spectrum,
+            "original_spectrum": original_spectrum, 
+            "local_spectrum": local_spectrum, 
+            "regime": regime,
+            "telescope": telescope,
+            "instrument": instrument, 
+            "mode": mode ,
             "observation_date": obs_date,
-            "wavelength_units": None
-            if ma.is_masked(wavelength_units[i])
-            else wavelength_units[i],
-            "flux_units": None if ma.is_masked(flux_units[i]) else flux_units[i],
-            "wavelength_order": None
-            if ma.is_masked(wavelength_order[i])
-            else wavelength_order[i],
-            "comments": None if ma.is_masked(comments[i]) else comments[i],
-            "reference": references[i],
-            "other_references": None
-            if ma.is_masked(other_references[i])
-            else other_references[i],
+            "comments": comments,
+            "reference": reference,
+            "other_references": other_references,
         }
     ]
     logger.debug(row_data)
@@ -319,27 +345,23 @@ def ingest_spectrum(db, source, spectrum, regime, telescope, instrument, mode,
         n_added += 1
     except sqlalchemy.exc.IntegrityError as e:
         if "CHECK constraint failed: regime" in str(e):
-            msg = f"Regime provided is not in schema: {regimes[i]}"
+            msg = f"Regime provided is not in schema: {regime}"
             logger.error(msg)
             if raise_error:
                 raise SimpleError(msg)
-            else:
-                continue
         if (
             db.query(db.Publications)
-            .filter(db.Publications.c.publication == references[i])
+            .filter(db.Publications.c.publication == reference)
             .count()
             == 0
         ):
             msg = (
-                f"Spectrum for {source} could not be added to the database because the reference {references[i]} is not in Publications table. \n"
+                f"Spectrum for {source} could not be added to the database because the reference {reference} is not in Publications table. \n"
                 f"(Add it with ingest_publication function.) \n "
             )
             logger.warning(msg)
             if raise_error:
                 raise SimpleError(msg)
-            else:
-                continue
             # check telescope, instrument, mode exists
         telescope = (
             db.query(db.Telescopes)
@@ -351,18 +373,14 @@ def ingest_spectrum(db, source, spectrum, regime, telescope, instrument, mode,
             .filter(db.Instruments.c.name == row_data[0]["instrument"])
             .table()
         )
-        mode = (
-            db.query(db.Modes)
-            .filter(db.Modes.c.name == row_data[0]["mode"])
-            .table()
-        )
+        mode = db.query(db.Modes).filter(db.Modes.c.name == row_data[0]["mode"]).table()
 
         if len(source_spec_data) > 0:  # Spectra data already exists
             # check for duplicate measurement
-            ref_dupe_ind = source_spec_data["reference"] == references[i]
+            ref_dupe_ind = source_spec_data["reference"] == reference
             date_dupe_ind = source_spec_data["observation_date"] == obs_date
-            instrument_dupe_ind = source_spec_data["instrument"] == instruments[i]
-            mode_dupe_ind = source_spec_data["mode"] == modes[i]
+            instrument_dupe_ind = source_spec_data["instrument"] == instrument
+            mode_dupe_ind = source_spec_data["mode"] == mode
             if (
                 sum(ref_dupe_ind)
                 and sum(date_dupe_ind)
@@ -371,14 +389,12 @@ def ingest_spectrum(db, source, spectrum, regime, telescope, instrument, mode,
             ):
                 msg = f"Skipping suspected duplicate measurement\n{source}\n"
                 msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
-                msg3 = f"{instruments[i], modes[i], obs_date, references[i], spectra[i]} \n"
+                msg3 = f"{instrument, mode, obs_date, reference, spectrum} \n"
                 logger.warning(msg)
                 logger.debug(msg2 + msg3 + str(e))
-                n_dupes += 1
+                dupe = True
                 if raise_error:
                     raise SimpleError
-                else:
-                    continue  # Skip duplicate measurement
             # else:
             #     msg = f'Spectrum could not be added to the database (other data exist): \n ' \
             #           f"{source, instruments[i], modes[i], obs_date, references[i], spectra[i]} \n"
@@ -400,12 +416,62 @@ def ingest_spectrum(db, source, spectrum, regime, telescope, instrument, mode,
                 f" Telescope: {telescope}, Instrument: {instrument}, Mode: {mode} \n"
             )
             logger.error(msg)
-            n_missing_instrument += 1
+            missing_instrument = True
             if raise_error:
                 raise SimpleError
-            else:
-                continue
         else:
-            msg = f"Spectrum for {source} could not be added to the database for unknown reason: \n {row_data} \n "
+            msg = f"Spectrum for {source} could not be added to the database"
+            "for unknown reason: \n {row_data} \n "
             logger.error(msg)
             raise SimpleError(msg)
+
+    return [skipped, dupe, missing_instrument, no_obs_date]
+
+
+def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
+    """
+    Ingests spectrum using data found in the header
+
+    Parameters
+    ----------
+    db
+    source
+    spectrum_fits_file
+
+    """
+    header = fits.getheader(spectrum_fits_file)
+    regime = header["SPECBAND"]
+    if regime == "opt":
+        regime = "optical"
+    telescope = header["TELESCOP"]
+    instrument = header["INSTRUME"]
+    try:
+        mode = header["MODE"]
+    except KeyError:
+        mode = None
+    obs_date = header["DATE-OBS"]
+    doi = header["REFERENC"]
+    data_header = fits.getheader(spectrum_fits_file, 1)
+    w_unit = data_header["TUNIT1"]
+    flux_unit = data_header["TUNIT2"]
+
+    reference_match = (
+        db.query(db.Publications.c.publication)
+        .filter(db.Publications.c.doi == doi)
+        .table()
+    )
+    reference = reference_match["publication"][0]
+
+    ingest_spectrum(
+        db,
+        source,
+        spectrum_fits_file,
+        regime,
+        telescope,
+        instrument,
+        None,
+        obs_date,
+        reference,
+        wavelength_units=w_unit,
+        flux_units=flux_unit,
+    )
