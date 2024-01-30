@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up Python 3.10
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
@@ -26,6 +26,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest ads
         pip install astrodbkit2
+        pip install git+https://github.com/astrodbtoolkit/astrodb_scripts.git@main
 
     - name: Test with pytest
       run: |
