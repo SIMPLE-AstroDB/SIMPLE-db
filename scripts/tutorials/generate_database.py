@@ -5,15 +5,24 @@ import argparse
 import sys
 import os
 from astrodbkit2.astrodb import create_database, Database
+
 sys.path.append(os.getcwd())  # hack to be able to discover simple
-from simple.schema import *
+from schema.schema import *
 
 # Location of source data
-DB_PATH = 'data'
-DB_NAME = 'SIMPLE.db'
+DB_PATH = "data"
+DB_NAME = "SIMPLE.db"
 
 # Used to overwrite AstrodbKit2 reference tables defaults
-REFERENCE_TABLES = ['Publications', 'Telescopes', 'Instruments', 'Modes', 'PhotometryFilters', 'Versions', 'Parameters']
+REFERENCE_TABLES = [
+    "Publications",
+    "Telescopes",
+    "Instruments",
+    "Modes",
+    "PhotometryFilters",
+    "Versions",
+    "Parameters",
+]
 
 
 def load_postgres(connection_string):
@@ -44,14 +53,18 @@ def load_sqlite():
     # If the schema has not changed, this part can be skipped
     if os.path.exists(DB_NAME):
         os.remove(DB_NAME)
-    connection_string = 'sqlite:///' + DB_NAME
+    connection_string = "sqlite:///" + DB_NAME
 
     # Use in-memory database for initial load (addresses issues with IO bottlenecks)
-    try: 
-        db = Database('sqlite://', reference_tables=REFERENCE_TABLES)  # creates and connects to a temporary in-memory database
-        db.load_database(DB_PATH)  # loads the data from the data files into the database
+    try:
+        db = Database(
+            "sqlite://", reference_tables=REFERENCE_TABLES
+        )  # creates and connects to a temporary in-memory database
+        db.load_database(
+            DB_PATH
+        )  # loads the data from the data files into the database
         db.dump_sqlite(DB_NAME)  # dump in-memory database to file
-        print('In-memory database created and saved to file.')
+        print("In-memory database created and saved to file.")
         db.session.close()
     except RuntimeError:
         # use in-file database
@@ -69,20 +82,25 @@ def load_database(connection_string):
     db = Database(connection_string, reference_tables=REFERENCE_TABLES)
     db.load_database(DB_PATH, verbose=False)
 
-    print('New database generated.')
+    print("New database generated.")
 
     # Close all connections
     db.session.close()
     db.engine.dispose()
 
 
-if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser(description='Generate the SIMPLE database')
-    parser.add_argument('architecture', choices=['sqlite', 'postgres'],
-                        help='Database architecture to use.')
-    parser.add_argument('connection_string', nargs='?',
-                        help='Connection string to use for non-sqlite databases.')
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Generate the SIMPLE database")
+    parser.add_argument(
+        "architecture",
+        choices=["sqlite", "postgres"],
+        help="Database architecture to use.",
+    )
+    parser.add_argument(
+        "connection_string",
+        nargs="?",
+        help="Connection string to use for non-sqlite databases.",
+    )
 
     args = parser.parse_args()
 
@@ -90,10 +108,10 @@ if __name__ == '__main__':
     if args.connection_string is not None:
         connection_string = args.connection_string
     else:
-        connection_string = os.getenv('SIMPLE_DATABASE_URL', default='')
+        connection_string = os.getenv("SIMPLE_DATABASE_URL", default="")
 
     # Run the loader for the specified DB architecture
-    if args.architecture == 'postgres':
+    if args.architecture == "postgres":
         load_postgres(connection_string)
-    elif args.architecture == 'sqlite':
+    elif args.architecture == "sqlite":
         load_sqlite()
