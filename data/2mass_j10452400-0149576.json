@@ -48,121 +48,108 @@
     "Photometry": [
         {
             "band": "2MASS.H",
-            "ucd": "em.IR.H",
             "magnitude": 12.352,
             "magnitude_error": 0.025,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.J",
-            "ucd": "em.IR.J",
             "magnitude": 13.16,
             "magnitude_error": 0.024,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.Ks",
-            "ucd": "em.IR.K",
             "magnitude": 11.78,
             "magnitude_error": 0.023,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "GAIA2.G",
-            "ucd": "em.opt",
             "magnitude": 17.997819900512695,
             "magnitude_error": 0.0022775469730917258,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaDR2"
         },
         {
             "band": "GAIA2.Grp",
-            "ucd": "em.opt.R",
             "magnitude": 16.38809585571289,
             "magnitude_error": 0.008175440510294965,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaDR2"
         },
         {
             "band": "GAIA3.G",
-            "ucd": "em.opt",
             "magnitude": 17.994436264038086,
             "magnitude_error": 0.002454746143947097,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
         },
         {
             "band": "GAIA3.Grp",
-            "ucd": "em.opt.R",
             "magnitude": 16.40934181213379,
             "magnitude_error": 0.009989013628793992,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
         },
         {
+            "band": "WFCAM.Y",
+            "magnitude": 14.231,
+            "magnitude_error": 0.002,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr12"
+        },
+        {
             "band": "WISE.W1",
-            "ucd": null,
             "magnitude": 11.452,
             "magnitude_error": 0.024,
             "telescope": "WISE",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
         },
         {
             "band": "WISE.W2",
-            "ucd": null,
             "magnitude": 11.227,
             "magnitude_error": 0.022,
             "telescope": "WISE",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
         },
         {
             "band": "WISE.W3",
-            "ucd": null,
             "magnitude": 10.762,
             "magnitude_error": 0.092,
             "telescope": "WISE",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
         },
         {
             "band": "WISE.W4",
-            "ucd": null,
             "magnitude": 8.957,
             "magnitude_error": 0.412,
             "telescope": "WISE",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
@@ -199,7 +186,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1045-0149_IRS_spectrum.fits",
+            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J10452400-0149576.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1045-0149_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -231,7 +218,7 @@
             "regime": "optical",
             "telescope": "CTIO 4m",
             "instrument": "R-C Spec",
-            "mode": null,
+            "mode": "Missing",
             "observation_date": "2006-01-15T07:04:22.341000",
             "comments": null,
             "reference": "Cruz07",

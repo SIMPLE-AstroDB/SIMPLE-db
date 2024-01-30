@@ -21,6 +21,9 @@
         },
         {
             "other_name": "Gaia EDR3 2760661255379706240"
+        },
+        {
+            "other_name": "ULAS J234645.76+112908.8"
         }
     ],
     "Parallaxes": [
@@ -42,80 +45,75 @@
     "Photometry": [
         {
             "band": "2MASS.H",
-            "ucd": "em.IR.H",
             "magnitude": 12.101,
             "magnitude_error": 0.028,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.J",
-            "ucd": "em.IR.J",
             "magnitude": 12.798,
             "magnitude_error": 0.024,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.Ks",
-            "ucd": "em.IR.K",
             "magnitude": 11.605,
             "magnitude_error": 0.023,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "GAIA2.G",
-            "ucd": "em.opt",
             "magnitude": 17.39209747314453,
             "magnitude_error": 0.001276826683300171,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaDR2"
         },
         {
             "band": "GAIA2.Grp",
-            "ucd": "em.opt.R",
             "magnitude": 15.793680191040039,
             "magnitude_error": 0.0067769990453274845,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaDR2"
         },
         {
             "band": "GAIA3.G",
-            "ucd": "em.opt",
             "magnitude": 17.402420043945312,
             "magnitude_error": 0.0014115431668251996,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
         },
         {
             "band": "GAIA3.Grp",
-            "ucd": "em.opt.R",
             "magnitude": 15.827333450317383,
             "magnitude_error": 0.003732732334479831,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 13.666,
+            "magnitude_error": 0.002,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr12"
         }
     ],
     "ProperMotions": [
@@ -155,7 +153,7 @@
             "regime": "optical",
             "telescope": "KPNO 4m",
             "instrument": "R-C Spec",
-            "mode": null,
+            "mode": "Missing",
             "observation_date": "2003-07-10T00:00:00",
             "comments": null,
             "reference": "Reid08.1290",

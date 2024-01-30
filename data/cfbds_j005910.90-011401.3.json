@@ -15,52 +15,56 @@
     "Names": [
         {
             "other_name": "CFBDS J005910.90-011401.3"
+        },
+        {
+            "other_name": "ULAS J005910.84-011401.4"
         }
     ],
     "Photometry": [
         {
             "band": "IRAC.I1",
-            "ucd": "em.IR.3-4um",
             "magnitude": 15.77,
             "magnitude_error": 0.03,
             "telescope": "Spitzer",
-            "instrument": "IRAC",
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
         },
         {
             "band": "IRAC.I2",
-            "ucd": "em.IR.4-8um",
             "magnitude": 13.72,
             "magnitude_error": 0.02,
             "telescope": "Spitzer",
-            "instrument": "IRAC",
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
         },
         {
             "band": "IRAC.I3",
-            "ucd": "em.IR.4-8um",
             "magnitude": 14.24,
             "magnitude_error": 0.04,
             "telescope": "Spitzer",
-            "instrument": "IRAC",
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
         },
         {
             "band": "IRAC.I4",
-            "ucd": "em.IR.8-15um",
             "magnitude": 13.31,
             "magnitude_error": 0.04,
             "telescope": "Spitzer",
-            "instrument": "IRAC",
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "band": "Wircam.Y",
+            "magnitude": 18.82,
+            "magnitude_error": 0.02,
+            "telescope": "CFHT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Delo08.961"
         }
     ],
     "ProperMotions": [
@@ -76,7 +80,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0059-0114_IRS_spectrum.fits",
+            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/CFBDS+J005910.90-011401.3.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0059-0114_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",

@@ -26,6 +26,9 @@
             "other_name": "SIMP J013656.5+093347.3"
         },
         {
+            "other_name": "ULAS J013657.46+093347.2"
+        },
+        {
             "other_name": "WISEP J013657.45+093347.0"
         }
     ],
@@ -62,80 +65,75 @@
     "Photometry": [
         {
             "band": "2MASS.H",
-            "ucd": "em.IR.H",
             "magnitude": 12.771,
             "magnitude_error": 0.032,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.J",
-            "ucd": "em.IR.J",
             "magnitude": 13.455,
             "magnitude_error": 0.03,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.Ks",
-            "ucd": "em.IR.K",
             "magnitude": 12.562,
             "magnitude_error": 0.024,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "GAIA2.G",
-            "ucd": "em.opt",
             "magnitude": 19.458127975463867,
             "magnitude_error": 0.007102977625766173,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaDR2"
         },
         {
             "band": "GAIA2.Grp",
-            "ucd": "em.opt.R",
             "magnitude": 17.488922119140625,
             "magnitude_error": 0.03301675244810154,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaDR2"
         },
         {
             "band": "GAIA3.G",
-            "ucd": "em.opt",
             "magnitude": 19.486692428588867,
             "magnitude_error": 0.006472124530161825,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
         },
         {
             "band": "GAIA3.Grp",
-            "ucd": "em.opt.R",
             "magnitude": 17.640981674194336,
             "magnitude_error": 0.01442282515233853,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 14.392,
+            "magnitude_error": 0.003,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr07"
         }
     ],
     "ProperMotions": [
@@ -217,7 +215,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0136%252B0933_IRS_spectrum.fits",
+            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/SIMP+J013656.5%2B093347.3.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0136%2B0933_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",

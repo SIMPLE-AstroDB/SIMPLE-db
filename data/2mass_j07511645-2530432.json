@@ -82,187 +82,153 @@
     "Photometry": [
         {
             "band": "2MASS.H",
-            "ucd": "em.IR.H",
             "magnitude": 12.495,
             "magnitude_error": 0.023,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.J",
-            "ucd": "em.IR.J",
             "magnitude": 13.161,
             "magnitude_error": 0.024,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.Ks",
-            "ucd": "em.IR.K",
             "magnitude": 11.991,
             "magnitude_error": 0.024,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "Cousins.I",
-            "ucd": null,
             "magnitude": 16.39,
             "magnitude_error": 0.005,
             "telescope": null,
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Diet14"
         },
         {
             "band": "Cousins.R",
-            "ucd": null,
             "magnitude": 18.86,
             "magnitude_error": 0.02,
             "telescope": null,
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Diet14"
         },
         {
             "band": "DENIS.I",
-            "ucd": null,
             "magnitude": 16.53,
             "magnitude_error": 0.07,
             "telescope": null,
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "DENIS"
         },
         {
             "band": "DENIS.J",
-            "ucd": null,
             "magnitude": 13.221,
             "magnitude_error": 0.07,
             "telescope": null,
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "DENIS"
         },
         {
             "band": "DENIS.Ks",
-            "ucd": null,
             "magnitude": 12.071,
             "magnitude_error": 0.11,
             "telescope": null,
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "DENIS"
         },
         {
             "band": "GAIA2.G",
-            "ucd": "em.opt",
             "magnitude": 17.951147079467773,
             "magnitude_error": 0.0014410289581019153,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaDR2"
         },
         {
             "band": "GAIA2.Grp",
-            "ucd": "em.opt.R",
             "magnitude": 16.325267791748047,
             "magnitude_error": 0.005782657410407683,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaDR2"
         },
         {
             "band": "GAIA3.G",
-            "ucd": "em.opt",
             "magnitude": 17.950481414794922,
             "magnitude_error": 0.001236737100526106,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
         },
         {
             "band": "GAIA3.Grp",
-            "ucd": "em.opt.R",
             "magnitude": 16.355745315551758,
             "magnitude_error": 0.002788105963892863,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
         },
         {
             "band": "Johnson.V",
-            "ucd": null,
             "magnitude": 21.66,
             "magnitude_error": 0.045,
             "telescope": null,
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Diet14"
         },
         {
             "band": "WISE.W1",
-            "ucd": null,
             "magnitude": 11.67,
             "magnitude_error": 0.023,
             "telescope": "WISE",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
         },
         {
             "band": "WISE.W2",
-            "ucd": null,
             "magnitude": 11.446,
             "magnitude_error": 0.023,
             "telescope": "WISE",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
         },
         {
             "band": "WISE.W3",
-            "ucd": null,
             "magnitude": 11.291,
             "magnitude_error": 0.131,
             "telescope": "WISE",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
         },
         {
             "band": "WISE.W4",
-            "ucd": null,
             "magnitude": 9.482,
             "magnitude_error": null,
             "telescope": "WISE",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
@@ -299,8 +265,8 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U50080_JHK_2009nov04.txt",
-            "original_spectrum": null,
+            "spectrum": "https://bdnyc.s3.amazonaws.com/SpeX/Prism/2MASS+J07511645-2530432_2009-11-04.fits",
+            "original_spectrum": "https://s3.amazonaws.com/bdnyc/U50080_JHK_2009nov04.txt",
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U50080_JHK_2009nov04.txt",
             "regime": "nir",
             "telescope": "IRTF",

@@ -61,6 +61,9 @@
         },
         {
             "other_name": "SDSS J035523.48+113339.4"
+        },
+        {
+            "other_name": "UGCS J035523.45+113340.0"
         }
     ],
     "Parallaxes": [
@@ -89,176 +92,144 @@
     "Photometry": [
         {
             "band": "2MASS.H",
-            "ucd": "em.IR.H",
             "magnitude": 12.53,
             "magnitude_error": 0.03,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.J",
-            "ucd": "em.IR.J",
             "magnitude": 14.05,
             "magnitude_error": 0.024,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.Ks",
-            "ucd": "em.IR.K",
             "magnitude": 11.526,
             "magnitude_error": 0.021,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "GAIA2.G",
-            "ucd": "em.opt",
             "magnitude": 19.5831356048584,
             "magnitude_error": 0.004214992080828963,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaDR2"
         },
         {
             "band": "GAIA2.Grp",
-            "ucd": "em.opt.R",
             "magnitude": 17.915071487426758,
             "magnitude_error": 0.01994258138250109,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaDR2"
         },
         {
             "band": "GAIA3.G",
-            "ucd": "em.opt",
             "magnitude": 19.56068229675293,
             "magnitude_error": 0.0037674463650959242,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
         },
         {
             "band": "GAIA3.Grp",
-            "ucd": "em.opt.R",
             "magnitude": 17.967544555664062,
             "magnitude_error": 0.021278883725949164,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
         },
         {
             "band": "SDSS.g",
-            "ucd": null,
             "magnitude": 24.82263,
             "magnitude_error": 0.5037085,
             "telescope": "Sloan",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Ahn_12"
         },
         {
             "band": "SDSS.i",
-            "ucd": null,
             "magnitude": 19.26252,
             "magnitude_error": 0.0153267,
             "telescope": "Sloan",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Ahn_12"
         },
         {
             "band": "SDSS.r",
-            "ucd": null,
             "magnitude": 21.76513,
             "magnitude_error": 0.07960194,
             "telescope": "Sloan",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Ahn_12"
         },
         {
             "band": "SDSS.u",
-            "ucd": null,
             "magnitude": 24.69322,
             "magnitude_error": 0.8435081,
             "telescope": "Sloan",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Ahn_12"
         },
         {
             "band": "SDSS.z",
-            "ucd": null,
             "magnitude": 17.21609,
             "magnitude_error": 0.01225069,
             "telescope": "Sloan",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Ahn_12"
         },
         {
             "band": "WISE.W1",
-            "ucd": null,
             "magnitude": 10.528,
             "magnitude_error": 0.023,
             "telescope": "WISE",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
         },
         {
             "band": "WISE.W2",
-            "ucd": null,
             "magnitude": 9.943,
             "magnitude_error": 0.021,
             "telescope": "WISE",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
         },
         {
             "band": "WISE.W3",
-            "ucd": null,
             "magnitude": 9.294,
             "magnitude_error": 0.038,
             "telescope": "WISE",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
         },
         {
             "band": "WISE.W4",
-            "ucd": null,
             "magnitude": 8.317,
             "magnitude_error": null,
             "telescope": "WISE",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
@@ -334,7 +305,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0355%252B1133_IRS_spectrum.fits",
+            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J03552337%2B1133437.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0355%2B1133_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -353,7 +324,7 @@
             "regime": "mir",
             "telescope": "Spitzer",
             "instrument": "IRS",
-            "mode": null,
+            "mode": "Missing",
             "observation_date": "2008-10-10T14:12:37.569000",
             "comments": null,
             "reference": "PID50059",
@@ -392,7 +363,7 @@
             "regime": "optical",
             "telescope": "Gemini North",
             "instrument": "GMOS-N",
-            "mode": null,
+            "mode": "Missing",
             "observation_date": "2005-11-27T00:00:00",
             "comments": null,
             "reference": "Cruz09",

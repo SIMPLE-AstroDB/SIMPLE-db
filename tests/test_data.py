@@ -3,12 +3,13 @@
 import os
 import pytest
 import sys
+from astrodbkit2.astrodb import create_database, Database
+from sqlalchemy import except_, select, and_
 
 sys.path.append('.')
 from simple.schema import *
-from astrodbkit2.astrodb import create_database, Database
-from sqlalchemy import except_, select, and_
 from . import REFERENCE_TABLES
+
 
 DB_NAME = 'temp.db'
 DB_PATH = 'data'
@@ -115,6 +116,10 @@ def test_discovery_references(db):
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 91, f'found {len(t)} discovery reference entries for {ref}'
 
+    ref = 'Roth'
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 83, f'found {len(t)} discovery reference entries for {ref}'
+
 
 def test_proper_motion_refs(db):
     """
@@ -182,7 +187,7 @@ def test_proper_motion_refs(db):
 def test_parallax_refs(db):
     # Test total odopted measuruments
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.adopted == 1).astropy()
-    assert len(t) == 1442, f'found {len(t)} adopted parallax measuruments.'
+    assert len(t) == 1444, f'found {len(t)} adopted parallax measuruments.'
 
     ref = 'GaiaDR3'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
@@ -205,56 +210,35 @@ def test_parallax_refs(db):
     assert len(t) == 1104, f'found {len(t)} adopted parallax reference entries for {ref}'
 
 
-def test_photometry_bands(db):
+@pytest.mark.parametrize('band, value', [
+    ('GAIA2.G', 1267),
+    ('GAIA2.Grp', 1107),
+    ('GAIA3.G', 1256),
+    ('GAIA3.Grp', 1261),
+    ('WISE.W1', 461),
+    ('WISE.W2', 461),
+    ('WISE.W3', 457),
+    ('WISE.W4', 450),
+    ('2MASS.J', 1802),
+    ('2MASS.H', 1791),
+    ('2MASS.Ks', 1762),
+    ('GPI.Y', 1),
+    ('NIRI.Y', 21),
+    ('UFTI.Y', 13),
+    ('Wircam.Y', 29),
+    ('WFCAM.Y', 854),
+    ('VisAO.Ys', 1),
+    ('VISTA.Y', 59),
+])
+def test_photometry_bands(db, band, value):
     # To refresh these counts:
     # from sqlalchemy import func
     # db.query(db.Photometry.c.band, func.count(db.Photometry.c.band).label('count')).\
     #     group_by(db.Photometry.c.band).\
     #     astropy()
 
-    band = 'GAIA2.G'
     t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1266, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'GAIA2.Grp'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1106, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'GAIA3.G'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1256, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'GAIA3.Grp'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1261, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'WISE.W1'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 460, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'WISE.W2'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 460, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'WISE.W3'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 457, f'found {len(t)} photometry measurements for {band}'
-
-    band = 'WISE.W4'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 450, f'found {len(t)} photometry measurements for {band}'
-
-    band = '2MASS.J'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1802, f'found {len(t)} photometry measurements for {band}'
-
-    band = '2MASS.H'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1791, f'found {len(t)} photometry measurements for {band}'
-
-    band = '2MASS.Ks'
-    t = db.query(db.Photometry).filter(db.Photometry.c.band == band).astropy()
-    assert len(t) == 1762, f'found {len(t)} photometry measurements for {band}'
+    assert len(t) == value, f'found {len(t)} photometry measurements for {band}'
 
 
 def test_missions(db):
@@ -262,7 +246,7 @@ def test_missions(db):
     stm = except_(select(db.Names.c.source).where(db.Names.c.other_name.like("2MASS J%")),
                   select(db.Photometry.c.source).where(db.Photometry.c.band.like("2MASS%")))
     s = db.session.scalars(stm).all()
-    assert len(s) == 255, f'found {len(s)} sources with 2MASS designation that have no 2MASS photometry'
+    assert len(s) == 256, f'found {len(s)} sources with 2MASS designation that have no 2MASS photometry'
 
     # If 2MASS photometry, 2MASS designation should be in Names
     stm = except_(select(db.Photometry.c.source).where(db.Photometry.c.band.like("2MASS%")),
@@ -274,7 +258,7 @@ def test_missions(db):
     stm = except_(select(db.Names.c.source).where(db.Names.c.other_name.like("Gaia%")),
                   select(db.Photometry.c.source).where(db.Photometry.c.band.like("GAIA%")))
     s = db.session.scalars(stm).all()
-    assert len(s) == 1, f'found {len(s)} sources with Gaia designation that have no GAIA photometry'
+    assert len(s) == 0, f'found {len(s)} sources with Gaia designation that have no GAIA photometry'
 
     # If Gaia photometry, Gaia designation should be in Names
     stm = except_(select(db.Photometry.c.source).where(db.Photometry.c.band.like("GAIA%")),
@@ -286,13 +270,13 @@ def test_missions(db):
     stm = except_(select(db.Names.c.source).where(db.Names.c.other_name.like("WISE%")),
                   select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")))
     s = db.session.scalars(stm).all()
-    assert len(s) == 479, f'found {len(s)} sources with WISE designation that have no WISE photometry'
+    assert len(s) == 480, f'found {len(s)} sources with WISE designation that have no WISE photometry'
 
     # If Wise photometry, Wise designation should be in Names
     stm = except_(select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")),
                   select(db.Names.c.source).where(db.Names.c.other_name.like("WISE%")))
     s = db.session.scalars(stm).all()
-    assert len(s) == 388, f'found {len(s)} sources with WISE photometry and no Wise designation in Names'
+    assert len(s) == 389, f'found {len(s)} sources with WISE photometry and no Wise designation in Names'
 
     # If Gaia EDR3 pm, Gaia EDR3 designation should be in Names
     stm = except_(select(db.ProperMotions.c.source).where(db.ProperMotions.c.reference.like("GaiaEDR3%")),
@@ -322,11 +306,11 @@ def test_spectra(db):
 
     regime = 'nir'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 458, f'found {len(t)} spectra in the {regime} regime'
+    assert len(t) == 459, f'found {len(t)} spectra in the {regime} regime'
 
     regime = 'mir'
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 203, f'found {len(t)} spectra in the {regime} regime'
+    assert len(t) == 204, f'found {len(t)} spectra in the {regime} regime'
 
     telescope = 'IRTF'
     t = db.query(db.Spectra).filter(db.Spectra.c.telescope == telescope).astropy()
@@ -379,7 +363,7 @@ def test_spectral_types(db):
 
     regime = 'nir'
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 380, f'found {len(t)} spectral types in the {regime} regime'
+    assert len(t) == 381, f'found {len(t)} spectral types in the {regime} regime'
 
     regime = 'nir_UCD'
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
@@ -406,19 +390,20 @@ def test_spectral_types(db):
     l_dwarfs = db.query(db.SpectralTypes).filter(
         and_(db.SpectralTypes.c.spectral_type_code >= 70,
              db.SpectralTypes.c.spectral_type_code < 80)).astropy()
-    assert len(l_dwarfs) == 1963, f'found {len(t)} L spectral types'
+    assert len(l_dwarfs) == 1963, f'found {len(l_dwarfs)} L spectral types'
 
     t_dwarfs = db.query(db.SpectralTypes).filter(
         and_(db.SpectralTypes.c.spectral_type_code >= 80,
              db.SpectralTypes.c.spectral_type_code < 90)).astropy()
-    assert len(t_dwarfs) == 998, f'found {len(t)} T spectral types'
+    assert len(t_dwarfs) == 999, f'found {len(t_dwarfs)} T spectral types'
 
     y_dwarfs = db.query(db.SpectralTypes).filter(
         and_(db.SpectralTypes.c.spectral_type_code >= 90)).astropy()
-    assert len(y_dwarfs) == 79, f'found {len(t)} Y spectral types'
+    assert len(y_dwarfs) == 79, f'found {len(y_dwarfs)} Y spectral types'
 
     n_spectral_types = db.query(db.SpectralTypes).count()
     assert len(m_dwarfs) + len(l_dwarfs) + len(t_dwarfs) + len(y_dwarfs) == n_spectral_types
+
 
 # Individual ingest tests
 # -----------------------------------------------------------------------------------------
@@ -505,7 +490,7 @@ def test_Kirk19_ingest(db):
 
     # Test spectral types added
 
-    # Test parallaxes 
+    # Test parallaxes
     ref = 'Kirk19'
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
     assert len(t) == 23, f'found {len(t)} parallax entries for {ref}'
@@ -569,8 +554,53 @@ def test_suar22_ingest(db):
     t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
     assert len(t) == 112, f'found {len(t)} spectra entries for {ref}'
 
+
 def test_modeledparameters(db):
     # Test to verify existing counts of modeled parameters
     ref = 'Fili15'
     t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.reference == ref).astropy()
     assert len(t) == 696, f'found {len(t)} modeled parameters with {ref} reference'
+
+    #Test to verify log g counts
+    param = 'log g'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 176, f'found {len(t)} modeled parameters with {param} parameter'
+
+    #Test to verify metallicity counts
+    param = 'metallicity'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 2, f'found {len(t)} modeled parameters with {param} parameter'
+
+    #Test to verify radius counts
+    param = 'radius'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 175, f'found {len(t)} modeled parameters with {param} parameter'
+
+    #Test to verify mass counts
+    param = 'mass'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 176, f'found {len(t)} modeled parameters with {param} parameter'
+
+    #Test to verify T eff counts
+    param = 'T eff'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.parameter == param).astropy()
+    assert len(t) == 176, f'found {len(t)} modeled parameters with {param} parameter'
+
+    #Test to verify Lodi22 reference counts
+    ref = 'Lodi22'
+    t = db.query(db.ModeledParameters).filter(db.ModeledParameters.c.reference == ref).astropy()
+    assert len(t) == 5, f'found {len(t)} modeled parameters with {ref} reference'
+
+
+def test_photometrymko_y(db):
+    # Test for Y photometry entries added for references
+    bands_list = ['Wircam.Y', 'WFCAM.Y', 'NIRI.Y', 'VISTA.Y', 'GPI.Y', 'VisAO.Ys', 'UFTI.Y']
+    ref_list = ['Albe11', 'Burn08', 'Burn09', 'Burn10.1885', 'Burn13', 'Burn14', 'Card15', 'Deac11.6319', 'Deac12.100',
+                'Deac14.119', 'Deac17.1126', 'Delo08.961', 'Delo12', 'Dupu12.19', 'Dupu15.102', 'Dupu19 ', 'Edge16',
+                'Garc17.162', 'Gauz12 ', 'Kell16', 'Lawr07', 'Lawr12', 'Legg13', 'Legg15', 'Legg16', 'Liu_12',
+                'Liu_13.20', 'Liu_16', 'Lodi07.372', 'Lodi12.53', 'Lodi13.2474', 'Luca10', 'Male14', 'McMa13',
+                'Minn17', 'Naud14', 'Pena11', 'Pena12', 'Pinf08', 'Smit18', 'Warr07.1400']
+
+    t = db.query(db.Photometry).filter(and_(db.Photometry.c.band.in_(bands_list),
+                                            db.Photometry.c.reference.in_(ref_list))).astropy()
+    assert len(t) == 969, f'found {len(t)} Y photometry entries'

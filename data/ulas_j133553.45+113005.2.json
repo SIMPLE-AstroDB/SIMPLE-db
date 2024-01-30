@@ -23,47 +23,48 @@
     "Photometry": [
         {
             "band": "IRAC.I1",
-            "ucd": "em.IR.3-4um",
             "magnitude": 15.99,
             "magnitude_error": 0.03,
             "telescope": "Spitzer",
-            "instrument": "IRAC",
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
         },
         {
             "band": "IRAC.I2",
-            "ucd": "em.IR.4-8um",
             "magnitude": 13.94,
             "magnitude_error": 0.02,
             "telescope": "Spitzer",
-            "instrument": "IRAC",
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
         },
         {
             "band": "IRAC.I3",
-            "ucd": "em.IR.4-8um",
             "magnitude": 14.34,
             "magnitude_error": 0.05,
             "telescope": "Spitzer",
-            "instrument": "IRAC",
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
         },
         {
             "band": "IRAC.I4",
-            "ucd": "em.IR.8-15um",
             "magnitude": 13.37,
             "magnitude_error": 0.06,
             "telescope": "Spitzer",
-            "instrument": "IRAC",
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 18.81,
+            "magnitude_error": 0.04,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Burn08"
         }
     ],
     "ProperMotions": [
@@ -79,7 +80,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1335%252B1130_IRS_spectrum.fits",
+            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/ULAS+J133553.45%2B113005.2.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1335%2B1130_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",

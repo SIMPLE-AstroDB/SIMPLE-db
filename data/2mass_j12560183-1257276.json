@@ -12,12 +12,26 @@
             "comments": null
         }
     ],
+    "CompanionRelationships": [
+        {
+            "companion_name": "VHS J1256-1257",
+            "projected_separation_arcsec": 8.06,
+            "projected_separation_error": 0.03,
+            "relationship": "Child",
+            "comments": null,
+            "reference": "Gauz15",
+            "other_companion_names": "SIPS J1256-1257, 2MASS J12560215-1257217, Gaia DR3 3526198184723289472"
+        }
+    ],
     "Names": [
         {
             "other_name": "2MASS J12560183-1257276"
         },
         {
             "other_name": "VHS 1256-1257b"
+        },
+        {
+            "other_name": "VHS 1256b"
         },
         {
             "other_name": "VHS J125601.92-125723.9 b"
@@ -48,121 +62,108 @@
     "Photometry": [
         {
             "band": "2MASS.H",
-            "ucd": "em.IR.H",
             "magnitude": 15.6,
             "magnitude_error": 0.21,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.J",
-            "ucd": "em.IR.J",
             "magnitude": 16.66,
             "magnitude_error": 0.29,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.Ks",
-            "ucd": "em.IR.K",
             "magnitude": 14.57,
             "magnitude_error": 0.12,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "ACAM.i",
-            "ucd": null,
             "magnitude": 22.494,
             "magnitude_error": 0.315,
             "telescope": "WHT",
-            "instrument": "ACAM",
             "epoch": 2014.5396728515625,
             "comments": null,
             "reference": "Gauz15"
         },
         {
             "band": "ACAM.z",
-            "ucd": null,
             "magnitude": 20.095,
             "magnitude_error": 0.09,
             "telescope": "WHT",
-            "instrument": "ACAM",
             "epoch": 2014.5396728515625,
             "comments": null,
             "reference": "Gauz15"
         },
         {
             "band": "VISTA.H",
-            "ucd": null,
             "magnitude": 15.777,
             "magnitude_error": 0.015,
             "telescope": "VISTA",
-            "instrument": "VIRCAM",
             "epoch": 2011.495849609375,
             "comments": null,
             "reference": "Gauz15"
         },
         {
             "band": "VISTA.J",
-            "ucd": null,
             "magnitude": 17.136,
             "magnitude_error": 0.02,
             "telescope": "VISTA",
-            "instrument": "VIRCAM",
             "epoch": 2011.495849609375,
             "comments": null,
             "reference": "Gauz15"
         },
         {
             "band": "VISTA.Ks",
-            "ucd": null,
             "magnitude": 14.665,
             "magnitude_error": 0.01,
             "telescope": "VISTA",
-            "instrument": "VIRCAM",
             "epoch": 2011.495849609375,
             "comments": null,
             "reference": "Gauz15"
         },
         {
             "band": "VISTA.Y",
-            "ucd": null,
             "magnitude": 18.558,
             "magnitude_error": 0.051,
             "telescope": "VISTA",
-            "instrument": "VIRCAM",
             "epoch": 2011.495849609375,
             "comments": null,
             "reference": "Gauz15"
         },
         {
+            "band": "VISTA.Y",
+            "magnitude": 18.558,
+            "magnitude_error": 0.051,
+            "telescope": "VISTA",
+            "epoch": null,
+            "comments": null,
+            "reference": "McMa13"
+        },
+        {
             "band": "WISE.W1",
-            "ucd": null,
             "magnitude": 13.6,
             "magnitude_error": 0.5,
             "telescope": "WISE",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Gauz15"
         },
         {
             "band": "WISE.W2",
-            "ucd": null,
             "magnitude": 12.8,
             "magnitude_error": 0.5,
             "telescope": "WISE",
-            "instrument": null,
             "epoch": null,
             "comments": null,
             "reference": "Gauz15"
@@ -181,13 +182,26 @@
     ],
     "Spectra": [
         {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/JWST/MIRI/VHS1256b_MIRI.fits",
+            "original_spectrum": "https://bdnyc.s3.amazonaws.com/JWST/VHS1256b_V2.txt",
+            "local_spectrum": null,
+            "regime": "mir",
+            "telescope": "JWST",
+            "instrument": "MIRI",
+            "mode": "MRS",
+            "observation_date": "2022-07-05T00:00:00",
+            "comments": null,
+            "reference": "Mile23",
+            "other_references": null
+        },
+        {
             "spectrum": "https://bdnyc.s3.amazonaws.com/nir_spectra/vhs1256b_nir_SOFI.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/vhs1256b_optnir_werrors.txt",
             "local_spectrum": null,
             "regime": "nir",
             "telescope": "NTT",
             "instrument": "SofI",
-            "mode": null,
+            "mode": "Missing",
             "observation_date": "2014-03-12T00:00:00",
             "comments": null,
             "reference": "Gauz15",
@@ -200,10 +214,23 @@
             "regime": "nir",
             "telescope": "Keck II",
             "instrument": "NIRSPEC",
-            "mode": null,
+            "mode": "Missing",
             "observation_date": "2016-06-19T00:00:00",
             "comments": null,
             "reference": "Mile18",
+            "other_references": null
+        },
+        {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/JWST/NIRSpec/VHS1256b_NIR.fits",
+            "original_spectrum": "https://bdnyc.s3.amazonaws.com/JWST/VHS1256b_V2.txt",
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "JWST",
+            "instrument": "NIRSpec",
+            "mode": "IFU",
+            "observation_date": "2022-07-05T00:00:00",
+            "comments": null,
+            "reference": "Mile23",
             "other_references": null
         },
         {
@@ -213,7 +240,7 @@
             "regime": "optical",
             "telescope": "GTC",
             "instrument": "OSIRIS",
-            "mode": null,
+            "mode": "Missing",
             "observation_date": "2014-06-03T00:00:00",
             "comments": null,
             "reference": "Gauz15",

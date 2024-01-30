@@ -18,6 +18,9 @@
         },
         {
             "other_name": "SDSS J151643.01+305344.4"
+        },
+        {
+            "other_name": "ULAS J151642.98+305344.5"
         }
     ],
     "Parallaxes": [
@@ -32,36 +35,39 @@
     "Photometry": [
         {
             "band": "2MASS.H",
-            "ucd": "em.IR.H",
             "magnitude": 15.868,
             "magnitude_error": 0.161,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.J",
-            "ucd": "em.IR.J",
             "magnitude": 16.848,
             "magnitude_error": 0.154,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.Ks",
-            "ucd": "em.IR.K",
             "magnitude": 15.081,
             "magnitude_error": 0.092,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 17.961,
+            "magnitude_error": 0.025,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr12"
         }
     ],
     "ProperMotions": [
@@ -86,7 +92,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1516%252B3053_IRS_spectrum.fits",
+            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J15164306%2B3053443.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1516%2B3053_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",

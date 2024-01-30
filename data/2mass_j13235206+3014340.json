@@ -21,6 +21,9 @@
         },
         {
             "other_name": "Gaia EDR3 1462421490816513280"
+        },
+        {
+            "other_name": "ULAS J132351.52+301435.7"
         }
     ],
     "Parallaxes": [
@@ -42,80 +45,75 @@
     "Photometry": [
         {
             "band": "2MASS.H",
-            "ucd": "em.IR.H",
             "magnitude": 12.97,
             "magnitude_error": 0.028,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.J",
-            "ucd": "em.IR.J",
             "magnitude": 13.638,
             "magnitude_error": 0.024,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "2MASS.Ks",
-            "ucd": "em.IR.K",
             "magnitude": 12.548,
             "magnitude_error": 0.023,
             "telescope": "2MASS",
-            "instrument": "2MASS",
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
         },
         {
             "band": "GAIA2.G",
-            "ucd": "em.opt",
             "magnitude": 18.139192581176758,
             "magnitude_error": 0.0013258446247173517,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaDR2"
         },
         {
             "band": "GAIA2.Grp",
-            "ucd": "em.opt.R",
             "magnitude": 16.52655601501465,
             "magnitude_error": 0.005223501969560517,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaDR2"
         },
         {
             "band": "GAIA3.G",
-            "ucd": "em.opt",
             "magnitude": 18.13573455810547,
             "magnitude_error": 0.001368747681945601,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
         },
         {
             "band": "GAIA3.Grp",
-            "ucd": "em.opt.R",
             "magnitude": 16.557167053222656,
             "magnitude_error": 0.0041580417765130495,
             "telescope": "Gaia",
-            "instrument": "Gaia",
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 14.415,
+            "magnitude_error": 0.003,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr12"
         }
     ],
     "ProperMotions": [
@@ -154,8 +152,8 @@
             "local_spectrum": "$BDNYC_spectra/optical_spectra/u11139.fits",
             "regime": "optical",
             "telescope": "ARC 3.5m",
-            "instrument": null,
-            "mode": null,
+            "instrument": "Missing",
+            "mode": "Missing",
             "observation_date": "2002-04-10T10:19:02.279000",
             "comments": null,
             "reference": "Cruz07",

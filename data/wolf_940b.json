@@ -23,47 +23,48 @@
     "Photometry": [
         {
             "band": "IRAC.I1",
-            "ucd": "em.IR.3-4um",
             "magnitude": 16.39,
             "magnitude_error": 0.02,
             "telescope": "Spitzer",
-            "instrument": "IRAC",
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
         },
         {
             "band": "IRAC.I2",
-            "ucd": "em.IR.4-8um",
             "magnitude": 14.42,
             "magnitude_error": 0.02,
             "telescope": "Spitzer",
-            "instrument": "IRAC",
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
         },
         {
             "band": "IRAC.I3",
-            "ucd": "em.IR.4-8um",
             "magnitude": 15.38,
             "magnitude_error": 0.15,
             "telescope": "Spitzer",
-            "instrument": "IRAC",
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
         },
         {
             "band": "IRAC.I4",
-            "ucd": "em.IR.8-15um",
             "magnitude": 14.36,
             "magnitude_error": 0.08,
             "telescope": "Spitzer",
-            "instrument": "IRAC",
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 19.02,
+            "magnitude_error": 0.08,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Burn09"
         }
     ],
     "ProperMotions": [
@@ -79,7 +80,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2146-0010_IRS_spectrum.fits",
+            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/ULAS+J214638.83\u2212001038.7.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2146-0010_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
