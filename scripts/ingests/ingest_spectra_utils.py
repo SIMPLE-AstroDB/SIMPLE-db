@@ -1,18 +1,18 @@
 import logging
-import os
 import requests
 import numpy.ma as ma
-from astropy.io import fits
 import pandas as pd  # used for to_datetime conversion
 import dateutil  # used to convert obs date to datetime object
 import sqlalchemy.exc
+import numpy as np
 
-# from astrodb_scripts import (
-#    AstroDBError
-from scripts.ingests.utils import (
-    SimpleError,
+from astropy.io import fits
+import astropy.units as u
+
+from astrodbkit2.spectra import load_spectrum
+from astrodb_scripts import (
+    AstroDBError,
     find_source_in_db,
-    find_publication,
     check_internet_connection,
 )
 
@@ -165,31 +165,32 @@ def ingest_spectra(
     if n_added + n_dupes + n_blank + n_skipped + n_missing_instrument != n_spectra:
         msg = "Numbers don't add up: "
         logger.error(msg)
-        raise SimpleError(msg)
+        raise AstroDBError(msg)
 
-    spec_count = (
-        db.query(Spectra.regime, func.count(Spectra.regime))
-        .group_by(Spectra.regime)
-        .all()
-    )
+    # spec_count = (
+    #     db.query(Spectra.regime, func.count(Spectra.regime))
+    #     .group_by(Spectra.regime)
+    #     .all()
+    # )
 
-    spec_ref_count = (
-        db.query(Spectra.reference, func.count(Spectra.reference))
-        .group_by(Spectra.reference)
-        .order_by(func.count(Spectra.reference).desc())
-        .limit(20)
-        .all()
-    )
+    # spec_ref_count = (
+    #     db.query(Spectra.reference, func.count(Spectra.reference))
+    #     .group_by(Spectra.reference)
+    #     .order_by(func.count(Spectra.reference).desc())
+    #     .limit(20)
+    #     .all()
+    # )
 
-    telescope_spec_count = (
-        db.query(Spectra.telescope, func.count(Spectra.telescope))
-        .group_by(Spectra.telescope)
-        .order_by(func.count(Spectra.telescope).desc())
-        .limit(20)
-        .all()
-    )
+    # telescope_spec_count = (
+    #     db.query(Spectra.telescope, func.count(Spectra.telescope))
+    #     .group_by(Spectra.telescope)
+    #     .order_by(func.count(Spectra.telescope).desc())
+    #     .limit(20)
+    #     .all()
+    # )
 
-    # logger.info(f'Spectra in the database: \n {spec_count} \n {spec_ref_count} \n {telescope_spec_count}')
+    # logger.info(f'Spectra in the database: \n {spec_count}
+    # \n {spec_ref_count} \n {telescope_spec_count}')
 
     return
 
@@ -231,10 +232,11 @@ def ingest_spectrum(
     dupe = False
     missing_instrument = False
     no_obs_date = False
+    added = False
 
     if len(db_name) != 1:
         msg = f"No unique source match for {source} in the database"
-        raise SimpleError(msg)
+        raise AstroDBError(msg)
     else:
         db_name = db_name[0]
 
@@ -255,7 +257,7 @@ def ingest_spectrum(
             )
             logger.error(msg)
             if raise_error:
-                raise SimpleError(msg)
+                raise AstroDBError(msg)
         else:
             msg = f"The spectrum location appears up: {spectrum}"
             logger.debug(msg)
@@ -271,21 +273,15 @@ def ingest_spectrum(
                 )
                 logger.error(msg)
                 if raise_error:
-                    raise SimpleError(msg)
+                    raise AstroDBError(msg)
             else:
                 msg = f"The spectrum location appears up: {original_spectrum}"
                 logger.debug(msg)
     else:
         msg = "No internet connection. Internet is needed to check spectrum files."
-        raise SimpleError(msg)
-
-    # Find what spectra already exists in database for this source
-    source_spec_data = (
-        db.query(db.Spectra).filter(db.Spectra.c.source == db_name).table()
-    )
+        raise AstroDBError(msg)
 
     # SKIP if observation date is blank
-    # TODO: try to populate obs date from meta data in spectrum file
     if ma.is_masked(obs_date) or obs_date == "":
         obs_date = None
         missing_obs_msg = (
@@ -307,7 +303,7 @@ def ingest_spectrum(
                     f"{source}: Can't convert obs date to Date Time object: {obs_date}"
                 )
                 logger.error(msg)
-                raise SimpleError
+                raise AstroDBError
         except dateutil.parser._parser.ParserError:
             skipped = True
             if raise_error:
@@ -315,10 +311,41 @@ def ingest_spectrum(
                     f"{source}: Can't convert obs date to Date Time object: {obs_date}"
                 )
                 logger.error(msg)
-                raise SimpleError
+                raise AstroDBError
             else:
-                msg = f"Skipping {source} Can't convert obs date to Date Time object: {obs_date}"
+                msg = (
+                    f"Skipping {source} Can't convert obs date to Date Time object: "
+                    f"{obs_date}"
+                )
                 logger.warning(msg)
+
+    ######################################################################################
+    # Check if spectrum is plottable
+    ######################################################################################
+
+    # load the spectrum and make sure it's a Spectrum1D object
+    # spectrum: Spectrum1D = spec['spectrum']
+    spectrum = load_spectrum(spectrum)
+
+    # checking spectrum has good units and not only NaNs
+    try:
+        wave: np.ndarray = spectrum.spectral_axis.to(u.micron).value
+        flux: np.ndarray = spectrum.flux.value
+        nan_check: np.ndarray = ~np.isnan(flux) & ~np.isnan(wave)
+        wave = wave[nan_check]
+        flux = flux[nan_check]
+        if not len(wave):
+            raise ValueError
+
+    # handle any objects which failed checks
+    except (u.UnitConversionError, AttributeError, ValueError):
+        skipped = True
+        msg = f"Skipping {source}: spectrum is not plottable"
+        if raise_error:
+            logger.error(msg)
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
 
     row_data = [
         {
@@ -342,13 +369,13 @@ def ingest_spectrum(
         with db.engine.connect() as conn:
             conn.execute(db.Spectra.insert().values(row_data))
             conn.commit()
-        n_added += 1
+        added = True
     except sqlalchemy.exc.IntegrityError as e:
         if "CHECK constraint failed: regime" in str(e):
             msg = f"Regime provided is not in schema: {regime}"
             logger.error(msg)
             if raise_error:
-                raise SimpleError(msg)
+                raise AstroDBError(msg)
         if (
             db.query(db.Publications)
             .filter(db.Publications.c.publication == reference)
@@ -356,12 +383,13 @@ def ingest_spectrum(
             == 0
         ):
             msg = (
-                f"Spectrum for {source} could not be added to the database because the reference {reference} is not in Publications table. \n"
+                f"Spectrum for {source} could not be added to the database because the "
+                f"reference {reference} is not in Publications table. \n"
                 f"(Add it with ingest_publication function.) \n "
             )
             logger.warning(msg)
             if raise_error:
-                raise SimpleError(msg)
+                raise AstroDBError(msg)
             # check telescope, instrument, mode exists
         telescope = (
             db.query(db.Telescopes)
@@ -374,6 +402,13 @@ def ingest_spectrum(
             .table()
         )
         mode = db.query(db.Modes).filter(db.Modes.c.name == row_data[0]["mode"]).table()
+
+        #################################################################################
+        # Find what spectra already exists in database for this source
+        #################################################################################
+        source_spec_data = (
+            db.query(db.Spectra).filter(db.Spectra.c.source == db_name).table()
+        )
 
         if len(source_spec_data) > 0:  # Spectra data already exists
             # check for duplicate measurement
@@ -388,44 +423,53 @@ def ingest_spectrum(
                 and sum(mode_dupe_ind)
             ):
                 msg = f"Skipping suspected duplicate measurement\n{source}\n"
-                msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
-                msg3 = f"{instrument, mode, obs_date, reference, spectrum} \n"
+                msg2 = (
+                    f"{source_spec_data[ref_dupe_ind]}"
+                    f"{instrument, mode, obs_date, reference, spectrum} \n"
+                )
                 logger.warning(msg)
-                logger.debug(msg2 + msg3 + str(e))
+                logger.debug(msg2 + str(e))
                 dupe = True
                 if raise_error:
-                    raise SimpleError
+                    raise AstroDBError
             # else:
-            #     msg = f'Spectrum could not be added to the database (other data exist): \n ' \
-            #           f"{source, instruments[i], modes[i], obs_date, references[i], spectra[i]} \n"
+            #     msg = (
+            # f'Spectrum could not be added to the database
+            # (other data exist): \n ' \
+            #   f"{source, instruments[i], modes[i], obs_date, references[i],
+            # spectra[i]} \n"
             #     msg2 = f"Existing Data: \n "
-            #            # f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference', 'spectrum']}"
+            #            # f"{source_spec_data[ref_dupe_ind]['source', 'instrument',
+            # 'mode', 'observation_date', 'reference', 'spectrum']}"
             #     msg3 = f"Data not able to add: \n {row_data} \n "
             #     logger.warning(msg + msg2)
             #     source_spec_data[ref_dupe_ind][
-            #               'source', 'instrument', 'mode', 'observation_date', 'reference', 'spectrum'].pprint_all()
+            #               'source', 'instrument', 'mode', 'observation_date',
+            # 'reference', 'spectrum'].pprint_all()
             #     logger.debug(msg3)
             #     n_skipped += 1
             #     continue
         if len(instrument) == 0 or len(mode) == 0 or len(telescope) == 0:
             msg = (
                 f"Spectrum for {source} could not be added to the database. \n"
-                f" Telescope, Instrument, and/or Mode need to be added to the appropriate table. \n"
-                f" Trying to find telescope: {row_data[0]['telescope']}, instrument: {row_data[0]['instrument']}, "
+                f" Telescope, Instrument, and/or Mode need to be added to the"
+                " appropriate table. \n"
+                f" Trying to find telescope: {row_data[0]['telescope']},"
+                f" instrument: {row_data[0]['instrument']}, "
                 f" mode: {row_data[0]['mode']} \n"
                 f" Telescope: {telescope}, Instrument: {instrument}, Mode: {mode} \n"
             )
             logger.error(msg)
             missing_instrument = True
             if raise_error:
-                raise SimpleError
+                raise AstroDBError
         else:
             msg = f"Spectrum for {source} could not be added to the database"
             "for unknown reason: \n {row_data} \n "
             logger.error(msg)
-            raise SimpleError(msg)
+            raise AstroDBError(msg)
 
-    return [skipped, dupe, missing_instrument, no_obs_date]
+    return [added, skipped, dupe, missing_instrument, no_obs_date]
 
 
 def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
