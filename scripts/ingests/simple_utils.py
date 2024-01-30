@@ -13,7 +13,7 @@ import re
 import requests
 import logging
 import sqlalchemy.exc
-from astrodb_scripts import (
+from astrodb_scripts.utils import (
     AstroDBError,
     find_source_in_db,
     check_internet_connection,
@@ -285,10 +285,10 @@ def convert_spt_string_to_code(spectral_types):
             else:  # only trigger if not MLTY
                 i = 0
         # find integer or decimal subclass and add to spt_code
-        if re.search("\d*\.?\d+", spt[i + 1:]) is None:
+        if re.search("\d*\.?\d+", spt[i + 1 :]) is None:
             spt_code = spt_code
         else:
-            spt_code += float(re.findall("\d*\.?\d+", spt[i + 1:])[0])
+            spt_code += float(re.findall("\d*\.?\d+", spt[i + 1 :])[0])
 
         spectral_type_codes.append(spt_code)
     return spectral_type_codes
@@ -1028,10 +1028,10 @@ def ingest_spectra(
                 "source": db_name,
                 "spectrum": spectra[i],
                 "original_spectrum": None,  # if ma.is_masked(original_spectra[i]) or
-                                            # isinstance(original_spectra,None)
+                # isinstance(original_spectra,None)
                 # else original_spectra[i],
                 "local_spectrum": None,  # if ma.is_masked(local_spectra[i])
-                                         # else local_spectra[i],
+                # else local_spectra[i],
                 "regime": regimes[i],
                 "telescope": telescopes[i],
                 "instrument": None if ma.is_masked(instruments[i]) else instruments[i],
@@ -1458,8 +1458,10 @@ def ingest_companion_relationships(
         logger.error(msg)
         raise AstroDBError(msg)
     if projected_separation_error is not None and projected_separation_error < 0:
-        msg = f"Projected separation error: {projected_separation_error}, "
-        "cannot be negative"
+        msg = (
+            f"Projected separation error: {projected_separation_error}, "
+            "cannot be negative"
+        )
         logger.error(msg)
         raise AstroDBError(msg)
 
