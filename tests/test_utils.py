@@ -4,7 +4,7 @@ from astrodbkit2.astrodb import create_database, Database
 from astropy.table import Table
 from sqlalchemy import and_
 import logging
-from astrodb_scripts import (
+from astrodb_scripts.utils import (
     AstroDBError,
 )
 from scripts.ingests.simple_utils import (
