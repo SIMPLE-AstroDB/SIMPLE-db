@@ -3,7 +3,7 @@ import os
 import pytest
 from . import REFERENCE_TABLES
 from sqlalchemy import func, and_  # , select, except_
-from simple.schema import *
+from schema.schema import *
 from astrodbkit2.astrodb import create_database, Database, or_
 from astropy.table import unique
 from astropy import units as u
@@ -11,7 +11,7 @@ from astroquery.simbad import Simbad
 from astrodbkit2.utils import _name_formatter
 
 
-DB_NAME = "temp.db"
+DB_NAME = "temp.sqlite"
 DB_PATH = "data"
 
 
