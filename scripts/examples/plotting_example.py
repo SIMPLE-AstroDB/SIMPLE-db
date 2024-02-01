@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import astropy.units as u
 from sqlalchemy import func, and_, Integer, cast
 from scripts.ingests.utils import load_simpledb, logger
-from scripts.ingests.simple_utils import convert_spt_code_to_string_to_code
+from scripts.utils.simple_utils import convert_spt_code_to_string_to_code
 from astrodbkit2.spectra import load_spectrum
 
 plt.interactive(False)

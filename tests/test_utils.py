@@ -7,7 +7,7 @@ import logging
 from astrodb_scripts.utils import (
     AstroDBError,
 )
-from scripts.ingests.simple_utils import (
+from scripts.utils.simple_utils import (
     convert_spt_string_to_code,
     ingest_companion_relationships,
     ingest_parallaxes,
