@@ -5,10 +5,13 @@ import pandas as pd  # used for to_datetime conversion
 import dateutil  # used to convert obs date to datetime object
 import sqlalchemy.exc
 import numpy as np
+from typing import Optional
 
 from astropy.io import fits
 import astropy.units as u
+from specutils import Spectrum1D
 
+from astrodbkit2.astrodb import Database
 from astrodbkit2.spectra import load_spectrum
 from astrodb_scripts import (
     AstroDBError,
@@ -16,7 +19,12 @@ from astrodb_scripts import (
     check_internet_connection,
 )
 
-__all__ = ["ingest_spectra", "ingest_spectrum", "ingest_spectrum_from_fits"]
+__all__ = [
+    "ingest_spectra",
+    "ingest_spectrum",
+    "ingest_spectrum_from_fits",
+    "spectrum_plottable",
+]
 
 
 logger = logging.getLogger("AstroDB")
@@ -196,20 +204,21 @@ def ingest_spectra(
 
 
 def ingest_spectrum(
-    db,
-    source,
-    spectrum,
-    regime,
-    telescope,
-    instrument,
-    mode,
-    obs_date,
-    reference,
-    original_spectrum=None,
-    comments=None,
-    other_references=None,
-    local_spectrum=None,
-    raise_error=True,
+    db: Database,
+    *,
+    source: str = None,
+    spectrum: str = None,
+    regime: str = None,
+    telescope: str = None,
+    instrument: str = None,
+    mode: str = None,
+    obs_date: str = None,
+    reference: str = None,
+    original_spectrum: Optional[str] = None,
+    comments: Optional[str] = None,
+    other_references: Optional[str] = None,
+    local_spectrum: Optional[str] = None,
+    raise_error: bool = True,
 ):
     """
     Parameters
@@ -224,15 +233,27 @@ def ingest_spectrum(
         Regime of spectrum (optical, NIR, radio, etc.)
     telescope: str
         Telescope used to obtain spectrum
+
+    Returns
+    -------
+    flags: dict
+
+    Raises
+    ------
+    AstroDBError
     """
 
     # Get source name as it appears in the database
     db_name = find_source_in_db(db, source)
-    skipped = False
-    dupe = False
-    missing_instrument = False
-    no_obs_date = False
-    added = False
+
+    flags = {
+        "skipped": False,
+        "dupe": False,
+        "missing_instrument": False,
+        "no_obs_date": False,
+        "added": False,
+        "plottable": False,
+    }
 
     if len(db_name) != 1:
         msg = f"No unique source match for {source} in the database"
@@ -290,14 +311,14 @@ def ingest_spectrum(
         missing_row_spe = f"{source, obs_date, reference} \n"
         logger.info(missing_obs_msg)
         logger.debug(missing_row_spe)
-        no_obs_date = True
+        flags["no_obs_date"] = True
     else:
         try:
             obs_date = pd.to_datetime(
                 obs_date
             )  # TODO: Another method that doesn't require pandas?
         except ValueError:
-            skipped = True
+            flags["skipped"] = True
             if raise_error:
                 msg = (
                     f"{source}: Can't convert obs date to Date Time object: {obs_date}"
@@ -305,7 +326,7 @@ def ingest_spectrum(
                 logger.error(msg)
                 raise AstroDBError
         except dateutil.parser._parser.ParserError:
-            skipped = True
+            flags["skipped"] = True
             if raise_error:
                 msg = (
                     f"{source}: Can't convert obs date to Date Time object: {obs_date}"
@@ -319,33 +340,8 @@ def ingest_spectrum(
                 )
                 logger.warning(msg)
 
-    ######################################################################################
     # Check if spectrum is plottable
-    ######################################################################################
-
-    # load the spectrum and make sure it's a Spectrum1D object
-    # spectrum: Spectrum1D = spec['spectrum']
-    spectrum = load_spectrum(spectrum)
-
-    # checking spectrum has good units and not only NaNs
-    try:
-        wave: np.ndarray = spectrum.spectral_axis.to(u.micron).value
-        flux: np.ndarray = spectrum.flux.value
-        nan_check: np.ndarray = ~np.isnan(flux) & ~np.isnan(wave)
-        wave = wave[nan_check]
-        flux = flux[nan_check]
-        if not len(wave):
-            raise ValueError
-
-    # handle any objects which failed checks
-    except (u.UnitConversionError, AttributeError, ValueError):
-        skipped = True
-        msg = f"Skipping {source}: spectrum is not plottable"
-        if raise_error:
-            logger.error(msg)
-            raise AstroDBError(msg)
-        else:
-            logger.warning(msg)
+    flags["plottable"] = spectrum_plottable(spectrum, raise_error=raise_error)
 
     row_data = [
         {
@@ -369,7 +365,7 @@ def ingest_spectrum(
         with db.engine.connect() as conn:
             conn.execute(db.Spectra.insert().values(row_data))
             conn.commit()
-        added = True
+        flags["added"] = True
     except sqlalchemy.exc.IntegrityError as e:
         if "CHECK constraint failed: regime" in str(e):
             msg = f"Regime provided is not in schema: {regime}"
@@ -429,7 +425,7 @@ def ingest_spectrum(
                 )
                 logger.warning(msg)
                 logger.debug(msg2 + str(e))
-                dupe = True
+                flags["dupe"] = True
                 if raise_error:
                     raise AstroDBError
             # else:
@@ -460,7 +456,7 @@ def ingest_spectrum(
                 f" Telescope: {telescope}, Instrument: {instrument}, Mode: {mode} \n"
             )
             logger.error(msg)
-            missing_instrument = True
+            flags["missing_instrument"] = True
             if raise_error:
                 raise AstroDBError
         else:
@@ -469,7 +465,7 @@ def ingest_spectrum(
             logger.error(msg)
             raise AstroDBError(msg)
 
-    return [added, skipped, dupe, missing_instrument, no_obs_date]
+    return flags
 
 
 def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
@@ -519,3 +515,71 @@ def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
         wavelength_units=w_unit,
         flux_units=flux_unit,
     )
+
+
+def spectrum_plottable(spectrum_path, raise_error=True):
+    """
+    Check if spectrum is plottable
+    """
+    # load the spectrum and make sure it's a Spectrum1D object
+
+    try:
+        # spectrum: Spectrum1D = load_spectrum(spectrum_path) #astrodbkit2 method
+        spectrum = Spectrum1D.read(spectrum_path)
+    except Exception as e:
+        msg = (
+            str(e) + f"\nSkipping {spectrum_path}: \n"
+            "unable to load file as Spectrum1D object"
+        )
+        if raise_error:
+            logger.error(msg)
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return False
+
+    # checking spectrum has good units and not only NaNs
+    try:
+        wave: np.ndarray = spectrum.spectral_axis.to(u.micron).value
+        flux: np.ndarray = spectrum.flux.value
+    except AttributeError as e:
+        msg = str(e) + f"Skipping {spectrum_path}: unable to parse spectral axis"
+        if raise_error:
+            logger.error(msg)
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return False
+    except u.UnitConversionError as e:
+        msg = (
+            e + f"Skipping {spectrum_path}: unable to convert spectral axis to microns"
+        )
+        if raise_error:
+            logger.error(msg)
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return False
+    except ValueError as e:
+        msg = e + f"Skipping {spectrum_path}: Value error"
+        if raise_error:
+            logger.error(msg)
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return False
+
+    # check for NaNs
+    nan_check: np.ndarray = ~np.isnan(flux) & ~np.isnan(wave)
+    wave = wave[nan_check]
+    flux = flux[nan_check]
+    if not len(wave):
+        msg = f"Skipping {spectrum_path}: spectrum is all NaNs"
+        if raise_error:
+            logger.error(msg)
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return False
+
+    return True
