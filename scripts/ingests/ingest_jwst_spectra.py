@@ -1,9 +1,38 @@
-from specutils import Spectrum1D
-from astropy.io import fits
-import astropy.units as u
-import numpy as np
+from astrodb_scripts import load_astrodb, ingest_instrument
+from schema.schema import *
+from scripts.utils.ingest_spectra_utils import ingest_spectrum
 
-spec_1935 = Spectrum1D.read(
-    "/Users/kelle/Dropbox (Personal)/Mac/Downloads/jw02124-o051_s00001_nirspec_f290lp-g395h-s200a1-subs200a1_x1d_manual.fits",
-    format="tabular-fits",
+SAVE_DB = True  # save the data files in addition to modifying the .db file
+RECREATE_DB = True  # recreates the .db file from the data files
+
+
+db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB)
+
+file = (
+    "https://bdnyc.s3.amazonaws.com/JWST/NIRSpec/jw02124-o051_s00001_nirspec_f290lp-"
+    "g395h-s200a1-subs200a1_x1d_manual.fits"
 )
+
+ingest_instrument(
+    db,
+    telescope="JWST",
+    instrument="NIRSPEC",
+    mode="FS",
+)
+
+ingest_spectrum(
+    db,
+    source="CWISEP J193518.58-154620.3",
+    spectrum=file,
+    regime="mir",
+    telescope="JWST",
+    instrument="NIRSPEC",
+    mode="FS",
+    obs_date="2022-10-17",
+    reference="FaheSubm",
+    comments="F290LP-G395H",
+)
+
+# WRITE THE JSON FILES
+if SAVE_DB:
+    db.save_database(directory="data/")
