@@ -361,11 +361,11 @@ def test_spectra(db):
 
     regime = "nir"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 459, f"found {len(t)} spectra in the {regime} regime"
+    assert len(t) == 460, f"found {len(t)} spectra in the {regime} regime"
 
     regime = "mir"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 205, f"found {len(t)} spectra in the {regime} regime"
+    assert len(t) == 204, f"found {len(t)} spectra in the {regime} regime"
 
     telescope = "IRTF"
     t = db.query(db.Spectra).filter(db.Spectra.c.telescope == telescope).astropy()

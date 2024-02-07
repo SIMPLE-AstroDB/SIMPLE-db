@@ -1,6 +1,6 @@
 from astrodb_scripts import load_astrodb, ingest_instrument, ingest_publication
 from schema.schema import *
-from scripts.utils.ingest_spectra_utils import ingest_spectrum
+from scripts.utils.ingest_spectra_utils import ingest_spectrum, spectrum_plottable
 
 SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
@@ -31,7 +31,7 @@ ingest_spectrum(
     db,
     source="CWISEP J193518.58-154620.3",
     spectrum=file,
-    regime="mir",
+    regime="nir",
     telescope="JWST",
     instrument="NIRSpec",
     mode="FS",
