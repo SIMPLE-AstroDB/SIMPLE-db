@@ -6,17 +6,18 @@ import dateutil  # used to convert obs date to datetime object
 import sqlalchemy.exc
 import numpy as np
 from typing import Optional
+import matplotlib.pyplot as plt
 
 from astropy.io import fits
 import astropy.units as u
 from specutils import Spectrum1D
 
 from astrodbkit2.astrodb import Database
-from astrodbkit2.spectra import load_spectrum
 from astrodb_scripts import (
     AstroDBError,
     find_source_in_db,
     check_internet_connection,
+    find_publication,
 )
 
 __all__ = [
@@ -166,7 +167,7 @@ def ingest_spectra(
         f" Spectra skipped for unknown reason: {n_skipped} \n"
     )
     if n_spectra == 1:
-        logger.info(f"Added {source} : \n" f"{row_data}")
+        logger.info(f"Added {source}")  # : \n" f"{row_data}")
     else:
         logger.info(msg)
 
@@ -230,7 +231,8 @@ def ingest_spectrum(
     spectrum: str
         URL or path to spectrum file
     regime: str
-        Regime of spectrum (optical, NIR, radio, etc.)
+        Regime of spectrum (optical, infrared, radio, etc.)
+        controlled by to-be-made Regimes table
     telescope: str
         Telescope used to obtain spectrum
 
@@ -243,9 +245,6 @@ def ingest_spectrum(
     AstroDBError
     """
 
-    # Get source name as it appears in the database
-    db_name = find_source_in_db(db, source)
-
     flags = {
         "skipped": False,
         "dupe": False,
@@ -254,6 +253,43 @@ def ingest_spectrum(
         "added": False,
         "plottable": False,
     }
+
+    # Check input values
+
+    if regime is None:
+        msg = "Regime is required"
+        logger.error(msg)
+        flags["skipped"] = True
+        if raise_error:
+            raise AstroDBError(msg)
+        else:
+            return flags
+
+    if reference is None:
+        msg = "Reference is required"
+        logger.error(msg)
+        flags["skipped"] = True
+        if raise_error:
+            raise AstroDBError(msg)
+        else:
+            return flags
+    else:
+        good_reference = find_publication(db, reference)
+        if good_reference[0] is False:
+            msg = (
+                f"Spectrum for {source} could not be added to the database because the "
+                f"reference {reference} is not in Publications table. \n"
+                f"(Add it with ingest_publication function.) \n "
+            )
+            logger.error(msg)
+            flags["skipped"] = True
+            if raise_error:
+                raise AstroDBError(msg)
+            else:
+                return flags
+
+    # Get source name as it appears in the database
+    db_name = find_source_in_db(db, source)
 
     if len(db_name) != 1:
         msg = f"No unique source match for {source} in the database"
@@ -270,7 +306,7 @@ def ingest_spectrum(
             request_response.status_code
         )  # The website is up if the status code is 200
         if status_code != 200:
-            skipped = True
+            flags["skipped"] = True
             msg = (
                 "The spectrum location does not appear to be valid: \n"
                 f"spectrum: {spectrum} \n"
@@ -286,7 +322,7 @@ def ingest_spectrum(
             request_response1 = requests.head(original_spectrum)
             status_code1 = request_response1.status_code
             if status_code1 != 200:
-                skipped = True
+                flags["skipped"] = True
                 msg = (
                     "The spectrum location does not appear to be valid: \n"
                     f"spectrum: {original_spectrum} \n"
@@ -366,24 +402,11 @@ def ingest_spectrum(
             conn.execute(db.Spectra.insert().values(row_data))
             conn.commit()
         flags["added"] = True
+        logger.info(f"Added {source} : \n" f"{row_data}")
     except sqlalchemy.exc.IntegrityError as e:
         if "CHECK constraint failed: regime" in str(e):
             msg = f"Regime provided is not in schema: {regime}"
             logger.error(msg)
-            if raise_error:
-                raise AstroDBError(msg)
-        if (
-            db.query(db.Publications)
-            .filter(db.Publications.c.publication == reference)
-            .count()
-            == 0
-        ):
-            msg = (
-                f"Spectrum for {source} could not be added to the database because the "
-                f"reference {reference} is not in Publications table. \n"
-                f"(Add it with ingest_publication function.) \n "
-            )
-            logger.warning(msg)
             if raise_error:
                 raise AstroDBError(msg)
             # check telescope, instrument, mode exists
@@ -509,7 +532,7 @@ def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
         regime,
         telescope,
         instrument,
-        None,
+        mode,
         obs_date,
         reference,
         wavelength_units=w_unit,
@@ -517,7 +540,7 @@ def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
     )
 
 
-def spectrum_plottable(spectrum_path, raise_error=True):
+def spectrum_plottable(spectrum_path, raise_error=True, show_plot=False):
     """
     Check if spectrum is plottable
     """
@@ -581,5 +604,9 @@ def spectrum_plottable(spectrum_path, raise_error=True):
         else:
             logger.warning(msg)
             return False
+
+    if show_plot:
+        plt.plot(wave, flux)
+        plt.show()
 
     return True
