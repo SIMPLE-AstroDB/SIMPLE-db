@@ -371,6 +371,20 @@ def test_spectra(db):
     t = db.query(db.Spectra).filter(db.Spectra.c.telescope == telescope).astropy()
     assert len(t) == 436, f"found {len(t)} spectra from {telescope}"
 
+    telescope = "JWST"
+    instrument = "NIRSpec"
+    t = (
+        db.query(db.Spectra)
+        .filter(
+            and_(
+                db.Spectra.c.telescope == telescope,
+                db.Spectra.c.instrument == instrument,
+            )
+        )
+        .astropy()
+    )
+    assert len(t) == 2, f"found {len(t)} spectra from {telescope}/{instrument}"
+
     telescope = "HST"
     instrument = "WFC3"
     t = (
