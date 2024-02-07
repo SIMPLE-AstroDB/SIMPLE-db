@@ -36,7 +36,7 @@ ingest_spectrum(
     instrument="NIRSpec",
     mode="FS",
     obs_date="2022-10-17",
-    reference="FaheSubm",
+    reference="Fahe24",
     comments="F290LP-G395H",
 )
 
