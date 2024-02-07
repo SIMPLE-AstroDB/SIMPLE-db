@@ -1,12 +1,8 @@
 # Tests to verify database contents
-
 import os
 import pytest
-import sys
 from astrodbkit2.astrodb import create_database, Database
 from sqlalchemy import except_, select, and_
-
-sys.path.append(".")
 from schema.schema import *
 from . import REFERENCE_TABLES
 
@@ -136,8 +132,10 @@ def test_proper_motion_refs(db):
         ORDER By 2 DESC
 
     from sqlalchemy import func
-    proper_motion_mearsurements = db.query(ProperMotions.reference, func.count(ProperMotions.reference)).\
-        group_by(ProperMotions.reference).order_by(func.count(ProperMotions.reference).desc()).limit(20).all()
+    proper_motion_mearsurements = db.query(ProperMotions.reference, func.count(
+        ProperMotions.reference)).\
+        group_by(ProperMotions.reference).order_by(
+            func.count(ProperMotions.reference).desc()).limit(20).all()
     """
     ref = "GaiaEDR3"
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
@@ -327,9 +325,11 @@ def test_missions(db):
         select(db.Names.c.source).where(db.Names.c.other_name.like("Gaia EDR3%")),
     )
     s = db.session.scalars(stm).all()
-    assert (
-        len(s) == 0
-    ), f"found {len(s)} sources with Gaia EDR3 proper motion and no Gaia EDR3 designation in Names"
+    msg = (
+        f"found {len(s)} sources with Gaia EDR3 proper motion "
+        "and no Gaia EDR3 designation in Names"
+    )
+    assert len(s) == 0, msg
 
     # If Gaia EDR3 parallax, Gaia EDR3 designation should be in Names
     stm = except_(
@@ -339,9 +339,11 @@ def test_missions(db):
         select(db.Names.c.source).where(db.Names.c.other_name.like("Gaia EDR3%")),
     )
     s = db.session.scalars(stm).all()
-    assert (
-        len(s) == 0
-    ), f"found {len(s)} sources with Gaia EDR3 parallax and no Gaia EDR3 designation in Names"
+    msg = (
+        f"found {len(s)} sources with Gaia EDR3 parallax "
+        "and no Gaia EDR3 designation in Names"
+    )
+    assert len(s) == 0, msg
 
 
 def test_spectra(db):
@@ -363,7 +365,7 @@ def test_spectra(db):
 
     regime = "mir"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 204, f"found {len(t)} spectra in the {regime} regime"
+    assert len(t) == 205, f"found {len(t)} spectra in the {regime} regime"
 
     telescope = "IRTF"
     t = db.query(db.Spectra).filter(db.Spectra.c.telescope == telescope).astropy()
