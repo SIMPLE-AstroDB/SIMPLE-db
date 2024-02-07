@@ -1,4 +1,4 @@
-from astrodb_scripts import load_astrodb, ingest_instrument
+from astrodb_scripts import load_astrodb, ingest_instrument, ingest_publication
 from schema.schema import *
 from scripts.utils.ingest_spectra_utils import ingest_spectrum
 
@@ -18,6 +18,13 @@ ingest_instrument(
     telescope="JWST",
     instrument="NIRSpec",
     mode="FS",
+)
+
+ingest_publication(
+    db,
+    publication="Fahe24",
+    description="W1935-1546 aurora Nature paper",
+    ignore_ads=True,
 )
 
 ingest_spectrum(
