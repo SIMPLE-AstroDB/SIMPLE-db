@@ -16,7 +16,7 @@ file = (
 ingest_instrument(
     db,
     telescope="JWST",
-    instrument="NIRSPEC",
+    instrument="NIRSpec",
     mode="FS",
 )
 
@@ -26,7 +26,7 @@ ingest_spectrum(
     spectrum=file,
     regime="mir",
     telescope="JWST",
-    instrument="NIRSPEC",
+    instrument="NIRSpec",
     mode="FS",
     obs_date="2022-10-17",
     reference="FaheSubm",
