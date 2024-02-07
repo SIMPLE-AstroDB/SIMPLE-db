@@ -3,7 +3,7 @@ from schema.schema import *
 from scripts.utils.ingest_spectra_utils import ingest_spectrum, spectrum_plottable
 from scripts.utils.add_photometry_filters import add_photometry_filter, fetch_svo
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 
 
