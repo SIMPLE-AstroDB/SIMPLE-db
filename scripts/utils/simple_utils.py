@@ -12,7 +12,11 @@ import sqlalchemy.exc
 from astrodb_scripts import (
     AstroDBError,
     find_source_in_db,
+    # photometry
 )
+
+# from scripts.utils.photometry import ingest_photometry
+# used by broken ingest_gaia_photometry
 
 __all__ = [
     "ingest_spectral_types",
@@ -20,7 +24,6 @@ __all__ = [
     "convert_spt_code_to_string_to_code",
     "ingest_parallaxes",
     "ingest_proper_motions",
-    "ingest_photometry",
     "find_survey_name_in_simbad",
     "get_gaiadr3",
     "ingest_gaia_photometry",
@@ -819,29 +822,32 @@ def ingest_gaia_photometry(db, sources, gaia_data, ref):
     else:
         raise Exception
 
-    ingest_photometry(
-        db,
-        sources,
-        g_band_name,
-        gaia_g_phot["phot_g_mean_mag"],
-        gaia_g_phot["g_unc"],
-        ref,
-        ucds="em.opt",
-        telescope="Gaia",
-        instrument="Gaia",
-    )
+    print(g_band_name, rp_band_name)
 
-    ingest_photometry(
-        db,
-        sources,
-        rp_band_name,
-        gaia_rp_phot["phot_rp_mean_mag"],
-        gaia_rp_phot["rp_unc"],
-        ref,
-        ucds="em.opt.R",
-        telescope="Gaia",
-        instrument="Gaia",
-    )
+    # TODO: Turn into a loop and ingest one at a time
+    # ingest_photometry(
+    #     db,
+    #     sources,
+    #     g_band_name,
+    #     gaia_g_phot["phot_g_mean_mag"],
+    #     gaia_g_phot["g_unc"],
+    #     ref,
+    #     ucds="em.opt",
+    #     telescope="Gaia",
+    #     instrument="Gaia",
+    # )
+
+    # ingest_photometry(
+    #     db,
+    #     sources,
+    #     rp_band_name,
+    #     gaia_rp_phot["phot_rp_mean_mag"],
+    #     gaia_rp_phot["rp_unc"],
+    #     ref,
+    #     ucds="em.opt.R",
+    #     telescope="Gaia",
+    #     instrument="Gaia",
+    # )
 
     return
 

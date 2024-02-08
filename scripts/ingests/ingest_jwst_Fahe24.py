@@ -1,7 +1,7 @@
 from astrodb_scripts import load_astrodb, ingest_instrument, ingest_publication
 from schema.schema import *
 from scripts.utils.ingest_spectra_utils import ingest_spectrum, spectrum_plottable
-from scripts.utils.add_photometry_filters import add_photometry_filter, fetch_svo
+from scripts.utils.photometry import ingest_photometry_filter, ingest_photometry
 
 SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
@@ -43,12 +43,14 @@ ingest_spectrum(
 
 filter_names = ["F1000W", "F1280W", "F1800W"]
 for filter_name in filter_names:
-    add_photometry_filter(
+    ingest_photometry_filter(
         db,
         telescope="JWST",
         instrument="MIRI",
         filter_name=filter_name,
     )
+
+# ingest_photometry(
 
 
 # WRITE THE JSON FILES
