@@ -1,109 +1,31 @@
-# Script to add new references to the database
-# https://github.com/SIMPLE-AstroDB/SIMPLE-db/issues/144
 import requests
 from io import BytesIO
 import logging
 import numpy as np
 import sqlalchemy.exc
+from typing import Optional
 
 from astropy.io.votable import parse
 
 from astrodb_scripts import AstroDBError, find_source_in_db
 
-logger = logging.getLogger("SIMPLE")
+logger = logging.getLogger("AstroDB")
 
-
-def fetch_svo(telescope, instrument, filter_name):
-    url = (
-        f"http://svo2.cab.inta-csic.es/svo/theory/fps3/fps.php?ID="
-        f"{telescope}/{instrument}.{filter_name}"
-    )
-    r = requests.get(url)
-
-    if r.status_code != 200:
-        print(f"Error retrieving {url}")
-        return
-
-    # Parse VOTable contents
-    content = BytesIO(r.content)
-    votable = parse(content)
-
-    # Get Filtter ID
-    filter_id = votable.get_field_by_id("filterID").value.split("/")[1]
-
-    # Get effective wavelength and FWHM
-    eff_wave = votable.get_field_by_id("WavelengthEff").value
-    fwhm = votable.get_field_by_id("FWHM").value
-
-    return filter_id, eff_wave, fwhm
-
-
-def ingest_photometry_filter(
-    db, *, telescope=None, instrument=None, filter_name=None, ucd=None
-):
-    """
-    Add a new photometry filter to the database
-    """
-    # Fetch existing telescopes, add if missing
-    existing = (
-        db.query(db.Telescopes).filter(db.Telescopes.c.telescope == telescope).table()
-    )
-    if len(existing) == 0:
-        with db.engine.connect() as conn:
-            conn.execute(db.Telescopes.insert().values({"telescope": telescope}))
-            conn.commit()
-
-    # Fetch existing instruments, add if missing
-    existing = (
-        db.query(db.Instruments)
-        .filter(db.Instruments.c.instrument == instrument)
-        .table()
-    )
-    if len(existing) == 0:
-        with db.engine.connect() as conn:
-            conn.execute(db.Instruments.insert().values({"instrument": instrument}))
-            conn.commit()
-
-    # Get data from SVO
-    filter_id, eff_wave, fwhm = fetch_svo(telescope, instrument, filter_name)
-
-    if ucd is None:
-        ucd = assign_ucd(eff_wave)
-
-    # Add the filter
-    try:
-        with db.engine.connect() as conn:
-            conn.execute(
-                db.PhotometryFilters.insert().values(
-                    {
-                        "band": filter_id,
-                        "ucd": ucd,
-                        "effective_wavelength": eff_wave,
-                        "width": fwhm,
-                    }
-                )
-            )
-            conn.commit()
-        logging.info(
-            f"Added filter {filter_id} with effective wavelength {eff_wave}, "
-            f"FWHM {fwhm}, and UCD {ucd}."
-        )
-    except Exception as e:
-        msg = str(e)
-        raise AstroDBError(msg)
+__all__ = ["ingest_photometry", "ingest_photometry_filter", "fetch_svo", "assign_ucd"]
 
 
 def ingest_photometry(
     db,
-    source,
-    band,
-    magnitude,
-    magnitude_error,
-    reference,
-    telescope=None,
-    epoch=None,
-    comments=None,
-    raise_error=True,
+    *,
+    source: str = None,
+    band: str = None,
+    magnitude: float = None,
+    magnitude_error: float = None,
+    reference: str = None,
+    telescope: Optional[str] = None,
+    epoch: Optional[float] = None,
+    comments: Optional[str] = None,
+    raise_error: bool = True,
 ):
     """
     TODO: Write Docstring
@@ -177,15 +99,110 @@ def ingest_photometry(
         else:
             msg = (
                 "The source may not exist in Sources table.\n"
+                "The band may not exist in the PhotometryFilters table.\n"
                 "The reference may not exist in the Publications table. "
                 "Add it with add_publication function."
             )
-            logger.error(msg)
-            raise AstroDBError(msg)
-
-    logger.info(f"Added photometry measurement: {photometry_data} \n")
+            if raise_error:
+                logger.error(msg)
+                raise AstroDBError(msg)
+            else:
+                logger.warning(msg)
 
     return flags
+
+
+def ingest_photometry_filter(
+    db, *, telescope=None, instrument=None, filter_name=None, ucd=None
+):
+    """
+    Add a new photometry filter to the database
+    """
+    # Fetch existing telescopes, add if missing
+    existing = (
+        db.query(db.Telescopes).filter(db.Telescopes.c.telescope == telescope).table()
+    )
+    if len(existing) == 0:
+        with db.engine.connect() as conn:
+            conn.execute(db.Telescopes.insert().values({"telescope": telescope}))
+            conn.commit()
+
+    # Fetch existing instruments, add if missing
+    existing = (
+        db.query(db.Instruments)
+        .filter(db.Instruments.c.instrument == instrument)
+        .table()
+    )
+    if len(existing) == 0:
+        with db.engine.connect() as conn:
+            conn.execute(db.Instruments.insert().values({"instrument": instrument}))
+            conn.commit()
+
+    # Get data from SVO
+    filter_id, eff_wave, fwhm = fetch_svo(telescope, instrument, filter_name)
+
+    if ucd is None:
+        ucd = assign_ucd(eff_wave)
+
+    # Add the filter
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(
+                db.PhotometryFilters.insert().values(
+                    {
+                        "band": filter_id,
+                        "ucd": ucd,
+                        "effective_wavelength": eff_wave,
+                        "width": fwhm,
+                    }
+                )
+            )
+            conn.commit()
+        logger.info(
+            f"Added filter {filter_id} with effective wavelength {eff_wave}, "
+            f"FWHM {fwhm}, and UCD {ucd}."
+        )
+    except sqlalchemy.exc.IntegrityError as e:
+        if "UNIQUE constraint failed:" in str(e):
+            msg = str(e) + f"Filter {filter_id} already exists in the database."
+            raise AstroDBError(msg)
+        else:
+            msg = str(e) + f"Error adding filter {filter_id}."
+            raise AstroDBError(msg)
+    except Exception as e:
+        msg = str(e)
+        raise AstroDBError(msg)
+
+
+def fetch_svo(telescope, instrument, filter_name):
+    url = (
+        f"http://svo2.cab.inta-csic.es/svo/theory/fps3/fps.php?ID="
+        f"{telescope}/{instrument}.{filter_name}"
+    )
+    r = requests.get(url)
+
+    if r.status_code != 200:
+        print(f"Error retrieving {url}")
+        return
+
+    # Parse VOTable contents
+    content = BytesIO(r.content)
+    votable = parse(content)
+
+    # Get Filtter ID
+    filter_id = votable.get_field_by_id("filterID").value  # .split("/")[1]
+
+    # Get effective wavelength and FWHM
+    eff_wave = votable.get_field_by_id("WavelengthEff").value
+    fwhm = votable.get_field_by_id("FWHM").value
+
+    logger.debug(
+        f"Found in SVO: "
+        f"Filter {filter_id} has effective wavelength {eff_wave} and "
+        f"FWHM {fwhm}."
+    )
+
+    return filter_id, eff_wave, fwhm
 
 
 def assign_ucd(eff_wave):
