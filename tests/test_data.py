@@ -243,6 +243,9 @@ def test_parallax_refs(db):
         ("WFCAM.Y", 854),
         ("VisAO.Ys", 1),
         ("VISTA.Y", 59),
+        ("JWST/MIRI.F1000W", 1),
+        ("JWST/MIRI.F1280W", 1),
+        ("JWST/MIRI.F1800W", 1),
     ],
 )
 def test_photometry_bands(db, band, value):
