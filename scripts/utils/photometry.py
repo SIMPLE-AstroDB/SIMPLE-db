@@ -4,7 +4,7 @@ import logging
 import numpy as np
 import sqlalchemy.exc
 from typing import Optional
-
+import astropy.units as u
 from astropy.io.votable import parse
 
 from astrodb_scripts import AstroDBError, find_source_in_db
@@ -174,7 +174,39 @@ def ingest_photometry_filter(
         raise AstroDBError(msg)
 
 
-def fetch_svo(telescope, instrument, filter_name):
+def fetch_svo(telescope: str = None, instrument: str = None, filter_name: str = None):
+    """
+    Fetch photometry filter information from the SVO Filter Profile Service
+    http://svo2.cab.inta-csic.es/theory/fps/
+
+    Could use better error handling when instrument name or filter name is not found
+
+    Parameters
+    ----------
+    telescope: str
+        Telescope name
+    instrument: str
+        Instrument name
+    filter_name: str
+        Filter name
+
+    Returns
+    -------
+    filter_id: str
+        Filter ID
+    eff_wave: Quantity
+        Effective wavelength
+    fwhm: Quantity
+        Full width at half maximum (FWHM)
+
+
+    Raises
+    ------
+    AstroDBError
+        If the SVO URL is not reachable or the filter information is not found
+    KeyError
+        If the filter information is not found in the VOTable
+    """
     url = (
         f"http://svo2.cab.inta-csic.es/svo/theory/fps3/fps.php?ID="
         f"{telescope}/{instrument}.{filter_name}"
@@ -182,19 +214,31 @@ def fetch_svo(telescope, instrument, filter_name):
     r = requests.get(url)
 
     if r.status_code != 200:
-        print(f"Error retrieving {url}")
-        return
+        msg = f"Error retrieving {url}. Status code: {r.status_code}"
+        logger.error(msg)
+        raise AstroDBError(msg)
 
     # Parse VOTable contents
     content = BytesIO(r.content)
     votable = parse(content)
 
-    # Get Filtter ID
-    filter_id = votable.get_field_by_id("filterID").value  # .split("/")[1]
+    # Get Filter ID
+    try:
+        filter_id = votable.get_field_by_id("filterID").value
+    except KeyError:
+        msg = f"Filter {telescope}, {instrument}, {filter_name} not found in SVO."
+        raise AstroDBError(msg)
 
     # Get effective wavelength and FWHM
-    eff_wave = votable.get_field_by_id("WavelengthEff").value
-    fwhm = votable.get_field_by_id("FWHM").value
+    eff_wave = votable.get_field_by_id("WavelengthEff")
+    fwhm = votable.get_field_by_id("FWHM")
+
+    if eff_wave.unit == "AA" and fwhm.unit == "AA":
+        eff_wave = eff_wave.value * u.Angstrom
+        fwhm = fwhm.value * u.Angstrom
+    else:
+        msg = f"Wavelengths from SVO may not be Angstroms as expected: {eff_wave.unit}"
+        raise AstroDBError(msg)
 
     logger.debug(
         f"Found in SVO: "
@@ -206,29 +250,45 @@ def fetch_svo(telescope, instrument, filter_name):
 
 
 def assign_ucd(eff_wave):
-    if 3000 < eff_wave < 4000:
+    """
+    Assign a Unified Content Descriptors (UCD) to a photometry filter based on its effective wavelength
+    UCDs are from the UCD1+ controlled vocabulary
+    https://www.ivoa.net/documents/UCD1+/20200212/PEN-UCDlist-1.4-20200212.html#tth_sEcB
+
+    Parameters
+    ----------
+    eff_wave: float
+        Effective wavelength in Angstroms
+
+    Returns
+    -------
+    ucd: str
+        UCD string
+
+    """
+    if 3000 < eff_wave <= 4000:
         ucd = "em.opt.U"
-    elif 4000 < eff_wave < 5000:
+    elif 4000 < eff_wave <= 5000:
         ucd = "em.opt.B"
-    elif 5000 < eff_wave < 6000:
+    elif 5000 < eff_wave <= 6000:
         ucd = "em.opt.V"
-    elif 6000 < eff_wave < 7500:
+    elif 6000 < eff_wave <= 7500:
         ucd = "em.opt.R"
-    elif 7500 < eff_wave < 10000:
+    elif 7500 < eff_wave <= 10000:
         ucd = "em.opt.I"
-    elif 10000 < eff_wave < 15000:
+    elif 10000 < eff_wave <= 15000:
         ucd = "em.IR.J"
-    elif 15000 < eff_wave < 20000:
+    elif 15000 < eff_wave <= 20000:
         ucd = "em.IR.H"
-    elif 20000 < eff_wave < 30000:
+    elif 20000 < eff_wave <= 30000:
         ucd = "em.IR.K"
-    elif 30000 < eff_wave < 40000:
+    elif 30000 < eff_wave <= 40000:
         ucd = "em.IR.3-4um"
-    elif 40000 < eff_wave < 80000:
+    elif 40000 < eff_wave <= 80000:
         ucd = "em.IR.4-8um"
-    elif 80000 < eff_wave < 150000:
+    elif 80000 < eff_wave <= 150000:
         ucd = "em.IR.8-15um"
-    elif 150000 < eff_wave < 300000:
+    elif 150000 < eff_wave <= 300000:
         ucd = "em.IR.15-30um"
     else:
         ucd = None

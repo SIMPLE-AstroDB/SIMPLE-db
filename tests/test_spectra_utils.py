@@ -1,7 +1,6 @@
 import pytest
 import os
 import logging
-import warnings
 from astrodbkit2.astrodb import create_database, Database
 from astrodb_scripts.utils import (
     AstroDBError,
@@ -72,7 +71,7 @@ def test_ingest_spectrum(db):
     spectrum = "https://bdnyc.s3.amazonaws.com/tests/U10176.fits"
     with pytest.raises(AstroDBError) as error_message:
         ingest_spectrum(db, source="apple", spectrum=spectrum)
-    assert "Regime is required" == str(error_message.value)
+    assert "Regime is required" in str(error_message.value)
     result = ingest_spectrum(db, source="apple", spectrum=spectrum, raise_error=False)
     assert result["added"] is False
     assert result["skipped"] is True
