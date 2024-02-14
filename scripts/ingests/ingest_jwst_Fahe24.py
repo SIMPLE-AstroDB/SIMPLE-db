@@ -62,8 +62,8 @@ ingest_photometry(
     source="CWISEP J193518.58-154620.3",
     band="JWST/MIRI.F1000W",
     telescope="JWST",
-    magnitude=13.7404,
-    magnitude_error=0.0051,
+    magnitude=13.740,
+    magnitude_error=0.005,
     reference="Fahe24",
 )
 
@@ -72,8 +72,8 @@ ingest_photometry(
     source="CWISEP J193518.58-154620.3",
     band="JWST/MIRI.F1280W",
     telescope="JWST",
-    magnitude=13.1256,
-    magnitude_error=0.0071,
+    magnitude=13.126,
+    magnitude_error=0.007,
     reference="Fahe24",
 )
 
@@ -82,8 +82,8 @@ ingest_photometry(
     source="CWISEP J193518.58-154620.3",
     band="JWST/MIRI.F1800W",
     telescope="JWST",
-    magnitude=12.109,
-    magnitude_error=0.018,
+    magnitude=12.107,
+    magnitude_error=0.017,
     reference="Fahe24",
 )
 
