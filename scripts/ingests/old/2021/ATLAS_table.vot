@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE version="1.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.ivoa.net/xml/VOTable/v1.3"
+  xsi:schemaLocation="http://www.ivoa.net/xml/VOTable/v1.3 http://www.ivoa.net/xml/VOTable/v1.3">
+ <DESCRIPTION>
+   VizieR Astronomical Server vizier.u-strasbg.fr
+    Date: 2021-01-26T21:19:11 [V1.99+ (14-Oct-2013)]
+   Explanations and Statistics of UCDs:			See LINK below
+   In case of problem, please report to:	cds-question@unistra.fr
+   In this version, NULL integer columns are written as an empty string
+   &lt;TD&gt;&lt;/TD&gt;, explicitely possible from VOTable-1.3
+ </DESCRIPTION>
+<!-- VOTable description at http://www.ivoa.net/Documents/latest/VOT.html -->
+<INFO ID="VERSION" name="votable-version" value="1.99+ (14-Oct-2013)"/>
+<INFO ID="Ref" name="-ref" value="VIZ6010855a86aa"/>
+<INFO ID="MaxTuples" name="-out.max" value="100"/>
+<INFO name="queryParameters" value="30">
+-oc.form=dec
+-out.max=100
+-out.all=2
+-out.add=_r
+-out.add=_RAJ,_DEJ
+-sort=_r
+-order=I
+-out.src=J/AJ/157/101/table1
+-nav=cat:J/AJ/157/101&amp;tab:{J/AJ/157/101/table1}&amp;key:source=J/AJ/157/101/table1&amp;key:c=CD-352722b&amp;pos:CD-352722b( 2 arcmin J2000)&amp;HTTPPRM:&amp;&amp;-ref=VIZ6010855a86aa&amp;-out.max=50&amp;-out.form=HTML Table&amp;-out.add=_r&amp;-out.add=_RAJ,_DEJ&amp;-sort=_r&amp;-oc.form=dec&amp;-c.eq=J2000&amp;-c.r=  2&amp;-c.u=arcmin&amp;-c.geom=r&amp;-order=I&amp;-out=Num&amp;-out=Name&amp;-out=SpType&amp;-out=SpTSpeX&amp;-out=RAJ2000&amp;-out=DEJ2000&amp;-out=l_Jmag&amp;-out=Jmag&amp;-out=Hmag&amp;-out=l_Ksmag&amp;-out=Ksmag&amp;-out=Plx&amp;-out=r_Plx&amp;-out=S/N&amp;-out=HST&amp;-out=Ref&amp;-file=.&amp;-meta.ucd=2&amp;-meta=1&amp;-meta.foot=1&amp;-usenav=1&amp;-bmark=POST&amp;-out.src=J/AJ/157/101/table1
+-c.eq=J2000
+-c.r=  2
+-c.u=arcmin
+-c.geom=r
+-source=J/AJ/157/101/table1
+-out=Num
+-out=Name
+-out=SpType
+-out=SpTSpeX
+-out=RAJ2000
+-out=DEJ2000
+-out=l_Jmag
+-out=Jmag
+-out=Hmag
+-out=l_Ksmag
+-out=Ksmag
+-out=Plx
+-out=r_Plx
+-out=S/N
+-out=HST
+-out=Ref
+</INFO>
+
+<!--
+Execution Reports
+ -->
+
+<RESOURCE ID="yCat_51570101" name="J/AJ/157/101">
+  <DESCRIPTION>Cloud Atlas: HST/WFC3 NIR spectral library (Manjavacas+, 2019)</DESCRIPTION>
+  <COOSYS ID="J2000" system="eq_FK5" equinox="J2000"/>
+  <TABLE ID="J_AJ_157_101_table1" name="J/AJ/157/101/table1">
+    <DESCRIPTION>L, T, and Y dwarfs with HST/WFC3 spectroscopy</DESCRIPTION>
+<!-- Sample of L, T, and Y dwarfs with HST/WFC3 spectroscopy -->
+
+    <!-- Definitions of GROUPs and FIELDs -->
+    <FIELD name="_RAJ2000" ucd="pos.eq.ra" ref="J2000" datatype="double" width="11" precision="7" unit="deg"><!-- ucd="POS_EQ_RA" -->
+      <DESCRIPTION>Right ascension (FK5, Equinox=J2000.0) (computed by VizieR, not part of the original data. The format may include more digits than the original data because of internal accuracy requirements in VizieR and across other CDS services)</DESCRIPTION>
+    </FIELD>
+    <FIELD name="_DEJ2000" ucd="pos.eq.dec" ref="J2000" datatype="double" width="11" precision="7" unit="deg"><!-- ucd="POS_EQ_DEC" -->
+      <DESCRIPTION>Declination (FK5, Equinox=J2000.0) (computed by VizieR, not part of the original data. The format may include more digits than the original data because of internal accuracy requirements in VizieR and across other CDS services)</DESCRIPTION>
+    </FIELD>
+    <FIELD name="recno" ucd="meta.record" datatype="int" width="8" type="hidden"><!-- ucd="RECORD" -->
+      <DESCRIPTION>Record number assigned by the VizieR team. Should Not be used for identification.</DESCRIPTION>
+      <LINK href="http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-info=XML&amp;-out.add=.&amp;-source=J/AJ/157/101/table1&amp;recno=${recno}"/>
+    </FIELD>
+    <FIELD name="Num" ucd="meta.id" datatype="short" width="2"><!-- ucd="ID_NUMBER" -->
+      <DESCRIPTION>[1/66] Object number</DESCRIPTION>
+      <LINK href="http://vizier.u-strasbg.fr/viz-bin/VizieR-4?-info=XML&amp;-out.add=.&amp;-source=J/AJ/157/101/table12&amp;Num=${Num}"/>
+    </FIELD>
+    <FIELD name="Name" ucd="meta.id;meta.main" datatype="char" arraysize="24*"><!-- ucd="ID_MAIN" -->
+      <DESCRIPTION>Object name</DESCRIPTION>
+      <LINK href="http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-info=XML&amp;-out.add=.&amp;-source=J/AJ/157/101/table1&amp;recno=${recno}"/>
+    </FIELD>
+    <FIELD name="SpType" ucd="src.spType" datatype="char" arraysize="9*"><!-- ucd="SPECT_TYPE_MK" -->
+      <DESCRIPTION>Spectral type</DESCRIPTION>
+    </FIELD>
+    <FIELD name="SpTSpeX" ucd="src.spType" datatype="char" arraysize="4"><!-- ucd="SPECT_TYPE_MK" -->
+      <DESCRIPTION>Spectral type (1)</DESCRIPTION>
+    </FIELD>
+    <FIELD name="RAJ2000" ucd="pos.eq.ra;meta.main" ref="J2000" datatype="char" arraysize="11" unit="&quot;h:m:s&quot;"><!-- ucd="POS_EQ_RA_MAIN" -->
+      <DESCRIPTION>Hour of Right Ascension (J2000)</DESCRIPTION>
+    </FIELD>
+    <FIELD name="DEJ2000" ucd="pos.eq.dec;meta.main" ref="J2000" datatype="char" arraysize="12" unit="&quot;d:m:s&quot;"><!-- ucd="POS_EQ_DEC_MAIN" -->
+      <DESCRIPTION>Degree of Declination (J2000)</DESCRIPTION>
+    </FIELD>
+    <FIELD name="l_Jmag" ucd="meta.code.error" datatype="char" arraysize="1"><!-- ucd="CODE_LIMIT" -->
+      <DESCRIPTION>[&gt;] Limit flag on Jmag</DESCRIPTION>
+    </FIELD>
+    <FIELD name="Jmag" ucd="phot.mag;em.IR.J" datatype="float" width="6" precision="3" unit="mag"><!-- ucd="PHOT_JHN_J" -->
+      <DESCRIPTION>[11.5/22.58]? 2MASS J band magnitude</DESCRIPTION>
+      <VALUES null="NaN" />
+    </FIELD>
+    <FIELD name="e_Jmag" ucd="stat.error;phot.mag" datatype="float" width="5" precision="2" unit="mag"><!-- ucd="ERROR" -->
+      <DESCRIPTION>[0.01/0.26]? Uncertainty in Jmag</DESCRIPTION>
+      <VALUES null="NaN" />
+    </FIELD>
+    <FIELD name="Hmag" ucd="phot.mag;em.IR.H" datatype="float" width="5" precision="2" unit="mag"><!-- ucd="PHOT_JHN_H" -->
+      <DESCRIPTION>[10.37/22.98]? 2MASS H band magnitude</DESCRIPTION>
+      <VALUES null="NaN" />
+    </FIELD>
+    <FIELD name="e_Hmag" ucd="stat.error;phot.mag" datatype="float" width="5" precision="2" unit="mag"><!-- ucd="ERROR" -->
+      <DESCRIPTION>[0.02/0.8]? Uncertainty in Hmag</DESCRIPTION>
+      <VALUES null="NaN" />
+    </FIELD>
+    <FIELD name="l_Ksmag" ucd="meta.code.error" datatype="char" arraysize="1"><!-- ucd="CODE_LIMIT" -->
+      <DESCRIPTION>[&gt;] Limit flag on Ksmag</DESCRIPTION>
+    </FIELD>
+    <FIELD name="Ksmag" ucd="phot.mag;em.IR.K" datatype="float" width="6" precision="3" unit="mag"><!-- ucd="PHOT_JHN_K" -->
+      <DESCRIPTION>[9.44/20.91]? 2MASS K_s_ band magnitude</DESCRIPTION>
+      <VALUES null="NaN" />
+    </FIELD>
+    <FIELD name="e_Ksmag" ucd="stat.error;phot.mag" datatype="float" width="6" precision="3" unit="mag"><!-- ucd="ERROR" -->
+      <DESCRIPTION>[0.02/0.31]? Uncertainty in Ksmag</DESCRIPTION>
+      <VALUES null="NaN" />
+    </FIELD>
+    <FIELD name="Plx" ucd="pos.parallax.trig" datatype="float" width="6" precision="2" unit="mas"><!-- ucd="POS_PARLX_TRIG" -->
+      <DESCRIPTION>[14.52/501.4]? Trigonometric parallaxe {pi}_T_</DESCRIPTION>
+      <VALUES null="NaN" />
+    </FIELD>
+    <FIELD name="e_Plx" ucd="stat.error;pos.parallax" datatype="float" width="5" precision="2" unit="mas"><!-- ucd="ERROR" -->
+      <DESCRIPTION>[0.03/41]? Uncertainty in Plx</DESCRIPTION>
+      <VALUES null="NaN" />
+    </FIELD>
+    <FIELD name="r_Plx" ucd="meta.ref;pos.frame" datatype="short" width="2"><!-- ucd="REFER_CODE" -->
+      <DESCRIPTION>[13/34]? Reference for trigonometric parallax measurement (4) [NULL integer written as an empty string]</DESCRIPTION>
+      <VALUES null="-32768" />
+      <LINK href="http://vizier.u-strasbg.fr/viz-bin/VizieR?-6N&amp;-info=XML&amp;-out.add=.&amp;&amp;lt;&amp;quot;Note&amp;quot;&amp;catid=51570101&amp;notid=4&amp;-out.emph=${r_Plx}"/>
+    </FIELD>
+    <FIELD name="S/N" ucd="stat.snr" datatype="float" width="6" precision="1"><!-- ucd="INST_S/N" -->
+      <DESCRIPTION>[1/3333]? Signal-to-noise ratio measured at 1.25 {mu}m</DESCRIPTION>
+      <VALUES null="NaN" />
+    </FIELD>
+    <FIELD name="HST" ucd="meta.id;obs" datatype="short" width="5"><!-- ucd="OBS_ID" -->
+      <DESCRIPTION>[12217/14241] HST program (2)</DESCRIPTION>
+    </FIELD>
+    <FIELD name="Ref" ucd="meta.ref;pos.frame" datatype="char" arraysize="5*"><!-- ucd="REFER_CODE" -->
+      <DESCRIPTION>Reference(s) for first publication of HST/WFC3 near-infrared spectra (3)</DESCRIPTION>
+      <LINK href="http://vizier.u-strasbg.fr/viz-bin/VizieR?-6N&amp;-info=XML&amp;-out.add=.&amp;&amp;lt;&amp;quot;Note&amp;quot;&amp;catid=51570101&amp;notid=3&amp;-out.emph=${Ref}"/>
+    </FIELD>
+<DATA><TABLEDATA>
+<TR><TD>092.3300417</TD><TD>-35.8253333</TD><TD>1</TD><TD>1</TD><TD>CD-352722b</TD><TD>L4</TD><TD>L7.5</TD><TD>06 09 19.21</TD><TD>-35 49 31.20</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>44.63</TD><TD>0.03</TD><TD></TD><TD>45.0</TD><TD>14241</TD><TD>TS</TD></TR>
+<TR><TD>267.6035000</TD><TD>-0.2708639</TD><TD>2</TD><TD>2</TD><TD>2MASS J17502484-0016151</TD><TD>L4.5</TD><TD>L5</TD><TD>17 50 24.84</TD><TD>-00 16 15.11</TD><TD></TD><TD>13.290</TD><TD>0.02</TD><TD>12.41</TD><TD>0.02</TD><TD></TD><TD>11.840</TD><TD>0.020</TD><TD>45.16</TD><TD>0.16</TD><TD>13</TD><TD>2000.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>058.8473750</TD><TD>+11.5621389</TD><TD>3</TD><TD>3</TD><TD>2MASS J03552337+1133437</TD><TD>L5</TD><TD>L5.5</TD><TD>03 55 23.37</TD><TD>+11 33 43.70</TD><TD></TD><TD>14.050</TD><TD>0.02</TD><TD>12.53</TD><TD>0.03</TD><TD></TD><TD>11.530</TD><TD>0.020</TD><TD>108.70</TD><TD>2.36</TD><TD>14</TD><TD>322.0</TD><TD>14241</TD><TD>TS</TD></TR>
+<TR><TD>275.3672917</TD><TD>+14.2336222</TD><TD>4</TD><TD>4</TD><TD>2MASS J18212815+1414010</TD><TD>L5</TD><TD>L5.5</TD><TD>18 21 28.15</TD><TD>+14 14 01.04</TD><TD></TD><TD>13.430</TD><TD>0.02</TD><TD>12.39</TD><TD>0.02</TD><TD></TD><TD>11.650</TD><TD>0.020</TD><TD>122.00</TD><TD>13.00</TD><TD>15</TD><TD>370.0</TD><TD>13176</TD><TD>2</TD></TR>
+<TR><TD>226.9487083</TD><TD>-16.4607278</TD><TD>5</TD><TD>5</TD><TD>2MASSW J1507476-162738</TD><TD>L5</TD><TD>L5.5</TD><TD>15 07 47.69</TD><TD>-16 27 38.62</TD><TD></TD><TD>12.830</TD><TD>0.03</TD><TD>11.89</TD><TD>0.02</TD><TD></TD><TD>11.310</TD><TD>0.020</TD><TD>106.50</TD><TD>0.19</TD><TD></TD><TD>526.0</TD><TD>13176</TD><TD>2</TD></TR>
+<TR><TD>065.2799583</TD><TD>-63.1006250</TD><TD>6</TD><TD>6</TD><TD>2MASSI J0421072-630602</TD><TD>L5</TD><TD>L5</TD><TD>04 21 07.19</TD><TD>-63 06 02.25</TD><TD></TD><TD>15.560</TD><TD>0.05</TD><TD>14.28</TD><TD>0.04</TD><TD></TD><TD>13.440</TD><TD>0.040</TD><TD></TD><TD></TD><TD></TD><TD>1250.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>084.9666667</TD><TD>-0.9838611</TD><TD>7</TD><TD>7</TD><TD>2MASS J05395200-0059019</TD><TD>L5</TD><TD>L5</TD><TD>05 39 52.00</TD><TD>-00 59 01.90</TD><TD></TD><TD>14.030</TD><TD>0.03</TD><TD>13.10</TD><TD>0.03</TD><TD></TD><TD>12.520</TD><TD>0.020</TD><TD>81.97</TD><TD>2.69</TD><TD>13</TD><TD>2000.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>257.9405417</TD><TD>+22.5345583</TD><TD>8</TD><TD>8</TD><TD>2MASSI J1711457+223204</TD><TD>L5.0+T5.5</TD><TD></TD><TD>17 11 45.73</TD><TD>+22 32 04.41</TD><TD></TD><TD>17.080</TD><TD>0.18</TD><TD>15.79</TD><TD>0.11</TD><TD></TD><TD>14.720</TD><TD>0.090</TD><TD>33.11</TD><TD>4.71</TD><TD>16</TD><TD>1111.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>011.7544167</TD><TD>+68.0644722</TD><TD>9</TD><TD>9</TD><TD>2MASS J00470038+6803543</TD><TD>L6</TD><TD>L5.5</TD><TD>00 47 01.06</TD><TD>+68 03 52.10</TD><TD></TD><TD>15.600</TD><TD>0.07</TD><TD>13.97</TD><TD>0.04</TD><TD></TD><TD>13.050</TD><TD>0.030</TD><TD>82.00</TD><TD>3.00</TD><TD>17</TD><TD>370.0</TD><TD>14241</TD><TD>3</TD></TR>
+<TR><TD>147.7691667</TD><TD>+35.9693889</TD><TD>10</TD><TD>10</TD><TD>LP261-75B</TD><TD>L6</TD><TD>L4.5</TD><TD>09 51 04.60</TD><TD>+35 58 09.80</TD><TD></TD><TD>17.220</TD><TD>0.21</TD><TD>15.89</TD><TD>0.14</TD><TD></TD><TD>15.140</TD><TD>0.130</TD><TD>29.60</TD><TD>2.80</TD><TD>18</TD><TD>333.0</TD><TD>14241</TD><TD>4</TD></TR>
+<TR><TD>016.9684167</TD><TD>+0.6990000</TD><TD>11</TD><TD>11</TD><TD>2MASS J01075242+0041563</TD><TD>L6</TD><TD>L5.5</TD><TD>01 07 52.42</TD><TD>+00 41 56.40</TD><TD></TD><TD>15.820</TD><TD>0.06</TD><TD>14.51</TD><TD>0.04</TD><TD></TD><TD>13.710</TD><TD>0.040</TD><TD>64.13</TD><TD>4.51</TD><TD>19</TD><TD>208.0</TD><TD>14241</TD><TD>TS</TD></TR>
+<TR><TD>228.7534583</TD><TD>+48.7949139</TD><TD>12</TD><TD>12</TD><TD>2MASSW J1515008+484742</TD><TD>L6</TD><TD>L6</TD><TD>15 15 00.83</TD><TD>+48 47 41.69</TD><TD></TD><TD>14.110</TD><TD>0.03</TD><TD>13.09</TD><TD>0.03</TD><TD></TD><TD>12.500</TD><TD>0.020</TD><TD></TD><TD></TD><TD>20</TD><TD>1666.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>096.1914583</TD><TD>-45.3652472</TD><TD>13</TD><TD>13</TD><TD>2MASS J06244595-4521548</TD><TD>L6.5</TD><TD>L5</TD><TD>06 24 45.95</TD><TD>-45 21 54.89</TD><TD></TD><TD>14.480</TD><TD>0.03</TD><TD>13.33</TD><TD>0.03</TD><TD></TD><TD>12.590</TD><TD>0.030</TD><TD>86.21</TD><TD>4.46</TD><TD>19</TD><TD>1428.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>120.4190000</TD><TD>+46.4805111</TD><TD>14</TD><TD>14</TD><TD>2MASSW J0801405+462850</TD><TD>L6.5</TD><TD>L6</TD><TD>08 01 40.56</TD><TD>+46 28 49.84</TD><TD></TD><TD>16.270</TD><TD>0.13</TD><TD>15.45</TD><TD>0.14</TD><TD></TD><TD>14.530</TD><TD>0.100</TD><TD></TD><TD></TD><TD></TD><TD>1428.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>318.5334583</TD><TD>-22.8599556</TD><TD>15</TD><TD>15</TD><TD>PSO J318.5-22</TD><TD>L7</TD><TD>L7.5</TD><TD>21 14 08.03</TD><TD>-22 51 35.84</TD><TD></TD><TD>16.710</TD><TD>0.19</TD><TD>15.72</TD><TD>0.17</TD><TD></TD><TD>14.740</TD><TD>0.120</TD><TD>45.10</TD><TD>1.70</TD><TD>21</TD><TD>285.0</TD><TD>14188</TD><TD>10</TD></TR>
+<TR><TD>336.1825833</TD><TD>-1.9811500</TD><TD>16</TD><TD>16</TD><TD>2MASSW J2224438-015852</TD><TD>L7.5</TD><TD>L4.5</TD><TD>22 24 43.82</TD><TD>-01 58 52.14</TD><TD></TD><TD>14.070</TD><TD>0.03</TD><TD>12.81</TD><TD>0.03</TD><TD></TD><TD>12.020</TD><TD>0.020</TD><TD>86.20</TD><TD>1.10</TD><TD>22</TD><TD>47.0</TD><TD>14241</TD><TD>2</TD></TR>
+<TR><TD>162.3288333</TD><TD>-53.3194667</TD><TD>17</TD><TD>17</TD><TD>Luh 16AB</TD><TD>L7.5+T0.5</TD><TD></TD><TD>10 49 18.92</TD><TD>-53 19 10.08</TD><TD></TD><TD>11.500</TD><TD>0.04</TD><TD>10.37</TD><TD>0.04</TD><TD></TD><TD>9.440</TD><TD>0.070</TD><TD>501.40</TD><TD>0.09</TD><TD>23</TD><TD>500.0</TD><TD>13280</TD><TD>5</TD></TR>
+<TR><TD>126.3320417</TD><TD>+21.2644778</TD><TD>18</TD><TD>18</TD><TD>2MASSI J0825196+211552</TD><TD>L7.5</TD><TD>L6</TD><TD>08 25 19.69</TD><TD>+21 15 52.12</TD><TD></TD><TD>15.100</TD><TD>0.03</TD><TD>13.79</TD><TD>0.03</TD><TD></TD><TD>13.030</TD><TD>0.030</TD><TD>93.46</TD><TD>0.87</TD><TD>24</TD><TD>2000.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>137.1585000</TD><TD>+50.5357833</TD><TD>19</TD><TD>19</TD><TD>2MUCD 10802</TD><TD>L8</TD><TD>L7.5</TD><TD>09 08 38.04</TD><TD>+50 32 08.82</TD><TD></TD><TD>14.550</TD><TD>0.02</TD><TD>13.48</TD><TD>0.03</TD><TD></TD><TD>12.950</TD><TD>0.030</TD><TD></TD><TD></TD><TD></TD><TD>967.0</TD><TD>14241</TD><TD>1</TD></TR>
+<TR><TD>248.1212917</TD><TD>+19.0779750</TD><TD>20</TD><TD>20</TD><TD>2MASS J16322911+1904407</TD><TD>L8</TD><TD>L8</TD><TD>16 32 29.11</TD><TD>+19 04 40.71</TD><TD></TD><TD>15.860</TD><TD>0.07</TD><TD>14.61</TD><TD>0.04</TD><TD></TD><TD>14.000</TD><TD>0.050</TD><TD>65.79</TD><TD>2.16</TD><TD>24</TD><TD>1428.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>047.7494583</TD><TD>+16.8043333</TD><TD>21</TD><TD>21</TD><TD>2MASSW J0310599+164816</TD><TD>L8</TD><TD>T2</TD><TD>03 10 59.87</TD><TD>+16 48 15.60</TD><TD></TD><TD>16.020</TD><TD>0.08</TD><TD>14.93</TD><TD>0.07</TD><TD></TD><TD>14.310</TD><TD>0.070</TD><TD>36.90</TD><TD>3.40</TD><TD>16</TD><TD>1428.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>184.9648333</TD><TD>+31.4804750</TD><TD>22</TD><TD>22</TD><TD>2MASS J12195156+3128497</TD><TD>L9</TD><TD>L8</TD><TD>12 19 51.56</TD><TD>+31 28 49.71</TD><TD></TD><TD>15.910</TD><TD>0.08</TD><TD>14.91</TD><TD>0.07</TD><TD></TD><TD>14.310</TD><TD>0.070</TD><TD></TD><TD></TD><TD></TD><TD>1428.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>119.6667917</TD><TD>+32.7884417</TD><TD>23</TD><TD>23</TD><TD>SDSS J075840.33+324723.4</TD><TD>T0+T3.5</TD><TD></TD><TD>07 58 40.03</TD><TD>+32 47 18.39</TD><TD></TD><TD>14.950</TD><TD>0.04</TD><TD>14.11</TD><TD>0.04</TD><TD></TD><TD>13.880</TD><TD>0.060</TD><TD></TD><TD></TD><TD></TD><TD>3333.0</TD><TD>13299</TD><TD>TS</TD></TR>
+<TR><TD>159.8807500</TD><TD>+32.9406667</TD><TD>24</TD><TD>24</TD><TD>2MASS J10393137+3256263</TD><TD>T1</TD><TD>T2</TD><TD>10 39 31.38</TD><TD>+32 56 26.40</TD><TD></TD><TD>16.410</TD><TD>0.15</TD><TD>15.34</TD><TD>0.11</TD><TD></TD><TD>15.150</TD><TD>0.160</TD><TD></TD><TD></TD><TD></TD><TD>1250.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>137.2535833</TD><TD>+65.4243250</TD><TD>25</TD><TD>25</TD><TD>2MASS J09090085+6525275</TD><TD>T1.5</TD><TD>T1</TD><TD>09 09 00.86</TD><TD>+65 25 27.57</TD><TD></TD><TD>16.030</TD><TD>0.09</TD><TD>15.21</TD><TD>0.09</TD><TD></TD><TD>15.170</TD><TD>0.150</TD><TD></TD><TD></TD><TD></TD><TD>1250.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>324.8615417</TD><TD>+2.3396389</TD><TD>26</TD><TD>26</TD><TD>2MASS J21392676+0220226</TD><TD>T2</TD><TD>T1.5</TD><TD>21 39 26.77</TD><TD>+02 20 22.70</TD><TD></TD><TD>14.710</TD><TD>0.01</TD><TD>14.16</TD><TD>0.05</TD><TD></TD><TD>13.580</TD><TD>0.040</TD><TD>101.50</TD><TD>2.00</TD><TD>25</TD><TD>172.0</TD><TD>12314</TD><TD>11, 6</TD></TR>
+<TR><TD>201.1480833</TD><TD>+63.9744861</TD><TD>27</TD><TD>27</TD><TD>2MASS J13243553+6358281</TD><TD>T2</TD><TD>T0.5</TD><TD>13 24 35.54</TD><TD>+63 58 28.15</TD><TD></TD><TD>15.590</TD><TD>0.07</TD><TD>14.57</TD><TD>0.06</TD><TD></TD><TD>14.050</TD><TD>0.060</TD><TD></TD><TD></TD><TD></TD><TD>1111.0</TD><TD>12550</TD><TD>1, 6</TD></TR>
+<TR><TD>247.3275833</TD><TD>+3.5930583</TD><TD>28</TD><TD>28</TD><TD>2MASS J16291840+0335371</TD><TD>T2</TD><TD>T2</TD><TD>16 29 18.62</TD><TD>+03 35 35.01</TD><TD></TD><TD>15.290</TD><TD>0.04</TD><TD>14.48</TD><TD>0.03</TD><TD></TD><TD>14.040</TD><TD>0.030</TD><TD></TD><TD></TD><TD></TD><TD>3333.0</TD><TD>14051</TD><TD>TS</TD></TR>
+<TR><TD>326.1186250</TD><TD>+14.7688333</TD><TD>29</TD><TD>29</TD><TD>HN PEG B</TD><TD>T2.5</TD><TD>T2.5</TD><TD>21 44 28.47</TD><TD>+14 46 07.80</TD><TD></TD><TD>15.860</TD><TD>0.03</TD><TD>15.40</TD><TD>0.03</TD><TD></TD><TD>15.120</TD><TD>0.030</TD><TD>54.37</TD><TD>0.85</TD><TD></TD><TD>2222.0</TD><TD>14241</TD><TD>9</TD></TR>
+<TR><TD>024.2359167</TD><TD>+9.5631389</TD><TD>30</TD><TD>30</TD><TD>SIMP J013656.5+093347.3</TD><TD>T2.5</TD><TD>T2.5</TD><TD>01 36 56.62</TD><TD>+09 33 47.30</TD><TD></TD><TD>13.460</TD><TD>0.03</TD><TD>12.77</TD><TD>0.03</TD><TD></TD><TD>12.560</TD><TD>0.020</TD><TD>162.87</TD><TD>1.06</TD><TD>26</TD><TD>370.0</TD><TD>12314</TD><TD>6, 11</TD></TR>
+<TR><TD>018.1520000</TD><TD>+17.0755000</TD><TD>31</TD><TD>31</TD><TD>GU PSC B</TD><TD>T3.5</TD><TD>T1.5</TD><TD>01 12 36.48</TD><TD>+17 04 31.80</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>21.00</TD><TD>0.07</TD><TD></TD><TD>100.0</TD><TD>14241</TD><TD>TS</TD></TR>
+<TR><TD>267.6372500</TD><TD>+17.9845278</TD><TD>32</TD><TD>32</TD><TD>2MASS J17503293+1759042</TD><TD>T3.5</TD><TD>T3.5</TD><TD>17 50 32.94</TD><TD>+17 59 04.30</TD><TD></TD><TD>16.340</TD><TD>0.10</TD><TD>15.95</TD><TD>0.13</TD><TD></TD><TD>15.480</TD><TD>0.189</TD><TD>36.23</TD><TD>4.46</TD><TD>16</TD><TD>909.0</TD><TD>12500</TD><TD>1</TD></TR>
+<TR><TD>000.0564167</TD><TD>+25.9050278</TD><TD>33</TD><TD>33</TD><TD>2MASS J00001354+2554180</TD><TD>T4.5</TD><TD>T4.5</TD><TD>00 00 13.54</TD><TD>+25 54 18.10</TD><TD></TD><TD>15.060</TD><TD>0.04</TD><TD>14.73</TD><TD>0.07</TD><TD></TD><TD></TD><TD></TD><TD>14.84</TD><TD>0.12</TD><TD></TD><TD>667.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>089.8297500</TD><TD>-14.0802444</TD><TD>34</TD><TD>34</TD><TD>2MASS J05591914-1404488</TD><TD>T4.5</TD><TD>T4.5</TD><TD>05 59 19.14</TD><TD>-14 04 48.88</TD><TD></TD><TD>13.800</TD><TD>0.02</TD><TD>13.67</TD><TD>0.04</TD><TD></TD><TD>13.570</TD><TD>0.060</TD><TD>96.15</TD><TD>0.96</TD><TD>22</TD><TD>833.0</TD><TD>12500</TD><TD>1</TD></TR>
+<TR><TD>354.7927083</TD><TD>+13.8745833</TD><TD>35</TD><TD>35</TD><TD>2MASS J2339101+135230</TD><TD>T5.4</TD><TD>T5</TD><TD>23 39 10.25</TD><TD>+13 52 28.50</TD><TD></TD><TD>16.240</TD><TD>0.11</TD><TD>15.82</TD><TD>0.15</TD><TD></TD><TD>16.140</TD><TD>0.310</TD><TD></TD><TD></TD><TD></TD><TD>909.0</TD><TD>12500</TD><TD>1</TD></TR>
+<TR><TD>167.5416250</TD><TD>+1.2703028</TD><TD>36</TD><TD>36</TD><TD>2MASS J1110100+0116130</TD><TD>T5.5</TD><TD>T5.5</TD><TD>11 10 09.99</TD><TD>+01 16 13.09</TD><TD></TD><TD>16.340</TD><TD>0.12</TD><TD>15.92</TD><TD>0.14</TD><TD></TD><TD></TD><TD></TD><TD>52.10</TD><TD>1.20</TD><TD>27</TD><TD>147.0</TD><TD>14241</TD><TD>TS</TD></TR>
+<TR><TD>337.1203750</TD><TD>-43.1739639</TD><TD>37</TD><TD>37</TD><TD>2MASS J2228288-4310262</TD><TD>T6</TD><TD>T6</TD><TD>22 28 28.89</TD><TD>-43 10 26.27</TD><TD></TD><TD>15.660</TD><TD>0.07</TD><TD>15.36</TD><TD>0.12</TD><TD></TD><TD>15.290</TD><TD>0.210</TD><TD>92.10</TD><TD>2.60</TD><TD>25</TD><TD>243.0</TD><TD>12314</TD><TD>12, 6</TD></TR>
+<TR><TD>124.3750417</TD><TD>-61.9210611</TD><TD>38</TD><TD>38</TD><TD>2MASS J0817300-6155158</TD><TD>T6</TD><TD>T6</TD><TD>08 17 30.01</TD><TD>-61 55 15.82</TD><TD></TD><TD>13.610</TD><TD>0.02</TD><TD>13.53</TD><TD>0.03</TD><TD></TD><TD>13.520</TD><TD>0.040</TD><TD>204.08</TD><TD>12.49</TD><TD>19</TD><TD>1000.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>084.5420833</TD><TD>-2.6072222</TD><TD>39</TD><TD>39</TD><TD>S Ori 70</TD><TD>T4.5</TD><TD>T7.5</TD><TD>05 38 10.10</TD><TD>-02 36 26.00</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>5.0</TD><TD>12217</TD><TD>7</TD></TR>
+<TR><TD>040.8071667</TD><TD>-24.8916111</TD><TD>40</TD><TD>40</TD><TD>2MASS J0243137-245329</TD><TD>T6</TD><TD>T6</TD><TD>02 43 13.72</TD><TD>-24 53 29.80</TD><TD></TD><TD>15.380</TD><TD>0.05</TD><TD>15.14</TD><TD>0.11</TD><TD></TD><TD>15.220</TD><TD>0.170</TD><TD>93.46</TD><TD>3.49</TD><TD>22</TD><TD>667.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>246.0598750</TD><TD>+0.4877278</TD><TD>41</TD><TD>41</TD><TD>2MASS J1624143+0029158</TD><TD>T6</TD><TD>T6</TD><TD>16 24 14.37</TD><TD>+00 29 15.82</TD><TD></TD><TD>15.490</TD><TD>0.05</TD><TD>15.52</TD><TD>0.10</TD><TD></TD><TD>11.000</TD><TD>0.200</TD><TD>90.91</TD><TD>1.65</TD><TD>28</TD><TD>909.0</TD><TD>12550</TD><TD>1</TD></TR>
+<TR><TD>327.4466667</TD><TD>-4.0524722</TD><TD>42</TD><TD>42</TD><TD>CFBDSIR2149-0403</TD><TD>T7</TD><TD></TD><TD>21 49 47.20</TD><TD>-04 03 08.90</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>18.30</TD><TD>1.80</TD><TD>29</TD><TD>6.7</TD><TD>14241</TD><TD>TS</TD></TR>
+<TR><TD>084.5591250</TD><TD>-2.7532778</TD><TD>43</TD><TD>43</TD><TD>S Ori 73</TD><TD>T7</TD><TD>T7.5</TD><TD>05 38 14.19</TD><TD>-02 45 11.80</TD><TD></TD><TD>20.910</TD><TD>0.07</TD><TD>20.83</TD><TD>0.12</TD><TD></TD><TD>20.910</TD><TD>0.150</TD><TD></TD><TD></TD><TD></TD><TD>5.0</TD><TD>12217</TD><TD>7</TD></TR>
+<TR><TD>195.1747500</TD><TD>+12.3540889</TD><TD>44</TD><TD>44</TD><TD>ROSS458C</TD><TD>T8</TD><TD>T7.5</TD><TD>13 00 41.94</TD><TD>+12 21 14.72</TD><TD></TD><TD>16.680</TD><TD>0.01</TD><TD>17.01</TD><TD>0.04</TD><TD></TD><TD>16.890</TD><TD>0.060</TD><TD>85.54</TD><TD>1.53</TD><TD></TD><TD>65.0</TD><TD>14241</TD><TD>TS</TD></TR>
+<TR><TD>051.2688333</TD><TD>-50.7341667</TD><TD>45</TD><TD>45</TD><TD>WISEA J032504.5-504403.0</TD><TD>T8</TD><TD></TD><TD>03 25 04.52</TD><TD>-50 44 03.00</TD><TD></TD><TD>18.430</TD><TD>0.26</TD><TD>16.21</TD><TD>0.15</TD><TD>&gt;</TD><TD>12.918</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>8.0</TD><TD>13178</TD><TD>8</TD></TR>
+<TR><TD>053.8127917</TD><TD>+43.1790833</TD><TD>46</TD><TD>46</TD><TD>WISEA J033515.1+431044.7</TD><TD>T9</TD><TD></TD><TD>03 35 15.07</TD><TD>+43 10 44.70</TD><TD>&gt;</TD><TD>18.652</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>14.52</TD><TD>0.06</TD><TD></TD><TD>5.0</TD><TD>12970</TD><TD>8</TD></TR>
+<TR><TD>061.1812500</TD><TD>-64.3416667</TD><TD>47</TD><TD>47</TD><TD>WISEA J040443.5-642030.0</TD><TD>T9</TD><TD></TD><TD>04 04 43.50</TD><TD>-64 20 30.00</TD><TD></TD><TD>18.440</TD><TD>0.18</TD><TD>15.73</TD><TD>0.06</TD><TD>&gt;</TD><TD>12.297</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>23.0</TD><TD>13178</TD><TD>8</TD></TR>
+<TR><TD>333.0677917</TD><TD>-69.5226667</TD><TD>48</TD><TD>48</TD><TD>WISEA J221216.3-693121.6</TD><TD>T9</TD><TD></TD><TD>22 12 16.27</TD><TD>-69 31 21.60</TD><TD></TD><TD>17.260</TD><TD>0.12</TD><TD>14.87</TD><TD>0.06</TD><TD>&gt;</TD><TD>12.278</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>4.0</TD><TD>12970</TD><TD>8</TD></TR>
+<TR><TD>145.7749583</TD><TD>+36.1232139</TD><TD>49</TD><TD>49</TD><TD>WISEA J094306.0+360723.3</TD><TD>T9.5</TD><TD></TD><TD>09 43 05.99</TD><TD>+36 07 23.57</TD><TD></TD><TD>19.740</TD><TD>0.05</TD><TD>20.37</TD><TD>0.20</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>2.0</TD><TD>12970</TD><TD>8</TD></TR>
+<TR><TD>235.5583333</TD><TD>+22.5014444</TD><TD>50</TD><TD>50</TD><TD>WISEA J154214.0+223005.2</TD><TD>T9.5</TD><TD></TD><TD>15 42 14.00</TD><TD>+22 30 05.20</TD><TD></TD><TD>20.250</TD><TD>0.13</TD><TD>21.80</TD><TD>0.80</TD><TD></TD><TD></TD><TD></TD><TD>96.00</TD><TD>41.00</TD><TD>27</TD><TD>2.0</TD><TD>12230</TD><TD>8</TD></TR>
+<TR><TD>059.8919583</TD><TD>-54.0318889</TD><TD>51</TD><TD>51</TD><TD>WISEA J035934.1-540154.8</TD><TD>Y0</TD><TD></TD><TD>03 59 34.07</TD><TD>-54 01 54.80</TD><TD>&gt;</TD><TD>19.031</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>15.380</TD><TD>0.050</TD><TD>75.40</TD><TD>6.62</TD><TD>34</TD><TD>2.0</TD><TD>12970</TD><TD>8</TD></TR>
+<TR><TD>062.5947917</TD><TD>+15.0466389</TD><TD>52</TD><TD>52</TD><TD>WISEA J041022.8+150247.9</TD><TD>Y0</TD><TD></TD><TD>04 10 22.75</TD><TD>+15 02 47.90</TD><TD>&gt;</TD><TD>18.170</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>14.110</TD><TD>0.050</TD><TD>153.40</TD><TD>4.00</TD><TD>34</TD><TD>2.0</TD><TD>12970</TD><TD>8</TD></TR>
+<TR><TD>113.6834583</TD><TD>-71.9621667</TD><TD>53</TD><TD>53</TD><TD>WISEA J073444.0-715743.8</TD><TD>Y0</TD><TD></TD><TD>07 34 44.03</TD><TD>-71 57 43.80</TD><TD></TD><TD>20.130</TD><TD>0.08</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>67.60</TD><TD>8.70</TD><TD>34</TD><TD>2.0</TD><TD>12970</TD><TD>8</TD></TR>
+<TR><TD>181.5182500</TD><TD>+84.0196111</TD><TD>54</TD><TD>54</TD><TD>WISEA J120604.3+840110.5</TD><TD>Y0</TD><TD></TD><TD>12 06 04.38</TD><TD>+84 01 10.60</TD><TD>&gt;</TD><TD>18.734</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>15.060</TD><TD>0.050</TD><TD>85.10</TD><TD>9.30</TD><TD>34</TD><TD>2.0</TD><TD>13178</TD><TD>8</TD></TR>
+<TR><TD>235.4652500</TD><TD>-22.8402750</TD><TD>55</TD><TD>55</TD><TD>WISE J154151.7-225024.9</TD><TD>Y0</TD><TD></TD><TD>15 41 51.66</TD><TD>-22 50 24.99</TD><TD></TD><TD>20.990</TD><TD>0.03</TD><TD>20.99</TD><TD>0.52</TD><TD></TD><TD></TD><TD></TD><TD>167.10</TD><TD>4.20</TD><TD>34</TD><TD>2.0</TD><TD>12970</TD><TD>8</TD></TR>
+<TR><TD>264.6480417</TD><TD>+27.5497500</TD><TD>56</TD><TD>56</TD><TD>WISEA J173835.5+273258.8</TD><TD>Y0</TD><TD></TD><TD>17 38 35.53</TD><TD>+27 32 59.10</TD><TD></TD><TD>19.470</TD><TD>0.08</TD><TD>20.39</TD><TD>0.33</TD><TD></TD><TD></TD><TD></TD><TD>128.50</TD><TD>6.30</TD><TD>34</TD><TD>2.0</TD><TD>12230</TD><TD>8</TD></TR>
+<TR><TD>314.1205000</TD><TD>+14.9981167</TD><TD>57</TD><TD>57</TD><TD>WISEA J205628.9+145953.6</TD><TD>Y0</TD><TD></TD><TD>20 56 28.92</TD><TD>+14 59 53.22</TD><TD></TD><TD>16.480</TD><TD>0.07</TD><TD>13.84</TD><TD>0.04</TD><TD></TD><TD>11.730</TD><TD>0.250</TD><TD>138.30</TD><TD>3.90</TD><TD>34</TD><TD>5.0</TD><TD>12230</TD><TD>8</TD></TR>
+<TR><TD>335.2305000</TD><TD>-36.4715278</TD><TD>58</TD><TD>58</TD><TD>WISEA J222055.3-362817.5</TD><TD>Y0</TD><TD></TD><TD>22 20 55.32</TD><TD>-36 28 17.50</TD><TD>&gt;</TD><TD>18.772</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>14.710</TD><TD>0.060</TD><TD>84.10</TD><TD>5.90</TD><TD>34</TD><TD>3.0</TD><TD>12970</TD><TD>8</TD></TR>
+<TR><TD>332.2738750</TD><TD>+27.1955556</TD><TD>59</TD><TD>59</TD><TD>WISEA J220905.8+271143.6</TD><TD>Y0:</TD><TD></TD><TD>22 09 05.73</TD><TD>+27 11 44.00</TD><TD></TD><TD>22.580</TD><TD>0.14</TD><TD>22.98</TD><TD>0.31</TD><TD></TD><TD></TD><TD></TD><TD>154.40</TD><TD>5.70</TD><TD>34</TD><TD>1.0</TD><TD>12970</TD><TD>8</TD></TR>
+<TR><TD>126.2806667</TD><TD>+28.0968222</TD><TD>60</TD><TD>60</TD><TD>WISEA J082507.4+280548.2</TD><TD>Y0.5</TD><TD></TD><TD>08 25 07.36</TD><TD>+28 05 48.56</TD><TD>&gt;</TD><TD>18.444</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>14.580</TD><TD>0.060</TD><TD>139.00</TD><TD>4.30</TD><TD>34</TD><TD>1.0</TD><TD>12970</TD><TD>8</TD></TR>
+<TR><TD>211.3266250</TD><TD>+55.5726111</TD><TD>61</TD><TD>61</TD><TD>WISEA J140518.3+553421.3</TD><TD>Y0.5</TD><TD></TD><TD>14 05 18.39</TD><TD>+55 34 21.40</TD><TD></TD><TD>21.060</TD><TD>0.06</TD><TD>21.45</TD><TD>0.41</TD><TD></TD><TD></TD><TD></TD><TD>144.30</TD><TD>8.60</TD><TD>34</TD><TD>1.0</TD><TD>12230</TD><TD>8</TD></TR>
+<TR><TD>249.9201250</TD><TD>-68.7940556</TD><TD>62</TD><TD>62</TD><TD>WISEA J163940.8-684739.4</TD><TD>Y0pec</TD><TD></TD><TD>16 39 40.83</TD><TD>-68 47 38.60</TD><TD></TD><TD>20.570</TD><TD>0.05</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>228.10</TD><TD>8.90</TD><TD>34</TD><TD>5.0</TD><TD>12970</TD><TD>8</TD></TR>
+<TR><TD>083.8202917</TD><TD>-75.0068333</TD><TD>63</TD><TD>63</TD><TD>WISEA J053516.9-750024.6</TD><TD>Y1</TD><TD></TD><TD>05 35 16.87</TD><TD>-75 00 24.60</TD><TD></TD><TD>17.940</TD><TD>0.14</TD><TD>14.90</TD><TD>0.05</TD><TD>&gt;</TD><TD>12.349</TD><TD></TD><TD>79.50</TD><TD>8.80</TD><TD>34</TD><TD>1.0</TD><TD>12970</TD><TD>8</TD></TR>
+<TR><TD>057.5012917</TD><TD>-56.9751389</TD><TD>64</TD><TD>64</TD><TD>WISEA J035000.3-565830.5</TD><TD>Y1</TD><TD></TD><TD>03 50 00.31</TD><TD>-56 58 30.50</TD><TD>&gt;</TD><TD>18.699</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>14.740</TD><TD>0.040</TD><TD>168.80</TD><TD>8.50</TD><TD>34</TD><TD>1.0</TD><TD>12230</TD><TD>8</TD></TR>
+<TR><TD>101.8468333</TD><TD>-62.5431667</TD><TD>65</TD><TD>65</TD><TD>WISEA J064723.2-623235.4</TD><TD>Y1</TD><TD></TD><TD>06 47 23.24</TD><TD>-62 32 35.40</TD><TD></TD><TD>22.450</TD><TD>0.07</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>83.70</TD><TD>5.70</TD><TD>34</TD><TD>1.0</TD><TD>12970</TD><TD>8</TD></TR>
+<TR><TD>358.5116250</TD><TD>+2.6705833</TD><TD>66</TD><TD>66</TD><TD>WISEA J235402.8+024014.1</TD><TD>Y1</TD><TD></TD><TD>23 54 02.79</TD><TD>+02 40 14.10</TD><TD>&gt;</TD><TD>18.263</TD><TD></TD><TD></TD><TD></TD><TD></TD><TD>15.010</TD><TD>0.090</TD><TD></TD><TD></TD><TD></TD><TD>1.0</TD><TD>13178</TD><TD>8</TD></TR>
+</TABLEDATA></DATA>
+</TABLE>
+<INFO name="matches" value="66">matching records</INFO>
+
+<INFO name="Warning" value="No center provided++++"/>
+<INFO name="Warning" value="skip recno in all column selection"/>
+<INFO name="Warning" value="increase the precision for computed column 8"/>
+<INFO name="Warning" value="increase the precision for computed column 8"/>
+</RESOURCE>
+</VOTABLE>
