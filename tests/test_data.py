@@ -1,12 +1,8 @@
 # Tests to verify database contents
-
 import os
 import pytest
-import sys
 from astrodbkit2.astrodb import create_database, Database
 from sqlalchemy import except_, select, and_
-
-sys.path.append(".")
 from schema.schema import *
 from . import REFERENCE_TABLES
 
@@ -136,8 +132,10 @@ def test_proper_motion_refs(db):
         ORDER By 2 DESC
 
     from sqlalchemy import func
-    proper_motion_mearsurements = db.query(ProperMotions.reference, func.count(ProperMotions.reference)).\
-        group_by(ProperMotions.reference).order_by(func.count(ProperMotions.reference).desc()).limit(20).all()
+    proper_motion_mearsurements = db.query(ProperMotions.reference, func.count(
+        ProperMotions.reference)).\
+        group_by(ProperMotions.reference).order_by(
+            func.count(ProperMotions.reference).desc()).limit(20).all()
     """
     ref = "GaiaEDR3"
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
@@ -245,6 +243,9 @@ def test_parallax_refs(db):
         ("WFCAM.Y", 854),
         ("VisAO.Ys", 1),
         ("VISTA.Y", 59),
+        ("JWST/MIRI.F1000W", 1),
+        ("JWST/MIRI.F1280W", 1),
+        ("JWST/MIRI.F1800W", 1),
     ],
 )
 def test_photometry_bands(db, band, value):
@@ -327,9 +328,11 @@ def test_missions(db):
         select(db.Names.c.source).where(db.Names.c.other_name.like("Gaia EDR3%")),
     )
     s = db.session.scalars(stm).all()
-    assert (
-        len(s) == 0
-    ), f"found {len(s)} sources with Gaia EDR3 proper motion and no Gaia EDR3 designation in Names"
+    msg = (
+        f"found {len(s)} sources with Gaia EDR3 proper motion "
+        "and no Gaia EDR3 designation in Names"
+    )
+    assert len(s) == 0, msg
 
     # If Gaia EDR3 parallax, Gaia EDR3 designation should be in Names
     stm = except_(
@@ -339,9 +342,11 @@ def test_missions(db):
         select(db.Names.c.source).where(db.Names.c.other_name.like("Gaia EDR3%")),
     )
     s = db.session.scalars(stm).all()
-    assert (
-        len(s) == 0
-    ), f"found {len(s)} sources with Gaia EDR3 parallax and no Gaia EDR3 designation in Names"
+    msg = (
+        f"found {len(s)} sources with Gaia EDR3 parallax "
+        "and no Gaia EDR3 designation in Names"
+    )
+    assert len(s) == 0, msg
 
 
 def test_spectra(db):
@@ -359,7 +364,7 @@ def test_spectra(db):
 
     regime = "nir"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 459, f"found {len(t)} spectra in the {regime} regime"
+    assert len(t) == 460, f"found {len(t)} spectra in the {regime} regime"
 
     regime = "mir"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
@@ -368,6 +373,20 @@ def test_spectra(db):
     telescope = "IRTF"
     t = db.query(db.Spectra).filter(db.Spectra.c.telescope == telescope).astropy()
     assert len(t) == 436, f"found {len(t)} spectra from {telescope}"
+
+    telescope = "JWST"
+    instrument = "NIRSpec"
+    t = (
+        db.query(db.Spectra)
+        .filter(
+            and_(
+                db.Spectra.c.telescope == telescope,
+                db.Spectra.c.instrument == instrument,
+            )
+        )
+        .astropy()
+    )
+    assert len(t) == 2, f"found {len(t)} spectra from {telescope}/{instrument}"
 
     telescope = "HST"
     instrument = "WFC3"

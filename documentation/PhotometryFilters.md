@@ -12,6 +12,7 @@ Columns marked with an asterisk (*) may not be empty.
 | width | width of band | Angstroms (10<sup>-10</sup>m) | |
 
 ## Notes
+- Useful functions: `ingest_photometry_filter`, `fetch_svo`, `assign_ucd`
 - Band names are listed at the [SVO filter profile service](http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=Spitzer&asttype=).
 - UCDs are listed in the [IVOA controlled vocabulary](https://www.ivoa.net/documents/UCD1+/20200212/PEN-UCDlist-1.4-20200212.html#tth_sEcB).
   Common ones for cool stars are:

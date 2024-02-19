@@ -1,33 +1,111 @@
 """
 Utils functions for use in ingests
 """
+from astroquery.simbad import Simbad
 from astroquery.gaia import Gaia
 from astropy.table import Table
 import numpy as np
-import numpy.ma as ma
-import pandas as pd
-from sqlalchemy import and_
-from astropy.io import fits
-import dateutil
 import re
-import requests
 import logging
+from sqlalchemy import and_
 import sqlalchemy.exc
-from astrodb_scripts.utils import (
+from astrodb_scripts import (
     AstroDBError,
     find_source_in_db,
-    check_internet_connection,
+    # photometry
 )
+
+# from scripts.utils.photometry import ingest_photometry
+# used by broken ingest_gaia_photometry
 
 __all__ = [
     "ingest_spectral_types",
+    "convert_spt_string_to_code",
+    "convert_spt_code_to_string_to_code",
     "ingest_parallaxes",
     "ingest_proper_motions",
-    "ingest_photometry",
-    "ingest_spectra",
+    "find_survey_name_in_simbad",
+    "get_gaiadr3",
+    "ingest_gaia_photometry",
+    "ingest_gaia_parallaxes",
+    "ingest_gaia_pms",
+    "ingest_companion_relationships",
 ]
 
-logger = logging.getLogger("AstroDB")
+logger = logging.getLogger("SIMPLE")
+
+
+# SURVEY DATA
+def find_survey_name_in_simbad(sources, desig_prefix, source_id_index=None):
+    """
+    Function to extract source designations from SIMBAD
+
+    Parameters
+    ----------
+    sources: astropy.table.Table
+        Sources names to search for in SIMBAD
+    desig_prefix
+        prefix to search for in list of identifiers
+    source_id_index
+        After a designation is split, this index indicates source id suffix.
+        For example, source_id_index = 2 to extract suffix from "Gaia DR2" designations.
+        source_id_index = 1 to exctract suffix from "2MASS" designations.
+    Returns
+    -------
+    Astropy table
+    """
+
+    n_sources = len(sources)
+
+    Simbad.reset_votable_fields()
+    Simbad.add_votable_fields("typed_id")  # keep search term in result table
+    Simbad.add_votable_fields("ids")  # add all SIMBAD identifiers as an output column
+
+    logger.info("simbad query started")
+    result_table = Simbad.query_objects(sources["source"])
+    logger.info("simbad query ended")
+
+    ind = result_table["SCRIPT_NUMBER_ID"] > 0  # find indexes which contain results
+    simbad_ids = result_table["TYPED_ID", "IDS"][ind]
+
+    db_names = []
+    simbad_designations = []
+    source_ids = []
+
+    for row in simbad_ids:
+        db_name = row["TYPED_ID"]
+        ids = row["IDS"].split("|")
+        designation = [i for i in ids if desig_prefix in i]
+
+        if designation:
+            logger.debug(f"{db_name}, {designation[0]}")
+            db_names.append(db_name)
+            if len(designation) == 1:
+                simbad_designations.append(designation[0])
+            else:
+                simbad_designations.append(designation[0])
+                logger.warning(f"more than one designation matched, {designation}")
+
+            if source_id_index is not None:
+                source_id = designation[0].split()[source_id_index]
+                source_ids.append(int(source_id))  # convert to int since long in Gaia
+
+    n_matches = len(db_names)
+    logger.info(
+        f"Found, {n_matches}, {desig_prefix}, sources for, {n_sources}, sources"
+    )
+
+    if source_id_index is not None:
+        result_table = Table(
+            [db_names, simbad_designations, source_ids],
+            names=("db_names", "designation", "source_id"),
+        )
+    else:
+        result_table = Table(
+            [db_names, simbad_designations], names=("db_names", "designation")
+        )
+
+    return result_table
 
 
 # SPECTRAL TYPES
@@ -228,8 +306,8 @@ def ingest_spectral_types(
                 == 0
             ):
                 msg = f"The publication {references[i]} does not exist in the database"
-                "Add it with ingest_publication function."
-                logger.debug(msg)
+                msg1 = "Add it with ingest_publication function."
+                logger.debug(msg + msg1)
                 raise AstroDBError(msg)
             elif "NOT NULL constraint failed: SpectralTypes.regime" in str(e):
                 msg = f"The regime was not provided for {source}"
@@ -285,10 +363,10 @@ def convert_spt_string_to_code(spectral_types):
             else:  # only trigger if not MLTY
                 i = 0
         # find integer or decimal subclass and add to spt_code
-        if re.search("\d*\.?\d+", spt[i + 1 :]) is None:
+        if re.search("\d*\.?\d+", spt[i + 1:]) is None:
             spt_code = spt_code
         else:
-            spt_code += float(re.findall("\d*\.?\d+", spt[i + 1 :])[0])
+            spt_code += float(re.findall("\d*\.?\d+", spt[i + 1:])[0])
 
         spectral_type_codes.append(spt_code)
     return spectral_type_codes
@@ -526,7 +604,7 @@ def ingest_proper_motions(
     Examples
     ----------
     > ingest_proper_motions(db, my_sources, my_pm_ra, my_pm_ra_unc,
-                            my_pm_dec, my_pm_dec_unc, my_pm_refs,
+    my_pm_dec, my_pm_dec_unc, my_pm_refs,
                             verbose = True)
 
     """
@@ -678,534 +756,6 @@ def ingest_proper_motions(
     return
 
 
-# PHOTOMETRY
-def ingest_photometry(
-    db,
-    sources,
-    bands,
-    magnitudes,
-    magnitude_errors,
-    reference,
-    telescope=None,
-    epoch=None,
-    comments=None,
-    raise_error=True,
-):
-    """
-    TODO: Write Docstring
-
-    Parameters
-    ----------
-    db: astrodbkit2.astrodb.Database
-    sources: list[str]
-    bands: str or list[str]
-    magnitudes: list[float]
-    magnitude_errors: list[float]
-    reference: str or list[str]
-    telescope: str or list[str]
-    epoch: list[float], optional
-    comments: list[str], optional
-    raise_error: bool, optional
-        True (default): Raise an error if a source cannot be ingested
-        False: Log a warning but skip sources which cannot be ingested
-
-    Returns
-    -------
-
-    """
-
-    if isinstance(sources, str):
-        n_sources = 1
-        sources = [sources]
-    else:
-        n_sources = len(sources)
-
-    # Convert single element input values into lists
-    input_values = [bands, reference, telescope]
-    for i, input_value in enumerate(input_values):
-        if isinstance(input_value, str):
-            input_value = [input_value] * n_sources
-        elif input_value is None:
-            input_value = [None] * n_sources
-        input_values[i] = input_value
-
-    bands, reference, telescope = input_values
-
-    input_float_values = [magnitudes, magnitude_errors]
-    for i, input_value in enumerate(input_float_values):
-        if isinstance(input_value, float):
-            input_value = [input_value] * n_sources
-            input_float_values[i] = input_value
-    magnitudes, magnitude_errors = input_float_values
-
-    if n_sources != len(magnitudes) or n_sources != len(magnitude_errors):
-        msg = (
-            f"N Sources: {len(sources)}, "
-            f"N Magnitudes: {len(magnitudes)}, N Mag errors: {len(magnitude_errors)},"
-            f"\nSources, magnitudes, and magnitude error lists should all be same length"
-        )
-        logger.error(msg)
-        raise RuntimeError(msg)
-
-    if (
-        n_sources != len(reference)
-        or n_sources != len(telescope)
-        or n_sources != len(bands)
-    ):
-        msg = "All lists should be same length"
-        logger.error(msg)
-        raise RuntimeError(msg)
-
-    n_added = 0
-
-    for i, source in enumerate(sources):
-        db_name = find_source_in_db(db, source)
-
-        if len(db_name) != 1:
-            msg = f"No unique source match for {source} in the database"
-            raise AstroDBError(msg)
-        else:
-            db_name = db_name[0]
-
-        # if the uncertainty is masked, don't ingest anything
-        if isinstance(magnitude_errors[i], np.ma.core.MaskedConstant):
-            mag_error = None
-        else:
-            mag_error = str(magnitude_errors[i])
-
-        # Construct data to be added
-        photometry_data = [
-            {
-                "source": db_name,
-                "band": bands[i],
-                "magnitude": str(
-                    magnitudes[i]
-                ),  # Convert to string to maintain significant digits
-                "magnitude_error": mag_error,
-                "telescope": telescope[i],
-                "epoch": epoch,
-                "comments": comments,
-                "reference": reference[i],
-            }
-        ]
-        logger.debug(f"Photometry data: {photometry_data}")
-
-        try:
-            with db.engine.connect() as conn:
-                conn.execute(db.Photometry.insert().values(photometry_data))
-                conn.commit()
-            n_added += 1
-            logger.info(f"Photometry measurement added: \n" f"{photometry_data}")
-        except sqlalchemy.exc.IntegrityError as e:
-            if "UNIQUE constraint failed:" in str(e):
-                msg = "The measurement may be a duplicate."
-                if raise_error:
-                    logger.error(msg)
-                    raise AstroDBError(msg)
-                else:
-                    logger.warning(msg)
-                    continue
-            else:
-                msg = (
-                    "The source may not exist in Sources table.\n"
-                    "The reference may not exist in the Publications table. "
-                    "Add it with add_publication function."
-                )
-                logger.error(msg)
-                raise AstroDBError(msg)
-
-    logger.info(f"Total photometry measurements added to database: {n_added} \n")
-
-    return
-
-
-# SPECTRA
-def ingest_spectra(
-    db,
-    sources,
-    spectra,
-    regimes,
-    telescopes,
-    instruments,
-    modes,
-    obs_dates,
-    references,
-    original_spectra=None,
-    wavelength_units=None,
-    flux_units=None,
-    wavelength_order=None,
-    comments=None,
-    other_references=None,
-    raise_error=True,
-):
-    """
-
-    Parameters
-    ----------
-    db: astrodbkit2.astrodb.Database
-    sources: list[str]
-        List of source names
-    spectra: list[str]
-        List of filenames corresponding to spectra files
-    regimes: str or list[str]
-        List or string
-    telescopes: str or list[str]
-        List or string
-    instruments: str or list[str]
-        List or string
-    modes: str or list[str]
-        List or string
-    obs_dates: str or datetime
-        List of strings or datetime objects
-    references: list[str]
-        List or string
-    original_spectra: list[str]
-        List of filenames corresponding to original spectra files
-    wavelength_units: str or list[str] or Quantity, optional
-        List or string
-    flux_units: str or list[str] or Quantity, optional
-        List or string
-    wavelength_order: list[int], optional
-    comments: list[str], optional
-        List of strings
-    other_references: list[str], optional
-        List of strings
-    raise_error: bool
-
-    """
-
-    # Convert single value input values to lists
-    if isinstance(sources, str):
-        sources = [sources]
-
-    if isinstance(spectra, str):
-        spectra = [spectra]
-
-    input_values = [
-        regimes,
-        telescopes,
-        instruments,
-        modes,
-        obs_dates,
-        wavelength_order,
-        wavelength_units,
-        flux_units,
-        references,
-        comments,
-        other_references,
-    ]
-    for i, input_value in enumerate(input_values):
-        if isinstance(input_value, str):
-            input_values[i] = [input_value] * len(sources)
-        elif isinstance(input_value, type(None)):
-            input_values[i] = [None] * len(sources)
-    (
-        regimes,
-        telescopes,
-        instruments,
-        modes,
-        obs_dates,
-        wavelength_order,
-        wavelength_units,
-        flux_units,
-        references,
-        comments,
-        other_references,
-    ) = input_values
-
-    n_spectra = len(spectra)
-    n_skipped = 0
-    n_dupes = 0
-    n_missing_instrument = 0
-    n_added = 0
-    n_blank = 0
-
-    msg = f"Trying to add {n_spectra} spectra"
-    logger.info(msg)
-
-    for i, source in enumerate(sources):
-        # TODO: check that spectrum can be read by astrodbkit
-
-        # Get source name as it appears in the database
-        db_name = find_source_in_db(db, source)
-
-        if len(db_name) != 1:
-            msg = f"No unique source match for {source} in the database"
-            raise AstroDBError(msg)
-        else:
-            db_name = db_name[0]
-
-        # Check if spectrum file is accessible
-        # First check for internet
-        internet = check_internet_connection()
-        if internet:
-            request_response = requests.head(spectra[i])
-            status_code = (
-                request_response.status_code
-            )  # The website is up if the status code is 200
-            if status_code != 200:
-                n_skipped += 1
-                msg = (
-                    "The spectrum location does not appear to be valid: \n"
-                    f"spectrum: {spectra[i]} \n"
-                    f"status code: {status_code}"
-                )
-                logger.error(msg)
-                if raise_error:
-                    raise AstroDBError(msg)
-                else:
-                    continue
-            else:
-                msg = f"The spectrum location appears up: {spectra[i]}"
-                logger.debug(msg)
-            if original_spectra:
-                request_response1 = requests.head(original_spectra[i])
-                status_code1 = request_response1.status_code
-                if status_code1 != 200:
-                    n_skipped += 1
-                    msg = (
-                        "The spectrum location does not appear to be valid: \n"
-                        f"spectrum: {original_spectra[i]} \n"
-                        f"status code: {status_code1}"
-                    )
-                    logger.error(msg)
-                    if raise_error:
-                        raise AstroDBError(msg)
-                    else:
-                        continue
-                else:
-                    msg = f"The spectrum location appears up: {original_spectra[i]}"
-                    logger.debug(msg)
-        else:
-            msg = "No internet connection. Internet is needed to check spectrum files."
-            raise AstroDBError(msg)
-
-        # Find what spectra already exists in database for this source
-        source_spec_data = (
-            db.query(db.Spectra).filter(db.Spectra.c.source == db_name).table()
-        )
-
-        # SKIP if observation date is blank
-        # TODO: try to populate obs date from meta data in spectrum file
-        if ma.is_masked(obs_dates[i]) or obs_dates[i] == "":
-            obs_date = None
-            missing_obs_msg = (
-                f"Skipping spectrum with missing observation date: {source} \n"
-            )
-            missing_row_spe = f"{source, obs_dates[i], references[i]} \n"
-            logger.info(missing_obs_msg)
-            logger.debug(missing_row_spe)
-            n_blank += 1
-            continue
-        else:
-            try:
-                obs_date = pd.to_datetime(
-                    obs_dates[i]
-                )  # TODO: Another method that doesn't require pandas?
-            except ValueError:
-                n_skipped += 1
-                if raise_error:
-                    msg = f"{source}: Can't convert obs date to Date Time object: "
-                    "{obs_dates[i]}"
-                    logger.error(msg)
-                    raise AstroDBError
-            except dateutil.parser._parser.ParserError:
-                n_skipped += 1
-                if raise_error:
-                    msg = f"{source}: Can't convert obs date to "
-                    f"Date Time object: {obs_dates[i]}"
-                    logger.error(msg)
-                    raise AstroDBError
-                else:
-                    msg = f"Skipping {source} Can't convert obs date to "
-                    f"Date Time object: {obs_dates[i]}"
-                    logger.warning(msg)
-                continue
-
-        # TODO: make it possible to ingest units and order
-        row_data = [
-            {
-                "source": db_name,
-                "spectrum": spectra[i],
-                "original_spectrum": None,  # if ma.is_masked(original_spectra[i]) or
-                # isinstance(original_spectra,None)
-                # else original_spectra[i],
-                "local_spectrum": None,  # if ma.is_masked(local_spectra[i])
-                # else local_spectra[i],
-                "regime": regimes[i],
-                "telescope": telescopes[i],
-                "instrument": None if ma.is_masked(instruments[i]) else instruments[i],
-                "mode": None if ma.is_masked(modes[i]) else modes[i],
-                "observation_date": obs_date,
-                "wavelength_units": None
-                if ma.is_masked(wavelength_units[i])
-                else wavelength_units[i],
-                "flux_units": None if ma.is_masked(flux_units[i]) else flux_units[i],
-                "wavelength_order": None
-                if ma.is_masked(wavelength_order[i])
-                else wavelength_order[i],
-                "comments": None if ma.is_masked(comments[i]) else comments[i],
-                "reference": references[i],
-                "other_references": None
-                if ma.is_masked(other_references[i])
-                else other_references[i],
-            }
-        ]
-        logger.debug(row_data)
-
-        try:
-            with db.engine.connect() as conn:
-                conn.execute(db.Spectra.insert().values(row_data))
-                conn.commit()
-            n_added += 1
-        except sqlalchemy.exc.IntegrityError as e:
-            if "CHECK constraint failed: regime" in str(e):
-                msg = f"Regime provided is not in schema: {regimes[i]}"
-                logger.error(msg)
-                if raise_error:
-                    raise AstroDBError(msg)
-                else:
-                    continue
-            if (
-                db.query(db.Publications)
-                .filter(db.Publications.c.publication == references[i])
-                .count()
-                == 0
-            ):
-                msg = (
-                    f"Spectrum for {source} could not be added to the database "
-                    "because the reference {references[i]} is not in "
-                    "Publications table. \n"
-                    f"(Add it with ingest_publication function.) \n "
-                )
-                logger.warning(msg)
-                if raise_error:
-                    raise AstroDBError(msg)
-                else:
-                    continue
-                # check telescope, instrument, mode exists
-            telescope = (
-                db.query(db.Telescopes)
-                .filter(db.Telescopes.c.name == row_data[0]["telescope"])
-                .table()
-            )
-            instrument = (
-                db.query(db.Instruments)
-                .filter(db.Instruments.c.name == row_data[0]["instrument"])
-                .table()
-            )
-            mode = (
-                db.query(db.Modes)
-                .filter(db.Modes.c.name == row_data[0]["mode"])
-                .table()
-            )
-
-            if len(source_spec_data) > 0:  # Spectra data already exists
-                # check for duplicate measurement
-                ref_dupe_ind = source_spec_data["reference"] == references[i]
-                date_dupe_ind = source_spec_data["observation_date"] == obs_date
-                instrument_dupe_ind = source_spec_data["instrument"] == instruments[i]
-                mode_dupe_ind = source_spec_data["mode"] == modes[i]
-                if (
-                    sum(ref_dupe_ind)
-                    and sum(date_dupe_ind)
-                    and sum(instrument_dupe_ind)
-                    and sum(mode_dupe_ind)
-                ):
-                    msg = f"Skipping suspected duplicate measurement\n{source}\n"
-                    msg2 = f"{source_spec_data[ref_dupe_ind]['source', 'instrument', 'mode', 'observation_date', 'reference']}"
-                    msg3 = f"{instruments[i], modes[i]} "
-                    f"{obs_date, references[i], spectra[i]} \n"
-                    logger.warning(msg)
-                    logger.debug(msg2 + msg3 + str(e))
-                    n_dupes += 1
-                    if raise_error:
-                        raise AstroDBError
-                    else:
-                        continue  # Skip duplicate measurement
-                # else:
-                #     msg = f'Spectrum could not be added to the database
-                #    "(other data exist): \n ' \
-                #           f"{source, instruments[i], modes[i], obs_date, references[i],
-                #   "spectra[i]} \n"
-                #     msg2 = f"Existing Data: \n "
-                #            # f"{source_spec_data[ref_dupe_ind]['source', 'instrument',
-                #     'mode', 'observation_date', 'reference', 'spectrum']}"
-                #     msg3 = f"Data not able to add: \n {row_data} \n "
-                #     logger.warning(msg + msg2)
-                #     source_spec_data[ref_dupe_ind][
-                #               'source', 'instrument', 'mode', 'observation_date',
-                #    'reference', 'spectrum'].pprint_all()
-                #     logger.debug(msg3)
-                #     n_skipped += 1
-                #     continue
-            if len(instrument) == 0 or len(mode) == 0 or len(telescope) == 0:
-                msg = (
-                    f"Spectrum for {source} could not be added to the database. \n"
-                    f" Telescope, Instrument, and/or Mode need to be added "
-                    "to the appropriate table. \n"
-                    f" Trying to find telescope: {row_data[0]['telescope']} "
-                    f"instrument: {row_data[0]['instrument']}, "
-                    f" mode: {row_data[0]['mode']} \n"
-                    f" Telescope: {telescope}, Instrument: {instrument}, Mode: {mode} \n"
-                )
-                logger.error(msg)
-                n_missing_instrument += 1
-                if raise_error:
-                    raise AstroDBError
-                else:
-                    continue
-            else:
-                msg = f"Spectrum for {source} could not be added to the database "
-                "for unknown reason: \n {row_data} \n "
-                logger.error(msg)
-                raise AstroDBError(msg)
-
-    msg = (
-        f"SPECTRA ADDED: {n_added} \n"
-        f" Spectra with blank obs_date: {n_blank} \n"
-        f" Suspected duplicates skipped: {n_dupes}\n"
-        f" Missing Telescope/Instrument/Mode: {n_missing_instrument} \n"
-        f" Spectra skipped for unknown reason: {n_skipped} \n"
-    )
-    if n_spectra == 1:
-        logger.info(f"Added {source} : \n" f"{row_data}")
-    else:
-        logger.info(msg)
-
-    if n_added + n_dupes + n_blank + n_skipped + n_missing_instrument != n_spectra:
-        msg = "Numbers don't add up: "
-        logger.error(msg)
-        raise AstroDBError(msg)
-
-    # spec_count = (
-    #     db.query(Spectra.regime, func.count(Spectra.regime))
-    #     .group_by(Spectra.regime)
-    #     .all()
-    # )
-
-    # spec_ref_count = (
-    #     db.query(Spectra.reference, func.count(Spectra.reference))
-    #     .group_by(Spectra.reference)
-    #     .order_by(func.count(Spectra.reference).desc())
-    #     .limit(20)
-    #     .all()
-    # )
-
-    # telescope_spec_count = (
-    #     db.query(Spectra.telescope, func.count(Spectra.telescope))
-    #     .group_by(Spectra.telescope)
-    #     .order_by(func.count(Spectra.telescope).desc())
-    #     .limit(20)
-    #     .all()
-    # )
-
-    # logger.info(f'Spectra in the database: \n {spec_count}
-    # \n {spec_ref_count} \n {telescope_spec_count}')
-
-    return
-
-
 def get_gaiadr3(gaia_id, verbose=True):
     """
     Currently setup just to query one source
@@ -1272,29 +822,32 @@ def ingest_gaia_photometry(db, sources, gaia_data, ref):
     else:
         raise Exception
 
-    ingest_photometry(
-        db,
-        sources,
-        g_band_name,
-        gaia_g_phot["phot_g_mean_mag"],
-        gaia_g_phot["g_unc"],
-        ref,
-        ucds="em.opt",
-        telescope="Gaia",
-        instrument="Gaia",
-    )
+    print(g_band_name, rp_band_name)
 
-    ingest_photometry(
-        db,
-        sources,
-        rp_band_name,
-        gaia_rp_phot["phot_rp_mean_mag"],
-        gaia_rp_phot["rp_unc"],
-        ref,
-        ucds="em.opt.R",
-        telescope="Gaia",
-        instrument="Gaia",
-    )
+    # TODO: Turn into a loop and ingest one at a time
+    # ingest_photometry(
+    #     db,
+    #     sources,
+    #     g_band_name,
+    #     gaia_g_phot["phot_g_mean_mag"],
+    #     gaia_g_phot["g_unc"],
+    #     ref,
+    #     ucds="em.opt",
+    #     telescope="Gaia",
+    #     instrument="Gaia",
+    # )
+
+    # ingest_photometry(
+    #     db,
+    #     sources,
+    #     rp_band_name,
+    #     gaia_rp_phot["phot_rp_mean_mag"],
+    #     gaia_rp_phot["rp_unc"],
+    #     ref,
+    #     ucds="em.opt.R",
+    #     telescope="Gaia",
+    #     instrument="Gaia",
+    # )
 
     return
 
@@ -1323,55 +876,6 @@ def ingest_gaia_pms(db, sources, gaia_data, ref):
         pms["pmdec"],
         pms["pmdec_error"],
         refs,
-    )
-
-
-def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
-    """
-    Ingests spectrum using data found in the header
-
-    Parameters
-    ----------
-    db
-    source
-    spectrum_fits_file
-
-    """
-    header = fits.getheader(spectrum_fits_file)
-    regime = header["SPECBAND"]
-    if regime == "opt":
-        regime = "optical"
-    telescope = header["TELESCOP"]
-    instrument = header["INSTRUME"]
-    try:
-        mode = header["MODE"]
-    except KeyError:
-        mode = None
-    obs_date = header["DATE-OBS"]
-    doi = header["REFERENC"]
-    data_header = fits.getheader(spectrum_fits_file, 1)
-    w_unit = data_header["TUNIT1"]
-    flux_unit = data_header["TUNIT2"]
-
-    reference_match = (
-        db.query(db.Publications.c.publication)
-        .filter(db.Publications.c.doi == doi)
-        .table()
-    )
-    reference = reference_match["publication"][0]
-
-    ingest_spectra(
-        db,
-        source,
-        spectrum_fits_file,
-        regime,
-        telescope,
-        instrument,
-        None,
-        obs_date,
-        reference,
-        wavelength_units=w_unit,
-        flux_units=flux_unit,
     )
 
 
@@ -1424,7 +928,7 @@ def ingest_companion_relationships(
     - *Parent*: The source is higher mass/brighter than the companion
     - *Unresolved Parent*: The source is the unresolved,
         combined light source of an unresolved
-        multiple system which includes the companion
+         multiple system which includes the companion
 
     """
     # checking relationship entered
@@ -1437,8 +941,10 @@ def ingest_companion_relationships(
         )
         relationship = relationship.title()
     if relationship not in possible_relationships:
-        msg = f"Relationship given for {source}, {companion_name}: {relationship} "
-        f"NOT one of the constrained relationships \n {possible_relationships}"
+        msg = (
+            f"Relationship given for {source}, {companion_name}: {relationship} "
+            "NOT one of the constrained relationships \n {possible_relationships}"
+        )
         logger.error(msg)
         raise AstroDBError(msg)
 
@@ -1459,8 +965,8 @@ def ingest_companion_relationships(
         raise AstroDBError(msg)
     if projected_separation_error is not None and projected_separation_error < 0:
         msg = (
-            f"Projected separation error: {projected_separation_error}, "
-            "cannot be negative"
+            f"Projected separation error: {projected_separation_error},"
+            " cannot be negative"
         )
         logger.error(msg)
         raise AstroDBError(msg)
