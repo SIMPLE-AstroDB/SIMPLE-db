@@ -2,11 +2,11 @@ import pytest
 import os
 import logging
 from astrodbkit2.astrodb import create_database, Database
-from schema.schema import *
+from simple.schema import *
 from astrodb_scripts import (
     AstroDBError,
 )
-from scripts.utils.photometry import (
+from simple.utils.photometry import (
     ingest_photometry,
     ingest_photometry_filter,
     fetch_svo,

@@ -1,20 +1,18 @@
 import pytest
 import os
+import logging
 from astrodbkit2.astrodb import create_database, Database
 from astropy.table import Table
-from sqlalchemy import and_
-import logging
 from astrodb_scripts.utils import (
     AstroDBError,
 )
-from scripts.utils.simple_utils import (
+from simple.schema import *
+from simple.utils.spectral_types import (
     convert_spt_string_to_code,
-    ingest_companion_relationships,
-    ingest_parallaxes,
     ingest_spectral_types,
-    ingest_proper_motions,
 )
-from schema.schema import *
+from simple.utils.companions import ingest_companion_relationships
+from simple.utils.astrometry import ingest_parallaxes, ingest_proper_motions
 
 
 logger = logging.getLogger("SIMPLE")
