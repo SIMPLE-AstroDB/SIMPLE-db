@@ -6,9 +6,9 @@ They also provide examples for how ingests can be done.
 
 The folders are organized as follows:
 
-- `ingests`
+- `ingests/`
   - Scripts to handle ingest of new data into the database
-- `updates`
+- `updates/`
 	- scripts which update large chunks of data in the database 	
-- `spectra_convert`
+- `spectra_convert/`
   - Scripts which convert spectra files
