@@ -68,13 +68,19 @@ def db():
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
-@pytest.mark.filterwarnings("ignore:Card 'AIRMASS' is not FITS standard")
+@pytest.mark.filterwarnings("ignore", message=".*not FITS standard.*")
 @pytest.mark.filterwarnings(
-    "ignore:Note"
-)  # : astropy.io.fits uses zero-based indexing.
-@pytest.mark.filterwarnings("ignore:'datfix' made the change 'Set MJD-OBS to")
+    "ignore", message=".*Note: astropy.io.fits uses zero-based indexing.*"
+)
 @pytest.mark.filterwarnings(
-    "ignore:'erg/cm2/s/A' contains multiple slashes, which is discouraged by the FITS standard"
+    "ignore", message=".*'datfix' made the change 'Set MJD-OBS to.*"
+)
+@pytest.mark.filterwarnings(
+    "ignore",
+    message=(
+        ".*'erg/cm2/s/A' contains multiple slashes, "
+        "which is discouraged by the FITS standard.*",
+    ),
 )
 def test_ingest_spectrum(db):
     spectrum = "https://bdnyc.s3.amazonaws.com/tests/U10176.fits"
@@ -190,7 +196,7 @@ def test_ingest_spectrum(db):
 
 
 @pytest.mark.filterwarnings("ignore:Verification")
-@pytest.mark.filterwarnings("ignore:Card 'AIRMASS' is not FITS standard")
+@pytest.mark.filterwarnings("ignore", message=".*Card 'AIRMASS' is not FITS standard.*")
 @pytest.mark.filterwarnings(
     "ignore:Note"
 )  # : astropy.io.fits uses zero-based indexing.
@@ -217,7 +223,10 @@ def test_ingest_spectrum_works(db):
 @pytest.mark.filterwarnings("ignore:'cdfix' made the change 'Success'")
 @pytest.mark.filterwarnings("ignore:MJD-OBS =")
 @pytest.mark.filterwarnings(
-    "ignore:'erg/cm2/s/A' contains multiple slashes, which is discouraged by the FITS standard"
+    "ignore",
+    message=(
+        "'erg/cm2/s/A' contains multiple slashes, which is discouraged by the FITS standard.*",
+    ),
 )
 @pytest.mark.parametrize(
     "file",
