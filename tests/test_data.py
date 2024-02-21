@@ -3,7 +3,7 @@ import os
 import pytest
 from astrodbkit2.astrodb import create_database, Database
 from sqlalchemy import except_, select, and_
-from schema.schema import *
+from simple.schema import *
 from . import REFERENCE_TABLES
 
 

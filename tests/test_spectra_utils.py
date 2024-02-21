@@ -5,12 +5,12 @@ from astrodbkit2.astrodb import create_database, Database
 from astrodb_scripts.utils import (
     AstroDBError,
 )
-from scripts.utils.ingest_spectra_utils import (
+from simple.utils.spectra import (
     ingest_spectrum,
     ingest_spectrum_from_fits,
     spectrum_plottable,
 )
-from schema.schema import *
+from simple.schema import *
 
 
 logger = logging.getLogger("SIMPLE")
