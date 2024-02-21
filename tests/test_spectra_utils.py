@@ -67,6 +67,15 @@ def db():
     return db
 
 
+@pytest.mark.filterwarnings("ignore::UserWarning")
+@pytest.mark.filterwarnings("ignore:Card 'AIRMASS' is not FITS standard")
+@pytest.mark.filterwarnings(
+    "ignore:Note"
+)  # : astropy.io.fits uses zero-based indexing.
+@pytest.mark.filterwarnings("ignore:'datfix' made the change 'Set MJD-OBS to")
+@pytest.mark.filterwarnings(
+    "ignore:'erg/cm2/s/A' contains multiple slashes, which is discouraged by the FITS standard"
+)
 def test_ingest_spectrum(db):
     spectrum = "https://bdnyc.s3.amazonaws.com/tests/U10176.fits"
     with pytest.raises(AstroDBError) as error_message:
@@ -180,6 +189,15 @@ def test_ingest_spectrum(db):
     assert result["skipped"] is True
 
 
+@pytest.mark.filterwarnings("ignore:Verification")
+@pytest.mark.filterwarnings("ignore:Card 'AIRMASS' is not FITS standard")
+@pytest.mark.filterwarnings(
+    "ignore:Note"
+)  # : astropy.io.fits uses zero-based indexing.
+@pytest.mark.filterwarnings("ignore:'datfix' made the change 'Set MJD-OBS to")
+@pytest.mark.filterwarnings(
+    "ignore:'erg/cm2/s/A' contains multiple slashes, which is discouraged by the FITS standard"
+)
 def test_ingest_spectrum_works(db):
     spectrum = "https://bdnyc.s3.amazonaws.com/tests/U10176.fits"
     result = ingest_spectrum(
@@ -193,6 +211,14 @@ def test_ingest_spectrum_works(db):
     assert result["added"] is True
 
 
+@pytest.mark.filterwarnings("ignore:Invalid 'BLANK' keyword in header.")
+@pytest.mark.filterwarnings("ignore:'datfix' made the change 'Set MJD-OBS to")
+@pytest.mark.filterwarnings("ignore:The WCS transformation has more axes")
+@pytest.mark.filterwarnings("ignore:'cdfix' made the change 'Success'")
+@pytest.mark.filterwarnings("ignore:MJD-OBS =")
+@pytest.mark.filterwarnings(
+    "ignore:'erg/cm2/s/A' contains multiple slashes, which is discouraged by the FITS standard"
+)
 @pytest.mark.parametrize(
     "file",
     [
