@@ -352,19 +352,11 @@ def test_missions(db):
 def test_spectra(db):
     regime = "optical"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 719, f"found {len(t)} spectra in the {regime} regime"
-
-    regime = "em.IR.NIR"
-    t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 118, f"found {len(t)} spectra in the {regime} regime"
-
-    regime = "em.opt"
-    t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 21, f"found {len(t)} spectra in the {regime} regime"
+    assert len(t) == 740, f"found {len(t)} spectra in the {regime} regime"
 
     regime = "nir"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 460, f"found {len(t)} spectra in the {regime} regime"
+    assert len(t) == 578, f"found {len(t)} spectra in the {regime} regime"
 
     regime = "mir"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()

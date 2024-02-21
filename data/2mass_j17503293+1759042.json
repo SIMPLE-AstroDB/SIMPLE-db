@@ -301,19 +301,6 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J1750%2B17.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2012-10-05T00:00:00",
-            "comments": null,
-            "reference": "Manj19",
-            "other_references": "Apai11.12550, Buen14"
-        },
-        {
             "spectrum": "https://s3.amazonaws.com/bdnyc/1750%2B1759.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/1750+1759.txt",
@@ -325,6 +312,19 @@
             "comments": null,
             "reference": "Burg04.2856",
             "other_references": null
+        },
+        {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J1750%2B17.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2012-10-05T00:00:00",
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai11.12550, Buen14"
         }
     ],
     "SpectralTypes": [

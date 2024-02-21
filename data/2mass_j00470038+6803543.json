@@ -186,19 +186,6 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/WISE0047.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2016-06-06T00:00:00",
-            "comments": "Multiple observation dates.",
-            "reference": "Manj19",
-            "other_references": "Apai15.14241, Lew_16"
-        },
-        {
             "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1111/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/Gizis-WISE0047+68_0.5prism_2011jul21.fits",
@@ -210,6 +197,19 @@
             "comments": null,
             "reference": "Gizi12",
             "other_references": null
+        },
+        {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/WISE0047.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2016-06-06T00:00:00",
+            "comments": "Multiple observation dates.",
+            "reference": "Manj19",
+            "other_references": "Apai15.14241, Lew_16"
         }
     ],
     "SpectralTypes": [

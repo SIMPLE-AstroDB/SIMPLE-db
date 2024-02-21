@@ -242,19 +242,6 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J0817-61.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2011-10-09T00:00:00",
-            "comments": null,
-            "reference": "Manj19",
-            "other_references": "Apai11.12550, Buen14"
-        },
-        {
             "spectrum": "https://s3.amazonaws.com/bdnyc/T6_DENIS_J081730.0_615520_OSIRIS_SXD.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/OSIRIS/T6_DENIS_J081730.0_615520_OSIRIS_SXD.fits",
@@ -266,6 +253,19 @@
             "comments": null,
             "reference": "Arti10",
             "other_references": null
+        },
+        {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J0817-61.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2011-10-09T00:00:00",
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai11.12550, Buen14"
         }
     ],
     "SpectralTypes": [
