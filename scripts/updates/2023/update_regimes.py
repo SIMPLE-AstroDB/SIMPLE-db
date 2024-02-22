@@ -44,16 +44,16 @@ for row in t:
 
 # Fix the regimes in the Spectral Types table
 with db.engine.connect() as conn:
-    # conn.execute(
-    #     db.SpectralTypes.update()
-    #     .where(db.SpectralTypes.c.regime == "nir_UCD")
-    #     .values(regime="nir")
-    # )
     conn.execute(
         db.SpectralTypes.update()
-        .where(db.SpectralTypes.c.regime == "infared")
+        .where(db.SpectralTypes.c.regime == "nir_UCD")
         .values(regime="nir")
     )
+    # conn.execute(
+    #     db.SpectralTypes.update()
+    #     .where(db.SpectralTypes.c.regime == "infrared")
+    #     .values(regime="nir")
+    # )
     conn.commit()
 
 
