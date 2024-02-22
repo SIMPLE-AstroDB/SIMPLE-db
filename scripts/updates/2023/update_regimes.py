@@ -6,7 +6,7 @@ from simple.schema import *
 db = load_astrodb("SIMPLE.sqlite", recreatedb=True)
 
 
-# Get list of units
+# Get list of regimes in the Spectra table
 t = (
     db.query(db.Spectra.c.regime, func.count(db.Spectra.c.regime).label("Counts"))
     .group_by(db.Spectra.c.regime)
@@ -15,7 +15,7 @@ t = (
 for row in t:
     print(row)
 
-
+# Fix the regimes in the Spectra table
 with db.engine.connect() as conn:
     conn.execute(
         db.Spectra.update()
@@ -30,6 +30,34 @@ with db.engine.connect() as conn:
     conn.commit()
 
 
+# Get list of regimes in the Spectral Types table
+t = (
+    db.query(
+        db.SpectralTypes.c.regime, func.count(db.SpectralTypes.c.regime).label("Counts")
+    )
+    .group_by(db.SpectralTypes.c.regime)
+    .all()
+)
+for row in t:
+    print(row)
+
+
+# Fix the regimes in the Spectral Types table
+with db.engine.connect() as conn:
+    # conn.execute(
+    #     db.SpectralTypes.update()
+    #     .where(db.SpectralTypes.c.regime == "nir_UCD")
+    #     .values(regime="nir")
+    # )
+    conn.execute(
+        db.SpectralTypes.update()
+        .where(db.SpectralTypes.c.regime == "infared")
+        .values(regime="nir")
+    )
+    conn.commit()
+
+
+# Populate the regimes table
 with db.engine.connect() as conn:
     conn.execute(
         db.Regimes.insert().values(
