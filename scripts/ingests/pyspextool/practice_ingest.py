@@ -16,7 +16,7 @@ SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = False  # recreates the .db file from the data files
 
 logger = logging.getLogger("AstroDB")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.WARNING)
 
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB)
 
@@ -26,6 +26,7 @@ logger.info(f"Data directory: {data_directory}")
 fits_files = Path(data_directory).glob("*.fits")
 
 total_files = 0
+ingested = []
 skipped = []
 
 for file in fits_files:
@@ -39,12 +40,12 @@ for file in fits_files:
     if len(matches) == 0:
         skipped.append(file.name)
         msg = f"Source {hdr['OBJECT']} not found in the database. Skipping."
-        logger.info(msg)
+        logger.warning(msg)
         continue  # exit loop and go to next file
     elif len(matches) > 1:
         skipped.append(file.name)
         msg = f"Multiple matches found for {hdr['OBJECT']}. Skipping."
-        print(msg)
+        logger.warning(msg)
         continue  # exit loop and go to next file
     elif len(matches) == 1:
         source = matches[0]
@@ -59,16 +60,16 @@ for file in fits_files:
         telescope = "IRTF"
     else:
         skipped.append(file.name)
-        msg = f"Telescope {hdr['TELESCOP']} not expected. Skipping."
-        print(msg)
+        msg = f"Telescope {hdr['TELESCOP']} not expected. Skipping. Expected NASA IRTF."
+        logger.warning(msg)
         continue
 
     if hdr["INSTR"] == "SpeX":
         instrument = "SpeX"
     else:
         skipped.append(file.name)
-        msg = f"Instrument {hdr['INSTRUME']} not expected. Skipping."
-        print(msg)
+        msg = f"Instrument {hdr['INSTRUME']} not expected. Skipping. Expected SpeX."
+        logger.warning(msg)
         continue
 
     if hdr["MODE"] == "Prism":
@@ -77,8 +78,8 @@ for file in fits_files:
         mode = "SXD"
     else:
         skipped.append(file.name)
-        msg = f"Mode {hdr['MODE']} not expected. Skipping."
-        print(msg)
+        msg = f"Mode {hdr['MODE']} not expected. Skipping. Expected Prism or SXD."
+        logger.warning(msg)
 
     obs_date = hdr["AVE_DATE"]
 
@@ -93,22 +94,41 @@ for file in fits_files:
         plottable = spectrum_plottable(spectrum, raise_error=True)
     except AstroDBError as e:
         skipped.append(file.name)
-        logger.info(f"Spectrum not plottable. Skipping {file.name}")
+        logger.warning(f"Spectrum not plottable. Skipping {file.name}")
         logger.debug(e)
         continue
 
     # Ingest the spectrum
-    ingest_spectrum(
-        db,
-        source=source,
-        spectrum=spectrum,
-        regime=regime,
-        obs_date=obs_date,
-        telescope=telescope,
-        instrument=instrument,
-        mode=mode,
-        reference=reference,
-        other_references=other_references,
-    )
+    try:
+        ingest_spectrum(
+            db,
+            source=source,
+            spectrum=spectrum,
+            regime=regime,
+            obs_date=obs_date,
+            telescope=telescope,
+            instrument=instrument,
+            mode=mode,
+            reference=reference,
+            other_references=other_references,
+        )
+        ingested.append(file.name)
+    except AstroDBError as e:
+        skipped.append(file.name)
+        logger.warning(f"Error ingesting {file.name}. Skipping.")
+        logger.debug(e)
+        continue
 
-print(f"Skipped {len(skipped)} out of {total_files} files: \n {skipped}")
+if len(ingested) + len(skipped) != total_files:
+    msg = (
+        f"Some files were not ingested or skipped. \n"
+        f"n_ingested = {len(ingested)}, n_skipped = {len(skipped)}, total_files = {total_files}"
+    )
+    logger.error(msg)
+    raise AstroDBError
+
+if len(skipped) == 0:
+    logger.info(f"Ingested {len(ingested)} out of {total_files} files.")
+
+if len(skipped) > 0:
+    logger.warning(f"Skipped {len(skipped)} out of {total_files} files: \n {skipped}")
