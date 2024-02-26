@@ -1,10 +1,1 @@
-REFERENCE_TABLES = [
-    "Publications",
-    "Telescopes",
-    "Instruments",
-    "Modes",
-    "PhotometryFilters",
-    "Versions",
-    "Parameters",
-    "Regimes",
-]
+REFERENCE_TABLES = ['Publications', 'Telescopes', 'Instruments', 'Modes', 'PhotometryFilters', 'Versions', 'Parameters']
