@@ -196,8 +196,12 @@ class RadialVelocities(Base):
 class SpectralTypes(Base):
     # Table to store spectral types, as strings
     __tablename__ = 'SpectralTypes'
-    source = Column(String(100), ForeignKey('Sources.source', ondelete='cascade', onupdate='cascade'),
-                    nullable=False, primary_key=True)
+    source = Column(
+        String(100),
+        ForeignKey("Sources.source", ondelete="cascade", onupdate="cascade"),
+        nullable=False,
+        primary_key=True,
+    )
     spectral_type_string = Column(String(10), nullable=False)
     spectral_type_code = Column(Float, nullable=False)
     spectral_type_error = Column(Float)
@@ -208,7 +212,11 @@ class SpectralTypes(Base):
     # )
     adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
-    reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'), primary_key=True)
+    reference = Column(
+        String(30),
+        ForeignKey("Publications.reference", onupdate="cascade"),
+        primary_key=True,
+    )
 
 
 class Gravities(Base):
@@ -285,13 +293,14 @@ class CompanionRelationships(Base):
     projected_separation_arcsec = Column(Float)
     projected_separation_error = Column(Float)
     relationship = Column(String(100), nullable=False) # Relationship of source to companion. 
-                                                       # Options: Child, Sibling, Parent, Unresolved Parent
+    # Options: Child, Sibling, Parent, Unresolved Parent
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'))
     other_companion_names = Column(String(10000)) # other names of the companions 
 
 # -------------------------------------------------------------------------------------------------------------------
 # Views
+
 
 ParallaxView = view(
     "ParallaxView",
