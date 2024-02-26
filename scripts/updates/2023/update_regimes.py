@@ -1,5 +1,5 @@
+from sqlalchemy import func, and_
 from astrodb_scripts import load_astrodb
-from sqlalchemy import func, and_, or_
 from simple.schema import *
 
 # Establish connection to database
@@ -128,7 +128,8 @@ with db.engine.connect() as conn:
     #         ),
     #     )
     # )
-    # TODO: Figure out correct spectral type T6.5 or T7? for 2MASSI J1553022+153236 from Burg06
+    # TODO: Figure out correct spectral type T6.5 or T7?
+    # for 2MASSI J1553022+153236 from Burg06
     conn.execute(
         db.SpectralTypes.delete().where(
             and_(
