@@ -1,50 +1,16 @@
 # Test to verify database integrity
-import os
+# database object 'db' defined in conftest.py
 import pytest
-from . import REFERENCE_TABLES
-from sqlalchemy import func, and_  # , select, except_
-from simple.schema import *
-from astrodbkit2.astrodb import create_database, Database, or_
+from sqlalchemy import func, and_
 from astropy.table import unique
 from astropy import units as u
 from astroquery.simbad import Simbad
 from astrodbkit2.utils import _name_formatter
+from astrodbkit2.astrodb import or_
+from simple.schema import ParallaxView  # PhotometryView
 
-
-DB_NAME = "temp.sqlite"
-DB_PATH = "data"
-
-
-# Load the database for use in individual tests
-@pytest.fixture(scope="module")
-def db():
-    # Create a fresh temporary database and assert it exists
-    # Because we've imported simple.schema, we will be using that schema for the database
-
-    if os.path.exists(DB_NAME):
-        os.remove(DB_NAME)
-    connection_string = "sqlite:///" + DB_NAME
-    create_database(connection_string)
-    assert os.path.exists(DB_NAME)
-
-    # Connect to the new database and confirm it has the Sources table
-    db = Database(connection_string, reference_tables=REFERENCE_TABLES)
-    assert db
-    assert "source" in [c.name for c in db.Sources.columns]
-
-    # Load data into an in-memory sqlite database first, for performance
-    temp_db = Database(
-        "sqlite://", reference_tables=REFERENCE_TABLES
-    )  # creates and connects to a temporary in-memory database
-    temp_db.load_database(
-        DB_PATH, verbose=False
-    )  # loads the data from the data files into the database
-    temp_db.dump_sqlite(DB_NAME)  # dump in-memory database to file
-    db = Database(
-        "sqlite:///" + DB_NAME, reference_tables=REFERENCE_TABLES
-    )  # replace database object with new file version
-
-    return db
+# TODO: Figure out ParallaxView test.
+# TODO: Add Photometry view test
 
 
 def test_reference_uniqueness(db):
@@ -732,6 +698,9 @@ def test_special_characters(db):
                 elif table_name == "Versions":
                     check = [char not in data[table_name]["version"]]
                     assert all(check), f"{char} in {table_name}"
+                elif table_name == "Regimes":
+                    check = [char not in data[table_name]["regime"]]
+                    assert all(check), f"{char} in {table_name}"
                 else:
                     check = [char not in data[table_name]["source"]]
                     assert all(check), f"{char} in {table_name}"
@@ -874,5 +843,5 @@ def test_remove_database(db):
     # Clean up temporary database
     db.session.close()
     db.engine.dispose()
-    if os.path.exists(DB_NAME):
-        os.remove(DB_NAME)
+    # if os.path.exists(DB_NAME):
+    #    os.remove(DB_NAME)

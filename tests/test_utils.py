@@ -1,12 +1,9 @@
 import pytest
-import os
 import logging
-from astrodbkit2.astrodb import create_database, Database
 from astropy.table import Table
 from astrodb_scripts.utils import (
     AstroDBError,
 )
-from simple.schema import *
 from simple.utils.spectral_types import (
     convert_spt_string_to_code,
     ingest_spectral_types,
@@ -17,30 +14,6 @@ from simple.utils.astrometry import ingest_parallaxes, ingest_proper_motions
 
 logger = logging.getLogger("SIMPLE")
 logger.setLevel(logging.DEBUG)
-
-
-DB_NAME = "simple_temp.sqlite"
-DB_PATH = "data"
-
-
-# Load the database for use in individual tests
-@pytest.fixture(scope="module")
-def db():
-    # Create a fresh temporary database and assert it exists
-    # Because we've imported simple.schema, we will be using that schema for the database
-
-    if os.path.exists(DB_NAME):
-        os.remove(DB_NAME)
-    connection_string = "sqlite:///" + DB_NAME
-    create_database(connection_string)
-    assert os.path.exists(DB_NAME)
-
-    # Connect to the new database and confirm it has the Sources table
-    db = Database(connection_string)
-    assert db
-    assert "source" in [c.name for c in db.Sources.columns]
-
-    return db
 
 
 # Create fake astropy Table of data to load
@@ -90,32 +63,6 @@ def t_pm():
     return t_pm
 
 
-def test_setup_db(db):
-    # Some setup tasks to ensure some data exists in the database first
-    ref_data = [
-        {
-            "reference": "Ref 1",
-            "doi": "10.1093/mnras/staa1522",
-            "bibcode": "2020MNRAS.496.1922B",
-        },
-        {"reference": "Ref 2", "doi": "Doi2", "bibcode": "2012yCat.2311....0C"},
-        {"reference": "Burn08", "doi": "Doi3", "bibcode": "2008MNRAS.391..320B"},
-    ]
-
-    source_data = [
-        {"source": "Fake 1", "ra": 9.0673755, "dec": 18.352889, "reference": "Ref 1"},
-        {"source": "Fake 2", "ra": 9.0673755, "dec": 18.352889, "reference": "Ref 1"},
-        {"source": "Fake 3", "ra": 9.0673755, "dec": 18.352889, "reference": "Ref 2"},
-    ]
-
-    with db.engine.connect() as conn:
-        conn.execute(db.Publications.insert().values(ref_data))
-        conn.execute(db.Sources.insert().values(source_data))
-        conn.commit()
-
-    return db
-
-
 def test_convert_spt_string_to_code():
     # Test conversion of spectral types into numeric values
     assert convert_spt_string_to_code(["M5.6"]) == [65.6]
@@ -123,18 +70,22 @@ def test_convert_spt_string_to_code():
     assert convert_spt_string_to_code(["Y2pec"]) == [92]
 
 
-def test_ingest_parallaxes(db, t_plx):
+def test_ingest_parallaxes(temp_db, t_plx):
     # Test ingest of parallax data
     ingest_parallaxes(
-        db, t_plx["source"], t_plx["plx"], t_plx["plx_err"], t_plx["plx_ref"]
+        temp_db, t_plx["source"], t_plx["plx"], t_plx["plx_err"], t_plx["plx_ref"]
     )
 
     results = (
-        db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == "Ref 1").table()
+        temp_db.query(temp_db.Parallaxes)
+        .filter(temp_db.Parallaxes.c.reference == "Ref 1")
+        .table()
     )
     assert len(results) == 2
     results = (
-        db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == "Ref 2").table()
+        temp_db.query(temp_db.Parallaxes)
+        .filter(temp_db.Parallaxes.c.reference == "Ref 2")
+        .table()
     )
     assert len(results) == 1
     assert results["source"][0] == "Fake 3"
@@ -142,9 +93,9 @@ def test_ingest_parallaxes(db, t_plx):
     assert results["parallax_error"][0] == 0.6
 
 
-def test_ingest_proper_motions(db, t_pm):
+def test_ingest_proper_motions(temp_db, t_pm):
     ingest_proper_motions(
-        db,
+        temp_db,
         t_pm["source"],
         t_pm["mu_ra"],
         t_pm["mu_ra_err"],
@@ -153,14 +104,14 @@ def test_ingest_proper_motions(db, t_pm):
         t_pm["reference"],
     )
     assert (
-        db.query(db.ProperMotions)
-        .filter(db.ProperMotions.c.reference == "Ref 1")
+        temp_db.query(temp_db.ProperMotions)
+        .filter(temp_db.ProperMotions.c.reference == "Ref 1")
         .count()
         == 2
     )
     results = (
-        db.query(db.ProperMotions)
-        .filter(db.ProperMotions.c.reference == "Ref 2")
+        temp_db.query(temp_db.ProperMotions)
+        .filter(temp_db.ProperMotions.c.reference == "Ref 2")
         .table()
     )
     assert len(results) == 1
@@ -169,7 +120,7 @@ def test_ingest_proper_motions(db, t_pm):
     assert results["mu_ra_error"][0] == 0.23
 
 
-def test_ingest_spectral_types(db):
+def test_ingest_spectral_types(temp_db):
     data1 = Table(
         [
             {
@@ -224,17 +175,21 @@ def test_ingest_spectral_types(db):
         ]
     )
     ingest_spectral_types(
-        db, data1["source"], data1["spectral_type"], data1["reference"], data1["regime"]
+        temp_db,
+        data1["source"],
+        data1["spectral_type"],
+        data1["reference"],
+        data1["regime"],
     )
     assert (
-        db.query(db.SpectralTypes)
-        .filter(db.SpectralTypes.c.reference == "Ref 1")
+        temp_db.query(temp_db.SpectralTypes)
+        .filter(temp_db.SpectralTypes.c.reference == "Ref 1")
         .count()
         == 2
     )
     results = (
-        db.query(db.SpectralTypes)
-        .filter(db.SpectralTypes.c.reference == "Ref 2")
+        temp_db.query(temp_db.SpectralTypes)
+        .filter(temp_db.SpectralTypes.c.reference == "Ref 2")
         .table()
     )
     assert len(results) == 1
@@ -244,7 +199,7 @@ def test_ingest_spectral_types(db):
     # testing for publication error
     with pytest.raises(AstroDBError) as error_message:
         ingest_spectral_types(
-            db,
+            temp_db,
             data3["source"],
             data3["spectral_type"],
             data3["regime"],
@@ -260,28 +215,32 @@ def test_ingest_spectral_types(db):
 # TODO: test for ingest_spectra
 
 
-def test_companion_relationships(db):
+def test_companion_relationships(temp_db):
     # testing companion ingest
     # trying no companion
     with pytest.raises(AstroDBError) as error_message:
-        ingest_companion_relationships(db, "Fake 1", None, "Sibling")
+        ingest_companion_relationships(temp_db, "Fake 1", None, "Sibling")
     assert "Make sure all require parameters are provided." in str(error_message.value)
 
     # trying companion == source
     with pytest.raises(AstroDBError) as error_message:
-        ingest_companion_relationships(db, "Fake 1", "Fake 1", "Sibling")
+        ingest_companion_relationships(temp_db, "Fake 1", "Fake 1", "Sibling")
     assert "Source cannot be the same as companion name" in str(error_message.value)
 
     # trying negative separation
     with pytest.raises(AstroDBError) as error_message:
         ingest_companion_relationships(
-            db, "Fake 1", "Bad Companion", "Sibling", projected_separation_arcsec=-5
+            temp_db,
+            "Fake 1",
+            "Bad Companion",
+            "Sibling",
+            projected_separation_arcsec=-5,
         )
     assert "cannot be negative" in str(error_message.value)
 
     # trying negative separation error
     with pytest.raises(AstroDBError) as error_message:
         ingest_companion_relationships(
-            db, "Fake 1", "Bad Companion", "Sibling", projected_separation_error=-5
+            temp_db, "Fake 1", "Bad Companion", "Sibling", projected_separation_error=-5
         )
     assert "cannot be negative" in str(error_message.value)
