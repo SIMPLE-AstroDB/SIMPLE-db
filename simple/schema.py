@@ -12,6 +12,7 @@ from astrodbkit2.astrodb import Base
 from astrodbkit2.views import view
 
 
+
 # -------------------------------------------------------------------------------------------------------------------
 # Reference tables
 class Publications(Base):
@@ -69,17 +70,6 @@ class Versions(Base):
     version = Column(String(30), primary_key=True, nullable=False)
     start_date = Column(String(30))
     end_date = Column(String(30))
-    description = Column(String(1000))
-
-
-class Regimes(Base):
-    """
-    ORM for Regimes table
-    Values used by Spectra and SpectralTypes tables
-    """
-
-    __tablename__ = "Regimes"
-    regime = Column(String(30), primary_key=True, nullable=False)
     description = Column(String(1000))
 
 
@@ -203,9 +193,6 @@ class SpectralTypes(Base):
     spectral_type_error = Column(Float)
     regime = Column(Enum(Regime, create_constraint=True, native_enum=False),
                     primary_key=True)  # restricts to a few values: Optical, Infrared
-    # regime = Column(
-    #    String(30), ForeignKey("Regimes.regime", onupdate="cascade"), primary_key=True
-    # )
     adopted = Column(Boolean)  # flag for indicating if this is the adopted measurement or not
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'), primary_key=True)
@@ -220,9 +207,6 @@ class Gravities(Base):
                      nullable=False)  # restricts to enumerated values
     regime = Column(Enum(Regime, create_constraint=True, native_enum=False),
                     primary_key=True)  # restricts to a few values: Optical, Infrared
-    # regime = Column(
-    #    String(30), ForeignKey("Regimes.regime", onupdate="cascade"), primary_key=True
-    # )
     comments = Column(String(1000))
     reference = Column(String(30), ForeignKey('Publications.reference', onupdate='cascade'), primary_key=True)
 
@@ -242,9 +226,6 @@ class Spectra(Base):
     regime = Column(Enum(Regime, create_constraint=True, values_callable=lambda x: [e.value for e in x],
                          native_enum=False),
                     primary_key=True)  # eg, Optical, Infrared, etc
-    # regime = Column(
-    #    String(30), ForeignKey("Regimes.regime", onupdate="cascade"), primary_key=True
-    # )
     telescope = Column(String(30))
     instrument = Column(String(30))
     mode = Column(String(30))  # eg, Prism, Echelle, etc
@@ -326,3 +307,7 @@ PhotometryView = view(
     ).select_from(Photometry)
     .group_by(Photometry.source)
 )
+
+
+
+
