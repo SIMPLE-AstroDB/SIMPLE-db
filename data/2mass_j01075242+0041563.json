@@ -234,19 +234,6 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/S0107.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2017-01-02T00:00:00",
-            "comments": null,
-            "reference": "Manj19",
-            "other_references": "Apai15.14241"
-        },
-        {
             "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1119/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U20052_2M0107_dagny.fits",
@@ -258,9 +245,31 @@
             "comments": null,
             "reference": "Burg10.1142",
             "other_references": null
+        },
+        {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/S0107.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2017-01-02T00:00:00",
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai15.14241"
         }
     ],
     "SpectralTypes": [
+        {
+            "spectral_type_string": "L7 pec",
+            "spectral_type_code": 77.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Gagn15.33"
+        },
         {
             "spectral_type_string": "L5.5",
             "spectral_type_code": 75.5,
@@ -269,15 +278,6 @@
             "adopted": false,
             "comments": null,
             "reference": "Manj19"
-        },
-        {
-            "spectral_type_string": "L7 pec",
-            "spectral_type_code": 77.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Gagn15.33"
         },
         {
             "spectral_type_string": "L8",

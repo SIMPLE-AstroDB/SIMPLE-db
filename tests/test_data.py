@@ -352,19 +352,11 @@ def test_missions(db):
 def test_spectra(db):
     regime = "optical"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 719, f"found {len(t)} spectra in the {regime} regime"
-
-    regime = "em.IR.NIR"
-    t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 118, f"found {len(t)} spectra in the {regime} regime"
-
-    regime = "em.opt"
-    t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 21, f"found {len(t)} spectra in the {regime} regime"
+    assert len(t) == 740, f"found {len(t)} spectra in the {regime} regime"
 
     regime = "nir"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 460, f"found {len(t)} spectra in the {regime} regime"
+    assert len(t) == 578, f"found {len(t)} spectra in the {regime} regime"
 
     regime = "mir"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
@@ -443,11 +435,11 @@ def test_spectral_types(db):
 
     regime = "nir"
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 381, f"found {len(t)} spectral types in the {regime} regime"
+    assert len(t) == 2359, f"found {len(t)} spectral types in the {regime} regime"
 
     regime = "nir_UCD"
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 1977, f"found {len(t)} spectral types in the {regime} regime"
+    assert len(t) == 0, f"found {len(t)} spectral types in the {regime} regime"
 
     regime = "mir"
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
@@ -496,14 +488,14 @@ def test_spectral_types(db):
         )
         .astropy()
     )
-    assert len(t_dwarfs) == 999, f"found {len(t_dwarfs)} T spectral types"
+    assert len(t_dwarfs) == 998, f"found {len(t_dwarfs)} T spectral types"
 
     y_dwarfs = (
         db.query(db.SpectralTypes)
         .filter(and_(db.SpectralTypes.c.spectral_type_code >= 90))
         .astropy()
     )
-    assert len(y_dwarfs) == 79, f"found {len(y_dwarfs)} Y spectral types"
+    assert len(y_dwarfs) == 59, f"found {len(y_dwarfs)} Y spectral types"
 
     n_spectral_types = db.query(db.SpectralTypes).count()
     assert (

@@ -335,45 +335,6 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/SD0539_total.fits",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "ESO VLT",
-            "instrument": "XShooter",
-            "mode": "Echelle",
-            "observation_date": "2010-01-17T00:00:00",
-            "comments": null,
-            "reference": "Manj16",
-            "other_references": null
-        },
-        {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J0539-00.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2012-03-01T00:00:00",
-            "comments": null,
-            "reference": "Manj19",
-            "other_references": "Apai11.12550, Buen14"
-        },
-        {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/SD0539_total.fits",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.opt",
-            "telescope": "ESO VLT",
-            "instrument": "XShooter",
-            "mode": "Echelle",
-            "observation_date": "2010-01-17T00:00:00",
-            "comments": null,
-            "reference": "Manj16",
-            "other_references": null
-        },
-        {
             "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J05395200-0059019.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0539-0059_IRS_spectrum.dat",
             "local_spectrum": null,
@@ -426,6 +387,32 @@
             "other_references": null
         },
         {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/SD0539_total.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "ESO VLT",
+            "instrument": "XShooter",
+            "mode": "Echelle",
+            "observation_date": "2010-01-17T00:00:00",
+            "comments": null,
+            "reference": "Manj16",
+            "other_references": null
+        },
+        {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J0539-00.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2012-03-01T00:00:00",
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai11.12550, Buen14"
+        },
+        {
             "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1124/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U50061_SDSS0539-00_Fan00.fits",
@@ -437,6 +424,19 @@
             "comments": null,
             "reference": "Fan_00",
             "other_references": null
+        },
+        {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/SD0539_total.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "optical",
+            "telescope": "ESO VLT",
+            "instrument": "XShooter",
+            "mode": "Echelle",
+            "observation_date": "2010-01-17T00:00:00",
+            "comments": null,
+            "reference": "Manj16",
+            "other_references": null
         }
     ],
     "SpectralTypes": [
@@ -445,18 +445,18 @@
             "spectral_type_code": 75.0,
             "spectral_type_error": null,
             "regime": "nir",
-            "adopted": false,
+            "adopted": null,
             "comments": null,
-            "reference": "Manj19"
+            "reference": "Knap04"
         },
         {
             "spectral_type_string": "L5",
             "spectral_type_code": 75.0,
             "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
+            "regime": "nir",
+            "adopted": false,
             "comments": null,
-            "reference": "Knap04"
+            "reference": "Manj19"
         },
         {
             "spectral_type_string": "L5",

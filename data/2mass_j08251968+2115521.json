@@ -359,19 +359,6 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J0825%2B21.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2012-05-09T00:00:00",
-            "comments": null,
-            "reference": "Manj19",
-            "other_references": "Apai11.12550, Buen14"
-        },
-        {
             "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J08251968%2B2115521.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0825%2B2115_IRS_spectrum.dat",
             "local_spectrum": null,
@@ -437,6 +424,19 @@
             "other_references": null
         },
         {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J0825%2B21.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2012-05-09T00:00:00",
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai11.12550, Buen14"
+        },
+        {
             "spectrum": "https://s3.amazonaws.com/bdnyc/U10721_lris_141298.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U10721_lris_141298.fits",
@@ -452,6 +452,15 @@
     ],
     "SpectralTypes": [
         {
+            "spectral_type_string": "L7 pec",
+            "spectral_type_code": 77.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Knap04"
+        },
+        {
             "spectral_type_string": "L6",
             "spectral_type_code": 76.0,
             "spectral_type_error": null,
@@ -459,15 +468,6 @@
             "adopted": false,
             "comments": null,
             "reference": "Manj19"
-        },
-        {
-            "spectral_type_string": "L7 pec",
-            "spectral_type_code": 77.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Knap04"
         },
         {
             "spectral_type_string": "L7.5",
