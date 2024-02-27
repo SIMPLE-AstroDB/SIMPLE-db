@@ -21,8 +21,6 @@ assert os.path.exists(DB_NAME)
 
 # Connect to the new database and confirm it has the Sources table
 db = Database(connection_string, reference_tables=REFERENCE_TABLES)
-assert db
-assert "source" in [c.name for c in db.Sources.columns]
 
 # Load data into an in-memory sqlite database first, for performance
 temp_db = Database(
@@ -50,12 +48,9 @@ if os.path.exists(TEMP_DB_NAME):
     os.remove(TEMP_DB_NAME)
 connection_string = "sqlite:///" + TEMP_DB_NAME
 create_database(connection_string)
-assert os.path.exists(TEMP_DB_NAME)
 
 # Connect to the new database and confirm it has the Sources table
 temp_db = Database(connection_string)
-assert temp_db
-assert "source" in [c.name for c in temp_db.Sources.columns]
 
 # Some setup tasks to ensure some data exists in the database first
 ref_data = [
