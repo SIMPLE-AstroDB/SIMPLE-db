@@ -314,7 +314,6 @@ class Spectra(Base):
         nullable=False,
         primary_key=True,
     )
-
     # Data
     spectrum = Column(String(1000), nullable=False)  # URL of spectrum location
     original_spectrum = Column(
