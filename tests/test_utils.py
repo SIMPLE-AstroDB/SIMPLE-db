@@ -1,5 +1,4 @@
 import pytest
-import logging
 from astropy.table import Table
 from astrodb_scripts.utils import (
     AstroDBError,
@@ -10,10 +9,6 @@ from simple.utils.spectral_types import (
 )
 from simple.utils.companions import ingest_companion_relationships
 from simple.utils.astrometry import ingest_parallaxes, ingest_proper_motions
-
-
-logger = logging.getLogger("SIMPLE")
-logger.setLevel(logging.DEBUG)
 
 
 # Create fake astropy Table of data to load
@@ -208,11 +203,6 @@ def test_ingest_spectral_types(temp_db):
         assert "The publication does not exist in the database" in str(
             error_message.value
         )
-
-
-# TODO: test for ingest_photometry
-
-# TODO: test for ingest_spectra
 
 
 def test_companion_relationships(temp_db):

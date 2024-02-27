@@ -1,6 +1,5 @@
-# temp_db is defined in conftest.py
+# temp_db and logger is defined in conftest.py
 import pytest
-import logging
 from astrodb_scripts.utils import (
     AstroDBError,
 )
@@ -9,10 +8,6 @@ from simple.utils.spectra import (
     # ingest_spectrum_from_fits,
     spectrum_plottable,
 )
-
-
-logger = logging.getLogger("AstroDB")
-logger.setLevel(logging.DEBUG)
 
 
 @pytest.mark.filterwarnings("ignore")

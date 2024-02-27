@@ -1,70 +1,15 @@
+"""
+This function is in the process of being moved to astrodb_scripts
+"""
+
 import pytest
-import os
-import logging
-from astrodbkit2.astrodb import create_database, Database
-from simple.schema import *
 from astrodb_scripts import (
     AstroDBError,
 )
 from simple.utils.photometry import (
-    ingest_photometry,
-    ingest_photometry_filter,
     fetch_svo,
     assign_ucd,
 )
-
-
-logger = logging.getLogger("SIMPLE")
-logger.setLevel(logging.DEBUG)
-
-DB_NAME = "simple_test_photometry.sqlite"
-DB_PATH = "data"
-
-
-# Load the database for use in individual tests
-@pytest.fixture(scope="module")
-def db():
-    # Create a fresh temporary database and assert it exists
-    # Because we've imported simple.schema, we will be using that schema for the database
-
-    if os.path.exists(DB_NAME):
-        os.remove(DB_NAME)
-    connection_string = "sqlite:///" + DB_NAME
-    create_database(connection_string)
-    assert os.path.exists(DB_NAME)
-
-    # Connect to the new database and confirm it has the Sources table
-    db = Database(connection_string)
-    assert db
-    assert "source" in [c.name for c in db.Sources.columns]
-
-    ref_data = [
-        {
-            "reference": "Ref 1",
-            "doi": "10.1093/mnras/staa1522",
-            "bibcode": "2020MNRAS.496.1922B",
-        },
-        {"reference": "Ref 2", "doi": "Doi2", "bibcode": "2012yCat.2311....0C"},
-        {"reference": "Burn08", "doi": "Doi3", "bibcode": "2008MNRAS.391..320B"},
-    ]
-
-    source_data = [
-        {"source": "apple", "ra": 9.0673755, "dec": 18.352889, "reference": "Ref 1"},
-        {"source": "orange", "ra": 90.0673755, "dec": 19.352889, "reference": "Ref 2"},
-        {
-            "source": "banana",
-            "ra": 360.0673755,
-            "dec": -18.352889,
-            "reference": "Burn08",
-        },
-    ]
-
-    with db.engine.connect() as conn:
-        conn.execute(db.Publications.insert().values(ref_data))
-        conn.execute(db.Sources.insert().values(source_data))
-        conn.commit()
-
-    return db
 
 
 @pytest.mark.parametrize(
