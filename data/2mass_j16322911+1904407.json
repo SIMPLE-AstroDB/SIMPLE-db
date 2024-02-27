@@ -258,19 +258,6 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J1632%2B19.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2012-08-11T00:00:00",
-            "comments": null,
-            "reference": "Manj19",
-            "other_references": "Apai11.12550, Buen14"
-        },
-        {
             "spectrum": "https://s3.amazonaws.com/bdnyc/2M1632.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/2M1632_SpeX.fits",
@@ -282,6 +269,19 @@
             "comments": null,
             "reference": "Burg07.655",
             "other_references": null
+        },
+        {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J1632%2B19.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2012-08-11T00:00:00",
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai11.12550, Buen14"
         },
         {
             "spectrum": "https://s3.amazonaws.com/bdnyc/LRIS/U50006_1632%2B1904_lris.fits",
@@ -316,18 +316,18 @@
             "spectral_type_code": 78.0,
             "spectral_type_error": null,
             "regime": "nir",
-            "adopted": false,
+            "adopted": null,
             "comments": null,
-            "reference": "Manj19"
+            "reference": "Burg06.1067"
         },
         {
             "spectral_type_string": "L8",
             "spectral_type_code": 78.0,
             "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
+            "regime": "nir",
+            "adopted": false,
             "comments": null,
-            "reference": "Burg06.1067"
+            "reference": "Manj19"
         },
         {
             "spectral_type_string": "L8",

@@ -65,7 +65,7 @@
             "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J0801%2B46.csv",
             "original_spectrum": null,
             "local_spectrum": null,
-            "regime": "em.IR.NIR",
+            "regime": "nir",
             "telescope": "HST",
             "instrument": "WFC3",
             "mode": "G141 grism",
@@ -77,6 +77,15 @@
     ],
     "SpectralTypes": [
         {
+            "spectral_type_string": "L5.5",
+            "spectral_type_code": 75.5,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Burg10.1142"
+        },
+        {
             "spectral_type_string": "L6",
             "spectral_type_code": 76.0,
             "spectral_type_error": null,
@@ -84,15 +93,6 @@
             "adopted": false,
             "comments": null,
             "reference": "Manj19"
-        },
-        {
-            "spectral_type_string": "L5.5",
-            "spectral_type_code": 75.5,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Burg10.1142"
         },
         {
             "spectral_type_string": "L6.5",

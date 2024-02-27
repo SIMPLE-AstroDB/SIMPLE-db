@@ -177,19 +177,6 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/GUPSCB.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2018-01-08T00:00:00",
-            "comments": null,
-            "reference": "Manj19",
-            "other_references": "Apai15.14241"
-        },
-        {
             "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1104/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/GNIRS/GU Psc b_gnirs.txt",
@@ -201,6 +188,19 @@
             "comments": null,
             "reference": "Liu_13.85",
             "other_references": null
+        },
+        {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/GUPSCB.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2018-01-08T00:00:00",
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai15.14241"
         }
     ],
     "SpectralTypes": [
@@ -217,7 +217,7 @@
             "spectral_type_string": "T3.5",
             "spectral_type_code": 83.5,
             "spectral_type_error": null,
-            "regime": "nir_UCD",
+            "regime": "nir",
             "adopted": null,
             "comments": null,
             "reference": "Naud14"

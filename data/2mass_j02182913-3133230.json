@@ -183,32 +183,6 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/2M0218_total.fits",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "ESO VLT",
-            "instrument": "XShooter",
-            "mode": "Echelle",
-            "observation_date": "2010-01-04T00:00:00",
-            "comments": null,
-            "reference": "Manj16",
-            "other_references": null
-        },
-        {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/2M0218_total.fits",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.opt",
-            "telescope": "ESO VLT",
-            "instrument": "XShooter",
-            "mode": "Echelle",
-            "observation_date": "2010-01-04T00:00:00",
-            "comments": null,
-            "reference": "Manj16",
-            "other_references": null
-        },
-        {
             "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U10107_0218-3133.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U10107_0218-3133.fits",
@@ -219,6 +193,19 @@
             "observation_date": "2009-11-08T00:00:00",
             "comments": "None",
             "reference": "Bard14",
+            "other_references": null
+        },
+        {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/2M0218_total.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "ESO VLT",
+            "instrument": "XShooter",
+            "mode": "Echelle",
+            "observation_date": "2010-01-04T00:00:00",
+            "comments": null,
+            "reference": "Manj16",
             "other_references": null
         },
         {
@@ -246,6 +233,19 @@
             "comments": null,
             "reference": "Cruz03",
             "other_references": null
+        },
+        {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/2M0218_total.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "optical",
+            "telescope": "ESO VLT",
+            "instrument": "XShooter",
+            "mode": "Echelle",
+            "observation_date": "2010-01-04T00:00:00",
+            "comments": null,
+            "reference": "Manj16",
+            "other_references": null
         }
     ],
     "SpectralTypes": [
@@ -253,7 +253,7 @@
             "spectral_type_string": "L5.5",
             "spectral_type_code": 75.5,
             "spectral_type_error": null,
-            "regime": "nir_UCD",
+            "regime": "nir",
             "adopted": null,
             "comments": null,
             "reference": "Maro13"

@@ -237,19 +237,6 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J1515%2B48.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2012-02-25T00:00:00",
-            "comments": null,
-            "reference": "Manj19",
-            "other_references": "Apai11.12550, Buen14"
-        },
-        {
             "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J15150083%2B4847416.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1515%2B4847_IRS_spectrum.dat",
             "local_spectrum": null,
@@ -289,6 +276,19 @@
             "other_references": null
         },
         {
+            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J1515%2B48.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2012-02-25T00:00:00",
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai11.12550, Buen14"
+        },
+        {
             "spectrum": "https://s3.amazonaws.com/bdnyc/u11314.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/u11314.fits",
@@ -316,7 +316,7 @@
             "spectral_type_string": "L6",
             "spectral_type_code": 76.0,
             "spectral_type_error": null,
-            "regime": "nir_UCD",
+            "regime": "nir",
             "adopted": null,
             "comments": null,
             "reference": "Wils03"
