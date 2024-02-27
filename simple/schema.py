@@ -106,25 +106,6 @@ class Regimes(Base):
 # -------------------------------------------------------------------------------------------------------------------
 # Hard-coded enumerations
 
-class Regime(enum.Enum):
-    """Enumeration for spectral type, spectra, and photometry regimes
-    Use UCD controlled vocabulary:
-    https://www.ivoa.net/documents/UCD1+/20200212/PEN-UCDlist-1.4-20200212.html#tth_sEcB
-    The variable name is stored and used in the database; the string value should match it
-    """
-    ultraviolet = 'em.UV'
-    optical_UCD = 'em.opt'
-    optical = 'optical'
-    nir_UCD = 'em.IR.NIR'  # Near-Infrared, 1-5 microns
-    nir = 'nir'
-    infrared = 'em.IR'  # Infrared part of the spectrum
-    mir_UCD = 'em.IR.MIR'  # Medium-Infrared, 5-30 microns
-    mir = 'mir'
-    millimeter = 'em.mm'
-    radio = 'em.radio'
-    unknown = 'unknown'
-
-
 class Gravity(enum.Enum):
     """Enumeration for gravity"""
     # TODO: Fix enumerations; the variable name is what's used throughout the database
@@ -267,11 +248,9 @@ class SpectralTypes(Base):
     spectral_type_string = Column(String(10), nullable=False)
     spectral_type_code = Column(Float, nullable=False)
     spectral_type_error = Column(Float)
-    regime = Column(Enum(Regime, create_constraint=True, native_enum=False),
-                    primary_key=True)  # restricts to a few values: Optical, Infrared
-    # regime = Column(
-    #    String(30), ForeignKey("Regimes.regime", onupdate="cascade"), primary_key=True
-    # )
+    # regime = Column(Enum(Regime, create_constraint=True, native_enum=False),
+    #                primary_key=True)  # restricts to a few values: Optical, Infrared
+    regime = Column(String(30), primary_key=True)
     adopted = Column(Boolean)
     comments = Column(String(1000))
     reference = Column(
@@ -292,11 +271,9 @@ class Gravities(Base):
     )
     gravity = Column(Enum(Gravity, create_constraint=True, native_enum=False),
                      nullable=False)  # restricts to enumerated values
-    regime = Column(Enum(Regime, create_constraint=True, native_enum=False),
-                    primary_key=True)  # restricts to a few values: Optical, Infrared
-    # regime = Column(
-    #    String(30), ForeignKey("Regimes.regime", onupdate="cascade"), primary_key=True
-    # )
+    # regime = Column(Enum(Regime, create_constraint=True, native_enum=False),
+    #                primary_key=True)  # restricts to a few values: Optical, Infrared
+    regime = Column(String(30), primary_key=True)
     comments = Column(String(1000))
     reference = Column(
         String(30),
@@ -324,18 +301,16 @@ class Spectra(Base):
     )  # local directory (via environment variable) of spectrum location
 
     # Metadata
-    regime = Column(
-        Enum(
-            Regime,
-            create_constraint=True,
-            values_callable=lambda x: [e.value for e in x],
-            native_enum=False,
-        ),
-        primary_key=True,
-    )  # eg, Optical, Infrared, etc
     # regime = Column(
-    #    String(30), ForeignKey("Regimes.regime", onupdate="cascade"), primary_key=True
-    # )
+    #    Enum(
+    #        Regime,
+    #        create_constraint=True,
+    #        values_callable=lambda x: [e.value for e in x],
+    #        native_enum=False,
+    #    ),
+    #    primary_key=True,
+    # )  # eg, Optical, Infrared, etc
+    regime = Column(String(30), primary_key=True)
     telescope = Column(String(30))
     instrument = Column(String(30))
     mode = Column(String(30))  # eg, Prism, Echelle, etc
