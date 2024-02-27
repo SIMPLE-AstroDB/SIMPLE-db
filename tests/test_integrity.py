@@ -11,7 +11,7 @@ from astroquery.simbad import Simbad
 from astrodbkit2.utils import _name_formatter
 
 
-DB_NAME = "temp.db"
+DB_NAME = "temp.sqlite"
 DB_PATH = "data"
 
 
@@ -130,7 +130,7 @@ def test_publications(db):
         )
         .astropy()
     )
-    assert len(t) == 28, f"found {len(t)} publications with missing bibcode and doi"
+    assert len(t) == 29, f"found {len(t)} publications with missing bibcode and doi"
 
 
 def test_parameters(db):

@@ -1,11 +1,14 @@
 # SIMPLE Scripts
 
-This directory contains scripts for the SIMPLE database. 
-They are organized as follows:
+This directory contains scripts which have been used to modify the SIMPLE database. 
+They are "one-off" scripts which are not intended to be re-used, but rather to record the changes that have been made. 
+They also provide examples for how ingests can be done.
 
-- ingests
+The folders are organized as follows:
+
+- `ingests/`
   - Scripts to handle ingest of new data into the database
-- tutorials
-  - Tutorials to demonstrate specific uses of the database
-- examples
-  - Miscellaneous examples on how to use the database
+- `updates/`
+	- scripts which update large chunks of data in the database 	
+- `spectra_convert/`
+  - Scripts which convert spectra files
