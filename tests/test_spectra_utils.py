@@ -11,10 +11,11 @@ from simple.utils.spectra import (
 )
 
 
-logger = logging.getLogger("SIMPLE")
+logger = logging.getLogger("AstroDB")
 logger.setLevel(logging.DEBUG)
 
 
+@pytest.mark.filterwarnings("ignore")
 def test_ingest_spectrum(temp_db):
     spectrum = "https://bdnyc.s3.amazonaws.com/tests/U10176.fits"
     with pytest.raises(AstroDBError) as error_message:
@@ -130,6 +131,7 @@ def test_ingest_spectrum(temp_db):
     assert result["skipped"] is True
 
 
+@pytest.mark.filterwarnings("ignore")
 def test_ingest_spectrum_works(temp_db):
     spectrum = "https://bdnyc.s3.amazonaws.com/tests/U10176.fits"
     result = ingest_spectrum(
@@ -143,6 +145,7 @@ def test_ingest_spectrum_works(temp_db):
     assert result["added"] is True
 
 
+@pytest.mark.filterwarnings("ignore")
 @pytest.mark.parametrize(
     "file",
     [
