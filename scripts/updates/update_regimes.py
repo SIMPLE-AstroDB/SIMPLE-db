@@ -177,6 +177,16 @@ with db.engine.connect() as conn:
     )
     conn.commit()
 
+with db.engine.connect() as conn:
+    conn.execute(
+        db.SpectralTypes.update()
+        .where(
+            db.SpectralTypes.c.regime == "unknown",
+        )
+        .values(regime=None)
+    )
+    conn.commit()
+
 
 # Populate the regimes table
 with db.engine.connect() as conn:
@@ -197,6 +207,15 @@ with db.engine.connect() as conn:
     )
     conn.commit()
 
+with db.engine.connect() as conn:
+    conn.execute(
+        db.Regimes.insert().values(
+            regime="unknown", description="Used in Spectral Types table. Delete in #309"
+        )
+    )
+    conn.commit()
+
+# Get list of regimes in the Spectral Typtes table
 
 # Save database
 db.save_database("data/")
