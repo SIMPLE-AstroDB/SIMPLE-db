@@ -1,8 +1,10 @@
 # temp_db and logger is defined in conftest.py
 import pytest
+import sys
 from astrodb_scripts.utils import (
     AstroDBError,
 )
+sys.path.append("./")
 from simple.utils.spectra import (
     ingest_spectrum,
     # ingest_spectrum_from_fits,

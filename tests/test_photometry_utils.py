@@ -3,9 +3,11 @@ This function is in the process of being moved to astrodb_scripts
 """
 
 import pytest
+import sys
 from astrodb_scripts import (
     AstroDBError,
 )
+sys.path.append("./")
 from simple.utils.photometry import (
     fetch_svo,
     assign_ucd,
