@@ -2,7 +2,7 @@ import pytest
 import os
 import logging
 from astrodbkit2.astrodb import create_database, Database
-from simple import REFERENCE_TABLES
+from simple.schema import REFERENCE_TABLES
 from simple.schema import *
 
 

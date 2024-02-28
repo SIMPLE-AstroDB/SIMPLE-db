@@ -2,9 +2,6 @@
 Schema for the SIMPLE database
 """
 
-# pylint: disable=line-too-long, missing-class-docstring,
-# unused-import, invalid-name, singleton-comparison
-
 import enum
 import sqlalchemy as sa
 from sqlalchemy import (
@@ -23,6 +20,18 @@ from astrodbkit2.views import view
 
 # -------------------------------------------------------------------------------------------------------------------
 # Reference tables
+REFERENCE_TABLES = [
+    "Publications",
+    "Telescopes",
+    "Instruments",
+    "Modes",
+    "PhotometryFilters",
+    "Versions",
+    "Parameters",
+    "Regimes",
+]
+
+
 class Publications(Base):
     """ORM for publications table.
     This stores reference information (DOI, bibcodes, etc)
