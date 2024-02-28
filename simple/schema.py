@@ -274,9 +274,11 @@ class Gravities(Base):
     )
     gravity = Column(Enum(Gravity, create_constraint=True, native_enum=False),
                      nullable=False)  # restricts to enumerated values
-    # regime = Column(Enum(Regime, create_constraint=True, native_enum=False),
-    #                primary_key=True)  # restricts to a few values: Optical, Infrared
-    regime = Column(String(30), primary_key=True)
+    regime = Column(
+        String(30),
+        ForeignKey("Sources.source", ondelete="cascade", onupdate="cascade"),
+        primary_key=True,
+    )
     comments = Column(String(1000))
     reference = Column(
         String(30),
