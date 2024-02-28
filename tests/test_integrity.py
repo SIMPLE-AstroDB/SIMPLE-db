@@ -838,11 +838,3 @@ def test_names_uniqueness(db):
         print(duplicate_names)
 
     assert len(duplicate_names) == 0
-
-
-def test_remove_database(db):
-    # Clean up temporary database
-    db.session.close()
-    db.engine.dispose()
-    # if os.path.exists(DB_NAME):
-    #    os.remove(DB_NAME)
