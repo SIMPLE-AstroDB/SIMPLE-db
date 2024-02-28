@@ -25,6 +25,7 @@ __all__ = [
     "ingest_spectrum",
     "ingest_spectrum_from_fits",
     "spectrum_plottable",
+    "find_spectra",
 ]
 
 
@@ -516,7 +517,8 @@ def find_spectra(
     Find what spectra already exists in database for this source
     Finds matches based on parameter provided.
     E.g., if only source is provided, all spectra for that source are returned.
-    If Source and telescope are provided, only spectra for that source and telescope are provided.
+        If Source and telescope are provided,
+        only spectra for that source and telescope are provided.
 
     Parameters
     ----------

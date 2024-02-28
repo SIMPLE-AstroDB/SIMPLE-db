@@ -7,10 +7,7 @@ from astropy import units as u
 from astroquery.simbad import Simbad
 from astrodbkit2.utils import _name_formatter
 from astrodbkit2.astrodb import or_
-from simple.schema import *  # ParallaxView, PhotometryView
-
-# TODO: Figure out ParallaxView test.
-# TODO: Add Photometry view test
+from simple.schema import ParallaxView  # , PhotometryView
 
 
 def test_reference_uniqueness(db):
