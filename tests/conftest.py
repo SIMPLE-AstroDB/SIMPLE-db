@@ -62,6 +62,18 @@ def temp_db():
         {"reference": "Burn08", "doi": "Doi3", "bibcode": "2008MNRAS.391..320B"},
     ]
 
+    regime_data = [
+        {"regime": "optical"},
+        {"regime": "nir"},
+    ]
+
+    telescope_data = [{"telescope": "Keck I"}, {"telescope": "IRTF"}]
+
+    instrument_data = [
+        {"instrument": "LRIS", "mode": "OG570", "telescope": "Keck I"},
+        {"instrument": "SpeX", "mode": "Prism", "telescope": "IRTF"},
+    ]
+
     source_data = [
         {"source": "Fake 1", "ra": 9.0673755, "dec": 18.352889, "reference": "Ref 1"},
         {"source": "Fake 2", "ra": 9.0673755, "dec": 18.352889, "reference": "Ref 1"},
@@ -79,6 +91,9 @@ def temp_db():
     with temp_db.engine.connect() as conn:
         conn.execute(temp_db.Publications.insert().values(ref_data))
         conn.execute(temp_db.Sources.insert().values(source_data))
+        conn.execute(temp_db.Regimes.insert().values(regime_data))
+        conn.execute(temp_db.Telescopes.insert().values(telescope_data))
+        conn.execute(temp_db.Instruments.insert().values(instrument_data))
         conn.commit()
 
     logger.info("Loaded temp database using temp_db function in conftest")

@@ -11,7 +11,7 @@ from simple.utils.spectra import (
 
 
 @pytest.mark.filterwarnings("ignore")
-def test_ingest_spectrum(temp_db):
+def test_ingest_spectrum_errors(temp_db):
     spectrum = "https://bdnyc.s3.amazonaws.com/tests/U10176.fits"
     with pytest.raises(AstroDBError) as error_message:
         ingest_spectrum(temp_db, source="apple", spectrum=spectrum)
@@ -23,7 +23,15 @@ def test_ingest_spectrum(temp_db):
     assert result["skipped"] is True
 
     with pytest.raises(AstroDBError) as error_message:
-        ingest_spectrum(temp_db, source="apple", regime="nir", spectrum=spectrum)
+        ingest_spectrum(
+            temp_db,
+            source="apple",
+            telescope="IRTF",
+            instrument="SpeX",
+            mode="Prism",
+            regime="nir",
+            spectrum=spectrum,
+        )
     assert "Reference is required" in str(error_message.value)
     ingest_spectrum(
         temp_db, source="apple", regime="nir", spectrum=spectrum, raise_error=False
@@ -33,7 +41,14 @@ def test_ingest_spectrum(temp_db):
 
     with pytest.raises(AstroDBError) as error_message:
         ingest_spectrum(
-            temp_db, source="apple", regime="nir", spectrum=spectrum, reference="Ref 5"
+            temp_db,
+            source="apple",
+            regime="nir",
+            spectrum=spectrum,
+            telescope="IRTF",
+            instrument="SpeX",
+            mode="Prism",
+            reference="Ref 5",
         )
     assert "not in Publications table" in str(error_message.value)
     ingest_spectrum(
@@ -41,6 +56,9 @@ def test_ingest_spectrum(temp_db):
         source="apple",
         regime="nir",
         spectrum=spectrum,
+        telescope="IRTF",
+        instrument="SpeX",
+        mode="Prism",
         reference="Ref 5",
         raise_error=False,
     )
@@ -49,7 +67,14 @@ def test_ingest_spectrum(temp_db):
 
     with pytest.raises(AstroDBError) as error_message:
         ingest_spectrum(
-            temp_db, source="kiwi", regime="nir", spectrum=spectrum, reference="Ref 1"
+            temp_db,
+            source="kiwi",
+            regime="nir",
+            spectrum=spectrum,
+            reference="Ref 1",
+            telescope="IRTF",
+            instrument="SpeX",
+            mode="Prism",
         )
     assert "No unique source match for kiwi in the database" in str(error_message.value)
     result = ingest_spectrum(
@@ -59,13 +84,23 @@ def test_ingest_spectrum(temp_db):
         spectrum=spectrum,
         reference="Ref 1",
         raise_error=False,
+        telescope="IRTF",
+        instrument="SpeX",
+        mode="Prism",
     )
     assert result["added"] is False
     assert result["skipped"] is True
 
     with pytest.raises(AstroDBError) as error_message:
         ingest_spectrum(
-            temp_db, source="apple", regime="nir", spectrum=spectrum, reference="Ref 1"
+            temp_db,
+            source="apple",
+            regime="nir",
+            spectrum=spectrum,
+            reference="Ref 1",
+            telescope="IRTF",
+            instrument="SpeX",
+            mode="Prism",
         )
     assert "missing observation date" in str(error_message.value)
     result = ingest_spectrum(
@@ -74,6 +109,9 @@ def test_ingest_spectrum(temp_db):
         regime="nir",
         spectrum=spectrum,
         reference="Ref 1",
+        telescope="IRTF",
+        instrument="SpeX",
+        mode="Prism",
         raise_error=False,
     )
     assert result["added"] is False
@@ -111,8 +149,11 @@ def test_ingest_spectrum(temp_db):
             spectrum=spectrum,
             reference="Ref 1",
             obs_date="1/1/2024",
+            telescope="Keck I",
+            instrument="LRIS",
+            mode="OG570",
         )
-    assert "Regime provided is not in schema" in str(error_message.value)
+    assert "not in Regimes table" in str(error_message.value)
     result = ingest_spectrum(
         temp_db,
         source="orange",
@@ -120,6 +161,9 @@ def test_ingest_spectrum(temp_db):
         spectrum=spectrum,
         reference="Ref 1",
         obs_date="1/1/2024",
+        telescope="Keck I",
+        instrument="LRIS",
+        mode="OG570",
         raise_error=False,
     )
     assert result["added"] is False
@@ -136,6 +180,9 @@ def test_ingest_spectrum_works(temp_db):
         spectrum=spectrum,
         reference="Ref 1",
         obs_date="2020-01-01",
+        telescope="IRTF",
+        instrument="SpeX",
+        mode="Prism",
     )
     assert result["added"] is True
 

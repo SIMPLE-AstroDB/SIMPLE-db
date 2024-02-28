@@ -299,18 +299,11 @@ class Spectra(Base):
     local_spectrum = Column(
         String(1000)
     )  # local directory (via environment variable) of spectrum location
-
-    # Metadata
-    # regime = Column(
-    #    Enum(
-    #        Regime,
-    #        create_constraint=True,
-    #        values_callable=lambda x: [e.value for e in x],
-    #        native_enum=False,
-    #    ),
-    #    primary_key=True,
-    # )  # eg, Optical, Infrared, etc
-    regime = Column(String(30), primary_key=True)
+    regime = Column(
+        String(30),
+        ForeignKey("Regimes.regime", ondelete="cascade", onupdate="cascade"),
+        primary_key=True,
+    )
     telescope = Column(String(30))
     instrument = Column(String(30))
     mode = Column(String(30))  # eg, Prism, Echelle, etc
