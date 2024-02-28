@@ -20,7 +20,7 @@ Columns marked with an asterisk (*) may not be empty.
 | *reference        | Primary Reference |   | String(30)   | primary and foreign: Publications.reference |
 | other_references  | Other References |   | String(100)  |   |
 
-Relevant functions: `ingest_spectrum`, `spectrum_plottable`
+Relevant functions: `spectra.ingest_spectrum`, `spectra.spectrum_plottable`, `spectra.find_spectra`
 
 If the spectrum provided has been modified from the author-provided one, 
 a link to the original spectrum can be provided in the `original_spectrum` column.
