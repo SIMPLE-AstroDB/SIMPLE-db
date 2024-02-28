@@ -245,12 +245,15 @@ class SpectralTypes(Base):
         nullable=False,
         primary_key=True,
     )
-    spectral_type_string = Column(String(10), nullable=False)
-    spectral_type_code = Column(Float, nullable=False)
+    spectral_type_string = Column(String(10), nullable=False, primary_key=True)
+    spectral_type_code = Column(Float, nullable=False, primary_key=True)
     spectral_type_error = Column(Float)
-    # regime = Column(Enum(Regime, create_constraint=True, native_enum=False),
-    #                primary_key=True)  # restricts to a few values: Optical, Infrared
-    regime = Column(String(30), primary_key=True)
+    regime = Column(
+        String(30),
+        ForeignKey("Regimes.regime", ondelete="cascade", onupdate="cascade"),
+        nullable=True,
+        primary_key=True,
+    )
     adopted = Column(Boolean)
     comments = Column(String(1000))
     reference = Column(
