@@ -357,3 +357,150 @@ def ingest_proper_motions(
             updated_source_pm_data.pprint_all()
 
     return
+
+
+def ingest_radial_velocity(db, source, rv, rv_err, rv_ref, raise_error=True):
+    """
+
+    Parameters
+    ----------
+    db: astrodbkit2.astrodb.Database
+        Database object
+    sources: str
+        source name
+    rvs: float or str
+        radial velocity of the sources
+    rv_err: float or str
+        radial velocity uncertainty
+    rv_ref: str
+        references for the radial velocity data
+    raise_error: bool
+        If True, raise errors. If False, log an error and return.
+
+    Returns
+    -------
+    flags: dict
+
+    Examples
+    ----------
+    > ingest_radial_velocity(db, my_source, my_rv, my_rv_unc, my_rv_ref, raise_error = False)
+
+    """
+
+    flags = {"added": False, "skipped": False}
+
+    db_name = find_source_in_db(db, source)
+
+    if len(db_name) != 1:
+        msg = f"No unique source match for {source} in the database"
+        logger.error(msg)
+        if raise_error:
+            raise AstroDBError(msg)
+        else:
+            return flags
+    else:
+        db_name = db_name[0]
+
+    # Search for existing radial velocity data and determine if this is the best
+    # If no previous measurement exists, set the new one to the Adopted measurement
+    adopted = None
+    source_rv_data: Table = (
+        db.query(db.RadialVelocities)
+        .filter(db.RadialVelocities.c.source == db_name)
+        .table()
+    )
+
+    if source_rv_data is None or len(source_rv_data) == 0:
+        # if there's no other measurements in the database, set new data Adopted = True
+        adopted = True
+        logger.debug("No other measurement")
+    elif len(source_rv_data) > 0:  # Radial Velocity data already exists
+        # check for duplicate measurement
+        dupe_ind = source_rv_data["reference"] == rv_ref
+        if sum(dupe_ind):
+            msg = f"Duplicate measurement\n, {source_rv_data[dupe_ind]}"
+            logger.warning(msg)
+            flags["skipped"] = True
+            if raise_error:
+                raise AstroDBError(msg)
+            else:
+                return flags
+        else:
+            msg = "!!! Another Radial Velocity measurement exists,"
+            logger.warning(msg)
+            if logger.level == 10:
+                source_rv_data.pprint_all()
+
+            # check for previous adopted measurement and find new adopted
+            adopted_ind = source_rv_data["adopted"] == 1
+            if sum(adopted_ind):
+                old_adopted = source_rv_data[adopted_ind]
+                # if errors of new data are less than other measurements, set Adopted = True.
+                if rv_err < min(source_rv_data["radial_velocity_error"]):
+                    adopted = True
+
+                    # unset old adopted
+                    if old_adopted:
+                        db.RadialVelocities.update().where(
+                            and_(
+                                db.RadialVelocities.c.source
+                                == old_adopted["source"][0],
+                                db.RadialVelocities.c.reference
+                                == old_adopted["reference"][0],
+                            )
+                        ).values(adopted=False).execute()
+                        # check that adopted flag is successfully changed
+                        old_adopted_data = (
+                            db.query(db.RadialVelocities)
+                            .filter(
+                                and_(
+                                    db.RadialVelocities.c.source
+                                    == old_adopted["source"][0],
+                                    db.RadialVelocities.c.reference
+                                    == old_adopted["reference"][0],
+                                )
+                            )
+                            .table()
+                        )
+                        logger.debug("Old adopted measurement unset")
+                        if logger.level == 10:
+                            old_adopted_data.pprint_all()
+
+                logger.debug(f"The new measurement's adopted flag is:, {adopted}")
+            else:
+                msg = "Unexpected state"
+                logger.error(msg)
+                raise RuntimeError(msg)
+
+    # Construct data to be added
+    radial_velocity_data = [
+        {
+            "source": db_name,
+            "radial_velocity": rv,
+            "radial_velocity_error": rv_err,
+            "reference": rv_ref,
+            "adopted": adopted,
+        }
+    ]
+
+    logger.debug(f"{radial_velocity_data}")
+
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(db.RadialVelocities.insert().values(radial_velocity_data))
+            conn.commit()
+        flags["added"] = True
+        msg = f"Radial Velocity added to database: \n {radial_velocity_data}"
+        logger.debug(msg)
+    except sqlalchemy.exc.IntegrityError:
+        flags["skipped"] = True
+        msg = (
+            "The source may not exist in Sources table.\n"
+            "The Radial Velocity reference may not exist in Publications table. "
+            "Add it with add_publication function. \n"
+            "The radial velocity measurement may be a duplicate."
+        )
+        logger.error(msg)
+        raise AstroDBError(msg)
+
+    return flags

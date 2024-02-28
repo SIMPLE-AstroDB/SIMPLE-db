@@ -12,7 +12,11 @@ from simple.utils.spectral_types import (
     ingest_spectral_types,
 )
 from simple.utils.companions import ingest_companion_relationships
-from simple.utils.astrometry import ingest_parallaxes, ingest_proper_motions
+from simple.utils.astrometry import (
+    ingest_parallaxes,
+    ingest_proper_motions,
+    ingest_radial_velocity,
+)
 
 
 logger = logging.getLogger("SIMPLE")
@@ -88,6 +92,19 @@ def t_pm():
         ]
     )
     return t_pm
+
+
+# Create fake astropy Table of data to load
+@pytest.fixture(scope="module")
+def t_rv():
+    t_rv = Table(
+        [
+            {"source": "Fake 1", "rv": 113.0, "rv_err": 0.3, "rv_ref": "Ref 1"},
+            {"source": "Fake 2", "rv": 145.0, "rv_err": 0.5, "rv_ref": "Ref 1"},
+            {"source": "Fake 3", "rv": 155.0, "rv_err": 0.6, "rv_ref": "Ref 2"},
+        ]
+    )
+    return t_rv
 
 
 def test_setup_db(db):
@@ -285,3 +302,30 @@ def test_companion_relationships(db):
             db, "Fake 1", "Bad Companion", "Sibling", projected_separation_error=-5
         )
     assert "cannot be negative" in str(error_message.value)
+
+
+def test_ingest_radial_velocities_works(db, t_rv):
+    for ind in range(3):
+        ingest_radial_velocity(
+            db,
+            t_rv["source"][ind],
+            t_rv["rv"][ind],
+            t_rv["rv_err"][ind],
+            t_rv["rv_ref"][ind],
+        )
+
+    results = (
+        db.query(db.RadialVelocities)
+        .filter(db.RadialVelocities.c.reference == "Ref 1")
+        .table()
+    )
+    assert len(results) == 2
+    results = (
+        db.query(db.RadialVelocities)
+        .filter(db.RadialVelocities.c.reference == "Ref 2")
+        .table()
+    )
+    assert len(results) == 1
+    assert results["source"][0] == "Fake 3"
+    assert results["radial_velocity"][0] == 155
+    assert results["radial_velocity_error"][0] == 0.6
