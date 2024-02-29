@@ -1,11 +1,12 @@
-from astropy.table import Table
 import logging
+from typing import Optional, Union
 from sqlalchemy import and_
 import sqlalchemy.exc
-from astrodb_scripts import (
-    AstroDBError,
-    find_source_in_db,
-)
+import astropy.units as u
+from astropy.units import Quantity
+from astropy.table import Table
+from astrodbkit2.astrodb import Database
+from astrodb_scripts import AstroDBError, find_source_in_db, find_publication
 
 
 __all__ = [
@@ -359,40 +360,55 @@ def ingest_proper_motions(
     return
 
 
-def ingest_radial_velocity(db, source, rv, rv_err, rv_ref, raise_error=True):
+def ingest_radial_velocity(
+    db: Database,
+    *,
+    source: str = None,
+    rv: Union[Quantity, float] = None,
+    rv_err: Optional[Union[float, Quantity]] = None,
+    reference: str = None,
+    raise_error: bool = True,
+):
     """
 
     Parameters
     ----------
     db: astrodbkit2.astrodb.Database
         Database object
-    sources: str
+    source: str
         source name
-    rvs: float or str
+    rv: float or str
         radial velocity of the sources
+        if not a Quantity, assumed to be in km/s
     rv_err: float or str
         radial velocity uncertainty
-    rv_ref: str
-        references for the radial velocity data
+        if not a Quantity, assumed to be in km/s
+    reference: str
+        reference for the radial velocity data
     raise_error: bool
         If True, raise errors. If False, log an error and return.
 
     Returns
     -------
     flags: dict
+        'added' : bool
+        'skipped' : bool
 
     Examples
     ----------
-    > ingest_radial_velocity(db, my_source, my_rv, my_rv_unc, my_rv_ref, raise_error = False)
+    > ingest_radial_velocity(db, my_source, rv=my_rv, rv_err=my_rv_unc,
+                             reference=my_rv_ref,
+                             raise_error = False)
 
     """
 
     flags = {"added": False, "skipped": False}
 
+    # Find the source in the database, make sure there's only one match
     db_name = find_source_in_db(db, source)
-
     if len(db_name) != 1:
         msg = f"No unique source match for {source} in the database"
+        flags["skipped"] = True
         logger.error(msg)
         if raise_error:
             raise AstroDBError(msg)
@@ -400,6 +416,21 @@ def ingest_radial_velocity(db, source, rv, rv_err, rv_ref, raise_error=True):
             return flags
     else:
         db_name = db_name[0]
+
+    # Make sure the publication is in the database
+    pub_check = find_publication(db, reference=reference)
+    if pub_check[0]:
+        msg = f"Reference found: {pub_check[1]}."
+        logger.info(msg)
+    if not pub_check[0]:
+        flags["skipped"] = True
+        msg = f"Reference {reference} not found in Publications table."
+        if raise_error:
+            logger.error(msg)
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return flags
 
     # Search for existing radial velocity data and determine if this is the best
     # If no previous measurement exists, set the new one to the Adopted measurement
@@ -416,9 +447,9 @@ def ingest_radial_velocity(db, source, rv, rv_err, rv_ref, raise_error=True):
         logger.debug("No other measurement")
     elif len(source_rv_data) > 0:  # Radial Velocity data already exists
         # check for duplicate measurement
-        dupe_ind = source_rv_data["reference"] == rv_ref
+        dupe_ind = source_rv_data["reference"] == reference
         if sum(dupe_ind):
-            msg = f"Duplicate measurement\n, {source_rv_data[dupe_ind]}"
+            msg = f"Duplicate radial velocity measurement\n, {source_rv_data[dupe_ind]}"
             logger.warning(msg)
             flags["skipped"] = True
             if raise_error:
@@ -478,7 +509,7 @@ def ingest_radial_velocity(db, source, rv, rv_err, rv_ref, raise_error=True):
             "source": db_name,
             "radial_velocity": rv,
             "radial_velocity_error": rv_err,
-            "reference": rv_ref,
+            "reference": reference,
             "adopted": adopted,
         }
     ]
