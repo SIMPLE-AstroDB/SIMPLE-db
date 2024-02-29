@@ -1,5 +1,6 @@
 import pytest
 from astropy.table import Table
+from astrodb_scripts import AstroDBError
 from simple.utils.astrometry import (
     ingest_parallaxes,
     ingest_proper_motions,
@@ -59,7 +60,7 @@ def t_rv():
         [
             {"source": "Fake 1", "rv": 113.0, "rv_err": 0.3, "rv_ref": "Ref 1"},
             {"source": "Fake 2", "rv": 145.0, "rv_err": 0.5, "rv_ref": "Ref 1"},
-            {"source": "Fake 3", "rv": 155.0, "rv_err": 0.6, "rv_ref": "Ref 2"},
+            {"source": "Fake 3", "rv": "155.0", "rv_err": "0.6", "rv_ref": "Ref 2"},
         ]
     )
     return t_rv
@@ -116,9 +117,9 @@ def test_ingest_radial_velocities_works(db, t_rv):
         ingest_radial_velocity(
             db,
             t_rv["source"][ind],
-            t_rv["rv"][ind],
-            t_rv["rv_err"][ind],
-            t_rv["rv_ref"][ind],
+            rv=t_rv["rv"][ind],
+            rv_err=t_rv["rv_err"][ind],
+            reference=t_rv["rv_ref"][ind],
         )
 
     results = (
@@ -136,3 +137,22 @@ def test_ingest_radial_velocities_works(db, t_rv):
     assert results["source"][0] == "Fake 3"
     assert results["radial_velocity"][0] == 155
     assert results["radial_velocity_error"][0] == 0.6
+
+
+def test_ingest_radial_velocities_errors(db):
+    with pytest.raises(AstroDBError) as error_message:
+        ingest_radial_velocity(
+            db, "not a source", rv=12.5, rv_err=0.5, reference="Ref 1"
+        )
+    assert "No unique source match" in str(error_message.value)
+    # flag['skipped']  = True, flag['added']  = False
+
+    with pytest.raises(AstroDBError) as error_message:
+        ingest_radial_velocity(db, "Fake 1", rv=12.5, rv_err=0.5, reference="Ref 1")
+    assert "Duplicate radial velocity measurement" in str(error_message.value)
+    # flag['skipped']  = True,  flag['added']  = False
+
+    with pytest.raises(AstroDBError) as error_message:
+        ingest_radial_velocity(db, "Fake 1", rv=12.5, rv_err=0.5, reference="not a ref")
+    assert "not found in Publications table" in str(error_message.value)
+    # flag['skipped']  = True,  flag['added']  = False

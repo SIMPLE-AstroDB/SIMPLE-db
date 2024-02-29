@@ -99,14 +99,6 @@ def test_ingest_spectral_types(db):
         ]
     )
 
-    # data2 = Table(
-    #     [
-    #         {"source": "Fake 1", "spectral_type": "M5.6", "reference": "Ref 1"},
-    #         {"source": "Fake 2", "spectral_type": "T0.1", "reference": "Ref 1"},
-    #         {"source": "Fake 3", "spectral_type": "Y2pec", "reference": "Ref 2"},
-    #     ]
-    # )
-
     data3 = Table(
         [
             {
