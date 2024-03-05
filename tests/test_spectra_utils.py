@@ -4,6 +4,7 @@ import sys
 from astrodb_scripts.utils import (
     AstroDBError,
 )
+
 sys.path.append("./")
 from simple.utils.spectra import (
     ingest_spectrum,
@@ -222,7 +223,6 @@ def test_ingest_spectrum_works(temp_db):
         "'erg/cm2/s/A' contains multiple slashes, which is discouraged by the FITS standard.*",
     ),
 )
-@pytest.mark.filterwarnings("ignore")
 @pytest.mark.parametrize(
     "file",
     [
