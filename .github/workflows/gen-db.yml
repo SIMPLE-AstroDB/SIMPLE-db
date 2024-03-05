@@ -36,7 +36,7 @@ jobs:
 
     - name: Generate sqlite (file) database
       run: |
-        python scripts/tutorials/generate_database.py sqlite
+        python simple/utils/generate_database.py sqlite
       working-directory: .
 
     # The postgres database creation can take a while on the hobby-dev tier in Heroku
