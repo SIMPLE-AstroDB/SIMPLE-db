@@ -53,7 +53,7 @@ jobs:
       env:
           API_TOKEN_GITHUB: ${{ secrets.SIMPLE_TOKEN }}
       with:
-          source_file: 'SIMPLE.db'
+          source_file: 'SIMPLE.sqlite'
           destination_repo: 'SIMPLE-AstroDB/SIMPLE-binary'
           destination_branch: 'main'
           user_email: 'github-actions@github.com'
