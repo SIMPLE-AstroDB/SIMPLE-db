@@ -112,25 +112,25 @@ def test_ingest_proper_motions(db, t_pm):
     assert results["mu_ra_error"][0] == 0.23
 
 
-def test_ingest_radial_velocities_works(db, t_rv):
+def test_ingest_radial_velocities_works(temp_db, t_rv):
     for ind in range(3):
         ingest_radial_velocity(
-            db,
-            t_rv["source"][ind],
+            temp_db,
+            source=t_rv["source"][ind],
             rv=t_rv["rv"][ind],
             rv_err=t_rv["rv_err"][ind],
             reference=t_rv["rv_ref"][ind],
         )
 
     results = (
-        db.query(db.RadialVelocities)
-        .filter(db.RadialVelocities.c.reference == "Ref 1")
+        temp_db.query(temp_db.RadialVelocities)
+        .filter(temp_db.RadialVelocities.c.reference == "Ref 1")
         .table()
     )
     assert len(results) == 2
     results = (
-        db.query(db.RadialVelocities)
-        .filter(db.RadialVelocities.c.reference == "Ref 2")
+        temp_db.query(temp_db.RadialVelocities)
+        .filter(temp_db.RadialVelocities.c.reference == "Ref 2")
         .table()
     )
     assert len(results) == 1
@@ -139,20 +139,24 @@ def test_ingest_radial_velocities_works(db, t_rv):
     assert results["radial_velocity_error"][0] == 0.6
 
 
-def test_ingest_radial_velocities_errors(db):
+def test_ingest_radial_velocities_errors(temp_db):
     with pytest.raises(AstroDBError) as error_message:
         ingest_radial_velocity(
-            db, "not a source", rv=12.5, rv_err=0.5, reference="Ref 1"
+            temp_db, source="not a source", rv=12.5, rv_err=0.5, reference="Ref 1"
         )
     assert "No unique source match" in str(error_message.value)
     # flag['skipped']  = True, flag['added']  = False
 
     with pytest.raises(AstroDBError) as error_message:
-        ingest_radial_velocity(db, "Fake 1", rv=12.5, rv_err=0.5, reference="Ref 1")
+        ingest_radial_velocity(
+            temp_db, source="Fake 1", rv=12.5, rv_err=0.5, reference="Ref 1"
+        )
     assert "Duplicate radial velocity measurement" in str(error_message.value)
     # flag['skipped']  = True,  flag['added']  = False
 
     with pytest.raises(AstroDBError) as error_message:
-        ingest_radial_velocity(db, "Fake 1", rv=12.5, rv_err=0.5, reference="not a ref")
+        ingest_radial_velocity(
+            temp_db, source="Fake 1", rv=12.5, rv_err=0.5, reference="not a ref"
+        )
     assert "not found in Publications table" in str(error_message.value)
     # flag['skipped']  = True,  flag['added']  = False
