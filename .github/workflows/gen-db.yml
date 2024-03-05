@@ -5,7 +5,9 @@
 name: Generate Database
 
 on:
-  # More details on trigger events: https://docs.github.com/en/actions/reference/events-that-trigger-workflows
+  # More details on trigger events: 
+  #  https://docs.github.com/en/actions/reference/events-that-trigger-workflows
+  pull_request:  # added for testing
   workflow_dispatch:  # manual execution
   release:
     types: [published]
