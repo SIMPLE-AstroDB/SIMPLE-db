@@ -1,46 +1,7 @@
 # Tests to verify database contents
-import os
+# db is defined in conftest.py
 import pytest
-from astrodbkit2.astrodb import create_database, Database
 from sqlalchemy import except_, select, and_
-from simple.schema import *
-from . import REFERENCE_TABLES
-
-
-DB_NAME = "temp.sqlite"
-DB_PATH = "data"
-
-
-# Load the database for use in individual tests
-@pytest.fixture(scope="module")
-def db():
-    # Create a fresh temporary database and assert it exists
-    # Because we've imported simple.schema, we will be using that schema for the database
-
-    if os.path.exists(DB_NAME):
-        os.remove(DB_NAME)
-    connection_string = "sqlite:///" + DB_NAME
-    create_database(connection_string)
-    assert os.path.exists(DB_NAME)
-
-    # Connect to the new database and confirm it has the Sources table
-    db = Database(connection_string, reference_tables=REFERENCE_TABLES)
-    assert db
-    assert "source" in [c.name for c in db.Sources.columns]
-
-    # Load data into an in-memory sqlite database first, for performance
-    temp_db = Database(
-        "sqlite://", reference_tables=REFERENCE_TABLES
-    )  # creates and connects to a temporary in-memory database
-    temp_db.load_database(
-        DB_PATH, verbose=False
-    )  # loads the data from the data files into the database
-    temp_db.dump_sqlite(DB_NAME)  # dump in-memory database to file
-    db = Database(
-        "sqlite:///" + DB_NAME, reference_tables=REFERENCE_TABLES
-    )  # replace database object with new file version
-
-    return db
 
 
 # Utility functions
