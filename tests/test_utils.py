@@ -1,7 +1,7 @@
 import pytest
 import sys
 from astropy.table import Table
-from astrodb_scripts.utils import (
+from astrodb_utils.utils import (
     AstroDBError,
 )
 

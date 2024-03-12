@@ -1,7 +1,7 @@
 # temp_db and logger is defined in conftest.py
 import pytest
 import sys
-from astrodb_scripts.utils import (
+from astrodb_utils.utils import (
     AstroDBError,
 )
 
