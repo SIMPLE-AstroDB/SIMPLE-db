@@ -1,11 +1,8 @@
 # temp_db and logger is defined in conftest.py
 import pytest
-import sys
 from astrodb_utils.utils import (
     AstroDBError,
 )
-
-sys.path.append("./")
 from simple.utils.spectra import (
     ingest_spectrum,
     # ingest_spectrum_from_fits,
@@ -194,7 +191,8 @@ def test_ingest_spectrum_errors(temp_db):
 )  # : astropy.io.fits uses zero-based indexing.
 @pytest.mark.filterwarnings("ignore:'datfix' made the change 'Set MJD-OBS to")
 @pytest.mark.filterwarnings(
-    "ignore:'erg/cm2/s/A' contains multiple slashes, which is discouraged by the FITS standard"
+    "ignore:'erg/cm2/s/A' contains multiple slashes,"
+    " which is discouraged by the FITS standard"
 )
 @pytest.mark.filterwarnings("ignore")
 def test_ingest_spectrum_works(temp_db):
@@ -221,7 +219,8 @@ def test_ingest_spectrum_works(temp_db):
 @pytest.mark.filterwarnings(
     "ignore",
     message=(
-        "'erg/cm2/s/A' contains multiple slashes, which is discouraged by the FITS standard.*",
+        "'erg/cm2/s/A' contains multiple slashes, "
+        "which is discouraged by the FITS standard.*",
     ),
 )
 @pytest.mark.filterwarnings("ignore")
