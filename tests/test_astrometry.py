@@ -1,6 +1,6 @@
 import pytest
 from astropy.table import Table
-from astrodb_scripts import AstroDBError
+from astrodb_utils import AstroDBError
 from simple.utils.astrometry import (
     ingest_parallaxes,
     ingest_proper_motions,
@@ -66,18 +66,22 @@ def t_rv():
     return t_rv
 
 
-def test_ingest_parallaxes(db, t_plx):
+def test_ingest_parallaxes(temp_db, t_plx):
     # Test ingest of parallax data
     ingest_parallaxes(
-        db, t_plx["source"], t_plx["plx"], t_plx["plx_err"], t_plx["plx_ref"]
+        temp_db, t_plx["source"], t_plx["plx"], t_plx["plx_err"], t_plx["plx_ref"]
     )
 
     results = (
-        db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == "Ref 1").table()
+        temp_db.query(temp_db.Parallaxes)
+        .filter(temp_db.Parallaxes.c.reference == "Ref 1")
+        .table()
     )
     assert len(results) == 2
     results = (
-        db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == "Ref 2").table()
+        temp_db.query(temp_db.Parallaxes)
+        .filter(temp_db.Parallaxes.c.reference == "Ref 2")
+        .table()
     )
     assert len(results) == 1
     assert results["source"][0] == "Fake 3"
@@ -85,9 +89,9 @@ def test_ingest_parallaxes(db, t_plx):
     assert results["parallax_error"][0] == 0.6
 
 
-def test_ingest_proper_motions(db, t_pm):
+def test_ingest_proper_motions(temp_db, t_pm):
     ingest_proper_motions(
-        db,
+        temp_db,
         t_pm["source"],
         t_pm["mu_ra"],
         t_pm["mu_ra_err"],
@@ -96,14 +100,14 @@ def test_ingest_proper_motions(db, t_pm):
         t_pm["reference"],
     )
     assert (
-        db.query(db.ProperMotions)
-        .filter(db.ProperMotions.c.reference == "Ref 1")
+        temp_db.query(temp_db.ProperMotions)
+        .filter(temp_db.ProperMotions.c.reference == "Ref 1")
         .count()
         == 2
     )
     results = (
-        db.query(db.ProperMotions)
-        .filter(db.ProperMotions.c.reference == "Ref 2")
+        temp_db.query(temp_db.ProperMotions)
+        .filter(temp_db.ProperMotions.c.reference == "Ref 2")
         .table()
     )
     assert len(results) == 1
