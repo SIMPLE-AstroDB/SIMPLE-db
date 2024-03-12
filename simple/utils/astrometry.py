@@ -2,11 +2,10 @@ import logging
 from typing import Optional, Union
 from sqlalchemy import and_
 import sqlalchemy.exc
-import astropy.units as u
 from astropy.units import Quantity
 from astropy.table import Table
 from astrodbkit2.astrodb import Database
-from astrodb_scripts import AstroDBError, find_source_in_db, find_publication
+from astrodb_utils import AstroDBError, find_source_in_db, find_publication
 
 
 __all__ = [
