@@ -1,11 +1,8 @@
 import pytest
-import sys
 from astropy.table import Table
 from astrodb_utils.utils import (
     AstroDBError,
 )
-
-sys.path.append("./")
 from simple.utils.spectral_types import (
     convert_spt_string_to_code,
     ingest_spectral_types,
@@ -141,12 +138,10 @@ def test_ingest_spectral_types(temp_db):
             temp_db,
             data3["source"],
             data3["spectral_type"],
-            data3["regime"],
             data3["reference"],
+            data3["regime"],
         )
-        assert "The publication does not exist in the database" in str(
-            error_message.value
-        )
+    assert "The publication does not exist in the database" in str(error_message.value)
 
 
 def test_companion_relationships(temp_db):
@@ -154,7 +149,7 @@ def test_companion_relationships(temp_db):
     # trying no companion
     with pytest.raises(AstroDBError) as error_message:
         ingest_companion_relationships(temp_db, "Fake 1", None, "Sibling")
-    assert "Make sure all require parameters are provided." in str(error_message.value)
+    assert "Make sure all required parameters are provided." in str(error_message.value)
 
     # trying companion == source
     with pytest.raises(AstroDBError) as error_message:

@@ -3,7 +3,7 @@ import re
 import logging
 from sqlalchemy import and_
 import sqlalchemy.exc
-from astrodb_scripts import (
+from astrodb_utils import (
     AstroDBError,
     find_source_in_db,
 )
@@ -214,7 +214,7 @@ def ingest_spectral_types(
                 .count()
                 == 0
             ):
-                msg = f"The publication {references[i]} does not exist in the database"
+                msg = f"The publication does not exist in the database: {references[i]}"
                 msg1 = "Add it with ingest_publication function."
                 logger.debug(msg + msg1)
                 raise AstroDBError(msg)
