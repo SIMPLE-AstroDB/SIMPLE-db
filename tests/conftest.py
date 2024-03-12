@@ -3,7 +3,7 @@ import os
 import sys
 import logging
 from astrodbkit2.astrodb import create_database, Database
-sys.path.append("./simple")
+sys.path.append("./")
 from simple.schema import REFERENCE_TABLES
 from simple.schema import *
 
