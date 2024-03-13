@@ -26,7 +26,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest ads
         pip install astrodbkit2
-        pip install git+https://github.com/astrodbtoolkit/astrodb_scripts.git@main
+        pip install git+https://github.com/astrodbtoolkit/astrodb_utils.git@main
 
     - name: Test with pytest
       run: |
