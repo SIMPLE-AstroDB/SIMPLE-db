@@ -2,6 +2,8 @@ import pytest
 import os
 import logging
 from astrodbkit2.astrodb import create_database, Database
+
+sys.path.append("./")
 from simple.schema import REFERENCE_TABLES
 from simple.schema import *
 

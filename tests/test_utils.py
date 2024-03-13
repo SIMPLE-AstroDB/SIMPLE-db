@@ -3,6 +3,8 @@ from astropy.table import Table
 from astrodb_utils.utils import (
     AstroDBError,
 )
+
+sys.path.append("./")
 from simple.utils.spectral_types import (
     convert_spt_string_to_code,
     ingest_spectral_types,
