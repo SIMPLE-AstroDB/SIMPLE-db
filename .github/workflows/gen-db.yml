@@ -35,7 +35,7 @@ jobs:
 
     - name: Generate sqlite (file) database
       run: |
-        python simple/utils/generate_database.py sqlite
+        python simple/utils/generate_database.py
       working-directory: .
 
     - name: Push database file
