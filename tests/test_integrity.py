@@ -378,7 +378,7 @@ def test_radialvelocities(db):
     # There should be no entries in the RadialVelocities table without rv values
     t = (
         db.query(db.RadialVelocities.c.source)
-        .filter(db.RadialVelocities.c.radial_velocity.is_(None))
+        .filter(db.RadialVelocities.c.radial_velocity_km_s.is_(None))
         .astropy()
     )
     if len(t) > 0:
