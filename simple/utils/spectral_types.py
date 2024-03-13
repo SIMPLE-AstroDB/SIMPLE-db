@@ -214,7 +214,7 @@ def ingest_spectral_types(
                 .count()
                 == 0
             ):
-                msg = f"The publication {references[i]} does not exist in the database"
+                msg = f"The publication does not exist in the database: {references[i]}"
                 msg1 = "Add it with ingest_publication function."
                 logger.debug(msg + msg1)
                 raise AstroDBError(msg)
@@ -272,10 +272,10 @@ def convert_spt_string_to_code(spectral_types):
             else:  # only trigger if not MLTY
                 i = 0
         # find integer or decimal subclass and add to spt_code
-        if re.search("\d*\.?\d+", spt[i + 1 :]) is None:
+        if re.search(r"\d*\.?\d+", spt[i + 1 :]) is None:
             spt_code = spt_code
         else:
-            spt_code += float(re.findall("\d*\.?\d+", spt[i + 1 :])[0])
+            spt_code += float(re.findall(r"\d*\.?\d+", spt[i + 1 :])[0])
 
         spectral_type_codes.append(spt_code)
     return spectral_type_codes
