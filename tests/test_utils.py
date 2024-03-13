@@ -3,8 +3,9 @@ from astropy.table import Table
 from astrodb_utils.utils import (
     AstroDBError,
 )
+import sys
 
-sys.path.append("./")
+sys.path.append("./")  # needed for github actions to find the simple module
 from simple.utils.spectral_types import (
     convert_spt_string_to_code,
     ingest_spectral_types,
