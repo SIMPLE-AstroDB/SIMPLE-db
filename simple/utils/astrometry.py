@@ -506,8 +506,8 @@ def ingest_radial_velocity(
     radial_velocity_data = [
         {
             "source": db_name,
-            "radial_velocity": rv,
-            "radial_velocity_error": rv_err,
+            "radial_velocity_km_s": rv,
+            "radial_velocity_error_km_s": rv_err,
             "reference": reference,
             "adopted": adopted,
         }

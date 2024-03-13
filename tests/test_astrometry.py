@@ -139,8 +139,8 @@ def test_ingest_radial_velocities_works(temp_db, t_rv):
     )
     assert len(results) == 1
     assert results["source"][0] == "Fake 3"
-    assert results["radial_velocity"][0] == 155
-    assert results["radial_velocity_error"][0] == 0.6
+    assert results["radial_velocity_km_s"][0] == 155
+    assert results["radial_velocity_error_km_s"][0] == 0.6
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")

@@ -234,8 +234,8 @@ class RadialVelocities(Base):
         nullable=False,
         primary_key=True,
     )
-    radial_velocity = Column(Float, nullable=False)
-    radial_velocity_error = Column(Float)
+    radial_velocity_km_s = Column(Float, nullable=False)
+    radial_velocity_error_km_s = Column(Float)
     adopted = Column(Boolean)
     comments = Column(String(1000))
     reference = Column(
