@@ -465,7 +465,8 @@ def ingest_radial_velocity(
             adopted_ind = source_rv_data["adopted"] == 1
             if sum(adopted_ind):
                 old_adopted = source_rv_data[adopted_ind]
-                # if errors of new data are less than other measurements, set Adopted = True.
+                # if errors of new data are less than other measurements,
+                # set Adopted = True.
                 if rv_err < min(source_rv_data["radial_velocity_error"]):
                     adopted = True
 
