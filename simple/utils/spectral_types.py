@@ -3,7 +3,7 @@ import re
 import logging
 from sqlalchemy import and_
 import sqlalchemy.exc
-from astrodb_scripts import (
+from astrodb_utils import (
     AstroDBError,
     find_source_in_db,
 )
