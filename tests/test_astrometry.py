@@ -143,6 +143,7 @@ def test_ingest_radial_velocities_works(temp_db, t_rv):
     assert results["radial_velocity_error"][0] == 0.6
 
 
+@pytest.mark.filterwarnings("ignore::UserWarning")
 def test_ingest_radial_velocities_errors(temp_db):
     with pytest.raises(AstroDBError) as error_message:
         ingest_radial_velocity(
