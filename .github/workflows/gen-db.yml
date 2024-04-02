@@ -5,11 +5,11 @@
 name: Generate Database
 
 on:
-  # More details on trigger events: https://docs.github.com/en/actions/reference/events-that-trigger-workflows
+  # More details on trigger events: 
+  #  https://docs.github.com/en/actions/reference/events-that-trigger-workflows
   workflow_dispatch:  # manual execution
   release:
     types: [published]
-    branches: [main]
 
 jobs:
   build:
@@ -34,18 +34,8 @@ jobs:
 
     - name: Generate sqlite (file) database
       run: |
-        python scripts/tutorials/generate_database.py sqlite
+        python simple/utils/generate_database.py
       working-directory: .
-
-    # The postgres database creation can take a while on the hobby-dev tier in Heroku
-    # Disabling until we have a better idea on how to use this
-#    - name: Generate postgres (Heroku) database
-#      env:
-#        SIMPLE_DATABASE_URL: ${{secrets.SIMPLE_DATABASE_URL}}
-#      run: |
-#        pip install psycopg2
-#        python scripts/tutorials/generate_database.py postgres
-#      working-directory: .
 
     - name: Push database file
       uses: dmnemec/copy_file_to_another_repo_action@main
@@ -53,7 +43,7 @@ jobs:
       env:
           API_TOKEN_GITHUB: ${{ secrets.SIMPLE_TOKEN }}
       with:
-          source_file: 'SIMPLE.db'
+          source_file: 'SIMPLE.sqlite'
           destination_repo: 'SIMPLE-AstroDB/SIMPLE-binary'
           destination_branch: 'main'
           user_email: 'github-actions@github.com'
