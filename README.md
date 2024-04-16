@@ -7,8 +7,12 @@ and currently include names, coordinates, photometry and reference and data prov
 in the [schema](#simple-database-schema) below. 
 The archive includes kinematics, spectra, modeled and retrieved parameters. 
 
-There are several different methods to interact with the database, including python, a website and API, and 
-database browsers such as [DB Browser for SQLite](https://sqlitebrowser.org/).
+There are several different methods to interact with the database, including: 
+- Python
+- a website and API at https://simple-bd-archive.org/
+- database browsers such as [DB Browser for SQLite](https://sqlitebrowser.org/)
+
+To report missing data, data bugs or make feature requests, please use the [SIMPLE-db issue tracker](https://github.com/SIMPLE-AstroDB/SIMPLE-db/issues).
 
 For day-to-day discussions, please join us in the #simple-db-dev channel in the [Astropy Slack workspace](https://astropy.slack.com/).
 If you are not already in the Astropy Slack, [request an account](http://joinslack.astropy.org/).
@@ -21,7 +25,7 @@ If you'd like to set up your own copy of the SIMPLE database, here's what we rec
 
 1. Clone or download a copy of this repo locally onto your computer.
  
-2. Set up an environment for the python code. 
+2. Set up an environment for the Python code and install dependencies. 
 A conda environment file `environment.yml` exists for convenience. The following commands will use that file to create and activate an 
    environment called `simple-db`:
 
@@ -29,23 +33,19 @@ A conda environment file `environment.yml` exists for convenience. The following
     conda env create -f environment.yml
     conda activate simple-db
     ```
-    
-3. Install the latest version of the AstrodbKit2 package:
-    
-    ```bash
-     pip install git+https://github.com/dr-rodriguez/AstrodbKit2
-     ```
    
-4. In Python, connect a database file `SIMPLE.sqlite` as a Database object called `db` and recreate the database using the JSON files in the 'data/' directory.
+3. In Python, connect a database file `SIMPLE.sqlite` as a Database object called `db` and recreate the database using the JSON files in the 'data/' directory.
       
    ```python
    from astrodb_utils import load_astrodb
    from simple.schema import *
    
    db = load_astrodb("SIMPLE.sqlite", recreatedb=True)
-   ```
+    ```
 
-5. Use `astrodbkit2` to [explore](https://astrodbkit2.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit2.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit2.readthedocs.io/en/latest/#modifying-data) the database.
+    This step generates a "SIMPLE.sqlite" file which can be opened, explored, and modified using the [DB Browser for SQLite](https://sqlitebrowser.org/).
+
+4. Use `astrodbkit2` to [explore](https://astrodbkit2.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit2.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit2.readthedocs.io/en/latest/#modifying-data) the database.
 For example:
     - Find all objects in the database with "0141" in the name
         ```
@@ -57,7 +57,7 @@ For example:
         ```
         db.inventory('2MASS J01415823-4633574', pretty_print=True)
         ```
-
+5. The database can also be modified using helper scripts found in `simple/utils` and in the `astrodb_utils` package.
     
 ## SIMPLE Database Schema
 
