@@ -34,7 +34,7 @@ A conda environment file `environment.yml` exists for convenience. The following
     conda activate simple-db
     ```
    
-3. In Python, connect a database file `SIMPLE.sqlite` as a Database object called `db` and recreate the database using the JSON files in the 'data/' directory.
+3. In Python, connect a database file `SIMPLE.sqlite` as a Database object called `db` and recreate the database using the JSON files in the `data/` directory.
       
    ```python
    from astrodb_utils import load_astrodb
@@ -57,7 +57,7 @@ For example:
         ```
         db.inventory('2MASS J01415823-4633574', pretty_print=True)
         ```
-5. The database can also be modified using helper scripts found in `simple/utils` and in the `astrodb_utils` package. Previously used scripts to modify and/or update the database are stored in the `scripts/` directory.
+5. The database can also be modified using helper scripts found in [`simple/utils`](simple/utils) and in the `astrodb_utils` package. Previously used scripts to modify and/or update the database are stored in the [`scripts/`](scripts) directory and can be used for inspiration.
 
 ## Contributor Instructions
 If you've made changes to the SIMPLE Archive that you would like to contribute to the public verion, here's how to make a contribution.
@@ -68,7 +68,9 @@ If you've made changes to the SIMPLE Archive that you would like to contribute t
     ```
 
 2. (Optional) Run and modify tests as necessary
-
+    ```bash
+    pytest
+    ```
 
 3. Open a pull request with the modified JSON files and optionally, your ingest script.
 
@@ -76,7 +78,7 @@ If you've made changes to the SIMPLE Archive that you would like to contribute t
 ## SIMPLE Database Schema
 
 The schema for the SIMPLE database is described
-in the [Documentation](documentation) and can be found in `simple/schema.py`.
+in the [Documentation](documentation) and can be found in [`simple/schema.py`](simple/schema.py).
 
 A graphical representation of the SIMPLE schema:
 <img src="https://github.com/SIMPLE-AstroDB/SIMPLE-db/blob/main/documentation/figures/schema2023.png?raw=true" width=75%>
