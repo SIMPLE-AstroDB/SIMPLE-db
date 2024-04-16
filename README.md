@@ -39,8 +39,9 @@ A conda environment file `environment.yml` exists for convenience. The following
    ```python
    from astrodb_utils import load_astrodb
    from simple.schema import *
+   from simple.schema import REFERENCE_TABLES
    
-   db = load_astrodb("SIMPLE.sqlite", recreatedb=True)
+   db = load_astrodb("SIMPLE.sqlite", recreatedb=True,  reference_tables=REFERENCE_TABLES)
     ```
 
     This step generates a "SIMPLE.sqlite" file which can be opened, explored, and modified using the [DB Browser for SQLite](https://sqlitebrowser.org/).
