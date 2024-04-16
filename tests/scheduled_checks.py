@@ -4,7 +4,7 @@ import sys
 import requests
 from tqdm import tqdm
 from astrodbkit2.astrodb import create_database, Database
-from astrodb_utils.utils import check_internet_connection
+from astrodb_utils.utils import internet_connection
 
 sys.path.append(".")
 from simple.schema import *
@@ -52,7 +52,7 @@ def test_spectra_urls(db):
     spectra_urls = db.query(db.Spectra.c.spectrum).astropy()
     broken_urls = []
     codes = []
-    internet = check_internet_connection()
+    internet, _ = internet_connection()
     if internet:
         for spectrum_url in tqdm(spectra_urls["spectrum"]):
             request_response = requests.head(spectrum_url)
