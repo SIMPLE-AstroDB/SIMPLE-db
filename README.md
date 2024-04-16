@@ -57,8 +57,22 @@ For example:
         ```
         db.inventory('2MASS J01415823-4633574', pretty_print=True)
         ```
-5. The database can also be modified using helper scripts found in `simple/utils` and in the `astrodb_utils` package.
-    
+5. The database can also be modified using helper scripts found in `simple/utils` and in the `astrodb_utils` package. Previously used scripts to modify and/or update the database are stored in the `scripts/` directory.
+
+## Contributor Instructions
+If you've made changes to the SIMPLE Archive that you would like to contribute to the public verion, here's how to make a contribution.
+
+1. If you've made changes using Python or the DB Browser, write out the new/modified JSON files:
+    ```python
+    db.save_database(directory="data/")
+    ```
+
+2. (Optional) Run and modify tests as necessary
+
+
+3. Open a pull request with the modified JSON files and optionally, your ingest script.
+
+
 ## SIMPLE Database Schema
 
 The schema for the SIMPLE database is described
