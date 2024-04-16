@@ -150,7 +150,7 @@ def ingest_companion_relationships(
 
         else:
             msg = (
-                "Make sure all require parameters are provided. \\"
+                "Make sure all required parameters are provided. \\"
                 "Other possible errors: source may not exist in Sources table \\"
                 "or the reference may not exist in the Publications table. "
             )
