@@ -79,4 +79,5 @@ with db.engine.connect() as conn:
         )
     conn.commit()
 
-db.save_database("data/")
+# db.save_database("data/")
+db.save_reference_table("PhotometryFilters", "data/")
