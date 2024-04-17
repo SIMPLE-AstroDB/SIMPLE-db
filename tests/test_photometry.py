@@ -108,6 +108,8 @@ def test_photometrymko_y(db):
 
 
 def test_photometry_filters_ucds(db):
+    # UCDS based on UCD1+ controlled vocabulary version 1.5
+    # https://www.ivoa.net/documents/UCD1+/20230125/index.html
     t = db.query(db.PhotometryFilters.c.ucd).astropy()
     for ucd in t:
         ucd_string = "phot;" + ucd[0]
