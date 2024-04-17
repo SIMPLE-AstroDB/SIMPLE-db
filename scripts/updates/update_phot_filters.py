@@ -1,4 +1,3 @@
-from sqlalchemy import func, and_
 from astrodb_utils import load_astrodb
 from simple.schema import *
 from simple.schema import REFERENCE_TABLES
@@ -8,14 +7,17 @@ import pandas as pd
 db = load_astrodb("SIMPLE.sqlite", recreatedb=True, reference_tables=REFERENCE_TABLES)
 
 # Run a query to find the bands with null UCDs
-t = db.query(
-    db.PhotometryFilters.c.band,
-    db.PhotometryFilters.c.ucd,
-    db.PhotometryFilters.c.effective_wavelength,
-).pandas()
-null_values = pd.isnull(t["ucd"])
-df = t[null_values].sort_values(by=["effective_wavelength"])
-df_new = df.drop(columns=["effective_wavelength"])
+t = (
+    db.query(
+        db.PhotometryFilters.c.band,
+        db.PhotometryFilters.c.ucd,
+        db.PhotometryFilters.c.effective_wavelength,
+    )
+    .filter(db.PhotometryFilters.c.ucd.is_(None))
+    .order_by(db.PhotometryFilters.c.effective_wavelength)
+    .pandas()
+)
+df_new = t.drop(columns=["effective_wavelength"])
 data_dicts = df_new.to_dict(orient="records")
 
 data_dicts = [
