@@ -330,7 +330,7 @@ def ingest_spectrum(
     # Compile fields into a dictionary
     row_data = {
         "source": db_name,
-        "spectrum": spectrum,
+        "access_url": spectrum,
         "original_spectrum": original_spectrum,
         "local_spectrum": local_spectrum,
         "regime": regime,
