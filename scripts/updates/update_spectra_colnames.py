@@ -2,6 +2,7 @@
 
 import sqlalchemy as sa
 from astrodb_utils import load_astrodb
+
 from simple.schema import REFERENCE_TABLES
 
 # Establish connection to database
