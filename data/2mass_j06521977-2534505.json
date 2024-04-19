@@ -274,7 +274,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U50078_0652-2534_060902.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U50078_0652-2534_060902.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U50078_0652-2534_060902.fits",
             "regime": "nir",
@@ -287,7 +287,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/SpeX/Prism/2MASS+J06521977-2534505_2009-01-25.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/SpeX/Prism/2MASS+J06521977-2534505_2009-01-25.fits",
             "original_spectrum": "https://s3.amazonaws.com/bdnyc/U50078_JHK_2009jan25.txt",
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U50078_JHK_2009jan25.txt",
             "regime": "nir",
@@ -300,7 +300,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U50078_0652-2534_091104.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U50078_0652-2534_091104.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U50078_0652-2534_091104.fits",
             "regime": "nir",
@@ -315,15 +315,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M9.2",
-            "spectral_type_code": 69.2,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Bard14"
-        },
-        {
             "spectral_type_string": "L0",
             "spectral_type_code": 70.0,
             "spectral_type_error": null,
@@ -331,6 +322,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Phan08"
+        },
+        {
+            "spectral_type_string": "M9.2",
+            "spectral_type_code": 69.2,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Bard14"
         }
     ]
 }

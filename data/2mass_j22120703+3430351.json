@@ -95,7 +95,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U20936.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U20936.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U20936.fits",
             "regime": "nir",
@@ -108,7 +108,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20936.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20936.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20936.fits",
             "regime": "optical",
@@ -123,15 +123,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L6",
-            "spectral_type_code": 76.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Kirk10"
-        },
-        {
             "spectral_type_string": "L5:",
             "spectral_type_code": 75.0,
             "spectral_type_error": null,
@@ -139,6 +130,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Reid08.1290"
+        },
+        {
+            "spectral_type_string": "L6",
+            "spectral_type_code": 76.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Kirk10"
         }
     ]
 }

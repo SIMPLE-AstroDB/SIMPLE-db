@@ -62,7 +62,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20843.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20843.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20843.fits",
             "regime": "optical",
@@ -77,15 +77,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L0.9 VL-G",
-            "spectral_type_code": 70.9,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Fahe16"
-        },
-        {
             "spectral_type_string": "L0 gamma",
             "spectral_type_code": 70.0,
             "spectral_type_error": null,
@@ -93,6 +84,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz09"
+        },
+        {
+            "spectral_type_string": "L0.9 VL-G",
+            "spectral_type_code": 70.9,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Fahe16"
         }
     ]
 }

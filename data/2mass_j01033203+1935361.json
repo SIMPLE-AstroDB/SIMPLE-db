@@ -180,7 +180,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/2M0103.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/2M0103.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/2M0103.fits",
             "regime": "nir",
@@ -193,7 +193,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/2M0103%2B19_L7_davy.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/2M0103%2B19_L7_davy.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/2M0103+19_L7_davy.fits",
             "regime": "nir",
@@ -206,7 +206,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/LRIS/U13039_lris_1298.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/LRIS/U13039_lris_1298.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/LRIS/U13039_lris_1298.fits",
             "regime": "optical",
@@ -221,15 +221,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L6: INT-G",
-            "spectral_type_code": 76.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "L6 beta",
             "spectral_type_code": 76.0,
             "spectral_type_error": null,
@@ -237,6 +228,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Fahe12"
+        },
+        {
+            "spectral_type_string": "L6: INT-G",
+            "spectral_type_code": 76.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

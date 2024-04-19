@@ -262,7 +262,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J20575409-0252302.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J20575409-0252302.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2057-0252_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -275,7 +275,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/2057-0252.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/2057-0252.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/2057-0252.txt",
             "regime": "mir",
@@ -288,7 +288,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U12054_2057-0252.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U12054_2057-0252.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U12054_2057-0252.fits",
             "regime": "nir",
@@ -301,7 +301,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/RCspec/U12054_2057-0252.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/RCspec/U12054_2057-0252.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/RCspec/U12054_2057-0252.fits",
             "regime": "optical",
@@ -316,15 +316,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L2: FLD-G",
-            "spectral_type_code": 72.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "L1.5",
             "spectral_type_code": 71.5,
             "spectral_type_error": null,
@@ -332,6 +323,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz03"
+        },
+        {
+            "spectral_type_string": "L2: FLD-G",
+            "spectral_type_code": 72.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

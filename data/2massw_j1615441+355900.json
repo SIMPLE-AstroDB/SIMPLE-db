@@ -154,7 +154,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASSW+J1615441%2B355900.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASSW+J1615441%2B355900.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1615%2B3559_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -167,7 +167,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/IRS_DimSuns_S12/2MASS1615%2B3558_SL.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/IRS_DimSuns_S12/2MASS1615%2B3558_SL.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/2MASS1615+3558_SL.txt",
             "regime": "mir",
@@ -180,7 +180,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1615%2B3559_090630.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1615%2B3559_090630.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_1615+3559_090630.fits",
             "regime": "nir",
@@ -195,15 +195,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L3.6",
-            "spectral_type_code": 73.6,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Bard14"
-        },
-        {
             "spectral_type_string": "L3",
             "spectral_type_code": 73.0,
             "spectral_type_error": null,
@@ -211,6 +202,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk00"
+        },
+        {
+            "spectral_type_string": "L3.6",
+            "spectral_type_code": 73.6,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Bard14"
         }
     ]
 }

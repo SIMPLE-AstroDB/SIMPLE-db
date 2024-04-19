@@ -301,7 +301,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/SpeX/Prism/2MASS+J04510093-3402150_2012-09-27.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/SpeX/Prism/2MASS+J04510093-3402150_2012-09-27.fits",
             "original_spectrum": "https://s3.amazonaws.com/bdnyc/0451-3402.txt",
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/0451-3402.txt",
             "regime": "nir",
@@ -314,7 +314,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U10334.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U10334.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U10334.fits",
             "regime": "optical",
@@ -329,15 +329,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L0.6",
-            "spectral_type_code": 70.6,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Bard14"
-        },
-        {
             "spectral_type_string": "L0.5",
             "spectral_type_code": 70.5,
             "spectral_type_error": null,
@@ -345,6 +336,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz03"
+        },
+        {
+            "spectral_type_string": "L0.6",
+            "spectral_type_code": 70.6,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Bard14"
         }
     ]
 }

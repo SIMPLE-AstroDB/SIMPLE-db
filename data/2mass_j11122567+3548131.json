@@ -175,7 +175,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J11122567%2B3548131.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J11122567%2B3548131.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1112%2B3548_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -188,7 +188,7 @@
             "other_references": null
         },
         {
-            "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1117/type/native/viewcontent",
+            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1117/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/Gl417BC.txt",
             "regime": "nir",
@@ -201,7 +201,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SINFONI/Gl417B_SINFONIspeclib_JHK.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SINFONI/Gl417B_SINFONIspeclib_JHK.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SINFONI/Gl417B_SINFONIspeclib_JHK.fits",
             "regime": "nir",
@@ -216,15 +216,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L5: FLD-G",
-            "spectral_type_code": 75.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "L4.5",
             "spectral_type_code": 74.5,
             "spectral_type_error": null,
@@ -232,6 +223,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk00"
+        },
+        {
+            "spectral_type_string": "L5: FLD-G",
+            "spectral_type_code": 75.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

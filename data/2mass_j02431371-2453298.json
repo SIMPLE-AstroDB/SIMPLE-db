@@ -231,7 +231,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSIJ0243137-245329_20030917_BUR04B.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSIJ0243137-245329_20030917_BUR04B.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_2MASSIJ0243137-245329_20030917_BUR04B.txt",
             "regime": "nir",
@@ -244,7 +244,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J0243-24.csv",
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J0243-24.csv",
             "original_spectrum": null,
             "local_spectrum": null,
             "regime": "nir",
@@ -258,6 +258,15 @@
         }
     ],
     "SpectralTypes": [
+        {
+            "spectral_type_string": "T5.5",
+            "spectral_type_code": 85.5,
+            "spectral_type_error": null,
+            "regime": "optical",
+            "adopted": null,
+            "comments": null,
+            "reference": "Pine16"
+        },
         {
             "spectral_type_string": "T6",
             "spectral_type_code": 86.0,
@@ -275,15 +284,6 @@
             "adopted": false,
             "comments": null,
             "reference": "Manj19"
-        },
-        {
-            "spectral_type_string": "T5.5",
-            "spectral_type_code": 85.5,
-            "spectral_type_error": null,
-            "regime": "optical",
-            "adopted": null,
-            "comments": null,
-            "reference": "Pine16"
         }
     ]
 }

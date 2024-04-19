@@ -270,7 +270,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J12171110-0311131.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J12171110-0311131.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1217-0311_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -283,7 +283,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/2MASS1217-0311_SL.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/2MASS1217-0311_SL.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/2MASS1217-0311_SL.txt",
             "regime": "mir",
@@ -296,7 +296,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSIJ1217110-031113_20040311_BUR06D.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSIJ1217110-031113_20040311_BUR06D.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_2MASSIJ1217110-031113_20040311_BUR06D.txt",
             "regime": "nir",
@@ -311,15 +311,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "T7.5",
-            "spectral_type_code": 87.5,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Burg06.1067"
-        },
-        {
             "spectral_type_string": "T7",
             "spectral_type_code": 87.0,
             "spectral_type_error": null,
@@ -327,6 +318,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Burg03.510"
+        },
+        {
+            "spectral_type_string": "T7.5",
+            "spectral_type_code": 87.5,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Burg06.1067"
         }
     ]
 }

@@ -211,7 +211,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J21481633%2B4003594.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J21481633%2B4003594.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2148%2B4003_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -224,7 +224,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/j2148%2B40prismtc_davy1_09sep05.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/j2148%2B40prismtc_davy1_09sep05.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/j2148+40prismtc_davy1_09sep05.fits",
             "regime": "nir",
@@ -239,15 +239,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L6 FLD-G",
-            "spectral_type_code": 76.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Liu_13.20"
-        },
-        {
             "spectral_type_string": "L6",
             "spectral_type_code": 76.0,
             "spectral_type_error": null,
@@ -255,6 +246,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Loop08.528"
+        },
+        {
+            "spectral_type_string": "L6 FLD-G",
+            "spectral_type_code": 76.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Liu_13.20"
         }
     ]
 }

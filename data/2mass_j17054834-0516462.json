@@ -204,7 +204,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_denis1705-0516_040907.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_denis1705-0516_040907.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_denis1705-0516_040907.fits",
             "regime": "nir",
@@ -217,7 +217,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20699.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20699.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20699.fits",
             "regime": "optical",
@@ -232,15 +232,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L1: FLD-G",
-            "spectral_type_code": 71.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "L0.5",
             "spectral_type_code": 70.5,
             "spectral_type_error": null,
@@ -248,6 +239,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Reid08.1290"
+        },
+        {
+            "spectral_type_string": "L1: FLD-G",
+            "spectral_type_code": 71.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

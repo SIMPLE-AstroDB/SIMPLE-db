@@ -359,7 +359,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J08251968%2B2115521.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J08251968%2B2115521.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0825%2B2115_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -372,7 +372,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/0825%2B2115.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/0825%2B2115.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/0825+2115.txt",
             "regime": "mir",
@@ -385,7 +385,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/2MASS0825%2B2115_SL.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/2MASS0825%2B2115_SL.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/2MASS0825+2115_SL.txt",
             "regime": "mir",
@@ -398,7 +398,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/u10721_050323.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/u10721_050323.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/u10721_050323.fits",
             "regime": "nir",
@@ -411,7 +411,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/L7.5_2MASSJ0825%2B2115.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/L7.5_2MASSJ0825%2B2115.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/IRTF Library (Prism+LXD)/L7.5_2MASSJ0825+2115.fits",
             "regime": "nir",
@@ -424,7 +424,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J0825%2B21.csv",
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J0825%2B21.csv",
             "original_spectrum": null,
             "local_spectrum": null,
             "regime": "nir",
@@ -437,7 +437,7 @@
             "other_references": "Apai11.12550, Buen14"
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U10721_lris_141298.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U10721_lris_141298.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U10721_lris_141298.fits",
             "regime": "optical",
@@ -452,15 +452,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L7 pec",
-            "spectral_type_code": 77.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Knap04"
-        },
-        {
             "spectral_type_string": "L6",
             "spectral_type_code": 76.0,
             "spectral_type_error": null,
@@ -468,6 +459,15 @@
             "adopted": false,
             "comments": null,
             "reference": "Manj19"
+        },
+        {
+            "spectral_type_string": "L7 pec",
+            "spectral_type_code": 77.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Knap04"
         },
         {
             "spectral_type_string": "L7.5",
