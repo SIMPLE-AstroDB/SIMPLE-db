@@ -4,6 +4,7 @@ Schema for the SIMPLE database
 
 import enum
 import sqlalchemy as sa
+from sqlalchemy.orm import validates
 from sqlalchemy import (
     Boolean,
     Column,
@@ -16,7 +17,7 @@ from sqlalchemy import (
 )
 from astrodbkit2.astrodb import Base
 from astrodbkit2.views import view
-
+from astropy.io.votable.ucd import check_ucd
 
 # -------------------------------------------------------------------------------------------------------------------
 # Reference tables
@@ -87,6 +88,25 @@ class PhotometryFilters(Base):
     ucd = Column(String(100))
     effective_wavelength = Column(Float, nullable=False)
     width = Column(Float)
+
+    @validates("band")
+    def validate_band(self, key, value):
+        if "." not in value:
+            raise ValueError("Band name must be of the form instrument.filter")
+        return value
+
+    @validates("ucd")
+    def validate_ucd(self, key, value):
+        ucd_string = "phot;" + value
+        if check_ucd(ucd_string, check_controlled_vocabulary=True) is False:
+            raise ValueError(f"UCD {value} not in controlled vocabulary")
+        return value
+
+    @validates("effective_wavelength_angstroms")
+    def validate_wavelength(self, key, value):
+        if value is None or value < 0:
+            raise ValueError(f"Invalid effective wavelength received: {value}")
+        return value
 
 
 class Versions(Base):
