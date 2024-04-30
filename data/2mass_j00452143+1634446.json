@@ -256,7 +256,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U20037_2M0045%2B1634_adam.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U20037_2M0045%2B1634_adam.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U20037_2M0045+1634_adam.fits",
             "regime": "nir",
@@ -269,7 +269,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U20037.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U20037.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20037.fits",
             "regime": "optical",
@@ -284,15 +284,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L2: VL-G",
-            "spectral_type_code": 72.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "L2 beta",
             "spectral_type_code": 72.0,
             "spectral_type_error": null,
@@ -300,6 +291,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz09"
+        },
+        {
+            "spectral_type_string": "L2: VL-G",
+            "spectral_type_code": 72.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

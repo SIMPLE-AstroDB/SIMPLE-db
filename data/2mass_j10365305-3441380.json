@@ -214,7 +214,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J10365305-3441380.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J10365305-3441380.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1036-3441_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -227,7 +227,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/1036-3441.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/1036-3441.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/1036-3441.txt",
             "regime": "mir",
@@ -240,7 +240,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1036-3441.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1036-3441.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_1036-3441.txt",
             "regime": "nir",
@@ -255,15 +255,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L6.5",
-            "spectral_type_code": 76.5,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Burg10.1142"
-        },
-        {
             "spectral_type_string": "L6",
             "spectral_type_code": 76.0,
             "spectral_type_error": null,
@@ -271,6 +262,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Gizi02.484"
+        },
+        {
+            "spectral_type_string": "L6.5",
+            "spectral_type_code": 76.5,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Burg10.1142"
         }
     ]
 }

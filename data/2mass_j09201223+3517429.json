@@ -71,7 +71,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J09201223%2B3517429.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J09201223%2B3517429.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0920%2B3517_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -84,7 +84,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/0920%2B3517.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/0920%2B3517.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/0920+3517.txt",
             "regime": "mir",
@@ -97,7 +97,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/0920%2B3517%282%29.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/0920%2B3517%282%29.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/0920+3517(2).txt",
             "regime": "nir",
@@ -110,7 +110,7 @@
             "other_references": null
         },
         {
-            "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1114/type/native/viewcontent",
+            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1114/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/0920+3517(1).txt",
             "regime": "nir",
@@ -125,15 +125,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "T0 pec",
-            "spectral_type_code": 80.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Burg06.1067"
-        },
-        {
             "spectral_type_string": "L6.5",
             "spectral_type_code": 76.5,
             "spectral_type_error": null,
@@ -141,6 +132,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk00"
+        },
+        {
+            "spectral_type_string": "T0 pec",
+            "spectral_type_code": 80.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Burg06.1067"
         }
     ]
 }

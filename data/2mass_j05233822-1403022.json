@@ -241,7 +241,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J05233822-1403022.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J05233822-1403022.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0523-1403_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -254,7 +254,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/0523-1403.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/0523-1403.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/0523-1403.txt",
             "regime": "mir",
@@ -267,7 +267,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U10390.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U10390.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U10390.fits",
             "regime": "nir",
@@ -280,7 +280,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/RCspec/U10390.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/RCspec/U10390.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/RCspec/U10390.fits",
             "regime": "optical",
@@ -295,15 +295,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L5",
-            "spectral_type_code": 75.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Wils03"
-        },
-        {
             "spectral_type_string": "L2.5",
             "spectral_type_code": 72.5,
             "spectral_type_error": null,
@@ -311,6 +302,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz03"
+        },
+        {
+            "spectral_type_string": "L5",
+            "spectral_type_code": 75.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Wils03"
         }
     ]
 }

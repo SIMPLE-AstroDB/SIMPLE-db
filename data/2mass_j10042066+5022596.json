@@ -283,7 +283,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/G196-3B.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/G196-3B.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/G196-3B.txt",
             "regime": "mir",
@@ -296,7 +296,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/G196-3B_R400.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/G196-3B_R400.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/G196-3B_R400.fits",
             "regime": "nir",
@@ -309,7 +309,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/spex_prism_G196-3B_U40039.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/spex_prism_G196-3B_U40039.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_G196-3B_U40039.fits",
             "regime": "nir",
@@ -324,15 +324,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L3: VL-G",
-            "spectral_type_code": 73.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "L3 beta",
             "spectral_type_code": 73.0,
             "spectral_type_error": null,
@@ -340,6 +331,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz09"
+        },
+        {
+            "spectral_type_string": "L3: VL-G",
+            "spectral_type_code": 73.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

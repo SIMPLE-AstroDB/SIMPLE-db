@@ -244,7 +244,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/j2322-3133prismtc1.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/j2322-3133prismtc1.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/j2322-3133prismtc1.fits",
             "regime": "nir",
@@ -257,7 +257,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U20999.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U20999.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20999.fits",
             "regime": "optical",
@@ -272,15 +272,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L2: INT-G",
-            "spectral_type_code": 72.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "L0 beta",
             "spectral_type_code": 70.0,
             "spectral_type_error": null,
@@ -288,6 +279,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Fahe12"
+        },
+        {
+            "spectral_type_string": "L2: INT-G",
+            "spectral_type_code": 72.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

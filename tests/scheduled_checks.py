@@ -1,15 +1,15 @@
 import os
-import pytest
 import sys
+
+import pytest
 import requests
-from tqdm import tqdm
-from astrodbkit2.astrodb import create_database, Database
 from astrodb_utils.utils import internet_connection
+from astrodbkit2.astrodb import Database, create_database
+from tqdm import tqdm
 
 sys.path.append(".")
 from simple.schema import *
 from simple.schema import REFERENCE_TABLES
-
 
 DB_NAME = "temp.sqlite"
 DB_PATH = "data"
@@ -49,12 +49,12 @@ def db():
 
 
 def test_spectra_urls(db):
-    spectra_urls = db.query(db.Spectra.c.spectrum).astropy()
+    spectra_urls = db.query(db.Spectra.c.access_url).astropy()
     broken_urls = []
     codes = []
     internet, _ = internet_connection()
     if internet:
-        for spectrum_url in tqdm(spectra_urls["spectrum"]):
+        for spectrum_url in tqdm(spectra_urls["access_url"]):
             request_response = requests.head(spectrum_url)
             status_code = request_response.status_code
             # The website is up if the status code is 200
