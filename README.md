@@ -44,7 +44,7 @@ A conda environment file `environment.yml` exists for convenience. The following
    db = load_astrodb("SIMPLE.sqlite", recreatedb=True,  reference_tables=REFERENCE_TABLES)
     ```
 
-    This step generates a "SIMPLE.sqlite" file which can be opened, explored, and modified using the [DB Browser for SQLite](https://sqlitebrowser.org/).
+    This step generates a "SIMPLE.sqlite" file which can be opened, explored, and modified using a variety of tools.
 
 4. Use `astrodbkit2` to [explore](https://astrodbkit2.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit2.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit2.readthedocs.io/en/latest/#modifying-data) the database.
 For example:
@@ -63,7 +63,7 @@ For example:
 ## Contributor Instructions
 If you've made changes to the SIMPLE Archive that you would like to contribute to the public verion, here's how to make a contribution.
 
-1. If you've made changes using Python or the DB Browser, write out the new/modified JSON files:
+1. If you've made changes to the database contents, write out the new/modified JSON files:
     ```python
     db.save_database(directory="data/")
     ```
