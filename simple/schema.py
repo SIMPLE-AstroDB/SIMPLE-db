@@ -3,21 +3,22 @@ Schema for the SIMPLE database
 """
 
 import enum
+
 import sqlalchemy as sa
-from sqlalchemy.orm import validates
-from sqlalchemy import (
-    Boolean,
-    Column,
-    Float,
-    ForeignKey,
-    String,
-    Enum,
-    DateTime,
-    ForeignKeyConstraint,
-)
 from astrodbkit2.astrodb import Base
 from astrodbkit2.views import view
 from astropy.io.votable.ucd import check_ucd
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    ForeignKeyConstraint,
+    String,
+)
+from sqlalchemy.orm import validates
 
 # -------------------------------------------------------------------------------------------------------------------
 # Reference tables
@@ -43,6 +44,12 @@ class Publications(Base):
     bibcode = Column(String(100))
     doi = Column(String(100))
     description = Column(String(1000))
+
+    @validates("reference")
+    def validate_reference(self, key, value):
+        if value is None or len(value) > 30:
+            raise ValueError(f"Provided reference is invalid; too long or None: {value}")
+        return value
 
 
 class Telescopes(Base):
@@ -102,7 +109,7 @@ class PhotometryFilters(Base):
             raise ValueError(f"UCD {value} not in controlled vocabulary")
         return value
 
-    @validates("effective_wavelength_angstroms")
+    @validates("effective_wavelength")
     def validate_wavelength(self, key, value):
         if value is None or value < 0:
             raise ValueError(f"Invalid effective wavelength received: {value}")
@@ -168,6 +175,18 @@ class Sources(Base):
     )
     other_references = Column(String(100))
     comments = Column(String(1000))
+
+    @validates("ra")
+    def validate_ra(self, key, value):
+        if value > 360 or value < 0:
+            raise ValueError("RA not in allowed range (0..360)")
+        return value
+
+    @validates("dec")
+    def validate_dec(self, key, value):
+        if value > 90 or value < -90:
+            raise ValueError("Dec not in allowed range (-90..90)")
+        return value
 
 
 class Names(Base):
