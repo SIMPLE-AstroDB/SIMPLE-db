@@ -89,10 +89,10 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/LP261B.csv",
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/LP261B.csv",
             "original_spectrum": null,
             "local_spectrum": null,
-            "regime": "em.IR.NIR",
+            "regime": "nir",
             "telescope": "HST",
             "instrument": "WFC3",
             "mode": "G141 grism",
@@ -113,15 +113,6 @@
             "reference": "Manj19"
         },
         {
-            "spectral_type_string": "L6: FLD-G",
-            "spectral_type_code": 76.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Liu_16"
-        },
-        {
             "spectral_type_string": "L6",
             "spectral_type_code": 76.0,
             "spectral_type_error": null,
@@ -129,6 +120,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk00"
+        },
+        {
+            "spectral_type_string": "L6: FLD-G",
+            "spectral_type_code": 76.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Liu_16"
         }
     ]
 }

@@ -154,10 +154,10 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/2M0453_total.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M0453_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
-            "regime": "em.IR.NIR",
+            "regime": "nir",
             "telescope": "ESO VLT",
             "instrument": "XShooter",
             "mode": "Echelle",
@@ -167,20 +167,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/2M0453_total.fits",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.opt",
-            "telescope": "ESO VLT",
-            "instrument": "XShooter",
-            "mode": "Echelle",
-            "observation_date": "2009-12-21T00:00:00",
-            "comments": null,
-            "reference": "Manj16",
-            "other_references": null
-        },
-        {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U10339.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U10339.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U10339.fits",
             "regime": "optical",
@@ -191,6 +178,19 @@
             "comments": null,
             "reference": "Cruz03",
             "other_references": null
+        },
+        {
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M0453_total.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "optical",
+            "telescope": "ESO VLT",
+            "instrument": "XShooter",
+            "mode": "Echelle",
+            "observation_date": "2009-12-21T00:00:00",
+            "comments": null,
+            "reference": "Manj16",
+            "other_references": null
         }
     ],
     "SpectralTypes": [
@@ -198,7 +198,7 @@
             "spectral_type_string": "L2.5 INT-G",
             "spectral_type_code": 72.5,
             "spectral_type_error": null,
-            "regime": "nir_UCD",
+            "regime": "nir",
             "adopted": null,
             "comments": null,
             "reference": "Gagn15.33"

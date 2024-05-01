@@ -250,7 +250,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/1102-3430%20(5-35um).txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/1102-3430%20(5-35um).txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/1102-3430 (5-35um).txt",
             "regime": "mir",
@@ -263,7 +263,7 @@
             "other_references": null
         },
         {
-            "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1122/type/native/viewcontent",
+            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1122/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U40002_1102-3430_katelyn.fits",
             "regime": "nir",
@@ -278,15 +278,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M9: VL-G",
-            "spectral_type_code": 69.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "M8.5 gamma",
             "spectral_type_code": 68.5,
             "spectral_type_error": null,
@@ -294,6 +285,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Fahe12"
+        },
+        {
+            "spectral_type_string": "M9: VL-G",
+            "spectral_type_code": 69.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

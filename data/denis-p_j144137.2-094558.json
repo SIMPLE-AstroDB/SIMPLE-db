@@ -180,7 +180,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/1441-0945.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/1441-0945.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/1441-0945.txt",
             "regime": "mir",
@@ -193,7 +193,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J14413716\u22120945590.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J14413716\u22120945590.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1441-0945_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -206,7 +206,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1441-0945_080714.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1441-0945_080714.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_1441-0945_080714.fits",
             "regime": "nir",
@@ -221,15 +221,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L1: FLD-G",
-            "spectral_type_code": 71.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Liu_16"
-        },
-        {
             "spectral_type_string": "L0.5",
             "spectral_type_code": 70.5,
             "spectral_type_error": null,
@@ -237,6 +228,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk08"
+        },
+        {
+            "spectral_type_string": "L1: FLD-G",
+            "spectral_type_code": 71.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Liu_16"
         }
     ]
 }

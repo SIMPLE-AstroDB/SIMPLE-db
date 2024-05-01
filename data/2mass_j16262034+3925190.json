@@ -241,7 +241,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/1626%2B3925%20%281%29.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/1626%2B3925%20%281%29.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/1626+3925 (1).txt",
             "regime": "mir",
@@ -254,7 +254,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/1626%2B3925%20%282%29.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/1626%2B3925%20%282%29.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/1626+3925 (2).txt",
             "regime": "mir",
@@ -267,7 +267,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J16262034%2B3925190.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J16262034%2B3925190.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1626%2B3925_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -280,7 +280,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSJ16262034%2B3925190_20040723_BUR04A.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSJ16262034%2B3925190_20040723_BUR04A.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_2MASSJ16262034+3925190_20040723_BUR04A.txt",
             "regime": "nir",
@@ -295,15 +295,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "sdL",
-            "spectral_type_code": 70.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Burg04.73"
-        },
-        {
             "spectral_type_string": "esdL4",
             "spectral_type_code": 74.0,
             "spectral_type_error": null,
@@ -311,6 +302,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Zhan13"
+        },
+        {
+            "spectral_type_string": "sdL",
+            "spectral_type_code": 70.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Burg04.73"
         }
     ]
 }

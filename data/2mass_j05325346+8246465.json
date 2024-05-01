@@ -126,7 +126,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J05325346%2B8246465.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J05325346%2B8246465.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0532%2B8246_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -141,15 +141,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "sdL7",
-            "spectral_type_code": 77.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Burg07.494"
-        },
-        {
             "spectral_type_string": "esdL7",
             "spectral_type_code": 77.0,
             "spectral_type_error": null,
@@ -157,6 +148,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Zhan13"
+        },
+        {
+            "spectral_type_string": "sdL7",
+            "spectral_type_code": 77.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Burg07.494"
         }
     ]
 }

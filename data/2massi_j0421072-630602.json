@@ -95,10 +95,10 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J0421-63.csv",
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J0421-63.csv",
             "original_spectrum": null,
             "local_spectrum": null,
-            "regime": "em.IR.NIR",
+            "regime": "nir",
             "telescope": "HST",
             "instrument": "WFC3",
             "mode": "G141 grism",
@@ -108,7 +108,7 @@
             "other_references": "Apai11.12550, Buen14"
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U10268.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U10268.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U10268.fits",
             "regime": "optical",
@@ -123,6 +123,15 @@
     ],
     "SpectralTypes": [
         {
+            "spectral_type_string": "L4.2 INT-G",
+            "spectral_type_code": 74.2,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Fahe16"
+        },
+        {
             "spectral_type_string": "L5",
             "spectral_type_code": 75.0,
             "spectral_type_error": null,
@@ -130,15 +139,6 @@
             "adopted": false,
             "comments": null,
             "reference": "Manj19"
-        },
-        {
-            "spectral_type_string": "L4.2 INT-G",
-            "spectral_type_code": 74.2,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Fahe16"
         },
         {
             "spectral_type_string": "L5 beta",

@@ -202,7 +202,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/0857%2B5708.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/0857%2B5708.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/0857+5708.txt",
             "regime": "mir",
@@ -215,7 +215,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J08575849%2B5708514.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J08575849%2B5708514.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0857%2B5708_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -228,7 +228,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0857%2B5708_080108.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0857%2B5708_080108.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0857+5708_080108.fits",
             "regime": "nir",
@@ -241,7 +241,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20320_sdss0857%2B5708_tell_davy.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20320_sdss0857%2B5708_tell_davy.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20320_sdss0857+5708_tell_davy.fits",
             "regime": "optical",
@@ -256,15 +256,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L8:",
-            "spectral_type_code": 78.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Geba02"
-        },
-        {
             "spectral_type_string": "L8",
             "spectral_type_code": 78.0,
             "spectral_type_error": null,
@@ -272,6 +263,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk08"
+        },
+        {
+            "spectral_type_string": "L8:",
+            "spectral_type_code": 78.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Geba02"
         }
     ]
 }

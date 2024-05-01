@@ -178,20 +178,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J1821%2B14.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2013-06-09T00:00:00",
-            "comments": "Multiple observation dates.",
-            "reference": "Manj19",
-            "other_references": "Apai12.13176, Yang15"
-        },
-        {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J18212815%2B1414010.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J18212815%2B1414010.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1821%2B1414_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -204,7 +191,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/j1821%2B14prismtcadam.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/j1821%2B14prismtcadam.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/j1821+14prismtcadam.fits",
             "regime": "nir",
@@ -215,9 +202,31 @@
             "comments": null,
             "reference": "Loop08.528",
             "other_references": null
+        },
+        {
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J1821%2B14.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2013-06-09T00:00:00",
+            "comments": "Multiple observation dates.",
+            "reference": "Manj19",
+            "other_references": "Apai12.13176, Yang15"
         }
     ],
     "SpectralTypes": [
+        {
+            "spectral_type_string": "L4.5 pec",
+            "spectral_type_code": 74.5,
+            "spectral_type_error": null,
+            "regime": "optical",
+            "adopted": null,
+            "comments": null,
+            "reference": "Loop08.528"
+        },
         {
             "spectral_type_string": "L5.5",
             "spectral_type_code": 75.5,
@@ -231,19 +240,10 @@
             "spectral_type_string": "L5: FLD-G",
             "spectral_type_code": 75.0,
             "spectral_type_error": null,
-            "regime": "nir_UCD",
+            "regime": "nir",
             "adopted": null,
             "comments": null,
             "reference": "Liu_16"
-        },
-        {
-            "spectral_type_string": "L4.5 pec",
-            "spectral_type_code": 74.5,
-            "spectral_type_error": null,
-            "regime": "optical",
-            "adopted": null,
-            "comments": null,
-            "reference": "Loop08.528"
         }
     ]
 }

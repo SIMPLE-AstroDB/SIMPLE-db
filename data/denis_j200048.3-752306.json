@@ -241,7 +241,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/Y2000-7523_F-JULY28.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/Y2000-7523_F-JULY28.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/FIRE/Y2000-7523_F-JULY28.txt",
             "regime": "nir",
@@ -254,7 +254,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U20845.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U20845.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20845.fits",
             "regime": "optical",
@@ -269,15 +269,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M9.2 VL-G",
-            "spectral_type_code": 69.2,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Gagn15.33"
-        },
-        {
             "spectral_type_string": "M9 gamma",
             "spectral_type_code": 69.0,
             "spectral_type_error": null,
@@ -285,6 +276,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Fahe16"
+        },
+        {
+            "spectral_type_string": "M9.2 VL-G",
+            "spectral_type_code": 69.2,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Gagn15.33"
         }
     ]
 }

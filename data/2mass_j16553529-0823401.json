@@ -361,7 +361,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1118/type/native/viewcontent",
+            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1118/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/IRTF Library (Prism+LXD)/M7V_Gl644C.fits",
             "regime": "nir",
@@ -374,7 +374,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/vB8.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/vB8.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/vB8.txt",
             "regime": "nir",
@@ -387,7 +387,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/VB8.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/VB8.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/VB8.fits",
             "regime": "optical",
@@ -402,15 +402,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M7.0",
-            "spectral_type_code": 67.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Bard14"
-        },
-        {
             "spectral_type_string": "M7",
             "spectral_type_code": 67.0,
             "spectral_type_error": null,
@@ -418,6 +409,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Henr90"
+        },
+        {
+            "spectral_type_string": "M7.0",
+            "spectral_type_code": 67.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Bard14"
         }
     ]
 }

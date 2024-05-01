@@ -11,14 +11,16 @@ Columns marked with an asterisk (*) may not be empty.
 | *spectrum         | URL of spectrum location |   | String(1000) | primary |
 | original_spectrum | URL of original spectrum location, if applicable |   | String(1000) |  |
 | local_spectrum    | Local path of spectrum   |   | String(1000) |  |
-| *regime           | Regime of the spectrum, eg Optical, Infrared, etc |  | Enumeration  | primary |
-| *telescope        | Name of telescope |  | String(30)   | foreign: Telescopes.name |
-| *instrument       | Name of instrument |  | String(30)   | foreign: Instruments.name |
-| *mode             | Mode of spectrum  |  | String(30)   | foreign: Modes.name |
+| *regime           | Regime of the spectrum, eg Optical, Infrared, etc |  |  | foreign: Regimes.regime |
+| *telescope        | Name of telescope |  | String(30)   | foreign: Telescopes.telescope |
+| *instrument       | Name of instrument |  | String(30)   | foreign: Instruments.instrument |
+| *mode             | Mode of spectrum  |  | String(30)   | foreign: Instruments.mode |
 | *observation_date | Observation date  |  | DateTime     | primary |
 | comments          | Free form comments |   | String(1000) |   |
-| *reference        | Primary Reference |   | String(30)   | primary and foreign: Publications.name |
+| *reference        | Primary Reference |   | String(30)   | primary and foreign: Publications.reference |
 | other_references  | Other References |   | String(100)  |   |
+
+Relevant functions: `spectra.ingest_spectrum`, `spectra.spectrum_plottable`, `spectra.find_spectra`
 
 If the spectrum provided has been modified from the author-provided one, 
 a link to the original spectrum can be provided in the `original_spectrum` column.
@@ -27,20 +29,6 @@ The local_spectrum is meant to store the path to a local copy of the spectrum wi
 environment variable to define part of the path (so it can be shared among other users). 
 For example: `$ASTRODB_SPECTRA/infrared/filename.fits`
 
-Enumerations for regime should be [UCDs](https://www.ivoa.net/documents/UCD1+/20210616/EN-UCDlist-1.4-20210616.html#tth_sEc2). 
-They currently  include:
- - em.UV
- - em.opt
- - optical (*deprecated, do not use*)
- - em.IR.NIR
- - nir (*deprecated, do not use*)
- - em.IR
- - em.IR.MIR 
- - mir (*deprecated, do not use*)
- - em.mm
- - em.radio 
- - unknown
- 
 # Notes
  - An accurate observation date is required for a spectrum to be ingested.
  - Data based on data from multiple observation dates has 'Multiple observation dates' 

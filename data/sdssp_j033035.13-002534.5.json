@@ -150,7 +150,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U50456_0330-0025.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/U50456_0330-0025.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U50456_0330-0025.fits",
             "regime": "nir",
@@ -165,15 +165,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L6.5",
-            "spectral_type_code": 76.5,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Bard14"
-        },
-        {
             "spectral_type_string": "L4",
             "spectral_type_code": 74.0,
             "spectral_type_error": null,
@@ -181,6 +172,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Hawl02"
+        },
+        {
+            "spectral_type_string": "L6.5",
+            "spectral_type_code": 76.5,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Bard14"
         }
     ]
 }

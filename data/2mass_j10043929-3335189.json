@@ -138,10 +138,10 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/2M1004_total.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M1004_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
-            "regime": "em.IR.NIR",
+            "regime": "nir",
             "telescope": "ESO VLT",
             "instrument": "XShooter",
             "mode": "Echelle",
@@ -151,10 +151,10 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/2M1004_total.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M1004_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
-            "regime": "em.opt",
+            "regime": "optical",
             "telescope": "ESO VLT",
             "instrument": "XShooter",
             "mode": "Echelle",
@@ -166,15 +166,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L5:",
-            "spectral_type_code": 75.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Maro13"
-        },
-        {
             "spectral_type_string": "L4",
             "spectral_type_code": 74.0,
             "spectral_type_error": null,
@@ -182,6 +173,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Gizi02.484"
+        },
+        {
+            "spectral_type_string": "L5:",
+            "spectral_type_code": 75.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Maro13"
         }
     ]
 }

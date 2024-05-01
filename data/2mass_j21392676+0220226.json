@@ -189,20 +189,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J2139%2B02.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2010-10-21T00:00:00",
-            "comments": null,
-            "reference": "Manj19",
-            "other_references": "Apai10.12341, Apai13"
-        },
-        {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J21392676%2B0220226.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J21392676%2B0220226.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2139%2B0220_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -215,7 +202,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/20912_etador21_merge.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/20912_etador21_merge.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/20912_etador21_merge.fits",
             "regime": "mir",
@@ -228,7 +215,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U20912.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U20912.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U20912.fits",
             "regime": "nir",
@@ -241,7 +228,20 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20912.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J2139%2B02.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2010-10-21T00:00:00",
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai10.12341, Apai13"
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20912.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20912.fits",
             "regime": "optical",
@@ -260,18 +260,18 @@
             "spectral_type_code": 81.5,
             "spectral_type_error": null,
             "regime": "nir",
-            "adopted": false,
+            "adopted": null,
             "comments": null,
-            "reference": "Manj19"
+            "reference": "Burg06.1067"
         },
         {
             "spectral_type_string": "T1.5",
             "spectral_type_code": 81.5,
             "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
+            "regime": "nir",
+            "adopted": false,
             "comments": null,
-            "reference": "Burg06.1067"
+            "reference": "Manj19"
         },
         {
             "spectral_type_string": "T2",

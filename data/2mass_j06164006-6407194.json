@@ -59,7 +59,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/Uncategorized/2M0616-64_1.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/Uncategorized/2M0616-64_1.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/Uncategorized/2M0616-64_1.fits",
             "regime": "optical",
@@ -74,15 +74,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "sdL5",
-            "spectral_type_code": 75.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Cush09"
-        },
-        {
             "spectral_type_string": "esdL6",
             "spectral_type_code": 76.0,
             "spectral_type_error": null,
@@ -90,6 +81,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Zhan13"
+        },
+        {
+            "spectral_type_string": "sdL5",
+            "spectral_type_code": 75.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Cush09"
         }
     ]
 }

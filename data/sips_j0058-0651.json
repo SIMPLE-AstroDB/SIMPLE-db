@@ -214,7 +214,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/SpeX/Prism/SIPS+J0058-0651_2008-07-14.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/SpeX/Prism/SIPS+J0058-0651_2008-07-14.fits",
             "original_spectrum": "https://s3.amazonaws.com/bdnyc/0058-0651.txt",
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/0058-0651.txt",
             "regime": "nir",
@@ -229,15 +229,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L0.6 INT-G",
-            "spectral_type_code": 70.6,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Gagn15.33"
-        },
-        {
             "spectral_type_string": "L0",
             "spectral_type_code": 70.0,
             "spectral_type_error": null,
@@ -245,6 +236,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk00"
+        },
+        {
+            "spectral_type_string": "L0.6 INT-G",
+            "spectral_type_code": 70.6,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Gagn15.33"
         }
     ]
 }

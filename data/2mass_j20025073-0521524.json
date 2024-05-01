@@ -196,7 +196,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_2002-0521_080908.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_2002-0521_080908.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_2002-0521_080908.fits",
             "regime": "nir",
@@ -209,7 +209,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U11946.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U11946.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U11946.fits",
             "regime": "optical",
@@ -222,7 +222,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/2MASS2002-0521_tell.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/2MASS2002-0521_tell.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/2MASS2002-0521_tell.fits",
             "regime": "optical",
@@ -237,15 +237,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L7",
-            "spectral_type_code": 77.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Maro13"
-        },
-        {
             "spectral_type_string": "L5 beta",
             "spectral_type_code": 75.0,
             "spectral_type_error": null,
@@ -253,6 +244,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Fahe16"
+        },
+        {
+            "spectral_type_string": "L7",
+            "spectral_type_code": 77.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Maro13"
         }
     ]
 }

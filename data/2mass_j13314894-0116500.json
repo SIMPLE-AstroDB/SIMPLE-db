@@ -143,7 +143,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/1331-0116.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/1331-0116.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/1331-0116.txt",
             "regime": "mir",
@@ -156,7 +156,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J13314894-0116500.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J13314894-0116500.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1331-0116_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -169,7 +169,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U50174_1331-0116_BUR10A.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/U50174_1331-0116_BUR10A.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U50174_1331-0116_BUR10A.fits",
             "regime": "nir",
@@ -182,7 +182,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U50174_1331-0116_Hawley02.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U50174_1331-0116_Hawley02.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U50174_1331-0116_Hawley02.fits",
             "regime": "optical",
@@ -197,15 +197,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L6:",
-            "spectral_type_code": 76.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Maro15"
-        },
-        {
             "spectral_type_string": "L6",
             "spectral_type_code": 76.0,
             "spectral_type_error": null,
@@ -213,6 +204,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Hawl02"
+        },
+        {
+            "spectral_type_string": "L6:",
+            "spectral_type_code": 76.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Maro15"
         }
     ]
 }

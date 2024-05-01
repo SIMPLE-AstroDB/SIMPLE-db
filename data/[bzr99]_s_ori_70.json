@@ -44,10 +44,10 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/SOri70.csv",
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/SOri70.csv",
             "original_spectrum": null,
             "local_spectrum": null,
-            "regime": "em.IR.NIR",
+            "regime": "nir",
             "telescope": "HST",
             "instrument": "WFC3",
             "mode": "G141 grism",
@@ -59,6 +59,15 @@
     ],
     "SpectralTypes": [
         {
+            "spectral_type_string": "T7",
+            "spectral_type_code": 87.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Pena15"
+        },
+        {
             "spectral_type_string": "T7.5",
             "spectral_type_code": 87.5,
             "spectral_type_error": null,
@@ -66,15 +75,6 @@
             "adopted": false,
             "comments": null,
             "reference": "Manj19"
-        },
-        {
-            "spectral_type_string": "T7",
-            "spectral_type_code": 87.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Pena15"
         }
     ]
 }

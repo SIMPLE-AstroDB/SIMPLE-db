@@ -138,7 +138,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/SDSS+J080531.84%2B481233.0.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/SDSS+J080531.84%2B481233.0.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0805%2B4812_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -153,15 +153,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L9:",
-            "spectral_type_code": 79.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Knap04"
-        },
-        {
             "spectral_type_string": "L4",
             "spectral_type_code": 74.0,
             "spectral_type_error": null,
@@ -169,6 +160,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Hawl02"
+        },
+        {
+            "spectral_type_string": "L9:",
+            "spectral_type_code": 79.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Knap04"
         }
     ]
 }

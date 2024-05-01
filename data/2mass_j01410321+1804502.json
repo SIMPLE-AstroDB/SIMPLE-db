@@ -210,7 +210,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U10085_0141%2B1804.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U10085_0141%2B1804.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U10085_0141+1804.fits",
             "regime": "nir",
@@ -223,7 +223,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0141%2B1804_080907.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0141%2B1804_080907.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0141+1804_080907.fits",
             "regime": "nir",
@@ -236,7 +236,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/RCspec/U10085_0141%2B1804.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/RCspec/U10085_0141%2B1804.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/RCspec/U10085_0141+1804.fits",
             "regime": "optical",
@@ -251,15 +251,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L4.5",
-            "spectral_type_code": 74.5,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Wils03"
-        },
-        {
             "spectral_type_string": "L1",
             "spectral_type_code": 71.0,
             "spectral_type_error": null,
@@ -267,6 +258,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz07"
+        },
+        {
+            "spectral_type_string": "L4.5",
+            "spectral_type_code": 74.5,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Wils03"
         }
     ]
 }

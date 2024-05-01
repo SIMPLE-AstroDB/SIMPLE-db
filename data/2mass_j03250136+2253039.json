@@ -110,7 +110,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U13119.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U13119.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U13119.fits",
             "regime": "nir",
@@ -123,7 +123,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U13119_0325%2B2253.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/U13119_0325%2B2253.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U13119_0325+2253.fits",
             "regime": "nir",
@@ -136,7 +136,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U13119.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U13119.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U13119.fits",
             "regime": "optical",
@@ -151,15 +151,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L3.3",
-            "spectral_type_code": 73.3,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Bard14"
-        },
-        {
             "spectral_type_string": "L3",
             "spectral_type_code": 73.0,
             "spectral_type_error": null,
@@ -167,6 +158,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz07"
+        },
+        {
+            "spectral_type_string": "L3.3",
+            "spectral_type_code": 73.3,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Bard14"
         }
     ]
 }

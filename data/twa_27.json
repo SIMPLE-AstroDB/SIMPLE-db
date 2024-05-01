@@ -181,7 +181,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/1207-3932.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/1207-3932.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/1207-3932.txt",
             "regime": "mir",
@@ -194,7 +194,7 @@
             "other_references": null
         },
         {
-            "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1095/type/native/viewcontent",
+            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1095/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/SXD/2M1207_sxd.fits",
             "regime": "nir",
@@ -207,7 +207,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/SXD/2MASS_J12073346-3932539_spex_sxd.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/SXD/2MASS_J12073346-3932539_spex_sxd.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/SXD/2MASS_J12073346-3932539_spex_sxd.fits",
             "regime": "nir",
@@ -222,15 +222,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M8: VL-G",
-            "spectral_type_code": 68.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "M8 gamma",
             "spectral_type_code": 68.0,
             "spectral_type_error": null,
@@ -238,6 +229,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Fahe16"
+        },
+        {
+            "spectral_type_string": "M8: VL-G",
+            "spectral_type_code": 68.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

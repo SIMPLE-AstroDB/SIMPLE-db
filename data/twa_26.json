@@ -265,7 +265,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/1139-3159+%285-35um%29.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/1139-3159+%285-35um%29.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/1139-3159 (5-35um).txt",
             "regime": "mir",
@@ -278,7 +278,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/2MASS_J11395113-3159214_spex_prz.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/2MASS_J11395113-3159214_spex_prz.txt",
             "original_spectrum": null,
             "local_spectrum": null,
             "regime": "nir",
@@ -291,7 +291,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U20419.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U20419.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20419.fits",
             "regime": "optical",
@@ -306,15 +306,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M9: VL-G",
-            "spectral_type_code": 69.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "M9 gamma",
             "spectral_type_code": 69.0,
             "spectral_type_error": null,
@@ -322,6 +313,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Fahe12"
+        },
+        {
+            "spectral_type_string": "M9: VL-G",
+            "spectral_type_code": 69.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

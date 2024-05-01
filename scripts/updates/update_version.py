@@ -1,28 +1,25 @@
 # Script to show how to update the version number
 
-import logging
-from scripts.ingests.utils import logger, load_simpledb
+from astrodb_utils import load_astrodb
+
+from simple.schema import REFERENCE_TABLES, Versions
 
 SAVE_DB = True  # save the data files in addition to modifying the .db file
-RECREATE_DB = True  # recreates the .db file from the data files
 
-logger.setLevel(logging.INFO)
-
-db = load_simpledb('SIMPLE.db', recreatedb=RECREATE_DB)
+db = load_astrodb("SIMPLE.sqlite", recreatedb=True, reference_tables=REFERENCE_TABLES)
 
 # Check all versions
 print(db.query(db.Versions).table())
 
 # Add new version, add new entries as appropriate
 # Note that start_date and end_date are strings of the date in format YYYY-MM-DD
-data = [{'version': '2023.2',
-         'start_date': '2023-07-11',
-         'end_date': '2023-07-25',
-         'description': 'Added JWST spectra for VHS 1256b'}]
-with db.engine.connect() as conn:
-    conn.execute(db.Versions.insert().values(data))
-    conn.commit()
-
+obj = Versions(version="2024.4", 
+               start_date="2024-04-17", 
+               end_date="2024-04-19", 
+               description="Renaming Spectra.spectrum to Spectra.access_url")
+with db.session as session:
+    session.add(obj)
+    session.commit()
 
 # Fetch data of latest release
 latest_date = db.query(db.Versions.c.end_date).order_by(db.Versions.c.end_date.desc()).limit(1).table()
@@ -35,10 +32,12 @@ if latest == 1:
         conn.commit()
 
 # Add latest
-data = [{'version': 'latest', 'start_date': latest_date, 'description': 'Version in development'}]
-with db.engine.connect() as conn:
-    conn.execute(db.Versions.insert().values(data))
-    conn.commit()
+obj = Versions(version="latest", 
+               start_date=latest_date, 
+               description="Version in development")
+with db.session as session:
+    session.add(obj)
+    session.commit()
 
 print(db.query(db.Versions).table())
 

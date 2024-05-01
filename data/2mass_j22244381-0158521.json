@@ -305,20 +305,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J2224-01.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2015-09-09T00:00:00",
-            "comments": null,
-            "reference": "Manj19",
-            "other_references": "Apai15.14241, Yang15"
-        },
-        {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J22244381-0158521.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J22244381-0158521.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2224-0158_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -331,7 +318,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/2MASS2224-0158_SL.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/2MASS2224-0158_SL.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/2MASS2224-0158_SL.txt",
             "regime": "mir",
@@ -344,7 +331,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U12128_2224-0158.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U12128_2224-0158.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U12128_2224-0158.fits",
             "regime": "nir",
@@ -357,7 +344,20 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U12128_lris.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J2224-01.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2015-09-09T00:00:00",
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai15.14241, Yang15"
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/U12128_lris.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U12128_lris.fits",
             "regime": "optical",
@@ -372,6 +372,15 @@
     ],
     "SpectralTypes": [
         {
+            "spectral_type_string": "L3: FLD-G",
+            "spectral_type_code": 73.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Liu_16"
+        },
+        {
             "spectral_type_string": "L4.5",
             "spectral_type_code": 74.5,
             "spectral_type_error": null,
@@ -379,15 +388,6 @@
             "adopted": false,
             "comments": null,
             "reference": "Manj19"
-        },
-        {
-            "spectral_type_string": "L3: FLD-G",
-            "spectral_type_code": 73.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Liu_16"
         },
         {
             "spectral_type_string": "L4.5",
