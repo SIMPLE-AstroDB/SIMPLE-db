@@ -104,7 +104,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J07464256%2B2000321.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J07464256%2B2000321.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0746%2B2000_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -117,7 +117,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/0746%2B2000.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/0746%2B2000.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/0746+2000.txt",
             "regime": "mir",
@@ -130,7 +130,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/IRS_DimSuns_S12/2MASS0746%2B2000AB_SL.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/IRS_DimSuns_S12/2MASS0746%2B2000AB_SL.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/2MASS0746+2000AB_SL.txt",
             "regime": "mir",
@@ -143,7 +143,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0746%2B2000_U10668.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0746%2B2000_U10668.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0746+2000_U10668.fits",
             "regime": "nir",
@@ -156,7 +156,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/L0.5_2MASSJ0746%2B2000AB.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/L0.5_2MASSJ0746%2B2000AB.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/IRTF Library (Prism+LXD)/L0.5_2MASSJ0746+2000AB.fits",
             "regime": "nir",
@@ -169,7 +169,7 @@
             "other_references": null
         },
         {
-            "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1129/type/native/viewcontent",
+            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1129/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/2M0746.fits",
             "regime": "optical",
@@ -184,15 +184,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L1",
-            "spectral_type_code": 71.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Knap04"
-        },
-        {
             "spectral_type_string": "L0.5",
             "spectral_type_code": 70.5,
             "spectral_type_error": null,
@@ -200,6 +191,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk00"
+        },
+        {
+            "spectral_type_string": "L1",
+            "spectral_type_code": 71.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Knap04"
         }
     ]
 }

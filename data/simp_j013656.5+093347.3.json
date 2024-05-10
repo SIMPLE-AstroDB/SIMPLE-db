@@ -176,7 +176,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/SIMP+J013656.5%2B093347.3.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/SIMP+J013656.5%2B093347.3.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0136%2B0933_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -189,7 +189,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/IPMS0136_total.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/IPMS0136_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
             "regime": "nir",
@@ -202,7 +202,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/SIMP0136.csv",
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/SIMP0136.csv",
             "original_spectrum": null,
             "local_spectrum": null,
             "regime": "nir",
@@ -215,7 +215,7 @@
             "other_references": "Apai12.13176, Apai13"
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/IPMS0136_total.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/IPMS0136_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
             "regime": "optical",
@@ -229,6 +229,15 @@
         }
     ],
     "SpectralTypes": [
+        {
+            "spectral_type_string": "T2",
+            "spectral_type_code": 82.0,
+            "spectral_type_error": null,
+            "regime": "optical",
+            "adopted": null,
+            "comments": null,
+            "reference": "Pine16"
+        },
         {
             "spectral_type_string": "T2.5",
             "spectral_type_code": 82.5,
@@ -246,15 +255,6 @@
             "adopted": false,
             "comments": null,
             "reference": "Manj19"
-        },
-        {
-            "spectral_type_string": "T2",
-            "spectral_type_code": 82.0,
-            "spectral_type_error": null,
-            "regime": "optical",
-            "adopted": null,
-            "comments": null,
-            "reference": "Pine16"
         }
     ]
 }

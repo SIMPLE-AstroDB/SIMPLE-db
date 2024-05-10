@@ -1,16 +1,13 @@
 import pytest
-import sys
 from astropy.table import Table
-from astrodb_scripts.utils import (
+from astrodb_utils.utils import (
     AstroDBError,
 )
-sys.path.append("./")
 from simple.utils.spectral_types import (
     convert_spt_string_to_code,
     ingest_spectral_types,
 )
 from simple.utils.companions import ingest_companion_relationships
-from simple.utils.astrometry import ingest_parallaxes, ingest_proper_motions
 
 
 # Create fake astropy Table of data to load
@@ -67,56 +64,6 @@ def test_convert_spt_string_to_code():
     assert convert_spt_string_to_code(["Y2pec"]) == [92]
 
 
-def test_ingest_parallaxes(temp_db, t_plx):
-    # Test ingest of parallax data
-    ingest_parallaxes(
-        temp_db, t_plx["source"], t_plx["plx"], t_plx["plx_err"], t_plx["plx_ref"]
-    )
-
-    results = (
-        temp_db.query(temp_db.Parallaxes)
-        .filter(temp_db.Parallaxes.c.reference == "Ref 1")
-        .table()
-    )
-    assert len(results) == 2
-    results = (
-        temp_db.query(temp_db.Parallaxes)
-        .filter(temp_db.Parallaxes.c.reference == "Ref 2")
-        .table()
-    )
-    assert len(results) == 1
-    assert results["source"][0] == "Fake 3"
-    assert results["parallax"][0] == 155
-    assert results["parallax_error"][0] == 0.6
-
-
-def test_ingest_proper_motions(temp_db, t_pm):
-    ingest_proper_motions(
-        temp_db,
-        t_pm["source"],
-        t_pm["mu_ra"],
-        t_pm["mu_ra_err"],
-        t_pm["mu_dec"],
-        t_pm["mu_dec_err"],
-        t_pm["reference"],
-    )
-    assert (
-        temp_db.query(temp_db.ProperMotions)
-        .filter(temp_db.ProperMotions.c.reference == "Ref 1")
-        .count()
-        == 2
-    )
-    results = (
-        temp_db.query(temp_db.ProperMotions)
-        .filter(temp_db.ProperMotions.c.reference == "Ref 2")
-        .table()
-    )
-    assert len(results) == 1
-    assert results["source"][0] == "Fake 3"
-    assert results["mu_ra"][0] == 55
-    assert results["mu_ra_error"][0] == 0.23
-
-
 def test_ingest_spectral_types(temp_db):
     data1 = Table(
         [
@@ -140,14 +87,6 @@ def test_ingest_spectral_types(temp_db):
             },
         ]
     )
-
-    # data2 = Table(
-    #     [
-    #         {"source": "Fake 1", "spectral_type": "M5.6", "reference": "Ref 1"},
-    #         {"source": "Fake 2", "spectral_type": "T0.1", "reference": "Ref 1"},
-    #         {"source": "Fake 3", "spectral_type": "Y2pec", "reference": "Ref 2"},
-    #     ]
-    # )
 
     data3 = Table(
         [
@@ -199,12 +138,10 @@ def test_ingest_spectral_types(temp_db):
             temp_db,
             data3["source"],
             data3["spectral_type"],
-            data3["regime"],
             data3["reference"],
+            data3["regime"],
         )
-        assert "The publication does not exist in the database" in str(
-            error_message.value
-        )
+    assert "The publication does not exist in the database" in str(error_message.value)
 
 
 def test_companion_relationships(temp_db):
@@ -212,7 +149,7 @@ def test_companion_relationships(temp_db):
     # trying no companion
     with pytest.raises(AstroDBError) as error_message:
         ingest_companion_relationships(temp_db, "Fake 1", None, "Sibling")
-    assert "Make sure all require parameters are provided." in str(error_message.value)
+    assert "Make sure all required parameters are provided." in str(error_message.value)
 
     # trying companion == source
     with pytest.raises(AstroDBError) as error_message:

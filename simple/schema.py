@@ -3,20 +3,22 @@ Schema for the SIMPLE database
 """
 
 import enum
+
 import sqlalchemy as sa
+from astrodbkit2.astrodb import Base
+from astrodbkit2.views import view
+from astropy.io.votable.ucd import check_ucd
 from sqlalchemy import (
     Boolean,
     Column,
+    DateTime,
+    Enum,
     Float,
     ForeignKey,
-    String,
-    Enum,
-    DateTime,
     ForeignKeyConstraint,
+    String,
 )
-from astrodbkit2.astrodb import Base
-from astrodbkit2.views import view
-
+from sqlalchemy.orm import validates
 
 # -------------------------------------------------------------------------------------------------------------------
 # Reference tables
@@ -42,6 +44,12 @@ class Publications(Base):
     bibcode = Column(String(100))
     doi = Column(String(100))
     description = Column(String(1000))
+
+    @validates("reference")
+    def validate_reference(self, key, value):
+        if value is None or len(value) > 30:
+            raise ValueError(f"Provided reference is invalid; too long or None: {value}")
+        return value
 
 
 class Telescopes(Base):
@@ -87,6 +95,25 @@ class PhotometryFilters(Base):
     ucd = Column(String(100))
     effective_wavelength = Column(Float, nullable=False)
     width = Column(Float)
+
+    @validates("band")
+    def validate_band(self, key, value):
+        if "." not in value:
+            raise ValueError("Band name must be of the form instrument.filter")
+        return value
+
+    @validates("ucd")
+    def validate_ucd(self, key, value):
+        ucd_string = "phot;" + value
+        if check_ucd(ucd_string, check_controlled_vocabulary=True) is False:
+            raise ValueError(f"UCD {value} not in controlled vocabulary")
+        return value
+
+    @validates("effective_wavelength")
+    def validate_wavelength(self, key, value):
+        if value is None or value < 0:
+            raise ValueError(f"Invalid effective wavelength received: {value}")
+        return value
 
 
 class Versions(Base):
@@ -148,6 +175,18 @@ class Sources(Base):
     )
     other_references = Column(String(100))
     comments = Column(String(1000))
+
+    @validates("ra")
+    def validate_ra(self, key, value):
+        if value > 360 or value < 0:
+            raise ValueError("RA not in allowed range (0..360)")
+        return value
+
+    @validates("dec")
+    def validate_dec(self, key, value):
+        if value > 90 or value < -90:
+            raise ValueError("Dec not in allowed range (-90..90)")
+        return value
 
 
 class Names(Base):
@@ -234,8 +273,8 @@ class RadialVelocities(Base):
         nullable=False,
         primary_key=True,
     )
-    radial_velocity = Column(Float, nullable=False)
-    radial_velocity_error = Column(Float)
+    radial_velocity_km_s = Column(Float, nullable=False)
+    radial_velocity_error_km_s = Column(Float)
     adopted = Column(Boolean)
     comments = Column(String(1000))
     reference = Column(
@@ -306,7 +345,7 @@ class Spectra(Base):
         primary_key=True,
     )
     # Data
-    spectrum = Column(String(1000), nullable=False)  # URL of spectrum location
+    access_url = Column(String(1000), nullable=False)  # URL of spectrum location
     original_spectrum = Column(
         String(1000)
     )  # URL of original spectrum location, if applicable

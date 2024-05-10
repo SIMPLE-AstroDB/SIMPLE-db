@@ -159,7 +159,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J04234858\u22120414035.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J04234858\u22120414035.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0423-0414_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -172,7 +172,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SDSS0423-0414_SL.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SDSS0423-0414_SL.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/IRS_DimSuns_S12/SDSS0423-0414_SL.txt",
             "regime": "mir",
@@ -185,7 +185,7 @@
             "other_references": null
         },
         {
-            "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1094/type/native/viewcontent",
+            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1094/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/2M0423.fits",
             "regime": "nir",
@@ -198,7 +198,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/SD0423_total.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/SD0423_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
             "regime": "nir",
@@ -211,7 +211,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U10276.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U10276.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U10276.fits",
             "regime": "optical",
@@ -224,7 +224,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/SD0423_total.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/SD0423_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
             "regime": "optical",
@@ -239,15 +239,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "T0",
-            "spectral_type_code": 80.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Burg06.1067"
-        },
-        {
             "spectral_type_string": "L7.5",
             "spectral_type_code": 77.5,
             "spectral_type_error": null,
@@ -255,6 +246,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz03"
+        },
+        {
+            "spectral_type_string": "T0",
+            "spectral_type_code": 80.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Burg06.1067"
         }
     ]
 }

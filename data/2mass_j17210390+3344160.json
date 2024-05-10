@@ -174,7 +174,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/1721%2B3344.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/1721%2B3344.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/1721+3344.txt",
             "regime": "mir",
@@ -187,7 +187,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J17210390%2B3344160.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J17210390%2B3344160.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1721%2B3344_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -200,7 +200,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U11694.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/U11694.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U11694.fits",
             "regime": "nir",
@@ -213,7 +213,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U11694_1721%2B3344.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U11694_1721%2B3344.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U11694_1721+3344.fits",
             "regime": "optical",
@@ -228,15 +228,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L5:",
-            "spectral_type_code": 75.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Burg08.451"
-        },
-        {
             "spectral_type_string": "L3",
             "spectral_type_code": 73.0,
             "spectral_type_error": null,
@@ -244,6 +235,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz03"
+        },
+        {
+            "spectral_type_string": "L5:",
+            "spectral_type_code": 75.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Burg08.451"
         }
     ]
 }

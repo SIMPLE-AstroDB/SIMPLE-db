@@ -101,7 +101,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U10770.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/U10770.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U10770.fits",
             "regime": "nir",
@@ -114,7 +114,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0850%2B1057_060408.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0850%2B1057_060408.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0850+1057_060408.fits",
             "regime": "nir",
@@ -127,7 +127,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0850%2B1057_080108.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0850%2B1057_080108.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0850+1057_080108.fits",
             "regime": "nir",
@@ -142,15 +142,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L6.2 FLD-G",
-            "spectral_type_code": 76.2,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Gagn15.33"
-        },
-        {
             "spectral_type_string": "L6",
             "spectral_type_code": 76.0,
             "spectral_type_error": null,
@@ -158,6 +149,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk99.802"
+        },
+        {
+            "spectral_type_string": "L6.2 FLD-G",
+            "spectral_type_code": 76.2,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Gagn15.33"
         }
     ]
 }

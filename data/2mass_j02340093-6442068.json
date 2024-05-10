@@ -205,7 +205,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/W0234-6442.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/W0234-6442.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/FIRE/W0234-6442.fits",
             "regime": "nir",
@@ -220,15 +220,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L0.8 VL-G",
-            "spectral_type_code": 70.8,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Fahe16"
-        },
-        {
             "spectral_type_string": "L0 gamma",
             "spectral_type_code": 70.0,
             "spectral_type_error": null,
@@ -236,6 +227,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk10"
+        },
+        {
+            "spectral_type_string": "L0.8 VL-G",
+            "spectral_type_code": 70.8,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Fahe16"
         }
     ]
 }

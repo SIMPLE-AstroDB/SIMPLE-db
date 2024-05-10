@@ -171,7 +171,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0053-3631_080907.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0053-3631_080907.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0053-3631_080907.fits",
             "regime": "nir",
@@ -184,7 +184,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/2M0053_total.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M0053_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
             "regime": "nir",
@@ -197,7 +197,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20046_2mass0053m3631_davy.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20046_2mass0053m3631_davy.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20046_2mass0053m3631_davy.fits",
             "regime": "optical",
@@ -210,7 +210,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/2M0053_total.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M0053_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
             "regime": "optical",
@@ -225,15 +225,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L4:",
-            "spectral_type_code": 74.0,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Maro13"
-        },
-        {
             "spectral_type_string": "L3.5",
             "spectral_type_code": 73.5,
             "spectral_type_error": null,
@@ -241,6 +232,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk08"
+        },
+        {
+            "spectral_type_string": "L4:",
+            "spectral_type_code": 74.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Maro13"
         }
     ]
 }

@@ -14,10 +14,10 @@ import astropy.units as u
 from specutils import Spectrum1D
 
 from astrodbkit2.astrodb import Database
-from astrodb_scripts import (
+from astrodb_utils import (
     AstroDBError,
     find_source_in_db,
-    check_internet_connection,
+    internet_connection,
     find_publication,
 )
 
@@ -190,7 +190,7 @@ def ingest_spectrum(
         else:
             return flags
     else:
-        good_reference = find_publication(db, reference)
+        good_reference = find_publication(db, reference=reference)
         if good_reference[0] is False:
             msg = (
                 f"Spectrum for {source} could not be added to the database because the "
@@ -219,7 +219,7 @@ def ingest_spectrum(
 
     # Check if spectrum file is accessible
     # First check for internet
-    internet = check_internet_connection()
+    internet = internet_connection()
     if internet:
         request_response = requests.head(spectrum)
         status_code = (
@@ -330,7 +330,7 @@ def ingest_spectrum(
     # Compile fields into a dictionary
     row_data = {
         "source": db_name,
-        "spectrum": spectrum,
+        "access_url": spectrum,
         "original_spectrum": original_spectrum,
         "local_spectrum": local_spectrum,
         "regime": regime,
@@ -466,7 +466,8 @@ def spectrum_plottable(spectrum_path, raise_error=True, show_plot=False):
             return False
     except u.UnitConversionError as e:
         msg = (
-            e + f"Skipping {spectrum_path}: unable to convert spectral axis to microns"
+            f"{str(e)} \n"
+            f"Skipping {spectrum_path}: unable to convert spectral axis to microns"
         )
         if raise_error:
             logger.error(msg)
@@ -475,7 +476,7 @@ def spectrum_plottable(spectrum_path, raise_error=True, show_plot=False):
             logger.warning(msg)
             return False
     except ValueError as e:
-        msg = e + f"Skipping {spectrum_path}: Value error"
+        msg = f"{str(e)} \nSkipping {spectrum_path}: Value error"
         if raise_error:
             logger.error(msg)
             raise AstroDBError(msg)

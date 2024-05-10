@@ -1,11 +1,12 @@
 import pytest
 import os
-import sys
 import logging
 from astrodbkit2.astrodb import create_database, Database
-sys.path.append("./simple")
-# from schema import REFERENCE_TABLES
-from schema import *
+import sys
+
+sys.path.append("./")  # needed for github actions to find the simple module
+from simple.schema import REFERENCE_TABLES
+from simple.schema import *
 
 
 logger = logging.getLogger("AstroDB")

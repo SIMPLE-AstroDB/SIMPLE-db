@@ -163,7 +163,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/0908%2B5032.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/0908%2B5032.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/0908+5032.txt",
             "regime": "mir",
@@ -176,7 +176,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J09083803%2B5032088.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J09083803%2B5032088.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0908%2B5032_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -189,7 +189,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U10802.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U10802.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U10802.fits",
             "regime": "nir",
@@ -202,7 +202,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/WFC3/J0908%2B50.csv",
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J0908%2B50.csv",
             "original_spectrum": null,
             "local_spectrum": null,
             "regime": "nir",
@@ -215,7 +215,7 @@
             "other_references": "Apai11.12550, Buen14"
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U10802.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U10802.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U10802.fits",
             "regime": "optical",
@@ -230,13 +230,13 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L9:",
-            "spectral_type_code": 79.0,
+            "spectral_type_string": "L5",
+            "spectral_type_code": 75.0,
             "spectral_type_error": null,
-            "regime": "nir",
+            "regime": "optical",
             "adopted": null,
             "comments": null,
-            "reference": "Knap04"
+            "reference": "Cruz03"
         },
         {
             "spectral_type_string": "L7.5",
@@ -248,13 +248,13 @@
             "reference": "Manj19"
         },
         {
-            "spectral_type_string": "L5",
-            "spectral_type_code": 75.0,
+            "spectral_type_string": "L9:",
+            "spectral_type_code": 79.0,
             "spectral_type_error": null,
-            "regime": "optical",
+            "regime": "nir",
             "adopted": null,
             "comments": null,
-            "reference": "Cruz03"
+            "reference": "Knap04"
         }
     ]
 }

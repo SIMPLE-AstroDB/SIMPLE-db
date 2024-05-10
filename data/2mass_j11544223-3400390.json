@@ -199,7 +199,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/spex_prism_1154-3400_080109.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/spex_prism_1154-3400_080109.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_1154-3400_080109.fits",
             "regime": "nir",
@@ -212,7 +212,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U20430_2mass1154m3400_davy.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U20430_2mass1154m3400_davy.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20430_2mass1154m3400_davy.fits",
             "regime": "optical",
@@ -225,7 +225,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20430.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20430.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20430.fits",
             "regime": "optical",
@@ -240,15 +240,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L0.8 INT-G",
-            "spectral_type_code": 70.8,
-            "spectral_type_error": null,
-            "regime": "nir",
-            "adopted": null,
-            "comments": null,
-            "reference": "Gagn15.33"
-        },
-        {
             "spectral_type_string": "L0 beta",
             "spectral_type_code": 70.0,
             "spectral_type_error": null,
@@ -256,6 +247,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Fahe16"
+        },
+        {
+            "spectral_type_string": "L0.8 INT-G",
+            "spectral_type_code": 70.8,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Gagn15.33"
         }
     ]
 }

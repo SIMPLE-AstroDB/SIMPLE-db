@@ -378,7 +378,7 @@ def test_radialvelocities(db):
     # There should be no entries in the RadialVelocities table without rv values
     t = (
         db.query(db.RadialVelocities.c.source)
-        .filter(db.RadialVelocities.c.radial_velocity.is_(None))
+        .filter(db.RadialVelocities.c.radial_velocity_km_s.is_(None))
         .astropy()
     )
     if len(t) > 0:
@@ -626,7 +626,7 @@ def test_spectra(db):
     # Tests against the Spectra table
 
     # There should be no entries in the Spectra table without a spectrum
-    t = db.query(db.Spectra.c.source).filter(db.Spectra.c.spectrum.is_(None)).astropy()
+    t = db.query(db.Spectra.c.source).filter(db.Spectra.c.access_url.is_(None)).astropy()
     if len(t) > 0:
         print("\nEntries found without spectrum")
         print(t)
@@ -634,9 +634,9 @@ def test_spectra(db):
 
     # All spectra should have a unique filename
     sql_text = (
-        "SELECT Spectra.spectrum, Spectra.source "
+        "SELECT Spectra.access_url, Spectra.source "
         "FROM Spectra "
-        "GROUP BY spectrum "
+        "GROUP BY access_url "
         "HAVING (Count(*) > 1)"
     )
     duplicate_spectra = db.sql_query(sql_text, fmt="astropy")
@@ -675,7 +675,7 @@ def test_special_characters(db):
                     check = [char not in data[table_name]["reference"]]
                     assert all(check), f"{char} in {table_name}"
                 elif table_name == "Spectra":
-                    check = [char not in data[table_name]["spectrum"]]
+                    check = [char not in data[table_name]["access_url"]]
                     assert all(check), f"{char} in {table_name}"
                 elif table_name == "Names":
                     check = [char not in data[table_name]["other_name"]]
