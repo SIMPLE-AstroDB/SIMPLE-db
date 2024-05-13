@@ -10,6 +10,7 @@ from pathlib import Path
 from astropy.io import fits
 from astrodb_scripts import load_astrodb, find_source_in_db, AstroDBError
 from simple.schema import *
+from simple.schema import REFERENCE_TABLES
 from simple.utils.spectra import ingest_spectrum, spectrum_plottable
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
@@ -18,12 +19,13 @@ RECREATE_DB = False  # recreates the .db file from the data files
 logger = logging.getLogger("AstroDB")
 logger.setLevel(logging.WARNING)
 
-db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB)
+db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES)
 
-data_directory = "/Users/kelle/Desktop/processed data set"
+data_directory = "/Users/kelle/Desktop/processed data set" #proc directory
 logger.info(f"Data directory: {data_directory}")
 
-fits_files = Path(data_directory).glob("*.fits")
+#TODO - only ingest files renamed and converted to Spectrum1D fits
+fits_files = Path(data_directory).glob("calspec*.fits")
 
 total_files = 0
 ingested = []
@@ -83,7 +85,8 @@ for file in fits_files:
 
     obs_date = hdr["AVE_DATE"]
 
-    reference = "Missing"
+    #TODO: make a reference for the pyspextool team
+    reference = "Missing" 
 
     other_references = f"{hdr['PROG_ID']}: {hdr['OBSERVER']}"
 
@@ -99,6 +102,7 @@ for file in fits_files:
         continue
 
     # Ingest the spectrum
+    # TODO - ingest the new way. 
     try:
         ingest_spectrum(
             db,
