@@ -140,7 +140,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U10022.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U10022.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U10022.fits",
             "regime": "nir",
@@ -153,7 +153,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/LP349-25.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/LP349-25.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/LP349-25.fits",
             "regime": "optical",
@@ -168,15 +168,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M8 INT-G",
-            "spectral_type_code": 68.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Dupu17"
-        },
-        {
             "spectral_type_string": "M8",
             "spectral_type_code": 68.0,
             "spectral_type_error": null,
@@ -184,6 +175,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Gizi00"
+        },
+        {
+            "spectral_type_string": "M8 INT-G",
+            "spectral_type_code": 68.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Dupu17"
         }
     ]
 }

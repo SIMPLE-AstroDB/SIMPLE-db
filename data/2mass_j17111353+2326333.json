@@ -180,7 +180,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1711%2B2326_080713.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1711%2B2326_080713.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_1711+2326_080713.fits",
             "regime": "nir",
@@ -193,7 +193,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U11684_1711%2B2326.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U11684_1711%2B2326.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U11684_1711+2326.fits",
             "regime": "optical",
@@ -206,7 +206,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/2MASS1711%2B2326_tell.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/2MASS1711%2B2326_tell.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/2MASS1711+2326_tell.fits",
             "regime": "optical",
@@ -221,15 +221,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L1: INT-G",
-            "spectral_type_code": 71.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "L0 gamma",
             "spectral_type_code": 70.0,
             "spectral_type_error": null,
@@ -237,6 +228,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Fahe16"
+        },
+        {
+            "spectral_type_string": "L1: INT-G",
+            "spectral_type_code": 71.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

@@ -154,7 +154,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1421%2B1827_080730.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1421%2B1827_080730.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_1421+1827_080730.fits",
             "regime": "nir",
@@ -167,7 +167,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20562_apr03.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20562_apr03.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20562_apr03.fits",
             "regime": "optical",
@@ -180,7 +180,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/u20562.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/u20562.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/u20562.fits",
             "regime": "optical",
@@ -195,15 +195,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M8.9",
-            "spectral_type_code": 68.9,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Bard14"
-        },
-        {
             "spectral_type_string": "L0",
             "spectral_type_code": 70.0,
             "spectral_type_error": null,
@@ -211,6 +202,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Reid08.1290"
+        },
+        {
+            "spectral_type_string": "M8.9",
+            "spectral_type_code": 68.9,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Bard14"
         }
     ]
 }

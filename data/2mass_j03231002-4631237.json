@@ -244,7 +244,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/spex_prism_0323-4631_U20157.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/spex_prism_0323-4631_U20157.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0323-4631_U20157.fits",
             "regime": "nir",
@@ -257,7 +257,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U20157.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U20157.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20157.fits",
             "regime": "optical",
@@ -272,15 +272,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M9.4 VL-G",
-            "spectral_type_code": 69.4,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Fahe16"
-        },
-        {
             "spectral_type_string": "L0 gamma",
             "spectral_type_code": 70.0,
             "spectral_type_error": null,
@@ -288,6 +279,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz09"
+        },
+        {
+            "spectral_type_string": "M9.4 VL-G",
+            "spectral_type_code": 69.4,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Fahe16"
         }
     ]
 }

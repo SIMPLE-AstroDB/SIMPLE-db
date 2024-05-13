@@ -258,7 +258,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/2244%2B2043.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/2244%2B2043.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/2244+2043.txt",
             "regime": "mir",
@@ -271,7 +271,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J22443167%2B2043433.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J22443167%2B2043433.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2244%2B2043_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -284,7 +284,7 @@
             "other_references": null
         },
         {
-            "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1121/type/native/viewcontent",
+            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1121/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U20968_2244+2043_dagny.fits",
             "regime": "nir",
@@ -297,7 +297,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U20968_2244%2B2043_davy.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U20968_2244%2B2043_davy.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20968_2244+2043_davy.fits",
             "regime": "optical",
@@ -312,15 +312,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L6: VL-G",
-            "spectral_type_code": 76.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "L6.5",
             "spectral_type_code": 76.5,
             "spectral_type_error": null,
@@ -328,6 +319,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk08"
+        },
+        {
+            "spectral_type_string": "L6: VL-G",
+            "spectral_type_code": 76.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

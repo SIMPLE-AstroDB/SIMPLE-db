@@ -146,7 +146,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/j0534-0631prismtc1.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/j0534-0631prismtc1.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/j0534-0631prismtc1.fits",
             "regime": "nir",
@@ -159,7 +159,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/0534-0631.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/0534-0631.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/0534-0631.txt",
             "regime": "nir",
@@ -172,7 +172,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U40068_0534-0631.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U40068_0534-0631.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U40068_0534-0631.fits",
             "regime": "optical",
@@ -187,15 +187,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M8: VL-G",
-            "spectral_type_code": 68.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "M8 gamma",
             "spectral_type_code": 68.0,
             "spectral_type_error": null,
@@ -203,6 +194,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk10"
+        },
+        {
+            "spectral_type_string": "M8: VL-G",
+            "spectral_type_code": 68.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

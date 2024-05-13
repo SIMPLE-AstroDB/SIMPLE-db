@@ -1,100 +1,78 @@
+# temp_db and logger is defined in conftest.py
 import pytest
-import os
-import logging
-from astrodbkit2.astrodb import create_database, Database
-from astrodb_scripts.utils import (
+from astrodb_utils.utils import (
     AstroDBError,
 )
 from simple.utils.spectra import (
     ingest_spectrum,
-    ingest_spectrum_from_fits,
+    # ingest_spectrum_from_fits,
     spectrum_plottable,
 )
-from simple.schema import *
 
 
-logger = logging.getLogger("SIMPLE")
-logger.setLevel(logging.DEBUG)
-
-
-DB_NAME = "simple_test_spectra.sqlite"
-DB_PATH = "data"
-
-
-# Load the database for use in individual tests
-@pytest.fixture(scope="module")
-def db():
-    # Create a fresh temporary database and assert it exists
-    # Because we've imported simple.schema, we will be using that schema for the database
-
-    if os.path.exists(DB_NAME):
-        os.remove(DB_NAME)
-    connection_string = "sqlite:///" + DB_NAME
-    create_database(connection_string)
-    assert os.path.exists(DB_NAME)
-
-    # Connect to the new database and confirm it has the Sources table
-    db = Database(connection_string)
-    assert db
-    assert "source" in [c.name for c in db.Sources.columns]
-
-    ref_data = [
-        {
-            "reference": "Ref 1",
-            "doi": "10.1093/mnras/staa1522",
-            "bibcode": "2020MNRAS.496.1922B",
-        },
-        {"reference": "Ref 2", "doi": "Doi2", "bibcode": "2012yCat.2311....0C"},
-        {"reference": "Burn08", "doi": "Doi3", "bibcode": "2008MNRAS.391..320B"},
-    ]
-
-    source_data = [
-        {"source": "apple", "ra": 9.0673755, "dec": 18.352889, "reference": "Ref 1"},
-        {"source": "orange", "ra": 90.0673755, "dec": 19.352889, "reference": "Ref 2"},
-        {
-            "source": "banana",
-            "ra": 360.0673755,
-            "dec": -18.352889,
-            "reference": "Burn08",
-        },
-    ]
-
-    with db.engine.connect() as conn:
-        conn.execute(db.Publications.insert().values(ref_data))
-        conn.execute(db.Sources.insert().values(source_data))
-        conn.commit()
-
-    return db
-
-
-def test_ingest_spectrum(db):
+@pytest.mark.filterwarnings("ignore::UserWarning")
+@pytest.mark.filterwarnings("ignore", message=".*not FITS standard.*")
+@pytest.mark.filterwarnings(
+    "ignore", message=".*Note: astropy.io.fits uses zero-based indexing.*"
+)
+@pytest.mark.filterwarnings(
+    "ignore", message=".*'datfix' made the change 'Set MJD-OBS to.*"
+)
+@pytest.mark.filterwarnings(
+    "ignore",
+    message=(
+        ".*'erg/cm2/s/A' contains multiple slashes, "
+        "which is discouraged by the FITS standard.*",
+    ),
+)
+def test_ingest_spectrum_errors(temp_db):
     spectrum = "https://bdnyc.s3.amazonaws.com/tests/U10176.fits"
     with pytest.raises(AstroDBError) as error_message:
-        ingest_spectrum(db, source="apple", spectrum=spectrum)
+        ingest_spectrum(temp_db, source="apple", spectrum=spectrum)
     assert "Regime is required" in str(error_message.value)
-    result = ingest_spectrum(db, source="apple", spectrum=spectrum, raise_error=False)
-    assert result["added"] is False
-    assert result["skipped"] is True
-
-    with pytest.raises(AstroDBError) as error_message:
-        ingest_spectrum(db, source="apple", regime="nir", spectrum=spectrum)
-    assert "Reference is required" in str(error_message.value)
-    ingest_spectrum(
-        db, source="apple", regime="nir", spectrum=spectrum, raise_error=False
+    result = ingest_spectrum(
+        temp_db, source="apple", spectrum=spectrum, raise_error=False
     )
     assert result["added"] is False
     assert result["skipped"] is True
 
     with pytest.raises(AstroDBError) as error_message:
         ingest_spectrum(
-            db, source="apple", regime="nir", spectrum=spectrum, reference="Ref 5"
+            temp_db,
+            source="apple",
+            telescope="IRTF",
+            instrument="SpeX",
+            mode="Prism",
+            regime="nir",
+            spectrum=spectrum,
+        )
+    assert "Reference is required" in str(error_message.value)
+    ingest_spectrum(
+        temp_db, source="apple", regime="nir", spectrum=spectrum, raise_error=False
+    )
+    assert result["added"] is False
+    assert result["skipped"] is True
+
+    with pytest.raises(AstroDBError) as error_message:
+        ingest_spectrum(
+            temp_db,
+            source="apple",
+            regime="nir",
+            spectrum=spectrum,
+            telescope="IRTF",
+            instrument="SpeX",
+            mode="Prism",
+            reference="Ref 5",
         )
     assert "not in Publications table" in str(error_message.value)
     ingest_spectrum(
-        db,
+        temp_db,
         source="apple",
         regime="nir",
         spectrum=spectrum,
+        telescope="IRTF",
+        instrument="SpeX",
+        mode="Prism",
         reference="Ref 5",
         raise_error=False,
     )
@@ -103,31 +81,51 @@ def test_ingest_spectrum(db):
 
     with pytest.raises(AstroDBError) as error_message:
         ingest_spectrum(
-            db, source="kiwi", regime="nir", spectrum=spectrum, reference="Ref 1"
+            temp_db,
+            source="kiwi",
+            regime="nir",
+            spectrum=spectrum,
+            reference="Ref 1",
+            telescope="IRTF",
+            instrument="SpeX",
+            mode="Prism",
         )
     assert "No unique source match for kiwi in the database" in str(error_message.value)
     result = ingest_spectrum(
-        db,
+        temp_db,
         source="kiwi",
         regime="nir",
         spectrum=spectrum,
         reference="Ref 1",
         raise_error=False,
+        telescope="IRTF",
+        instrument="SpeX",
+        mode="Prism",
     )
     assert result["added"] is False
     assert result["skipped"] is True
 
     with pytest.raises(AstroDBError) as error_message:
         ingest_spectrum(
-            db, source="apple", regime="nir", spectrum=spectrum, reference="Ref 1"
+            temp_db,
+            source="apple",
+            regime="nir",
+            spectrum=spectrum,
+            reference="Ref 1",
+            telescope="IRTF",
+            instrument="SpeX",
+            mode="Prism",
         )
     assert "missing observation date" in str(error_message.value)
     result = ingest_spectrum(
-        db,
+        temp_db,
         source="apple",
         regime="nir",
         spectrum=spectrum,
         reference="Ref 1",
+        telescope="IRTF",
+        instrument="SpeX",
+        mode="Prism",
         raise_error=False,
     )
     assert result["added"] is False
@@ -159,40 +157,73 @@ def test_ingest_spectrum(db):
 
     with pytest.raises(AstroDBError) as error_message:
         result = ingest_spectrum(
-            db,
+            temp_db,
             source="orange",
             regime="far-uv",
             spectrum=spectrum,
             reference="Ref 1",
             obs_date="1/1/2024",
+            telescope="Keck I",
+            instrument="LRIS",
+            mode="OG570",
         )
-    assert "Regime provided is not in schema" in str(error_message.value)
+    assert "not in Regimes table" in str(error_message.value)
     result = ingest_spectrum(
-        db,
+        temp_db,
         source="orange",
         regime="far-uv",
         spectrum=spectrum,
         reference="Ref 1",
         obs_date="1/1/2024",
+        telescope="Keck I",
+        instrument="LRIS",
+        mode="OG570",
         raise_error=False,
     )
     assert result["added"] is False
     assert result["skipped"] is True
 
 
-def test_ingest_spectrum_works(db):
+@pytest.mark.filterwarnings("ignore:Verification")
+@pytest.mark.filterwarnings("ignore", message=".*Card 'AIRMASS' is not FITS standard.*")
+@pytest.mark.filterwarnings(
+    "ignore:Note"
+)  # : astropy.io.fits uses zero-based indexing.
+@pytest.mark.filterwarnings("ignore:'datfix' made the change 'Set MJD-OBS to")
+@pytest.mark.filterwarnings(
+    "ignore:'erg/cm2/s/A' contains multiple slashes,"
+    " which is discouraged by the FITS standard"
+)
+@pytest.mark.filterwarnings("ignore")
+def test_ingest_spectrum_works(temp_db):
     spectrum = "https://bdnyc.s3.amazonaws.com/tests/U10176.fits"
     result = ingest_spectrum(
-        db,
+        temp_db,
         source="banana",
         regime="nir",
         spectrum=spectrum,
         reference="Ref 1",
         obs_date="2020-01-01",
+        telescope="IRTF",
+        instrument="SpeX",
+        mode="Prism",
     )
     assert result["added"] is True
 
 
+@pytest.mark.filterwarnings("ignore:Invalid 'BLANK' keyword in header.")
+@pytest.mark.filterwarnings("ignore:'datfix' made the change 'Set MJD-OBS to")
+@pytest.mark.filterwarnings("ignore:The WCS transformation has more axes")
+@pytest.mark.filterwarnings("ignore:'cdfix' made the change 'Success'")
+@pytest.mark.filterwarnings("ignore:MJD-OBS =")
+@pytest.mark.filterwarnings(
+    "ignore",
+    message=(
+        "'erg/cm2/s/A' contains multiple slashes, "
+        "which is discouraged by the FITS standard.*",
+    ),
+)
+@pytest.mark.filterwarnings("ignore")
 @pytest.mark.parametrize(
     "file",
     [
@@ -213,7 +244,10 @@ def test_spectrum_plottable_false(file):
 @pytest.mark.parametrize(
     "file",
     [
-        "https://bdnyc.s3.amazonaws.com/SpeX/Prism/2MASS+J04510093-3402150_2012-09-27.fits",
+        (
+            "https://bdnyc.s3.amazonaws.com/SpeX/Prism/"
+            "2MASS+J04510093-3402150_2012-09-27.fits"
+        ),
         "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J23515044-2537367.fits",
         "https://bdnyc.s3.amazonaws.com/optical_spectra/vhs1256b_opt_Osiris.fits",
     ],

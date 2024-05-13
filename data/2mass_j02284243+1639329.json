@@ -151,7 +151,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/u20116.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/u20116.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/u20116.fits",
             "regime": "optical",
@@ -166,15 +166,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M8.7",
-            "spectral_type_code": 68.7,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Bard14"
-        },
-        {
             "spectral_type_string": "L0:",
             "spectral_type_code": 70.0,
             "spectral_type_error": null,
@@ -182,6 +173,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Reid08.1290"
+        },
+        {
+            "spectral_type_string": "M8.7",
+            "spectral_type_code": 68.7,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Bard14"
         }
     ]
 }

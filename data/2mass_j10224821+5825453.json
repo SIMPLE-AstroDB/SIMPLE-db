@@ -256,7 +256,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J10224821%2B5825453.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J10224821%2B5825453.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1022%2B5825_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -269,7 +269,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/1022%2B5825.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/1022%2B5825.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/1022+5825.txt",
             "regime": "mir",
@@ -282,7 +282,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/u20373_050323.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/u20373_050323.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/u20373_050323.fits",
             "regime": "nir",
@@ -295,7 +295,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/u20373_n1.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/u20373_n1.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/u20373_n1.fits",
             "regime": "optical",
@@ -308,7 +308,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/u20373_n2.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/u20373_n2.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/u20373_n2.fits",
             "regime": "optical",
@@ -321,7 +321,7 @@
             "other_references": null
         },
         {
-            "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1125/type/native/viewcontent",
+            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1125/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/L1b_1022+58_Cruz09.fits",
             "regime": "optical",
@@ -336,15 +336,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L1: FLD-G",
-            "spectral_type_code": 71.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "L1 beta",
             "spectral_type_code": 71.0,
             "spectral_type_error": null,
@@ -352,6 +343,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz09"
+        },
+        {
+            "spectral_type_string": "L1: FLD-G",
+            "spectral_type_code": 71.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

@@ -162,7 +162,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U12101_2158-1550_davy.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/U12101_2158-1550_davy.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U12101_2158-1550_davy.fits",
             "regime": "nir",
@@ -175,7 +175,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U12101_2158-1550.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U12101_2158-1550.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U12101_2158-1550.fits",
             "regime": "optical",
@@ -190,15 +190,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L5",
-            "spectral_type_code": 75.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Maro13"
-        },
-        {
             "spectral_type_string": "L4:",
             "spectral_type_code": 74.0,
             "spectral_type_error": null,
@@ -206,6 +197,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk08"
+        },
+        {
+            "spectral_type_string": "L5",
+            "spectral_type_code": 75.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Maro13"
         }
     ]
 }

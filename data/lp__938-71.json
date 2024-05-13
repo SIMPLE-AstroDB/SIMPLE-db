@@ -265,7 +265,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/SpeX/Prism/LP++938-71_2008-09-07.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/SpeX/Prism/LP++938-71_2008-09-07.fits",
             "original_spectrum": "https://s3.amazonaws.com/bdnyc/LHS132.txt",
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/LHS132.txt",
             "regime": "nir",
@@ -278,7 +278,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/u20049.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/u20049.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/u20049.fits",
             "regime": "optical",
@@ -293,15 +293,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M8.1",
-            "spectral_type_code": 68.1,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Bard14"
-        },
-        {
             "spectral_type_string": "M8",
             "spectral_type_code": 68.0,
             "spectral_type_error": null,
@@ -309,6 +300,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Reyl06"
+        },
+        {
+            "spectral_type_string": "M8.1",
+            "spectral_type_code": 68.1,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Bard14"
         }
     ]
 }

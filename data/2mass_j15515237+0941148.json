@@ -98,7 +98,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U20636.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U20636.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U20636.fits",
             "regime": "nir",
@@ -111,7 +111,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_U20636_060821.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_U20636_060821.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_U20636_060821.fits",
             "regime": "nir",
@@ -124,7 +124,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_U20636_1551%2B0941_080713.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_U20636_1551%2B0941_080713.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_U20636_1551+0941_080713.fits",
             "regime": "nir",
@@ -137,7 +137,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20636.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20636.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20636.fits",
             "regime": "optical",
@@ -150,7 +150,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20636_1551%2B09.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20636_1551%2B09.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20636_1551+09.fits",
             "regime": "optical",
@@ -163,7 +163,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/2MASS1551%2B0941_tell.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/2MASS1551%2B0941_tell.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/2MASS1551+0941_tell.fits",
             "regime": "optical",
@@ -178,15 +178,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L4: VL-G",
-            "spectral_type_code": 74.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "L4 gamma",
             "spectral_type_code": 74.0,
             "spectral_type_error": null,
@@ -194,6 +185,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Fahe13"
+        },
+        {
+            "spectral_type_string": "L4: VL-G",
+            "spectral_type_code": 74.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

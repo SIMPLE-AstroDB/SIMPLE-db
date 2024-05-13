@@ -235,7 +235,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U12171.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U12171.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U12171.fits",
             "regime": "nir",
@@ -248,7 +248,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/RCspec/U12171.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/RCspec/U12171.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/RCspec/U12171.fits",
             "regime": "optical",
@@ -263,15 +263,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M8",
-            "spectral_type_code": 68.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Gill16"
-        },
-        {
             "spectral_type_string": "M7.5",
             "spectral_type_code": 67.5,
             "spectral_type_error": null,
@@ -279,6 +270,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Gizi00"
+        },
+        {
+            "spectral_type_string": "M8",
+            "spectral_type_code": 68.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Gill16"
         }
     ]
 }

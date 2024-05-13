@@ -214,7 +214,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/spex_prism_0334-4953_U40007.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/spex_prism_0334-4953_U40007.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0334-4953_U40007.fits",
             "regime": "nir",
@@ -229,15 +229,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M9.4",
-            "spectral_type_code": 69.4,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Bard14"
-        },
-        {
             "spectral_type_string": "M9",
             "spectral_type_code": 69.0,
             "spectral_type_error": null,
@@ -245,6 +236,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Phan06.40"
+        },
+        {
+            "spectral_type_string": "M9.4",
+            "spectral_type_code": 69.4,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Bard14"
         }
     ]
 }

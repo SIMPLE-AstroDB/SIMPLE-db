@@ -137,7 +137,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/nir_spectra/U12091.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/U12091.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U12091.fits",
             "regime": "nir",
@@ -150,7 +150,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_U12091_060821.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_U12091_060821.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_U12091_060821.fits",
             "regime": "nir",
@@ -163,7 +163,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U12091.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U12091.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U12091.fits",
             "regime": "optical",
@@ -178,15 +178,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L4 pec",
-            "spectral_type_code": 74.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Gagn15.33"
-        },
-        {
             "spectral_type_string": "L3",
             "spectral_type_code": 73.0,
             "spectral_type_error": null,
@@ -194,6 +185,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz07"
+        },
+        {
+            "spectral_type_string": "L4 pec",
+            "spectral_type_code": 74.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Gagn15.33"
         }
     ]
 }

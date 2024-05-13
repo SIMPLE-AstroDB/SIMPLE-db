@@ -244,7 +244,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U10302.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U10302.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U10302.fits",
             "regime": "nir",
@@ -257,7 +257,7 @@
             "other_references": null
         },
         {
-            "spectrum": "http://academicworks.cuny.edu/context/hc_pubs/article/1128/type/native/viewcontent",
+            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1128/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/2M0435.fits",
             "regime": "optical",
@@ -272,15 +272,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "M8.0",
-            "spectral_type_code": 68.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Bard14"
-        },
-        {
             "spectral_type_string": "M7",
             "spectral_type_code": 67.0,
             "spectral_type_error": null,
@@ -288,6 +279,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Schm07"
+        },
+        {
+            "spectral_type_string": "M8.0",
+            "spectral_type_code": 68.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Bard14"
         }
     ]
 }

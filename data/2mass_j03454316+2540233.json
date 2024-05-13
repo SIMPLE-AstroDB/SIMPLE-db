@@ -265,7 +265,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/2M0345_L0.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/2M0345_L0.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/2M0345_L0.fits",
             "regime": "nir",
@@ -278,7 +278,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SINFONI/2M0345_SINFONIspeclib_JHK.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SINFONI/2M0345_SINFONIspeclib_JHK.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SINFONI/2M0345_SINFONIspeclib_JHK.fits",
             "regime": "nir",
@@ -291,7 +291,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U20165_0345%2B2540_lris.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U20165_0345%2B2540_lris.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/LRIS/U20165_0345+2540_lris.fits",
             "regime": "optical",
@@ -306,15 +306,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L1:",
-            "spectral_type_code": 71.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Knap04"
-        },
-        {
             "spectral_type_string": "L0",
             "spectral_type_code": 70.0,
             "spectral_type_error": null,
@@ -322,6 +313,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk99.802"
+        },
+        {
+            "spectral_type_string": "L1:",
+            "spectral_type_code": 71.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Knap04"
         }
     ]
 }

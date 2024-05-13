@@ -190,7 +190,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U10954_spex-prism_1104%2B1959_20030521_BUR04B.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/U10954_spex-prism_1104%2B1959_20030521_BUR04B.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U10954_spex-prism_1104+1959_20030521_BUR04B.fits",
             "regime": "nir",
@@ -203,7 +203,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U10954_1104%2B1959.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U10954_1104%2B1959.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U10954_1104+1959.fits",
             "regime": "optical",
@@ -218,15 +218,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L5.5",
-            "spectral_type_code": 75.5,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Burg10.1142"
-        },
-        {
             "spectral_type_string": "L4",
             "spectral_type_code": 74.0,
             "spectral_type_error": null,
@@ -234,6 +225,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz03"
+        },
+        {
+            "spectral_type_string": "L5.5",
+            "spectral_type_code": 75.5,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Burg10.1142"
         }
     ]
 }

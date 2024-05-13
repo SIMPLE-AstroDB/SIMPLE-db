@@ -204,7 +204,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_ULASJ141623.94%2B134836.3_20100123_BUR10B.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/spex-prism_ULASJ141623.94%2B134836.3_20100123_BUR10B.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_ULASJ141623.94+134836.3_20100123_BUR10B.txt",
             "regime": "nir",
@@ -219,6 +219,15 @@
     ],
     "SpectralTypes": [
         {
+            "spectral_type_string": "(sd)T7.5",
+            "spectral_type_code": 87.5,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Burg10.2448"
+        },
+        {
             "spectral_type_string": "T7.5",
             "spectral_type_code": 87.5,
             "spectral_type_error": null,
@@ -226,15 +235,6 @@
             "adopted": null,
             "comments": null,
             "reference": "Burn10.1885"
-        },
-        {
-            "spectral_type_string": "(sd)T7.5",
-            "spectral_type_code": 87.5,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Burg10.2448"
         }
     ]
 }

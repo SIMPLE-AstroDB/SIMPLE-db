@@ -213,7 +213,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1726%2B1538_080311kc.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1726%2B1538_080311kc.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_1726+1538_080311kc.fits",
             "regime": "nir",
@@ -226,7 +226,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/spex_prism_1726%2B1538_080713.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/spex_prism_1726%2B1538_080713.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_1726+1538_080713.fits",
             "regime": "nir",
@@ -239,7 +239,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/U11704_lris_120898.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/U11704_lris_120898.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/LRIS/U11704_lris_120898.fits",
             "regime": "optical",
@@ -252,7 +252,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/2MASS1726%2B1538_tell.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/2MASS1726%2B1538_tell.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/2MASS1726+1538_tell.fits",
             "regime": "optical",
@@ -267,15 +267,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L3: INT-G",
-            "spectral_type_code": 73.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "L3.5 gamma",
             "spectral_type_code": 73.5,
             "spectral_type_error": null,
@@ -283,6 +274,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Fahe16"
+        },
+        {
+            "spectral_type_string": "L3: INT-G",
+            "spectral_type_code": 73.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }

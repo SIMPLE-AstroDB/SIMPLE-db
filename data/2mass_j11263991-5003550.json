@@ -138,33 +138,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/2M1126_total.fits",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.IR.NIR",
-            "telescope": "ESO VLT",
-            "instrument": "XShooter",
-            "mode": "Echelle",
-            "observation_date": "2010-02-04T00:00:00",
-            "comments": null,
-            "reference": "Manj16",
-            "other_references": null
-        },
-        {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/xshooter/2M1126_total.fits",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "em.opt",
-            "telescope": "ESO VLT",
-            "instrument": "XShooter",
-            "mode": "Echelle",
-            "observation_date": "2010-02-04T00:00:00",
-            "comments": null,
-            "reference": "Manj16",
-            "other_references": null
-        },
-        {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/IRS/1126-5003.txt",
+            "access_url": "https://s3.amazonaws.com/bdnyc/IRS/1126-5003.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/1126-5003.txt",
             "regime": "mir",
@@ -177,7 +151,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J11263991-5003550.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J11263991-5003550.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1126-5003_IRS_spectrum.dat",
             "local_spectrum": null,
             "regime": "mir",
@@ -190,7 +164,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1126-5003_061221dl.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_1126-5003_061221dl.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_1126-5003_061221dl.fits",
             "regime": "nir",
@@ -203,7 +177,20 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/LDSS3/U50062_ldss3_1126-5003_060508.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M1126_total.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "ESO VLT",
+            "instrument": "XShooter",
+            "mode": "Echelle",
+            "observation_date": "2010-02-04T00:00:00",
+            "comments": null,
+            "reference": "Manj16",
+            "other_references": null
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/LDSS3/U50062_ldss3_1126-5003_060508.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/LDSS3/U50062_ldss3_1126-5003_060508.fits",
             "regime": "optical",
@@ -214,23 +201,36 @@
             "comments": null,
             "reference": "Burg08.451",
             "other_references": null
+        },
+        {
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M1126_total.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "optical",
+            "telescope": "ESO VLT",
+            "instrument": "XShooter",
+            "mode": "Echelle",
+            "observation_date": "2010-02-04T00:00:00",
+            "comments": null,
+            "reference": "Manj16",
+            "other_references": null
         }
     ],
     "SpectralTypes": [
-        {
-            "spectral_type_string": "L6.5:: pec",
-            "spectral_type_code": 76.5,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Burg08.451"
-        },
         {
             "spectral_type_string": "L4.5",
             "spectral_type_code": 74.5,
             "spectral_type_error": null,
             "regime": "optical",
+            "adopted": null,
+            "comments": null,
+            "reference": "Burg08.451"
+        },
+        {
+            "spectral_type_string": "L6.5:: pec",
+            "spectral_type_code": 76.5,
+            "spectral_type_error": null,
+            "regime": "nir",
             "adopted": null,
             "comments": null,
             "reference": "Burg08.451"

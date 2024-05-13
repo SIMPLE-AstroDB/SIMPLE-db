@@ -177,7 +177,7 @@
     ],
     "Spectra": [
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0032-4405_U20026.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0032-4405_U20026.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0032-4405_U20026.fits",
             "regime": "nir",
@@ -190,7 +190,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://bdnyc.s3.amazonaws.com/ISAAC/2M0032_ISAACspec_JHK_nocosmics.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/ISAAC/2M0032_ISAACspec_JHK_nocosmics.fits",
             "original_spectrum": null,
             "local_spectrum": null,
             "regime": "nir",
@@ -203,7 +203,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20026.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20026.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20026.fits",
             "regime": "optical",
@@ -216,7 +216,7 @@
             "other_references": null
         },
         {
-            "spectrum": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20026_0032-4405.fits",
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20026_0032-4405.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20026_0032-4405.fits",
             "regime": "optical",
@@ -231,15 +231,6 @@
     ],
     "SpectralTypes": [
         {
-            "spectral_type_string": "L0: VL-G",
-            "spectral_type_code": 70.0,
-            "spectral_type_error": null,
-            "regime": "nir_UCD",
-            "adopted": null,
-            "comments": null,
-            "reference": "Alle13"
-        },
-        {
             "spectral_type_string": "L0 gamma",
             "spectral_type_code": 70.0,
             "spectral_type_error": null,
@@ -247,6 +238,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Cruz09"
+        },
+        {
+            "spectral_type_string": "L0: VL-G",
+            "spectral_type_code": 70.0,
+            "spectral_type_error": null,
+            "regime": "nir",
+            "adopted": null,
+            "comments": null,
+            "reference": "Alle13"
         }
     ]
 }
