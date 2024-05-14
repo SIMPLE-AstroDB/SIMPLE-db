@@ -1,25 +1,23 @@
 import logging
-import requests
-import numpy.ma as ma
-import pandas as pd  # used for to_datetime conversion
-import dateutil  # used to convert obs date to datetime object
-import sqlalchemy.exc
 import sqlite3
-import numpy as np
 from typing import Optional
-import matplotlib.pyplot as plt
 
-from astropy.io import fits
 import astropy.units as u
-from specutils import Spectrum1D
-
-from astrodbkit2.astrodb import Database
+import matplotlib.pyplot as plt
+import numpy as np
+import requests
+import sqlalchemy.exc
 from astrodb_utils import (
     AstroDBError,
+    find_publication,
     find_source_in_db,
     internet_connection,
-    find_publication,
 )
+from astrodbkit2.astrodb import Database
+from astropy.io import fits
+from specutils import Spectrum1D
+
+from simple.schema import Spectra
 
 __all__ = [
     "ingest_spectrum",
@@ -91,119 +89,6 @@ def ingest_spectrum(
         "plottable": False,
     }
 
-    # Check input values
-    if regime is None:
-        msg = "Regime is required"
-        logger.error(msg)
-        flags["skipped"] = True
-        if raise_error:
-            raise AstroDBError(msg)
-        else:
-            return flags
-    else:
-        good_regime = db.query(db.Regimes).filter(db.Regimes.c.regime == regime).table()
-        if len(good_regime) == 0:
-            msg = f"Regime {regime} is not in Regimes table"
-            logger.error(msg)
-            flags["skipped"] = True
-            if raise_error:
-                raise AstroDBError(msg)
-            else:
-                return flags
-
-    if telescope is None:
-        msg = "Telescope is required"
-        logger.error(msg)
-        flags["skipped"] = True
-        if raise_error:
-            raise AstroDBError(msg)
-        else:
-            return flags
-    else:
-        good_telescope = (
-            db.query(db.Telescopes)
-            .filter(db.Telescopes.c.telescope == telescope)
-            .table()
-        )
-        if len(good_telescope) == 0:
-            msg = f"Telescope {telescope} is not in Telescopes table"
-            logger.error(msg)
-            flags["skipped"] = True
-            if raise_error:
-                raise AstroDBError(msg)
-            else:
-                return flags
-
-    if instrument is None:
-        msg = "Instrument is required"
-        logger.error(msg)
-        flags["skipped"] = True
-        if raise_error:
-            raise AstroDBError(msg)
-        else:
-            return flags
-    else:
-        good_instrument = (
-            db.query(db.Instruments)
-            .filter(db.Instruments.c.instrument == instrument)
-            .table()
-        )
-        if len(good_instrument) == 0:
-            msg = f"Instrument {instrument} is not in Instruments table"
-            logger.error(msg)
-            flags["skipped"] = True
-            if raise_error:
-                raise AstroDBError(msg)
-            else:
-                return flags
-
-    if mode is None:
-        msg = "Mode is required"
-        logger.error(msg)
-        flags["skipped"] = True
-        if raise_error:
-            raise AstroDBError(msg)
-        else:
-            return flags
-    else:
-        good_mode = (
-            db.query(db.Instruments)
-            .filter(db.Instruments.c.instrument == instrument)
-            .filter(db.Instruments.c.mode == mode)
-            .table()
-        )
-        if len(good_mode) == 0:
-            msg = f"Mode {mode} is not in Instruments table for {instrument}"
-            logger.error(msg)
-            flags["skipped"] = True
-            if raise_error:
-                raise AstroDBError(msg)
-            else:
-                return flags
-
-    if reference is None:
-        msg = "Reference is required"
-        logger.error(msg)
-        flags["skipped"] = True
-        if raise_error:
-            raise AstroDBError(msg)
-        else:
-            return flags
-    else:
-        good_reference = find_publication(db, reference=reference)
-        if good_reference[0] is False:
-            msg = (
-                f"Spectrum for {source} could not be added to the database because the "
-                f"reference {reference} is not in Publications table. \n"
-                f"(Add it with ingest_publication function.) \n "
-            )
-            logger.error(msg)
-            flags["skipped"] = True
-            if raise_error:
-                raise AstroDBError(msg)
-            else:
-                return flags
-
     # Get source name as it appears in the database
     db_name = find_source_in_db(db, source)
 
@@ -258,52 +143,6 @@ def ingest_spectrum(
         msg = "No internet connection. Internet is needed to check spectrum files."
         raise AstroDBError(msg)
 
-    # SKIP if observation date is blank
-    if ma.is_masked(obs_date) or obs_date == "" or obs_date is None:
-        obs_date = None
-        missing_obs_msg = (
-            f"Skipping spectrum with missing observation date: {source} \n"
-        )
-        missing_row_spe = f"{source, obs_date, reference} \n"
-        flags["no_obs_date"] = True
-        logger.debug(missing_row_spe)
-        if raise_error:
-            logger.error(missing_obs_msg)
-            raise AstroDBError(missing_obs_msg)
-        else:
-            logger.warning(missing_obs_msg)
-            return flags
-    else:
-        try:
-            obs_date = pd.to_datetime(
-                obs_date
-            )  # TODO: Another method that doesn't require pandas?
-        except ValueError:
-            flags["no_obs_date"] = True
-            if raise_error:
-                msg = (
-                    f"{source}: Can't convert obs date to Date Time object: {obs_date}"
-                )
-                logger.error(msg)
-                raise AstroDBError(msg)
-            else:
-                return flags
-        except dateutil.parser._parser.ParserError:
-            flags["no_obs_date"] = True
-            if raise_error:
-                msg = (
-                    f"{source}: Can't convert obs date to Date Time object: {obs_date}"
-                )
-                logger.error(msg)
-                raise AstroDBError(msg)
-            else:
-                msg = (
-                    f"Skipping {source} Can't convert obs date to Date Time object: "
-                    f"{obs_date}"
-                )
-                logger.warning(msg)
-                return flags
-
     matches = find_spectra(
         db,
         source,
@@ -344,11 +183,15 @@ def ingest_spectrum(
     }
     logger.debug(row_data)
 
-    # Attempt to add spectrum to database
     try:
-        with db.engine.connect() as conn:
-            conn.execute(db.Spectra.insert().values(row_data))
-            conn.commit()
+        # Attempt to add spectrum to database
+        # This will throw errors based on validation in schema.py 
+        # and any database checks (as for example IntegrityError)
+        obj = Spectra(**row_data)
+        with db.session as session:
+            session.add(obj)
+            session.commit()
+
         flags["added"] = True
         logger.info(f"Added {source} : \n" f"{row_data}")
     except sqlalchemy.exc.IntegrityError as e:
@@ -370,7 +213,7 @@ def ingest_spectrum(
     except Exception as e:
         msg = (
             f"Spectrum for {source} could not be added to the database"
-            f"for unexpected reason: \n {row_data} \n error: {str(e)}"
+            f"for unexpected reason: \n {row_data} \n error: {e}"
         )
         logger.error(msg)
         flags["skipped"] = True
