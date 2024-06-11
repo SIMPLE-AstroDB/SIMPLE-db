@@ -45,7 +45,7 @@ We recommend using a conda environment to handle python dependencies. The follow
 
     This step generates a "SIMPLE.sqlite" file which can be opened, explored, and modified using a variety of tools.
 
-3. Use `astrodbkit2` to [explore](https://astrodbkit2.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit2.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit2.readthedocs.io/en/latest/#modifying-data) the database.
+4. Use `astrodbkit2` to [explore](https://astrodbkit2.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit2.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit2.readthedocs.io/en/latest/#modifying-data) the database.
 For example:
     - Find all objects in the database with "0141" in the name
         ```python
@@ -57,7 +57,8 @@ For example:
         ```python
         db.inventory('2MASS J01415823-4633574', pretty_print=True)
         ```
-4. The database can also be modified using helper scripts found in [`simple/utils`](simple/utils) and in the [`astrodb_utils`](https://github.com/astrodbtoolkit/astrodb_utils) package. Previously used scripts to modify and/or update the database are stored in the [`scripts/`](scripts) directory and can be used for inspiration.
+        
+5. The database can also be modified using helper scripts found in [`simple/utils`](simple/utils) and in the [`astrodb_utils`](https://github.com/astrodbtoolkit/astrodb_utils) package. Previously used scripts to modify and/or update the database are stored in the [`scripts/`](scripts) directory and can be used for inspiration.
 
 ## Contributor Instructions
 If you've made changes to the SIMPLE Archive that you would like to contribute to the public version, here's how to make a contribution.
