@@ -27,16 +27,14 @@ If you'd like to set up your own copy of the SIMPLE database, here's what we rec
  
 2. Set up an environment for the Python code and install dependencies. 
 We recommend using a conda environment to handle python dependencies. The following commands will use that file to create and activate an 
-   environment called `simple-db`:
-
+   environment called `simple-db`. Run these commands at the terminal command prompt
     ```bash
     conda  create -n "simple-db" python=3.10
     conda activate simple-db
     pip install -r requirements.txt
     ```
    
-3. In Python, connect a database file `SIMPLE.sqlite` as a Database object called `db` and recreate the database using the JSON files in the `data/` directory.
-      
+3. In Python, connect a database file `SIMPLE.sqlite` as a Database object called `db` and recreate the database using the JSON files in the `data/` directory. Run these commands from within Python. 
    ```python
    from astrodb_utils import load_astrodb
    from simple.schema import *
@@ -47,19 +45,19 @@ We recommend using a conda environment to handle python dependencies. The follow
 
     This step generates a "SIMPLE.sqlite" file which can be opened, explored, and modified using a variety of tools.
 
-4. Use `astrodbkit2` to [explore](https://astrodbkit2.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit2.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit2.readthedocs.io/en/latest/#modifying-data) the database.
+3. Use `astrodbkit2` to [explore](https://astrodbkit2.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit2.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit2.readthedocs.io/en/latest/#modifying-data) the database.
 For example:
     - Find all objects in the database with "0141" in the name
-        ```
+        ```python
         db.search_object('0141', fmt='astropy')
         ```
     
     - See all the data in the database for 2MASS J01415823-4633574
 
-        ```
+        ```python
         db.inventory('2MASS J01415823-4633574', pretty_print=True)
         ```
-5. The database can also be modified using helper scripts found in [`simple/utils`](simple/utils) and in the [`astrodb_utils`](https://github.com/astrodbtoolkit/astrodb_utils) package. Previously used scripts to modify and/or update the database are stored in the [`scripts/`](scripts) directory and can be used for inspiration.
+4. The database can also be modified using helper scripts found in [`simple/utils`](simple/utils) and in the [`astrodb_utils`](https://github.com/astrodbtoolkit/astrodb_utils) package. Previously used scripts to modify and/or update the database are stored in the [`scripts/`](scripts) directory and can be used for inspiration.
 
 ## Contributor Instructions
 If you've made changes to the SIMPLE Archive that you would like to contribute to the public version, here's how to make a contribution.
