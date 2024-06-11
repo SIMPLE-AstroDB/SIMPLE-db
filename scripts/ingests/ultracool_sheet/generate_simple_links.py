@@ -1,9 +1,15 @@
-from scripts.ingests.utils import load_simpledb, find_source_in_db, logger, SimpleError
+from astrodb_utils import load_astrodb, find_source_in_db, AstroDBError
+import logging
 from astropy.io import ascii
 from urllib.parse import quote
 import requests
 from astropy.table import Table
+from simple.schema import *
+from simple.schema import REFERENCE_TABLES
 
+
+logger = logging.getLogger("AstroDB")
+logger.setLevel(logging.INFO)
 
 def check_simple_url(url, uc_sheet_name, simple_source):
     # test the URL to make sure it is valid
@@ -11,7 +17,7 @@ def check_simple_url(url, uc_sheet_name, simple_source):
     if url_status == 404:
         msg = f"URL not valid for {uc_sheet_name} {simple_source} at {url}"
         logger.error(msg)
-        raise SimpleError(msg)
+        raise AstroDBError(msg)
     elif url_status != 200:
         logger.warning(
             f"URL not valid for {uc_sheet_name} {simple_source} at {url} \
@@ -22,14 +28,14 @@ def check_simple_url(url, uc_sheet_name, simple_source):
         return url
 
 
-RECREATE_DB = False
-db = load_simpledb("SIMPLE.sqlite", recreatedb=RECREATE_DB)
+RECREATE_DB = True
+db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES)
 
 # Load Ultracool sheet
 sheet_id = "1i98ft8g5mzPp2DNno0kcz4B9nzMxdpyz5UquAVhz-U8"
-# link = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
+link = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
 # link = "scripts/ultracool_sheet/UltracoolSheet - Main_010824.csv"
-link = "scripts/ultracool_sheet/UltracoolSheet - PRIVATE - Sheet26.csv"
+#link = "scripts/ultracool_sheet/UltracoolSheet - PRIVATE - Sheet26.csv"
 
 # read the csv data into an astropy table
 uc_sheet_table = ascii.read(
@@ -62,13 +68,13 @@ for source in uc_sheet_table:
         msg = f"No match found for {uc_sheet_name}"
         logger.error(msg)
         no_match.append(uc_sheet_name)
-        # raise SimpleError(msg)
+        # raise AstroDBError(msg)
         continue
     elif len(match) > 1:
         msg = f"Multiple matches found for {uc_sheet_name}"
         logger.error(msg)
         multiple_matches.append(uc_sheet_name)
-        # raise SimpleError(msg)
+        # raise AstroDBError(msg)
         continue
     elif len(match) == 1:
         simple_source = match[0]
@@ -87,7 +93,7 @@ for source in uc_sheet_table:
     else:
         msg = f"Unexpected state for {uc_sheet_name}"
         logger.error(msg)
-        raise SimpleError(msg)
+        raise AstroDBError(msg)
 
 
 # write the results to a file
