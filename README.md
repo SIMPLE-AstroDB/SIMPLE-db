@@ -26,12 +26,13 @@ If you'd like to set up your own copy of the SIMPLE database, here's what we rec
 1. Clone or download a copy of this repo locally onto your computer.
  
 2. Set up an environment for the Python code and install dependencies. 
-A conda environment file `environment.yml` exists for convenience. The following commands will use that file to create and activate an 
+We recommend using a conda environment to handle python dependencies. The following commands will use that file to create and activate an 
    environment called `simple-db`:
 
     ```bash
-    conda env create -f environment.yml
+    conda  create -n "simple-db" python=3.10
     conda activate simple-db
+    pip install -r requirements.txt
     ```
    
 3. In Python, connect a database file `SIMPLE.sqlite` as a Database object called `db` and recreate the database using the JSON files in the `data/` directory.
