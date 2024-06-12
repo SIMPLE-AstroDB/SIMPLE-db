@@ -60,4 +60,6 @@ for source in uc_sheet_table:
             msg = f"Could not add {rv_data} to database."
             logger.warning(msg)
             #raise AstroDBError(msg) from e
+
+db.save_database(directory="data/")
         
