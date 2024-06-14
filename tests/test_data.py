@@ -695,3 +695,18 @@ def test_modeledparameters(db):
         .astropy()
     )
     assert len(t) == 5, f"found {len(t)} modeled parameters with {ref} reference"
+
+def test_radial_velocities(db):
+    t = (
+        db.query(db.RadialVelocities)
+        .astropy()
+    )
+    assert len(t) == 1261, f"found {len(t)} radial velociies"
+
+    ref = "Abaz09"
+    t = (
+        db.query(db.RadialVelocities)
+        .filter(db.RadialVelocities.c.reference == ref)
+        .astropy()
+    )
+    assert len(t) == 447, f"found {len(t)} radial velociies with {ref} reference"
