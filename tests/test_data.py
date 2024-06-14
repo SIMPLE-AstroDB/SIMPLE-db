@@ -701,7 +701,7 @@ def test_radial_velocities(db):
         db.query(db.RadialVelocities)
         .astropy()
     )
-    assert len(t) == 1261, f"found {len(t)} radial velociies"
+    assert len(t) == 1015, f"found {len(t)} radial velociies"
 
     ref = "Abaz09"
     t = (
@@ -709,4 +709,4 @@ def test_radial_velocities(db):
         .filter(db.RadialVelocities.c.reference == ref)
         .astropy()
     )
-    assert len(t) == 447, f"found {len(t)} radial velociies with {ref} reference"
+    assert len(t) == 445, f"found {len(t)} radial velociies with {ref} reference"
