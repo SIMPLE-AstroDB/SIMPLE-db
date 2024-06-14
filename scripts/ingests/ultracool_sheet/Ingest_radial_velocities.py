@@ -56,11 +56,12 @@ for source in uc_sheet_table:
         simple_source = match[0]
         logger.info(f"Match found for {uc_sheet_name}: {simple_source}")
         print(f"Match found for {uc_sheet_name}: {simple_source}")
-        rv_data = [{"source": simple_source, "radial_velocity_km_s": source["rv_lit"], "radial_velocity_error_km_s": source["rverr_lit"],"reference": source["ref_rv_lit"]}]
+        rv_data = {"source": simple_source, "radial_velocity_km_s": source["rv_lit"], "radial_velocity_error_km_s": source["rverr_lit"],"reference": source["ref_rv_lit"]}
+        rv_obj = RadialVelocities(**rv_data)
         try:
-            with db.engine.connect() as conn:
-                conn.execute(db.RadialVelocities.insert().values(rv_data))
-                conn.commit()
+            with db.session() as session:
+                session.add(rv_obj)
+                session.commit()
             logger.info(f" Radial Velocity added to database: {rv_data}\n")
         except sqlalchemy.exc.IntegrityError as e:
             msg = f"Could not add {rv_data} to database."
