@@ -59,7 +59,7 @@ for source in uc_sheet_table:
         rv_data = {"source": simple_source, "radial_velocity_km_s": source["rv_lit"], "radial_velocity_error_km_s": source["rverr_lit"],"reference": source["ref_rv_lit"]}
         rv_obj = RadialVelocities(**rv_data)
         try:
-            with db.session() as session:
+            with db.session as session:
                 session.add(rv_obj)
                 session.commit()
             logger.info(f" Radial Velocity added to database: {rv_data}\n")
