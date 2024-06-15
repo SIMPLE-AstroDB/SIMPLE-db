@@ -2,7 +2,7 @@
 
 import pytest
 
-from simple.schema import PhotometryFilters, Publications, Sources
+from simple.schema import Parallaxes, PhotometryFilters, Publications, Sources
 
 
 def schema_tester(table, values, error_state):
@@ -47,3 +47,14 @@ def test_sources(values, error_state):
 def test_publications(values, error_state):
     """Validating Publications"""
     schema_tester(Publications, values, error_state)
+
+
+@pytest.mark.parametrize("values, error_state",
+                         [
+                             ({"parallax": 0.1}, None),
+                             ({"parallax": -999}, ValueError),
+                             ({"parallax": None}, ValueError),
+                          ])
+def test_parallaxes(values, error_state):
+    """Validating Parallaxes"""
+    schema_tester(Parallaxes, values, error_state)
