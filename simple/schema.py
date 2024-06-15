@@ -241,6 +241,12 @@ class Parallaxes(Base):
         primary_key=True,
     )
 
+    @validates("parallax")
+    def validate_value(self, key, value):
+        if value is None or value < 0:
+            raise ValueError(f"{key} not allowed to be 0 or lower")
+        return value
+
 
 class ProperMotions(Base):
     # Table to store proper motions, in milliarcseconds per year
@@ -445,7 +451,7 @@ ParallaxView = view(
         Parallaxes.reference.label("reference"),
     )
     .select_from(Parallaxes)
-    .where(sa.and_(Parallaxes.adopted is True, Parallaxes.parallax > 0)),
+    .where(sa.and_(Parallaxes.adopted == 1, Parallaxes.parallax > 0)),
 )
 
 PhotometryView = view(
