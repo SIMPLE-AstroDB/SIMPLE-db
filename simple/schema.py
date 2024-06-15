@@ -3,6 +3,7 @@ Schema for the SIMPLE database
 """
 
 import enum
+from datetime import datetime
 
 import sqlalchemy as sa
 from astrodbkit2.astrodb import Base
@@ -338,20 +339,22 @@ class Gravities(Base):
 class Spectra(Base):
     # Table to store references to spectra
     __tablename__ = 'Spectra'
+
     source = Column(
         String(100),
         ForeignKey("Sources.source", ondelete="cascade", onupdate="cascade"),
         nullable=False,
         primary_key=True,
     )
+
     # Data
     access_url = Column(String(1000), nullable=False)  # URL of spectrum location
-    original_spectrum = Column(
-        String(1000)
-    )  # URL of original spectrum location, if applicable
-    local_spectrum = Column(
-        String(1000)
-    )  # local directory (via environment variable) of spectrum location
+
+    # URL of original spectrum location, if applicable
+    original_spectrum = Column(String(1000))  
+    # local directory (via environment variable) of spectrum location
+    local_spectrum = Column(String(1000))
+
     regime = Column(
         String(30),
         ForeignKey("Regimes.regime", ondelete="cascade", onupdate="cascade"),
@@ -380,6 +383,22 @@ class Spectra(Base):
         ),
         {},
     )
+
+    @validates("access_url", "regime", "source")
+    def validate_required(self, key, value):
+        if value is None:
+            raise ValueError(f"Value required for {key}")
+        return value
+
+    @validates("observation_date")
+    def validate_date(self, key, value):
+        if value is None:
+            raise ValueError(f"Invalid date received: {value}")
+        elif not isinstance(value, datetime):
+            # Convert to datetime for storing in the database
+            # Will throw error if unable to convert
+            value = datetime.fromisoformat(value)
+        return value
 
 
 class ModeledParameters(Base):
