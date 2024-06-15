@@ -6,8 +6,6 @@ from astrodb_utils import (
 )
 import logging
 from astropy.io import ascii
-from urllib.parse import quote
-import requests
 from astropy.table import Table
 from simple.schema import *
 from simple.schema import REFERENCE_TABLES
@@ -131,4 +129,4 @@ for source in uc_sheet_table:
 
 print(f"no sources:{no_sources}")  # skipped 244 due to 0 matches
 print(f"multiple sources:{multiple_sources}")  # skipped 0 due to multiple matches
-db.save_database(directory="data/")
+# db.save_database(directory="data/")
