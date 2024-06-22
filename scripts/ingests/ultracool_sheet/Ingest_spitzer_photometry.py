@@ -108,8 +108,9 @@ for source in uc_sheet_table:
         simple_source = match[0]
         logger.info(f"Match found for {uc_sheet_name}: {simple_source}")
         print(f"Match found for {uc_sheet_name}: {simple_source}")
-        for band in ["IRAC.I1", "IRAC.I2"]:
-            if isnan(source["ch1"] if band == "IRAC.I1" else source["ch2"]):
+        for val in [["IRAC.I1", "ch1", "ch1err"], ["IRAC.I2", "ch2", "ch2err"]]:
+            band, magnitude, mag_error = val
+            if isnan(source[magnitude]):
                 continue
             if source["ref_Spitzer"] in bad_references:
                 bad_reference += 1
@@ -117,10 +118,8 @@ for source in uc_sheet_table:
             table_data = {
                 "source": simple_source,
                 "band": band,
-                "magnitude": source["ch1"] if band == "IRAC.I1" else source["ch2"],
-                "magnitude_error": (
-                    source["ch1err"] if band == "IRAC.I1" else source["ch2err"]
-                ),
+                "magnitude": source[magnitude],
+                "magnitude_error": source[mag_error],
                 "telescope": "Spitzer",
                 "reference": uc_ref_to_simple_ref(source["ref_Spitzer"]),
             }
@@ -144,7 +143,7 @@ for source in uc_sheet_table:
     else:
         multiple_sources += 1
         if not (isnan(source["ch1"]) or isnan(source["ch2"])):
-            no_sources += 1
+            multiple_sources += 1
 
 # 1491 data points in UC sheet in total
 print(f"ingested:{ingested}")  # 891 ingested
