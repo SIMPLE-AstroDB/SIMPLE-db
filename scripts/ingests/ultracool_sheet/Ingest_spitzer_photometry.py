@@ -15,10 +15,6 @@ from simple.schema import REFERENCE_TABLES
 from math import isnan
 import sqlalchemy.exc
 
-import sys
-
-sys.path.append(".")
-
 
 logger = logging.getLogger("AstroDB")
 logger.setLevel(logging.INFO)
@@ -69,6 +65,7 @@ for ref in uc_reference_table:
     uc_ref_to_ADS[ref["code_ref"]] = ref["ADSkey_ref"]
 
 
+# used to translate between uc references and SIMPLE references
 def uc_ref_to_simple_ref(ref):
     t = (
         db.query(db.Publications)
@@ -112,30 +109,33 @@ for source in uc_sheet_table:
             band, magnitude, mag_error = val
             if isnan(source[magnitude]):
                 continue
-            if source["ref_Spitzer"] in bad_references:
-                bad_reference += 1
-                continue
-            table_data = {
-                "source": simple_source,
-                "band": band,
-                "magnitude": source[magnitude],
-                "magnitude_error": source[mag_error],
-                "telescope": "Spitzer",
-                "reference": uc_ref_to_simple_ref(source["ref_Spitzer"]),
-            }
-            try:
-                rv_obj = Photometry(**table_data)
-                with db.session as session:
-                    session.add(rv_obj)
-                    session.commit()
-                logger.info(f" Photometry added to database: {table_data}\n")
-                ingested += 1
-            except sqlalchemy.exc.IntegrityError as e:
-                msg = f"Could not add {table_data} to database. Error: {e}"
-                logger.warning(msg)
-                if "UNIQUE constraint failed" not in str(e):
-                    raise AstroDBError(msg) from e
-                already_exists += 1
+            # if source["ref_Spitzer"] in bad_references:
+            #    bad_reference += 1
+            #    continue
+
+            # ingest for each reference provided
+            for reference in source["ref_Spitzer"].split(";"):
+                table_data = {
+                    "source": simple_source,
+                    "band": band,
+                    "magnitude": source[magnitude],
+                    "magnitude_error": source[mag_error],
+                    "telescope": "Spitzer",
+                    "reference": uc_ref_to_simple_ref(reference),
+                }
+                try:
+                    rv_obj = Photometry(**table_data)
+                    with db.session as session:
+                        session.add(rv_obj)
+                        session.commit()
+                    logger.info(f" Photometry added to database: {table_data}\n")
+                    ingested += 1
+                except sqlalchemy.exc.IntegrityError as e:
+                    msg = f"Could not add {table_data} to database. Error: {e}"
+                    logger.warning(msg)
+                    if "UNIQUE constraint failed" not in str(e):
+                        raise AstroDBError(msg) from e
+                    already_exists += 1
     elif len(match) == 0:
         no_sources += 1
         if not (isnan(source["ch1"]) or isnan(source["ch2"])):
@@ -145,13 +145,13 @@ for source in uc_sheet_table:
         if not (isnan(source["ch1"]) or isnan(source["ch2"])):
             multiple_sources += 1
 
-# 1491 data points in UC sheet in total
-print(f"ingested:{ingested}")  # 891 ingested
-print(f"bad ref:{bad_reference}")  # 8 with bad ref
-print(f"already exists:{already_exists}")  # skipped 463 due to preexisting data
+# 1491 data points in UC sheet in total, 8 with 2 references
+print(f"ingested:{ingested}")  # 905 ingested
+print(f"bad ref:{bad_reference}")  # 0 with bad ref
+print(f"already exists:{already_exists}")  # skipped 465 due to preexisting data
 print(f"no sources:{no_sources}")  # skipped 129 due to 0 matches
 print(f"multiple sources:{multiple_sources}")  # skipped 0 due to multiple matches
 print(
     f"total:{ingested+bad_reference+already_exists+no_sources+multiple_sources}"
-)  # 1491
+)  # 1499
 # db.save_database(directory="data/")
