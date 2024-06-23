@@ -2,6 +2,7 @@ from sqlalchemy import and_
 import pytest
 from astropy.io.votable.ucd import check_ucd, parse_ucd, UCDWords
 
+
 @pytest.mark.parametrize(
     "band, value",
     [
@@ -26,6 +27,8 @@ from astropy.io.votable.ucd import check_ucd, parse_ucd, UCDWords
         ("JWST/MIRI.F1000W", 1),
         ("JWST/MIRI.F1280W", 1),
         ("JWST/MIRI.F1800W", 1),
+        ("IRAC.I1", 831),
+        ("IRAC.I2", 887),
     ],
 )
 def test_photometry_bands(db, band, value):

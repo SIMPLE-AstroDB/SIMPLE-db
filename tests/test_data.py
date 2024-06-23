@@ -576,15 +576,15 @@ def test_Kirk19_ingest(db):
         )
         .astropy()
     )
-    assert len(t) == 290, f"found {len(t)} photometry entries for {telescope}"
+    assert len(t) == 344, f"found {len(t)} photometry entries for {telescope}"
 
     ref = "Kirk19"
     t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
-    assert len(t) == 290, f"found {len(t)} photometry entries for {ref}"
+    assert len(t) == 344, f"found {len(t)} photometry entries for {ref}"
 
     ref = "Schn15"
     t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
-    assert len(t) == 28, f"found {len(t)} photometry entries for {ref}"
+    assert len(t) == 34, f"found {len(t)} photometry entries for {ref}"
 
     # Test parallaxes added for ATLAS
     ref = "Mart18"
@@ -696,11 +696,9 @@ def test_modeledparameters(db):
     )
     assert len(t) == 5, f"found {len(t)} modeled parameters with {ref} reference"
 
+
 def test_radial_velocities(db):
-    t = (
-        db.query(db.RadialVelocities)
-        .astropy()
-    )
+    t = db.query(db.RadialVelocities).astropy()
     assert len(t) == 1015, f"found {len(t)} radial velociies"
 
     ref = "Abaz09"
@@ -710,7 +708,7 @@ def test_radial_velocities(db):
         .astropy()
     )
     assert len(t) == 445, f"found {len(t)} radial velociies with {ref} reference"
-    
+
     ref = "Fahe16"
     t = (
         db.query(db.RadialVelocities)
