@@ -79,6 +79,28 @@ def uc_ref_to_simple_ref(ref):
         return t["reference"][0]
 
 
+def ingest_radial_velocity(
+    source: str = None, rv: str = None, rv_err: str = None, reference: str = None
+):
+    rv_data = {
+        "source": source,
+        "radial_velocity_km_s": rv,
+        "radial_velocity_error_km_s": rv_err,
+        "reference": reference,
+    }
+
+    try:
+        rv_obj = RadialVelocities(**rv_data)
+        with db.session as session:
+            session.add(rv_obj)
+            session.commit()
+        logger.info(f" Radial Velocity added to database: {rv_data}\n")
+    except sqlalchemy.exc.IntegrityError as e:
+        msg = f"Could not add {rv_data} to database. Error: {e}"
+        logger.warning(msg)
+        raise AstroDBError(msg) from e
+
+
 bad_sources = [
     "2MASS J02192210-3925225B",
     "beta Pic b",
@@ -106,22 +128,12 @@ for source in uc_sheet_table:
             continue
         logger.info(f"Match found for {uc_sheet_name}: {simple_source}")
         print(f"Match found for {uc_sheet_name}: {simple_source}")
-        rv_data = {
-            "source": simple_source,
-            "radial_velocity_km_s": source["rv_lit"],
-            "radial_velocity_error_km_s": source["rverr_lit"],
-            "reference": uc_ref_to_simple_ref(source["ref_rv_lit"]),
-        }
-        try:
-            rv_obj = RadialVelocities(**rv_data)
-            with db.session as session:
-                session.add(rv_obj)
-                session.commit()
-            logger.info(f" Radial Velocity added to database: {rv_data}\n")
-        except sqlalchemy.exc.IntegrityError as e:
-            msg = f"Could not add {rv_data} to database. Error: {e}"
-            logger.warning(msg)
-            raise AstroDBError(msg) from e
+        ingest_radial_velocity(
+            source=simple_source,
+            rv=source["rv_lit"],
+            rv_err=source["rverr_lit"],
+            reference=uc_ref_to_simple_ref(source["ref_rv_lit"]),
+        )
     elif len(match) == 0:
         no_sources += 1
     else:
