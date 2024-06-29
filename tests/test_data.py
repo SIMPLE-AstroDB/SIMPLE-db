@@ -695,3 +695,33 @@ def test_modeledparameters(db):
         .astropy()
     )
     assert len(t) == 5, f"found {len(t)} modeled parameters with {ref} reference"
+
+def test_radial_velocities(db):
+    t = (
+        db.query(db.RadialVelocities)
+        .astropy()
+    )
+    assert len(t) == 1015, f"found {len(t)} radial velociies"
+
+    ref = "Abaz09"
+    t = (
+        db.query(db.RadialVelocities)
+        .filter(db.RadialVelocities.c.reference == ref)
+        .astropy()
+    )
+    assert len(t) == 445, f"found {len(t)} radial velociies with {ref} reference"
+
+    ref = "Fahe16"
+    t = (
+        db.query(db.RadialVelocities)
+        .filter(db.RadialVelocities.c.reference == ref)
+        .astropy()
+    )
+    assert len(t) == 47, f"found {len(t)} radial velociies with {ref} reference"
+
+    t = (
+        db.query(db.RadialVelocities)
+        .filter(db.RadialVelocities.c.radial_velocity_error_km_s == None)
+        .astropy()
+    )
+    assert len(t) == 89, f"found {len(t)} radial velociies with no uncertainty"
