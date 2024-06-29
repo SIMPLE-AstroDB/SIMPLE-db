@@ -11,9 +11,9 @@ from simple.schema import REFERENCE_TABLES
 from math import isnan
 import sqlalchemy.exc
 import sys
+from scripts.ingests.ultracool_sheet.references import uc_ref_to_simple_ref
 
 sys.path.append(".")
-from scripts.ingests.ultracool_sheet.references import uc_ref_to_simple_ref
 
 logger = logging.getLogger("AstroDB")
 logger.setLevel(logging.INFO)
