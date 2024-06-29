@@ -721,7 +721,7 @@ def test_radial_velocities(db):
 
     t = (
         db.query(db.RadialVelocities)
-        .filter(db.RadialVelocities.c.radial_velocity_error_km_s is None)
+        .filter(db.RadialVelocities.c.radial_velocity_error_km_s == None)
         .astropy()
     )
     assert len(t) == 89, f"found {len(t)} radial velociies with no uncertainty"
