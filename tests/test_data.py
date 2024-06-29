@@ -710,7 +710,7 @@ def test_radial_velocities(db):
         .astropy()
     )
     assert len(t) == 445, f"found {len(t)} radial velociies with {ref} reference"
-    
+
     ref = "Fahe16"
     t = (
         db.query(db.RadialVelocities)
@@ -718,3 +718,10 @@ def test_radial_velocities(db):
         .astropy()
     )
     assert len(t) == 47, f"found {len(t)} radial velociies with {ref} reference"
+
+    t = (
+        db.query(db.RadialVelocities)
+        .filter(db.RadialVelocities.c.radial_velocity_error_km_s is None)
+        .astropy()
+    )
+    assert len(t) == 89, f"found {len(t)} radial velociies with no uncertainty"
