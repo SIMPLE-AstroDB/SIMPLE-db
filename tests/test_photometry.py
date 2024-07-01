@@ -122,5 +122,9 @@ def test_photometry_filters_ucds(db):
 
 
 def test_magnitude_errors(db):
-    t = db.query(db.Photometry).filter(db.Photometry.c.mag_error == None).astropy()
+    t = (
+        db.query(db.Photometry)
+        .filter(db.Photometry.c.magnitude_error == None)
+        .astropy()
+    )
     assert len(t) == 455, f"found {len(t)} Photometry entries with null error"
