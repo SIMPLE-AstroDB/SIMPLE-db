@@ -23,6 +23,47 @@ db = load_astrodb(
     "SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES
 )
 
+
+def ingest_Photometry(
+    source: str = None,
+    band: str = None,
+    magnitude: float = None,
+    mag_error: float = None,
+    telescope: str = None,
+    comment: str = None,
+    reference: str = None,
+    raise_error: bool = True,
+):
+    table_data = {
+        "source": source,
+        "band": band,
+        "magnitude": magnitude,
+        "magnitude_error": mag_error,
+        "telescope": telescope,
+        "comments": comment,
+        "reference": reference,
+    }
+
+    try:
+        pho_obj = Photometry(**table_data)
+        with db.session as session:
+            session.add(pho_obj)
+            session.commit()
+        logger.info(f" Photometry added to database: {table_data}\n")
+    except sqlalchemy.exc.IntegrityError as e:
+        if "UNIQUE constraint failed:" in str(e):
+            msg = f" Photometry with same reference already exists in database: {table_data}"
+            if raise_error:
+                raise AstroDBError(msg) from e
+            else:
+                msg2 = f"SKIPPING: {source}. Photometry with same reference already exists in database."
+                logger.warning(msg2)
+        else:
+            msg = f"Could not add {table_data} to database. Error: {e}"
+            logger.warning(msg)
+            raise AstroDBError(msg) from e
+
+
 # Load Ultracool sheet
 doc_id = "1i98ft8g5mzPp2DNno0kcz4B9nzMxdpyz5UquAVhz-U8"
 sheet_id = "361525788"
@@ -71,26 +112,21 @@ for source in uc_sheet_table:
             references = source["ref_Spitzer"].split(";")  # may have 2 references
             if len(references) > 1:
                 comment = "Second reference: " + uc_ref_to_simple_ref(db, references[1])
-            table_data = {
-                "source": simple_source,
-                "band": band,
-                "magnitude": source[magnitude],
-                "magnitude_error": source[mag_error],
-                "telescope": "Spitzer",
-                "comments": comment,
-                "reference": uc_ref_to_simple_ref(db, references[0]),
-            }
             try:
-                pho_obj = Photometry(**table_data)
-                with db.session as session:
-                    session.add(pho_obj)
-                    session.commit()
-                logger.info(f" Photometry added to database: {table_data}\n")
+                ingest_Photometry(
+                    simple_source,
+                    band,
+                    source[magnitude],
+                    source[mag_error],
+                    "Spitzer",
+                    comment,
+                    uc_ref_to_simple_ref(db, references[0]),
+                )
                 ingested += 1
-            except sqlalchemy.exc.IntegrityError as e:
-                msg = f"Could not add {table_data} to database. Error: {e}"
-                logger.warning(msg)
-                if "UNIQUE constraint failed" not in str(e):
+            except AstroDBError as e:
+                msg = "ingest failed with error: " + str(e)
+                if "Photometry with same reference already exists" not in str(e):
+                    logger.warning(msg)
                     raise AstroDBError(msg) from e
                 already_exists += 1
     elif len(match) == 0:
