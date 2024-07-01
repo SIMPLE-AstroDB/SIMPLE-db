@@ -2,7 +2,7 @@ import pytest
 from astropy.table import Table
 from astrodb_utils import AstroDBError
 from simple.utils.astrometry import (
-    ingest_parallaxes,
+    ingest_parallax,
     ingest_proper_motions,
     ingest_radial_velocity,
 )
@@ -15,6 +15,7 @@ def t_plx():
         [
             {"source": "Fake 1", "plx": 113.0, "plx_err": 0.3, "plx_ref": "Ref 1"},
             {"source": "Fake 2", "plx": 145.0, "plx_err": 0.5, "plx_ref": "Ref 1"},
+            {"source": "Fake 1", "plx": 113.0, "plx_err": 0.2, "plx_ref": "Ref 2"},
             {"source": "Fake 3", "plx": 155.0, "plx_err": 0.6, "plx_ref": "Ref 2"},
         ]
     )
@@ -68,9 +69,15 @@ def t_rv():
 
 def test_ingest_parallaxes(temp_db, t_plx):
     # Test ingest of parallax data
-    ingest_parallaxes(
-        temp_db, t_plx["source"], t_plx["plx"], t_plx["plx_err"], t_plx["plx_ref"]
-    )
+
+    for row in t_plx:
+        ingest_parallax(
+            temp_db,
+            row["source"],
+            row["plx"],
+            row["plx_err"],
+            row["plx_ref"],
+        )
 
     results = (
         temp_db.query(temp_db.Parallaxes)
@@ -78,15 +85,17 @@ def test_ingest_parallaxes(temp_db, t_plx):
         .table()
     )
     assert len(results) == 2
+    assert not results["adopted"][0]
     results = (
         temp_db.query(temp_db.Parallaxes)
         .filter(temp_db.Parallaxes.c.reference == "Ref 2")
         .table()
     )
-    assert len(results) == 1
-    assert results["source"][0] == "Fake 3"
-    assert results["parallax"][0] == 155
-    assert results["parallax_error"][0] == 0.6
+    assert len(results) == 2
+    assert results["source"][1] == "Fake 3"
+    assert results["parallax"][1] == 155
+    assert results["parallax_error"][1] == 0.6
+    assert results["adopted"][0]
 
 
 def test_ingest_proper_motions(temp_db, t_pm):

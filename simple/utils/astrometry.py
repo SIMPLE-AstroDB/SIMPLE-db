@@ -2,6 +2,7 @@ import logging
 from typing import Optional, Union
 from sqlalchemy import and_
 import sqlalchemy.exc
+from simple.schema import Parallaxes
 from astropy.units import Quantity
 from astropy.table import Table
 from astrodbkit2.astrodb import Database
@@ -179,6 +180,103 @@ def ingest_parallaxes(db, sources, plxs, plx_errs, plx_refs, comments=None):
     logger.info(f"Total Parallaxes added to database: {n_added} \n")
 
     return
+
+
+def ingest_parallax(
+    db,
+    source: str = None,
+    parallax: float = None,
+    plx_error: float = None,
+    reference: str = None,
+    comment: str = None,
+):
+    # Search for existing parallax data and determine if this is the best
+    # If no previous measurement exists, set the new one to the Adopted measurement
+    adopted = None
+    source_plx_data: Table = (
+        db.query(db.Parallaxes).filter(db.Parallaxes.c.source == source).table()
+    )
+
+    if source_plx_data is None or len(source_plx_data) == 0:
+        # if there's no other measurements in the database,
+        # set new data Adopted = True
+        adopted = True
+        # old_adopted = None  # not used
+        logger.debug("No other measurement")
+    elif len(source_plx_data) > 0:  # Parallax data already exists
+        # check for duplicate measurement
+        dupe_ind = source_plx_data["reference"] == reference
+        if sum(dupe_ind):
+            logger.debug(f"Duplicate measurement\n, {source_plx_data[dupe_ind]}")
+            msg = "Duplicate measurement exists with same reference"
+            raise AstroDBError(msg)
+        else:
+            logger.debug("!!! Another parallax measurement exists,")
+            if logger.level == 10:
+                source_plx_data.pprint_all()
+
+        # check for previous adopted measurement and find new adopted
+        adopted_ind = source_plx_data["adopted"] == 1
+        if sum(adopted_ind):
+            old_adopted = source_plx_data[adopted_ind]
+            # if errors of new data are less than other measurements,
+            # set Adopted = True.
+            if plx_error < min(source_plx_data["parallax_error"]):
+                adopted = True
+
+                # unset old adopted
+                if old_adopted:
+                    with db.engine.connect() as conn:
+                        conn.execute(
+                            db.Parallaxes.update()
+                            .where(
+                                and_(
+                                    db.Parallaxes.c.source == old_adopted["source"][0],
+                                    db.Parallaxes.c.reference
+                                    == old_adopted["reference"][0],
+                                )
+                            )
+                            .values(adopted=False)
+                        )
+                        conn.commit()
+                    # check that adopted flag is successfully changed
+                    old_adopted_data = (
+                        db.query(db.Parallaxes)
+                        .filter(
+                            and_(
+                                db.Parallaxes.c.source == old_adopted["source"][0],
+                                db.Parallaxes.c.reference
+                                == old_adopted["reference"][0],
+                            )
+                        )
+                        .table()
+                    )
+                    logger.debug("Old adopted measurement unset")
+                    if logger.level == 10:
+                        old_adopted_data.pprint_all()
+            else:
+                adopted = False
+            logger.debug(f"The new measurement's adopted flag is:, {adopted}")
+    else:
+        msg = "Unexpected state"
+        logger.error(msg)
+        raise RuntimeError(msg)
+
+    # Construct data to be added
+    parallax_data = {
+        "source": source,
+        "parallax": parallax,
+        "parallax_error": plx_error,
+        "reference": reference,
+        "adopted": adopted,
+        "comments": comment,
+    }
+
+    plx_obj = Parallaxes(**parallax_data)
+    with db.session as session:
+        session.add(plx_obj)
+        session.commit()
+    logger.info(f" Photometry added to database: {parallax_data}\n")
 
 
 # PROPER MOTIONS
