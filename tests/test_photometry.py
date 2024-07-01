@@ -119,3 +119,8 @@ def test_photometry_filters_ucds(db):
         assert check_ucd(
             ucd_string, check_controlled_vocabulary=True
         ), f"UCD {ucd[0]} not in controlled vocabulary"
+
+
+def test_magnitude_errors(db):
+    t = db.query(db.Photometry).filter(db.Photometry.c.mag_error == None).astropy()
+    assert len(t) == 455, f"found {len(t)} Photometry entries with null error"

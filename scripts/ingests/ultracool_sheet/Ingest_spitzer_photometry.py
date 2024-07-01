@@ -67,7 +67,7 @@ for source in uc_sheet_table:
             if isnan(source[magnitude]):
                 continue
 
-            comment = ""
+            comment = None
             references = source["ref_Spitzer"].split(";")  # may have 2 references
             if len(references) > 1:
                 comment = "Second reference: " + uc_ref_to_simple_ref(db, references[1])
