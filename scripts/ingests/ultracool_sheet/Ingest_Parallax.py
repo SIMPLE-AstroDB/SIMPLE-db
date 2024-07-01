@@ -16,7 +16,7 @@ from simple.utils.astrometry import ingest_parallax
 from scripts.ingests.ultracool_sheet.references import uc_ref_to_simple_ref
 
 logger = logging.getLogger("AstroDB")
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 DB_SAVE = False
 RECREATE_DB = True
@@ -67,6 +67,11 @@ for source in uc_sheet_table:
 
         try:
             references = source["ref_plx_lit"].split(";")
+            if references[0] == "Harr15":  # weird reference in UC sheet.
+                reference = "Harr15"
+            else:
+                reference = uc_ref_to_simple_ref(db, references[0])
+
             comment = None
             if len(references) > 1:
                 comment = f"other references: {uc_ref_to_simple_ref(db, references[1])}"
@@ -75,7 +80,7 @@ for source in uc_sheet_table:
                 simple_source,
                 source["plx_lit"],
                 source["plxerr_lit"],
-                uc_ref_to_simple_ref(db, references[0]),
+                reference,
                 comment,
             )
             ingested += 1
@@ -92,10 +97,10 @@ for source in uc_sheet_table:
 
 
 # 1108 data points in UC sheet in total
-logger.info(f"ingested:{ingested}")  # 899 ingested
-logger.info(f"already exists:{already_exists}")  # skipped 463 due to preexisting data
-logger.info(f"no sources:{no_sources}")  # skipped 129 due to 0 matches
-logger.info(f"multiple sources:{multiple_sources}")  # skipped 0 due to multiple matches
-logger.info(f"total:{ingested+already_exists+no_sources+multiple_sources}")  # 1491
+print(f"ingested:{ingested}")  # 1013 ingested
+print(f"already exists:{already_exists}")  # skipped 6 due to preexisting data
+print(f"no sources:{no_sources}")  # skipped 86 due to 0 matches
+print(f"multiple sources:{multiple_sources}")  # skipped 2 due to multiple matches
+print(f"total:{ingested+already_exists+no_sources+multiple_sources}")  # 1108
 if DB_SAVE:
     db.save_database(directory="data/")

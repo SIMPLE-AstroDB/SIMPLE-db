@@ -189,7 +189,28 @@ def ingest_parallax(
     plx_error: float = None,
     reference: str = None,
     comment: str = None,
+    raise_error: bool = True,
 ):
+    """
+
+    Parameters
+    ----------
+    db: astrodbkit2.astrodb.Database
+        Database object
+    sources: str
+        source name
+    plxs: float
+        parallax corresponding to the source
+    plx_errs: float
+        parallax uncertainties
+    plx_refs: str or list[str]
+        list of references for the parallax data
+    comment: str
+        comments
+    raise_error: bool
+        raise error if there is an error during ingest
+
+    """
     # Search for existing parallax data and determine if this is the best
     # If no previous measurement exists, set the new one to the Adopted measurement
     adopted = None
@@ -272,11 +293,23 @@ def ingest_parallax(
         "comments": comment,
     }
 
-    plx_obj = Parallaxes(**parallax_data)
-    with db.session as session:
-        session.add(plx_obj)
-        session.commit()
-    logger.info(f" Photometry added to database: {parallax_data}\n")
+    try:
+        plx_obj = Parallaxes(**parallax_data)
+        with db.session as session:
+            session.add(plx_obj)
+            session.commit()
+        logger.info(f" Photometry added to database: {parallax_data}\n")
+    except sqlalchemy.exc.IntegrityError as e:
+        msg = (
+            "The source may not exist in Sources table.\n"
+            "The parallax reference may not exist in Publications table. "
+            "Add it with add_publication function. \n"
+            "The parallax measurement may be a duplicate."
+        )
+        if raise_error:
+            raise AstroDBError(msg) from e
+        else:
+            logger.warning(msg)
 
 
 # PROPER MOTIONS
