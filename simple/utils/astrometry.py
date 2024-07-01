@@ -203,8 +203,8 @@ def ingest_parallax(
         parallax corresponding to the source
     plx_errs: float
         parallax uncertainties
-    plx_refs: str or list[str]
-        list of references for the parallax data
+    plx_refs: str
+        reference for the parallax data
     comment: str
         comments
     raise_error: bool
@@ -222,7 +222,6 @@ def ingest_parallax(
         # if there's no other measurements in the database,
         # set new data Adopted = True
         adopted = True
-        # old_adopted = None  # not used
         logger.debug("No other measurement")
     elif len(source_plx_data) > 0:  # Parallax data already exists
         # check for duplicate measurement

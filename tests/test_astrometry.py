@@ -85,7 +85,7 @@ def test_ingest_parallaxes(temp_db, t_plx):
         .table()
     )
     assert len(results) == 2
-    assert not results["adopted"][0]
+    assert not results["adopted"][0]  # 1st source with ref 1 should not be adopted
     results = (
         temp_db.query(temp_db.Parallaxes)
         .filter(temp_db.Parallaxes.c.reference == "Ref 2")
@@ -95,7 +95,31 @@ def test_ingest_parallaxes(temp_db, t_plx):
     assert results["source"][1] == "Fake 3"
     assert results["parallax"][1] == 155
     assert results["parallax_error"][1] == 0.6
-    assert results["adopted"][0]
+    assert results["adopted"][0]  # 1st source with ref 2 should be adopted
+
+
+def test_parallax_exceptions(temp_db):
+    try:
+        ingest_parallax(temp_db, "bad source", 1, 1, "Ref 1")
+    except AstroDBError:
+        None
+    else:  # weird syntax that activates if there is NO exception
+        assert False, "ingest_parallax ingested bad source without exception"
+
+    try:
+        ingest_parallax(temp_db, "Fake 1", 1, 1, "Bad Ref")
+    except AstroDBError:
+        None
+    else:
+        assert False, "ingest_parallax ingested bad source without exception"
+
+    ingest_parallax(temp_db, "Fake 2", 1, 1, "Ref 2")
+    try:
+        ingest_parallax(temp_db, "Fake 2", 1, 1, "Ref 2")
+    except AstroDBError:
+        None
+    else:
+        assert False, "ingest_parallax ingested duplicate measurement without exception"
 
 
 def test_ingest_proper_motions(temp_db, t_pm):
