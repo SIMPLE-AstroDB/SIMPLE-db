@@ -99,27 +99,22 @@ def test_ingest_parallaxes(temp_db, t_plx):
 
 
 def test_parallax_exceptions(temp_db):
-    try:
+    with pytest.raises(AstroDBError) as error_message:
         ingest_parallax(temp_db, "bad source", 1, 1, "Ref 1")
-    except AstroDBError:
-        None
-    else:  # weird syntax that activates if there is NO exception
-        assert False, "ingest_parallax ingested bad source without exception"
+    assert "The source may not exist in Sources table" in str(error_message.value)
 
-    try:
-        ingest_parallax(temp_db, "Fake 1", 1, 1, "Bad Ref")
-    except AstroDBError:
-        None
-    else:
-        assert False, "ingest_parallax ingested bad source without exception"
+    with pytest.raises(AstroDBError) as error_message:
+        ingest_parallax(temp_db, "Fake 1", 1, 1, "bad ref")
+    assert "The parallax reference may not exist in Publications table" in str(
+        error_message.value
+    )
 
     ingest_parallax(temp_db, "Fake 2", 1, 1, "Ref 2")
-    try:
+    with pytest.raises(AstroDBError) as error_message:
         ingest_parallax(temp_db, "Fake 2", 1, 1, "Ref 2")
-    except AstroDBError:
-        None
-    else:
-        assert False, "ingest_parallax ingested duplicate measurement without exception"
+    assert "Duplicate measurement exists with same reference" in str(
+        error_message.value
+    )
 
 
 def test_ingest_proper_motions(temp_db, t_pm):
