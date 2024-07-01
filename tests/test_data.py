@@ -571,7 +571,7 @@ def test_Kirk19_ingest(db):
 
     ref = "Kirk19"
     t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
-    assert len(t) == 334, f"found {len(t)} photometry entries for {ref}"
+    assert len(t) == 344, f"found {len(t)} photometry entries for {ref}"
 
     ref = "Schn15"
     t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
