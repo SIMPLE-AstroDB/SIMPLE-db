@@ -2,6 +2,7 @@ from sqlalchemy import and_
 import pytest
 from astropy.io.votable.ucd import check_ucd, parse_ucd, UCDWords
 
+
 @pytest.mark.parametrize(
     "band, value",
     [
@@ -26,6 +27,8 @@ from astropy.io.votable.ucd import check_ucd, parse_ucd, UCDWords
         ("JWST/MIRI.F1000W", 1),
         ("JWST/MIRI.F1280W", 1),
         ("JWST/MIRI.F1800W", 1),
+        ("IRAC.I1", 828),
+        ("IRAC.I2", 884),
     ],
 )
 def test_photometry_bands(db, band, value):
@@ -116,3 +119,26 @@ def test_photometry_filters_ucds(db):
         assert check_ucd(
             ucd_string, check_controlled_vocabulary=True
         ), f"UCD {ucd[0]} not in controlled vocabulary"
+
+
+def test_magnitude_errors(db):
+    t = (
+        db.query(db.Photometry)
+        .filter(db.Photometry.c.magnitude_error == None)
+        .astropy()
+    )
+    assert len(t) == 455, f"found {len(t)} Photometry entries with null error"
+
+
+def test_data(db):
+    telescope = "Spitzer"
+    t = db.query(db.Photometry).filter(db.Photometry.c.telescope == telescope).astropy()
+    assert len(t) == 1906, f"found {len(t)} photometry entries for {telescope}"
+
+    ref = "Kirk19"
+    t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
+    assert len(t) == 344, f"found {len(t)} photometry entries for {ref}"
+
+    ref = "Schn15"
+    t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
+    assert len(t) == 34, f"found {len(t)} photometry entries for {ref}"
