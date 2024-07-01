@@ -128,3 +128,17 @@ def test_magnitude_errors(db):
         .astropy()
     )
     assert len(t) == 455, f"found {len(t)} Photometry entries with null error"
+
+
+def test_data(db):
+    telescope = "Spitzer"
+    t = db.query(db.Photometry).filter(db.Photometry.c.telescope == telescope).astropy()
+    assert len(t) == 1906, f"found {len(t)} photometry entries for {telescope}"
+
+    ref = "Kirk19"
+    t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
+    assert len(t) == 344, f"found {len(t)} photometry entries for {ref}"
+
+    ref = "Schn15"
+    t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
+    assert len(t) == 34, f"found {len(t)} photometry entries for {ref}"

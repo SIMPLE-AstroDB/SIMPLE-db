@@ -564,19 +564,6 @@ def test_Kirk19_ingest(db):
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 182, f"found {len(t)} proper motion entries for {ref}"
 
-    # Test photometry added
-    telescope = "Spitzer"
-    t = db.query(db.Photometry).filter(db.Photometry.c.telescope == telescope).astropy()
-    assert len(t) == 1906, f"found {len(t)} photometry entries for {telescope}"
-
-    ref = "Kirk19"
-    t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
-    assert len(t) == 344, f"found {len(t)} photometry entries for {ref}"
-
-    ref = "Schn15"
-    t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
-    assert len(t) == 34, f"found {len(t)} photometry entries for {ref}"
-
     # Test parallaxes added for ATLAS
     ref = "Mart18"
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
