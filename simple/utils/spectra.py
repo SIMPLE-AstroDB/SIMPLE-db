@@ -74,6 +74,10 @@ def ingest_spectrum(
     Returns
     -------
     flags: dict
+        Status response with the following keys:
+             - "added": True if it's added and False if it's skipped.
+             - "content": the data that was attempted to add
+             - "message": string which includes information about why skipped
 
     Raises
     ------
@@ -81,12 +85,9 @@ def ingest_spectrum(
     """
 
     flags = {
-        "skipped": False,
-        "dupe": False,
-        "missing_instrument": False,
-        "no_obs_date": False,
         "added": False,
-        "plottable": False,
+        "content": {},
+        "message": ""
     }
 
     # Get source name as it appears in the database
@@ -94,7 +95,6 @@ def ingest_spectrum(
 
     if len(db_name) != 1:
         msg = f"No unique source match for {source} in the database"
-        flags["skipped"] = True
         if raise_error:
             raise AstroDBError(msg)
         else:
@@ -111,7 +111,6 @@ def ingest_spectrum(
             request_response.status_code
         )  # The website is up if the status code is 200
         if status_code != 200:
-            flags["skipped"] = True
             msg = (
                 "The spectrum location does not appear to be valid: \n"
                 f"spectrum: {spectrum} \n"
@@ -127,7 +126,6 @@ def ingest_spectrum(
             request_response1 = requests.head(original_spectrum)
             status_code1 = request_response1.status_code
             if status_code1 != 200:
-                flags["skipped"] = True
                 msg = (
                     "The spectrum location does not appear to be valid: \n"
                     f"spectrum: {original_spectrum} \n"
@@ -157,7 +155,7 @@ def ingest_spectrum(
         msg2 = f"{matches}" f"{instrument, mode, obs_date, reference, spectrum} \n"
         logger.warning(msg)
         logger.debug(msg2)
-        flags["dupe"] = True
+        flags["message"] = msg
         if raise_error:
             raise AstroDBError
         else:
@@ -182,6 +180,7 @@ def ingest_spectrum(
         "other_references": other_references,
     }
     logger.debug(row_data)
+    flags["content"] = row_data
 
     try:
         # Attempt to add spectrum to database
@@ -197,7 +196,7 @@ def ingest_spectrum(
     except sqlalchemy.exc.IntegrityError as e:
         msg = "Integrity Error:" f"{source} \n" f"{row_data}"
         logger.error(msg + str(e) + f" \n {row_data}")
-        flags["skipped"] = True
+        flags["message"] = msg
         if raise_error:
             raise AstroDBError(msg)
         else:
@@ -205,7 +204,7 @@ def ingest_spectrum(
     except sqlite3.IntegrityError as e:
         msg = "Integrity Error: " f"{source} \n" f"{row_data}"
         logger.error(msg + str(e))
-        flags["skipped"] = True
+        flags["message"] = msg
         if raise_error:
             raise AstroDBError(msg)
         else:
@@ -216,7 +215,7 @@ def ingest_spectrum(
             f"for unexpected reason: \n {row_data} \n error: {e}"
         )
         logger.error(msg)
-        flags["skipped"] = True
+        flags["message"] = msg
         if raise_error:
             raise AstroDBError(msg)
         else:
