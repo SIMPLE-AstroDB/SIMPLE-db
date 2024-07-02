@@ -34,6 +34,8 @@ def test_ingest_spectrum_errors(temp_db):
     with pytest.raises(AstroDBError) as error_message:
         ingest_spectrum(temp_db, source="apple", spectrum=spectrum)
     # assert "Regime is required" in str(error_message.value)
+    # Commented out the error_message assertions since we have more generic error messages with this
+
     result = ingest_spectrum(
         temp_db, source="apple", spectrum=spectrum, raise_error=False
     )
@@ -51,7 +53,8 @@ def test_ingest_spectrum_errors(temp_db):
             spectrum=spectrum,
         )
     # assert "Reference is required" in str(error_message.value)
-    ingest_spectrum(
+
+    result = ingest_spectrum(
         temp_db, source="apple", regime="nir", spectrum=spectrum, raise_error=False
     )
     assert result["added"] is False
@@ -69,7 +72,8 @@ def test_ingest_spectrum_errors(temp_db):
             reference="Ref 5",
         )
     # assert "not in Publications table" in str(error_message.value)
-    ingest_spectrum(
+
+    result = ingest_spectrum(
         temp_db,
         source="apple",
         regime="nir",
@@ -95,6 +99,7 @@ def test_ingest_spectrum_errors(temp_db):
             mode="Prism",
         )
     # assert "No unique source match for kiwi in the database" in str(error_message.value)
+
     result = ingest_spectrum(
         temp_db,
         source="kiwi",
@@ -121,6 +126,7 @@ def test_ingest_spectrum_errors(temp_db):
             mode="Prism",
         )
     # assert "missing observation date" in str(error_message.value)
+
     result = ingest_spectrum(
         temp_db,
         source="apple",
@@ -149,6 +155,7 @@ def test_ingest_spectrum_errors(temp_db):
             mode="OG570",
         )
     # assert "not in Regimes table" in str(error_message.value)
+
     result = ingest_spectrum(
         temp_db,
         source="orange",
