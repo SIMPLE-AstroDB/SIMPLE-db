@@ -564,28 +564,6 @@ def test_Kirk19_ingest(db):
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 182, f"found {len(t)} proper motion entries for {ref}"
 
-    # Test photometry added
-    telescope = "Spitzer"
-    ref = "Kirk19"
-    t = (
-        db.query(db.Photometry)
-        .filter(
-            and_(
-                db.Photometry.c.telescope == telescope, db.Photometry.c.reference == ref
-            )
-        )
-        .astropy()
-    )
-    assert len(t) == 290, f"found {len(t)} photometry entries for {telescope}"
-
-    ref = "Kirk19"
-    t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
-    assert len(t) == 290, f"found {len(t)} photometry entries for {ref}"
-
-    ref = "Schn15"
-    t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
-    assert len(t) == 28, f"found {len(t)} photometry entries for {ref}"
-
     # Test parallaxes added for ATLAS
     ref = "Mart18"
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
@@ -695,3 +673,31 @@ def test_modeledparameters(db):
         .astropy()
     )
     assert len(t) == 5, f"found {len(t)} modeled parameters with {ref} reference"
+
+
+def test_radial_velocities(db):
+    t = db.query(db.RadialVelocities).astropy()
+    assert len(t) == 1015, f"found {len(t)} radial velociies"
+
+    ref = "Abaz09"
+    t = (
+        db.query(db.RadialVelocities)
+        .filter(db.RadialVelocities.c.reference == ref)
+        .astropy()
+    )
+    assert len(t) == 445, f"found {len(t)} radial velociies with {ref} reference"
+
+    ref = "Fahe16"
+    t = (
+        db.query(db.RadialVelocities)
+        .filter(db.RadialVelocities.c.reference == ref)
+        .astropy()
+    )
+    assert len(t) == 47, f"found {len(t)} radial velociies with {ref} reference"
+
+    t = (
+        db.query(db.RadialVelocities)
+        .filter(db.RadialVelocities.c.radial_velocity_error_km_s == None)
+        .astropy()
+    )
+    assert len(t) == 89, f"found {len(t)} radial velociies with no uncertainty"

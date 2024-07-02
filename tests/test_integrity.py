@@ -1,13 +1,14 @@
 # Test to verify database integrity
 # database object 'db' defined in conftest.py
 import pytest
-from sqlalchemy import func, and_
-from astropy.table import unique
-from astropy import units as u
-from astroquery.simbad import Simbad
-from astrodbkit2.utils import _name_formatter
 from astrodbkit2.astrodb import or_
-# from simple.schema import ParallaxView  # , PhotometryView
+from astrodbkit2.utils import _name_formatter
+from astropy import units as u
+from astropy.table import unique
+from astroquery.simbad import Simbad
+from sqlalchemy import and_, func
+
+from simple.schema import ParallaxView  # , PhotometryView
 
 
 def test_reference_uniqueness(db):
@@ -703,7 +704,6 @@ def test_special_characters(db):
                     assert all(check), f"{char} in {table_name}"
 
 
-@pytest.mark.skip(reason="ParallaxView not working")
 def test_database_views(db):
     # Tests to verify views exist and work as intended
 
