@@ -299,14 +299,14 @@ def ingest_parallax(
             session.commit()
         logger.info(f" Photometry added to database: {parallax_data}\n")
     except sqlalchemy.exc.IntegrityError as e:
+
         msg = (
             "The source may not exist in Sources table.\n"
             "The parallax reference may not exist in Publications table. "
             "Add it with add_publication function. \n"
-            "The parallax measurement may be a duplicate."
         )
         if raise_error:
-            raise AstroDBError(msg) from e
+            raise AstroDBError(e)
         else:
             logger.warning(msg)
 

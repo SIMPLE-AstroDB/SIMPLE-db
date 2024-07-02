@@ -101,13 +101,11 @@ def test_ingest_parallaxes(temp_db, t_plx):
 def test_parallax_exceptions(temp_db):
     with pytest.raises(AstroDBError) as error_message:
         ingest_parallax(temp_db, "bad source", 1, 1, "Ref 1")
-    assert "The source may not exist in Sources table" in str(error_message.value)
+    assert "FOREIGN KEY constraint failed" in str(error_message.value)
 
     with pytest.raises(AstroDBError) as error_message:
         ingest_parallax(temp_db, "Fake 1", 1, 1, "bad ref")
-    assert "The parallax reference may not exist in Publications table" in str(
-        error_message.value
-    )
+    assert "FOREIGN KEY constraint failed" in str(error_message.value)
 
     ingest_parallax(temp_db, "Fake 2", 1, 1, "Ref 2")
     with pytest.raises(AstroDBError) as error_message:
