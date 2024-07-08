@@ -43,13 +43,21 @@ def ingest_parallax(
     comment: str
         comments
     raise_error: bool
-        raise error if there is an error during ingest
+        True: raises error when encountered
+        False: does not raise error, returns flags dictionary
+
+    Returns
+    -------
+    flags: dict
+        'added' : bool    - true if properly ingested
+        'content' : dict  - content attempted to ingest
+        'message' : str   - error message
 
     """
     # Search for existing parallax data and determine if this is the best
     # If no previous measurement exists, set the new one to the Adopted measurement
     flags = {"added": False, "content": {}, "message": ""}
-    adopted = None
+    adopted = False
     source_plx_data: Table = (
         db.query(db.Parallaxes).filter(db.Parallaxes.c.source == source).table()
     )
@@ -142,6 +150,7 @@ def ingest_parallax(
         flags["added"] = True
         return flags
     except sqlalchemy.exc.IntegrityError as error_msg:
+        flags["added"] = False
         msg = ""
         matching_sources = (
             db.query(db.Sources).filter(db.Sources.c.source == source).astropy()

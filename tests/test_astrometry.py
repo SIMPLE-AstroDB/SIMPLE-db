@@ -103,9 +103,38 @@ def test_parallax_exceptions(temp_db):
         ingest_parallax(temp_db, "bad source", 1, 1, "Ref 1")
     assert "does not exist in Sources table" in str(error_message.value)
 
+    flags = ingest_parallax(temp_db, "bad source", 1, 1, "Ref 1", "comment", False)
+    assert flags == {
+        "added": False,
+        "content": {
+            "source": "bad source",
+            "parallax": 1,
+            "parallax_error": 1,
+            "reference": "Ref 1",
+            "adopted": True,
+            "comments": "comment",
+        },
+        "message": "Source 'bad source' does not exist in Sources table. ",
+    }
+
     with pytest.raises(AstroDBError) as error_message:
         ingest_parallax(temp_db, "Fake 1", 1, 1, "bad ref")
     assert "does not exist in Publications table" in str(error_message.value)
+
+    flags = ingest_parallax(temp_db, "Fake 1", 1, 1, "bad ref", "comment", False)
+    print(flags)
+    assert flags == {
+        "added": False,
+        "content": {
+            "source": "Fake 1",
+            "parallax": 1,
+            "parallax_error": 1,
+            "reference": "bad ref",
+            "adopted": False,
+            "comments": "comment",
+        },
+        "message": "Reference 'bad ref' does not exist in Publications table. ",
+    }
 
     ingest_parallax(temp_db, "Fake 2", 1, 1, "Ref 2")
     with pytest.raises(AstroDBError) as error_message:
@@ -113,6 +142,14 @@ def test_parallax_exceptions(temp_db):
     assert "Duplicate measurement exists with same reference" in str(
         error_message.value
     )
+
+    flags = ingest_parallax(temp_db, "Fake 2", 1, 1, "Ref 2", "comment", False)
+    print(flags)
+    assert flags == {
+        "added": False,
+        "content": {},
+        "message": "Duplicate measurement exists with same reference",
+    }
 
 
 def test_ingest_proper_motions(temp_db, t_pm):

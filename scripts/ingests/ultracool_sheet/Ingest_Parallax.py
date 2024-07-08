@@ -7,7 +7,6 @@ from astropy.io import ascii
 from simple.schema import Photometry
 from simple.schema import REFERENCE_TABLES
 from math import isnan
-import sqlalchemy.exc
 from simple.utils.astrometry import ingest_parallax
 from scripts.ingests.ultracool_sheet.references import uc_ref_to_simple_ref
 
@@ -79,10 +78,7 @@ for source in uc_sheet_table:
 
         try:
             references = source["ref_plx_lit"].split(";")
-            if references[0] == "Harr15":  # weird reference in UC sheet.
-                reference = "Harr15"
-            else:
-                reference = uc_ref_to_simple_ref(db, references[0])
+            reference = uc_ref_to_simple_ref(db, references[0])
 
             comment = None
             if len(references) > 1:
@@ -115,16 +111,16 @@ for source in uc_sheet_table:
 
 
 # 1108 data points in UC sheet in total
-logger.info(f"ingested:{ingested}")  # 1013 ingested
+logger.info(f"ingested:{ingested}")  # 1014 ingested
 logger.info(f"already exists:{already_exists}")  # skipped 6 due to preexisting data
 logger.info(f"no sources:{no_sources}")  # skipped 86 due to 0 matches
 logger.info(f"multiple sources:{multiple_sources}")  # skipped 2 due to multiple matches
-logger.info(f"no data: {no_data}")
+logger.info(f"no data: {no_data}")  # 2782
 logger.info(
     f"data points tracked:{ingested+already_exists+no_sources+multiple_sources}"
 )  # 1108
 total = ingested + already_exists + no_sources + multiple_sources + no_data
-logger.info(f"total: {total}")
+logger.info(f"total: {total}")  # 3890
 
 if total != len(uc_sheet_table):
     msg = "data points tracked inconsistent with UC sheet"
