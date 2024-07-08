@@ -58,6 +58,7 @@ def ingest_parallax(
     # If no previous measurement exists, set the new one to the Adopted measurement
     flags = {"added": False, "content": {}, "message": ""}
     adopted = False
+    has_old_adopted = False
     source_plx_data: Table = (
         db.query(db.Parallaxes).filter(db.Parallaxes.c.source == source).table()
     )
@@ -86,42 +87,11 @@ def ingest_parallax(
         # check for previous adopted measurement and find new adopted
         adopted_ind = source_plx_data["adopted"] == 1
         if sum(adopted_ind):
-            old_adopted = source_plx_data[adopted_ind]
+            has_old_adopted = source_plx_data[adopted_ind]
             # if errors of new data are less than other measurements,
             # set Adopted = True.
             if plx_error < min(source_plx_data["parallax_error"]):
                 adopted = True
-
-                # unset old adopted
-                if old_adopted:
-                    with db.engine.connect() as conn:
-                        conn.execute(
-                            db.Parallaxes.update()
-                            .where(
-                                and_(
-                                    db.Parallaxes.c.source == old_adopted["source"][0],
-                                    db.Parallaxes.c.reference
-                                    == old_adopted["reference"][0],
-                                )
-                            )
-                            .values(adopted=False)
-                        )
-                        conn.commit()
-                    # check that adopted flag is successfully changed
-                    old_adopted_data = (
-                        db.query(db.Parallaxes)
-                        .filter(
-                            and_(
-                                db.Parallaxes.c.source == old_adopted["source"][0],
-                                db.Parallaxes.c.reference
-                                == old_adopted["reference"][0],
-                            )
-                        )
-                        .table()
-                    )
-                    logger.debug("Old adopted measurement unset")
-                    if logger.level == 10:
-                        old_adopted_data.pprint_all()
             else:
                 adopted = False
             logger.debug(f"The new measurement's adopted flag is:, {adopted}")
@@ -148,6 +118,37 @@ def ingest_parallax(
             session.commit()
         logger.info(f" Photometry added to database: {parallax_data}\n")
         flags["added"] = True
+
+        # unset old adopted only after ingest is successful!
+        if has_old_adopted:
+            with db.engine.connect() as conn:
+                conn.execute(
+                    db.Parallaxes.update()
+                    .where(
+                        and_(
+                            db.Parallaxes.c.source == has_old_adopted["source"][0],
+                            db.Parallaxes.c.reference
+                            == has_old_adopted["reference"][0],
+                        )
+                    )
+                    .values(adopted=False)
+                )
+                conn.commit()
+            # check that adopted flag is successfully changed
+            old_adopted_data = (
+                db.query(db.Parallaxes)
+                .filter(
+                    and_(
+                        db.Parallaxes.c.source == has_old_adopted["source"][0],
+                        db.Parallaxes.c.reference == has_old_adopted["reference"][0],
+                    )
+                )
+                .table()
+            )
+            logger.debug("Old adopted measurement unset")
+            if logger.level == 10:
+                old_adopted_data.pprint_all()
+
         return flags
     except sqlalchemy.exc.IntegrityError as error_msg:
         flags["added"] = False

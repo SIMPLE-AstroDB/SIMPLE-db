@@ -100,16 +100,16 @@ def test_ingest_parallaxes(temp_db, t_plx):
 
 def test_parallax_exceptions(temp_db):
     with pytest.raises(AstroDBError) as error_message:
-        ingest_parallax(temp_db, "bad source", 1, 1, "Ref 1")
+        ingest_parallax(temp_db, "bad source", 1, 0, "Ref 1")
     assert "does not exist in Sources table" in str(error_message.value)
 
-    flags = ingest_parallax(temp_db, "bad source", 1, 1, "Ref 1", "comment", False)
+    flags = ingest_parallax(temp_db, "bad source", 1, 0, "Ref 1", "comment", False)
     assert flags == {
         "added": False,
         "content": {
             "source": "bad source",
             "parallax": 1,
-            "parallax_error": 1,
+            "parallax_error": 0,
             "reference": "Ref 1",
             "adopted": True,
             "comments": "comment",
@@ -118,19 +118,19 @@ def test_parallax_exceptions(temp_db):
     }
 
     with pytest.raises(AstroDBError) as error_message:
-        ingest_parallax(temp_db, "Fake 1", 1, 1, "bad ref")
+        ingest_parallax(temp_db, "Fake 1", 1, 0, "bad ref")
     assert "does not exist in Publications table" in str(error_message.value)
 
-    flags = ingest_parallax(temp_db, "Fake 1", 1, 1, "bad ref", "comment", False)
+    flags = ingest_parallax(temp_db, "Fake 1", 1, 0, "bad ref", "comment", False)
     print(flags)
     assert flags == {
         "added": False,
         "content": {
             "source": "Fake 1",
             "parallax": 1,
-            "parallax_error": 1,
+            "parallax_error": 0,
             "reference": "bad ref",
-            "adopted": False,
+            "adopted": True,
             "comments": "comment",
         },
         "message": "Reference 'bad ref' does not exist in Publications table. ",
