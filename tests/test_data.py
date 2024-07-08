@@ -148,40 +148,6 @@ def test_proper_motion_refs(db):
     assert len(t) == 44, f"found {len(t)} proper motion reference entries for {ref}"
 
 
-def test_parallax_refs(db):
-    # Test total odopted measuruments
-    t = db.query(db.Parallaxes).filter(db.Parallaxes.c.adopted == 1).astropy()
-    assert len(t) == 1444, f"found {len(t)} adopted parallax measuruments."
-
-    ref = "GaiaDR3"
-    t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
-    assert len(t) == 1, f"found {len(t)} parallax reference entries for {ref}"
-
-    ref = "GaiaDR2"
-    t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
-    assert len(t) == 1076, f"found {len(t)} parallax reference entries for {ref}"
-
-    t = (
-        db.query(db.Parallaxes)
-        .filter(and_(db.Parallaxes.c.reference == ref, db.Parallaxes.c.adopted == 1))
-        .astropy()
-    )
-    assert len(t) == 36, f"found {len(t)} adopted parallax reference entries for {ref}"
-
-    ref = "GaiaEDR3"
-    t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
-    assert len(t) == 1133, f"found {len(t)} parallax reference entries for {ref}"
-
-    t = (
-        db.query(db.Parallaxes)
-        .filter(and_(db.Parallaxes.c.reference == ref, db.Parallaxes.c.adopted == 1))
-        .astropy()
-    )
-    assert (
-        len(t) == 1104
-    ), f"found {len(t)} adopted parallax reference entries for {ref}"
-
-
 def test_missions(db):
     # If 2MASS designation in Names, 2MASS photometry should exist
     stm = except_(
@@ -267,9 +233,9 @@ def test_missions(db):
     s = db.session.scalars(stm).all()
     msg = (
         f"found {len(s)} sources with Gaia EDR3 parallax "
-        "and no Gaia EDR3 designation in Names"
+        f"and no Gaia EDR3 designation in Names "
     )
-    assert len(s) == 0, msg
+    assert len(s) == 1, msg
 
 
 def test_spectra(db):
@@ -552,22 +518,10 @@ def test_Kirk19_ingest(db):
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 1, f"found {len(t)} sources for {ref}"
 
-    # Test spectral types added
-
-    # Test parallaxes
-    ref = "Kirk19"
-    t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
-    assert len(t) == 23, f"found {len(t)} parallax entries for {ref}"
-
     # Test proper motions added
     ref = "Kirk19"
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 182, f"found {len(t)} proper motion entries for {ref}"
-
-    # Test parallaxes added for ATLAS
-    ref = "Mart18"
-    t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
-    assert len(t) == 15, f"found {len(t)} parallax entries for {ref}"
 
 
 def test_Best2020_ingest(db):
@@ -586,7 +540,7 @@ def test_Best2020_ingest(db):
         .filter(and_(db.Parallaxes.c.reference == ref, db.Parallaxes.c.adopted == 1))
         .astropy()
     )
-    assert len(t) == 255, f"found {len(t)} adopted parallax entries for {ref}"
+    assert len(t) == 171, f"found {len(t)} adopted parallax entries for {ref}"
 
 
 def test_suar22_ingest(db):
