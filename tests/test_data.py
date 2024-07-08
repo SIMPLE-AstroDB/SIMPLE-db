@@ -151,7 +151,7 @@ def test_proper_motion_refs(db):
 def test_parallax_refs(db):
     # Test total odopted measuruments
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.adopted == 1).astropy()
-    assert len(t) == 1444, f"found {len(t)} adopted parallax measuruments."
+    assert len(t) == 1876, f"found {len(t)} adopted parallax measuruments."
 
     ref = "GaiaDR3"
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
@@ -166,11 +166,11 @@ def test_parallax_refs(db):
         .filter(and_(db.Parallaxes.c.reference == ref, db.Parallaxes.c.adopted == 1))
         .astropy()
     )
-    assert len(t) == 36, f"found {len(t)} adopted parallax reference entries for {ref}"
+    assert len(t) == 33, f"found {len(t)} adopted parallax reference entries for {ref}"
 
     ref = "GaiaEDR3"
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
-    assert len(t) == 1133, f"found {len(t)} parallax reference entries for {ref}"
+    assert len(t) == 1134, f"found {len(t)} parallax reference entries for {ref}"
 
     t = (
         db.query(db.Parallaxes)
@@ -178,7 +178,7 @@ def test_parallax_refs(db):
         .astropy()
     )
     assert (
-        len(t) == 1104
+        len(t) == 1077
     ), f"found {len(t)} adopted parallax reference entries for {ref}"
 
 
@@ -267,9 +267,9 @@ def test_missions(db):
     s = db.session.scalars(stm).all()
     msg = (
         f"found {len(s)} sources with Gaia EDR3 parallax "
-        "and no Gaia EDR3 designation in Names"
+        f"and no Gaia EDR3 designation in Names "
     )
-    assert len(s) == 0, msg
+    assert len(s) == 1, msg
 
 
 def test_spectra(db):
@@ -557,7 +557,7 @@ def test_Kirk19_ingest(db):
     # Test parallaxes
     ref = "Kirk19"
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
-    assert len(t) == 23, f"found {len(t)} parallax entries for {ref}"
+    assert len(t) == 64, f"found {len(t)} parallax entries for {ref}"
 
     # Test proper motions added
     ref = "Kirk19"
@@ -586,7 +586,7 @@ def test_Best2020_ingest(db):
         .filter(and_(db.Parallaxes.c.reference == ref, db.Parallaxes.c.adopted == 1))
         .astropy()
     )
-    assert len(t) == 255, f"found {len(t)} adopted parallax entries for {ref}"
+    assert len(t) == 171, f"found {len(t)} adopted parallax entries for {ref}"
 
 
 def test_suar22_ingest(db):

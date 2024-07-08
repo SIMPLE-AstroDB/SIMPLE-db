@@ -120,7 +120,7 @@ def ingest_parallax(
         flags["added"] = True
 
         # unset old adopted only after ingest is successful!
-        if has_old_adopted:
+        if has_old_adopted and adopted:
             with db.engine.connect() as conn:
                 conn.execute(
                     db.Parallaxes.update()
