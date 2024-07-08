@@ -27,6 +27,8 @@ for ref in uc_reference_table:
 
 
 def uc_ref_to_simple_ref(db, ref):
+    if ref == "Harr15":  # Reference with no ADS.
+        return ref
     t = (
         db.query(db.Publications)
         .filter(db.Publications.c.bibcode == uc_ref_to_ADS[ref])

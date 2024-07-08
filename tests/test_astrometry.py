@@ -2,7 +2,7 @@ import pytest
 from astropy.table import Table
 from astrodb_utils import AstroDBError
 from simple.utils.astrometry import (
-    ingest_parallaxes,
+    ingest_parallax,
     ingest_proper_motions,
     ingest_radial_velocity,
 )
@@ -15,6 +15,7 @@ def t_plx():
         [
             {"source": "Fake 1", "plx": 113.0, "plx_err": 0.3, "plx_ref": "Ref 1"},
             {"source": "Fake 2", "plx": 145.0, "plx_err": 0.5, "plx_ref": "Ref 1"},
+            {"source": "Fake 1", "plx": 113.0, "plx_err": 0.2, "plx_ref": "Ref 2"},
             {"source": "Fake 3", "plx": 155.0, "plx_err": 0.6, "plx_ref": "Ref 2"},
         ]
     )
@@ -68,9 +69,15 @@ def t_rv():
 
 def test_ingest_parallaxes(temp_db, t_plx):
     # Test ingest of parallax data
-    ingest_parallaxes(
-        temp_db, t_plx["source"], t_plx["plx"], t_plx["plx_err"], t_plx["plx_ref"]
-    )
+
+    for row in t_plx:
+        ingest_parallax(
+            temp_db,
+            row["source"],
+            row["plx"],
+            row["plx_err"],
+            row["plx_ref"],
+        )
 
     results = (
         temp_db.query(temp_db.Parallaxes)
@@ -78,15 +85,113 @@ def test_ingest_parallaxes(temp_db, t_plx):
         .table()
     )
     assert len(results) == 2
+    assert not results["adopted"][0]  # 1st source with ref 1 should not be adopted
     results = (
         temp_db.query(temp_db.Parallaxes)
         .filter(temp_db.Parallaxes.c.reference == "Ref 2")
         .table()
     )
-    assert len(results) == 1
-    assert results["source"][0] == "Fake 3"
-    assert results["parallax"][0] == 155
-    assert results["parallax_error"][0] == 0.6
+    assert len(results) == 2
+    assert results["source"][1] == "Fake 3"
+    assert results["parallax"][1] == 155
+    assert results["parallax_error"][1] == 0.6
+    assert results["adopted"][0]  # 1st source with ref 2 should be adopted
+
+
+def test_parallax_exceptions(temp_db):
+    with pytest.raises(AstroDBError) as error_message:
+        ingest_parallax(
+            temp_db,
+            source="bad source",
+            parallax_mas=1,
+            parallax_err_mas=0,
+            reference="Ref 1",
+        )
+    assert "does not exist in Sources table" in str(error_message.value)
+
+    flags = ingest_parallax(
+        temp_db,
+        source="bad source",
+        parallax_mas=1,
+        parallax_err_mas=0,
+        reference="Ref 1",
+        comment="comment",
+        raise_error=False,
+    )
+    assert flags == {
+        "added": False,
+        "content": {
+            "source": "bad source",
+            "parallax": 1,
+            "parallax_error": 0,
+            "reference": "Ref 1",
+            "adopted": True,
+            "comments": "comment",
+        },
+        "message": "Source 'bad source' does not exist in Sources table. ",
+    }
+
+    with pytest.raises(AstroDBError) as error_message:
+        ingest_parallax(
+            temp_db,
+            source="Fake 1",
+            parallax_mas=1,
+            parallax_err_mas=0,
+            reference="bad ref",
+        )
+    assert "does not exist in Publications table" in str(error_message.value)
+
+    flags = ingest_parallax(
+        temp_db,
+        source="Fake 1",
+        parallax_mas=1,
+        parallax_err_mas=0,
+        reference="bad ref",
+        comment="comment",
+        raise_error=False,
+    )
+    assert flags == {
+        "added": False,
+        "content": {
+            "source": "Fake 1",
+            "parallax": 1,
+            "parallax_error": 0,
+            "reference": "bad ref",
+            "adopted": True,
+            "comments": "comment",
+        },
+        "message": "Reference 'bad ref' does not exist in Publications table. ",
+    }
+
+    ingest_parallax(
+        temp_db, source="Fake 2", parallax_mas=1, parallax_err_mas=1, reference="Ref 2"
+    )
+    with pytest.raises(AstroDBError) as error_message:
+        ingest_parallax(
+            temp_db,
+            source="Fake 2",
+            parallax_mas=1,
+            parallax_err_mas=1,
+            reference="Ref 2",
+        )
+    assert "Duplicate measurement exists with same reference" in str(
+        error_message.value
+    )
+
+    flags = ingest_parallax(
+        temp_db,
+        source="Fake 2",
+        parallax_mas=1,
+        parallax_err_mas=1,
+        reference="Ref 2",
+        comment="comment",
+        raise_error=False,
+    )
+    assert flags == {
+        "added": False,
+        "content": {},
+        "message": "Duplicate measurement exists with same reference",
+    }
 
 
 def test_ingest_proper_motions(temp_db, t_pm):

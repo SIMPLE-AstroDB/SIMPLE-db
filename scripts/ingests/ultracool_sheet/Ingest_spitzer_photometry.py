@@ -17,7 +17,7 @@ from scripts.ingests.ultracool_sheet.references import uc_ref_to_simple_ref
 logger = logging.getLogger("AstroDB")
 logger.setLevel(logging.INFO)
 
-DB_SAVE = True
+DB_SAVE = False
 RECREATE_DB = True
 db = load_astrodb(
     "SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES
