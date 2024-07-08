@@ -85,11 +85,11 @@ for source in uc_sheet_table:
                 comment = f"other references: {uc_ref_to_simple_ref(db, references[1])}"
             ingest_parallax(
                 db,
-                simple_source,
-                source["plx_lit"],
-                source["plxerr_lit"],
-                reference,
-                comment,
+                source=simple_source,
+                parallax_mas=source["plx_lit"],
+                parallax_err_mas=source["plxerr_lit"],
+                reference=reference,
+                comment=comment,
             )
             ingested += 1
         except AstroDBError as e:

@@ -20,8 +20,8 @@ logger = logging.getLogger("SIMPLE")
 def ingest_parallax(
     db,
     source: str = None,
-    parallax: float = None,
-    plx_error: float = None,
+    parallax_mas: float = None,
+    parallax_err_mas: float = None,
     reference: str = None,
     comment: str = None,
     raise_error: bool = True,
@@ -35,9 +35,9 @@ def ingest_parallax(
     source: str
         source name
     parallax: float
-        parallax of source in arcseconds
+        parallax of source in milliarcseconds
     plx_err: float
-        parallax uncertainty in arcseconds
+        parallax uncertainty in milliarcseconds
     reference: str
         reference for the parallax data
     comment: str
@@ -90,7 +90,7 @@ def ingest_parallax(
             has_old_adopted = source_plx_data[adopted_ind]
             # if errors of new data are less than other measurements,
             # set Adopted = True.
-            if plx_error < min(source_plx_data["parallax_error"]):
+            if parallax_err_mas < min(source_plx_data["parallax_error"]):
                 adopted = True
             else:
                 adopted = False
@@ -103,8 +103,8 @@ def ingest_parallax(
     # Construct data to be added
     parallax_data = {
         "source": source,
-        "parallax": parallax,
-        "parallax_error": plx_error,
+        "parallax": parallax_mas,
+        "parallax_error": parallax_err_mas,
         "reference": reference,
         "adopted": adopted,
         "comments": comment,

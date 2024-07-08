@@ -101,15 +101,19 @@ def test_ingest_parallaxes(temp_db, t_plx):
 def test_parallax_exceptions(temp_db):
     with pytest.raises(AstroDBError) as error_message:
         ingest_parallax(
-            temp_db, source="bad source", parallax=1, plx_error=0, reference="Ref 1"
+            temp_db,
+            source="bad source",
+            parallax_mas=1,
+            parallax_err_mas=0,
+            reference="Ref 1",
         )
     assert "does not exist in Sources table" in str(error_message.value)
 
     flags = ingest_parallax(
         temp_db,
         source="bad source",
-        parallax=1,
-        plx_error=0,
+        parallax_mas=1,
+        parallax_err_mas=0,
         reference="Ref 1",
         comment="comment",
         raise_error=False,
@@ -129,15 +133,19 @@ def test_parallax_exceptions(temp_db):
 
     with pytest.raises(AstroDBError) as error_message:
         ingest_parallax(
-            temp_db, source="Fake 1", parallax=1, plx_error=0, reference="bad ref"
+            temp_db,
+            source="Fake 1",
+            parallax_mas=1,
+            parallax_err_mas=0,
+            reference="bad ref",
         )
     assert "does not exist in Publications table" in str(error_message.value)
 
     flags = ingest_parallax(
         temp_db,
         source="Fake 1",
-        parallax=1,
-        plx_error=0,
+        parallax_mas=1,
+        parallax_err_mas=0,
         reference="bad ref",
         comment="comment",
         raise_error=False,
@@ -156,11 +164,15 @@ def test_parallax_exceptions(temp_db):
     }
 
     ingest_parallax(
-        temp_db, source="Fake 2", parallax=1, plx_error=1, reference="Ref 2"
+        temp_db, source="Fake 2", parallax_mas=1, parallax_err_mas=1, reference="Ref 2"
     )
     with pytest.raises(AstroDBError) as error_message:
         ingest_parallax(
-            temp_db, source="Fake 2", parallax=1, plx_error=1, reference="Ref 2"
+            temp_db,
+            source="Fake 2",
+            parallax_mas=1,
+            parallax_err_mas=1,
+            reference="Ref 2",
         )
     assert "Duplicate measurement exists with same reference" in str(
         error_message.value
@@ -169,8 +181,8 @@ def test_parallax_exceptions(temp_db):
     flags = ingest_parallax(
         temp_db,
         source="Fake 2",
-        parallax=1,
-        plx_error=1,
+        parallax_mas=1,
+        parallax_err_mas=1,
         reference="Ref 2",
         comment="comment",
         raise_error=False,
