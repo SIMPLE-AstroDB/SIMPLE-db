@@ -32,12 +32,12 @@ def ingest_parallax(
     ----------
     db: astrodbkit2.astrodb.Database
         Database object
-    sources: str
+    source: str
         source name
     parallax: float
-        parallax corresponding to the source
+        parallax of source in arcseconds
     plx_err: float
-        parallax uncertainties
+        parallax uncertainty in arcseconds
     reference: str
         reference for the parallax data
     comment: str

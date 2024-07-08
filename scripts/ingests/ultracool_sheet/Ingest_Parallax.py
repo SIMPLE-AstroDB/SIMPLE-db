@@ -1,8 +1,4 @@
-from astrodb_utils import (
-    load_astrodb,
-    find_source_in_db,
-    AstroDBError,
-)
+from astrodb_utils import load_astrodb, find_source_in_db, AstroDBError
 import sys
 
 sys.path.append(".")
@@ -15,7 +11,21 @@ import sqlalchemy.exc
 from simple.utils.astrometry import ingest_parallax
 from scripts.ingests.ultracool_sheet.references import uc_ref_to_simple_ref
 
-logger = logging.getLogger("AstroDB")
+
+logger = logging.getLogger(__name__)
+
+# Logger setup
+# This will stream all logger messages to the standard output and
+# apply formatting for that
+logger.propagate = False  # prevents duplicated logging messages
+LOGFORMAT = logging.Formatter(
+    "%(asctime)s %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S%p"
+)
+ch = logging.StreamHandler(stream=sys.stdout)
+ch.setFormatter(LOGFORMAT)
+# To prevent duplicate handlers, only add if they haven't been set previously
+if len(logger.handlers) == 0:
+    logger.addHandler(ch)
 logger.setLevel(logging.INFO)
 
 DB_SAVE = False
@@ -47,10 +57,12 @@ no_sources = 0
 multiple_sources = 0
 ingested = 0
 already_exists = 0
+no_data = 0
 
 # Ingest loop
 for source in uc_sheet_table:
     if isnan(source["plx_lit"]):  # skip if no data
+        no_data += 1
         continue
     uc_sheet_name = source["name"]
     match = find_source_in_db(
@@ -63,7 +75,7 @@ for source in uc_sheet_table:
     if len(match) == 1:
         # 1 Match found. INGEST!
         simple_source = match[0]
-        logger.info(f"Match found for {uc_sheet_name}: {simple_source}")
+        logger.debug(f"Match found for {uc_sheet_name}: {simple_source}")
 
         try:
             references = source["ref_plx_lit"].split(";")
@@ -86,21 +98,37 @@ for source in uc_sheet_table:
             ingested += 1
         except AstroDBError as e:
             msg = "ingest failed with error: " + str(e)
-            if "Duplicate measurement exists" not in str(e):
+            if "Duplicate measurement exists" in str(e):
+                already_exists += 1
+            else:
                 logger.warning(msg)
                 raise AstroDBError(msg) from e
-            already_exists += 1
+
     elif len(match) == 0:
         no_sources += 1
-    else:
+    elif len(match) > 1:
         multiple_sources += 1
+    else:
+        msg = "Unexpected situation occured"
+        logger.error(msg)
+        raise AstroDBError(msg)
 
 
 # 1108 data points in UC sheet in total
-print(f"ingested:{ingested}")  # 1013 ingested
-print(f"already exists:{already_exists}")  # skipped 6 due to preexisting data
-print(f"no sources:{no_sources}")  # skipped 86 due to 0 matches
-print(f"multiple sources:{multiple_sources}")  # skipped 2 due to multiple matches
-print(f"total:{ingested+already_exists+no_sources+multiple_sources}")  # 1108
-if DB_SAVE:
+logger.info(f"ingested:{ingested}")  # 1013 ingested
+logger.info(f"already exists:{already_exists}")  # skipped 6 due to preexisting data
+logger.info(f"no sources:{no_sources}")  # skipped 86 due to 0 matches
+logger.info(f"multiple sources:{multiple_sources}")  # skipped 2 due to multiple matches
+logger.info(f"no data: {no_data}")
+logger.info(
+    f"data points tracked:{ingested+already_exists+no_sources+multiple_sources}"
+)  # 1108
+total = ingested + already_exists + no_sources + multiple_sources + no_data
+logger.info(f"total: {total}")
+
+if total != len(uc_sheet_table):
+    msg = "data points tracked inconsistent with UC sheet"
+    logger.error(msg)
+    raise AstroDBError(msg)
+elif DB_SAVE:
     db.save_database(directory="data/")
