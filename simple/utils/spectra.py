@@ -95,6 +95,7 @@ def ingest_spectrum(
 
     if len(db_name) != 1:
         msg = f"No unique source match for {source} in the database"
+        flags["message"] = msg
         if raise_error:
             raise AstroDBError(msg)
         else:
@@ -193,15 +194,7 @@ def ingest_spectrum(
 
         flags["added"] = True
         logger.info(f"Added {source} : \n" f"{row_data}")
-    except sqlalchemy.exc.IntegrityError as e:
-        msg = f"Integrity Error: {source} \n {e}"
-        logger.error(msg + f" \n {row_data}")
-        flags["message"] = msg
-        if raise_error:
-            raise AstroDBError(msg)
-        else:
-            return flags
-    except sqlite3.IntegrityError as e:
+    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         msg = f"Integrity Error: {source} \n {e}"
         logger.error(msg)
         flags["message"] = msg
