@@ -151,13 +151,13 @@ def ingest_spectrum(
         mode=mode,
     )
     if len(matches) > 0:
-        msg = f"Skipping suspected duplicate measurement\n{source}\n"
+        msg = f"Skipping suspected duplicate measurement: {source}\n"
         msg2 = f"{matches}" f"{instrument, mode, obs_date, reference, spectrum} \n"
         logger.warning(msg)
         logger.debug(msg2)
         flags["message"] = msg
         if raise_error:
-            raise AstroDBError
+            raise AstroDBError(msg)
         else:
             return flags
 
@@ -194,16 +194,16 @@ def ingest_spectrum(
         flags["added"] = True
         logger.info(f"Added {source} : \n" f"{row_data}")
     except sqlalchemy.exc.IntegrityError as e:
-        msg = "Integrity Error:" f"{source} \n" f"{row_data}"
-        logger.error(msg + str(e) + f" \n {row_data}")
+        msg = f"Integrity Error: {source} \n {e}"
+        logger.error(msg + f" \n {row_data}")
         flags["message"] = msg
         if raise_error:
             raise AstroDBError(msg)
         else:
             return flags
     except sqlite3.IntegrityError as e:
-        msg = "Integrity Error: " f"{source} \n" f"{row_data}"
-        logger.error(msg + str(e))
+        msg = f"Integrity Error: {source} \n {e}"
+        logger.error(msg)
         flags["message"] = msg
         if raise_error:
             raise AstroDBError(msg)
@@ -211,8 +211,8 @@ def ingest_spectrum(
             return flags
     except Exception as e:
         msg = (
-            f"Spectrum for {source} could not be added to the database"
-            f"for unexpected reason: \n {row_data} \n error: {e}"
+            f"Spectrum for {source} could not be added to the database "
+            f"for unexpected reason: {e}"
         )
         logger.error(msg)
         flags["message"] = msg
@@ -308,7 +308,7 @@ def spectrum_plottable(spectrum_path, raise_error=True, show_plot=False):
             return False
     except u.UnitConversionError as e:
         msg = (
-            f"{str(e)} \n"
+            f"{e} \n"
             f"Skipping {spectrum_path}: unable to convert spectral axis to microns"
         )
         if raise_error:
@@ -318,7 +318,7 @@ def spectrum_plottable(spectrum_path, raise_error=True, show_plot=False):
             logger.warning(msg)
             return False
     except ValueError as e:
-        msg = f"{str(e)} \nSkipping {spectrum_path}: Value error"
+        msg = f"{e} \nSkipping {spectrum_path}: Value error"
         if raise_error:
             logger.error(msg)
             raise AstroDBError(msg)

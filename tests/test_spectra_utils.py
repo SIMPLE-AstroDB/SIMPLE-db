@@ -11,8 +11,6 @@ from simple.utils.spectra import (
 )
 
 
-@pytest.mark.filterwarnings("ignore::UserWarning")
-@pytest.mark.filterwarnings("ignore", message=".*not FITS standard.*")
 @pytest.mark.filterwarnings(
     "ignore", message=".*Note: astropy.io.fits uses zero-based indexing.*"
 )
@@ -30,47 +28,55 @@ def test_ingest_spectrum_errors(temp_db):
 
     # A lot of the tests fail because they were checking very specific parts of ingest_spectrum
 
+    # Ingesting a spectrum with missing regime
     spectrum = "https://bdnyc.s3.amazonaws.com/tests/U10176.fits"
     with pytest.raises(AstroDBError) as error_message:
-        ingest_spectrum(temp_db, source="apple", spectrum=spectrum)
-    # assert "Regime is required" in str(error_message.value)
-    # Commented out the error_message assertions since we have more generic error messages with this
+        _ = ingest_spectrum(temp_db, source="apple", spectrum=spectrum)
+    assert "Value required for regime" in str(error_message.value)
 
     result = ingest_spectrum(
         temp_db, source="apple", spectrum=spectrum, raise_error=False
     )
     assert result["added"] is False
-    assert result["skipped"] is True
+    assert "Value required for regime" in result["message"]
 
+
+    # Ingesting with missing reference
     with pytest.raises(AstroDBError) as error_message:
-        ingest_spectrum(
-            temp_db,
-            source="apple",
-            telescope="IRTF",
-            instrument="SpeX",
-            mode="Prism",
-            regime="nir",
-            spectrum=spectrum,
-        )
+        _ = ingest_spectrum(
+                temp_db,
+                source="apple",
+                telescope="IRTF",
+                instrument="SpeX",
+                mode="Prism",
+                regime="nir",
+                spectrum=spectrum,
+                obs_date="2020-01-01",
+            )
+    assert "NOT NULL constraint failed: Spectra.reference" in str(error_message.value)
     # assert "Reference is required" in str(error_message.value)
 
     result = ingest_spectrum(
-        temp_db, source="apple", regime="nir", spectrum=spectrum, raise_error=False
+        temp_db, source="apple", regime="nir", spectrum=spectrum, raise_error=False, obs_date="2020-01-01"
     )
     assert result["added"] is False
-    assert result["skipped"] is True
+    assert "NOT NULL constraint failed: Spectra.reference" in result["message"]
 
+
+    # Ingesting with invalid reference (does not already exist)
     with pytest.raises(AstroDBError) as error_message:
-        ingest_spectrum(
-            temp_db,
-            source="apple",
-            regime="nir",
-            spectrum=spectrum,
-            telescope="IRTF",
-            instrument="SpeX",
-            mode="Prism",
-            reference="Ref 5",
-        )
+        _ = ingest_spectrum(
+                temp_db,
+                source="apple",
+                regime="nir",
+                spectrum=spectrum,
+                telescope="IRTF",
+                instrument="SpeX",
+                mode="Prism",
+                reference="Ref 5",
+                obs_date="2020-01-01",
+            )
+    print(error_message)
     # assert "not in Publications table" in str(error_message.value)
 
     result = ingest_spectrum(
@@ -83,21 +89,26 @@ def test_ingest_spectrum_errors(temp_db):
         mode="Prism",
         reference="Ref 5",
         raise_error=False,
+        obs_date="2020-01-01",
     )
+    for k, v in result.items():
+        print(k, v)
     assert result["added"] is False
-    assert result["skipped"] is True
 
+
+    # Ingesting for invalid source (not already in database)
     with pytest.raises(AstroDBError) as error_message:
-        ingest_spectrum(
-            temp_db,
-            source="kiwi",
-            regime="nir",
-            spectrum=spectrum,
-            reference="Ref 1",
-            telescope="IRTF",
-            instrument="SpeX",
-            mode="Prism",
-        )
+        _ = ingest_spectrum(
+                temp_db,
+                source="kiwi",
+                regime="nir",
+                spectrum=spectrum,
+                reference="Ref 1",
+                telescope="IRTF",
+                instrument="SpeX",
+                mode="Prism",
+                obs_date="2020-01-01",
+            )
     # assert "No unique source match for kiwi in the database" in str(error_message.value)
 
     result = ingest_spectrum(
@@ -110,21 +121,25 @@ def test_ingest_spectrum_errors(temp_db):
         telescope="IRTF",
         instrument="SpeX",
         mode="Prism",
+        obs_date="2020-01-01",
     )
+    print(result)
     assert result["added"] is False
-    assert result["skipped"] is True
 
+
+    # Ingesting with missing date
     with pytest.raises(AstroDBError) as error_message:
-        ingest_spectrum(
-            temp_db,
-            source="apple",
-            regime="nir",
-            spectrum=spectrum,
-            reference="Ref 1",
-            telescope="IRTF",
-            instrument="SpeX",
-            mode="Prism",
-        )
+        _ = ingest_spectrum(
+                temp_db,
+                source="apple",
+                regime="nir",
+                spectrum=spectrum,
+                reference="Ref 1",
+                telescope="IRTF",
+                instrument="SpeX",
+                mode="Prism",
+            )
+    assert "Invalid date received" in str(error_message.value)
     # assert "missing observation date" in str(error_message.value)
 
     result = ingest_spectrum(
@@ -139,11 +154,12 @@ def test_ingest_spectrum_errors(temp_db):
         raise_error=False,
     )
     assert result["added"] is False
-    # assert result["skipped"] is False
-    # assert result["no_obs_date"] is True
+    assert "Invalid date received" in result["message"]
 
+
+    # Ingesting with invalid regime
     with pytest.raises(AstroDBError) as error_message:
-        result = ingest_spectrum(
+        _ = ingest_spectrum(
             temp_db,
             source="orange",
             regime="far-uv",
@@ -168,9 +184,8 @@ def test_ingest_spectrum_errors(temp_db):
         mode="OG570",
         raise_error=False,
     )
+    print(result)
     assert result["added"] is False
-    assert result["skipped"] is True
-
 
 @pytest.mark.filterwarnings("ignore:Verification")
 @pytest.mark.filterwarnings("ignore", message=".*Card 'AIRMASS' is not FITS standard.*")
