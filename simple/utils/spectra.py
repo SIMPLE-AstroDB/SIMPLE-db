@@ -9,7 +9,6 @@ import requests
 import sqlalchemy.exc
 from astrodb_utils import (
     AstroDBError,
-    find_publication,
     find_source_in_db,
     internet_connection,
 )
@@ -152,8 +151,8 @@ def ingest_spectrum(
         mode=mode,
     )
     if len(matches) > 0:
-        msg = f"Skipping suspected duplicate measurement: {source}\n"
-        msg2 = f"{matches}" f"{instrument, mode, obs_date, reference, spectrum} \n"
+        msg = f"Skipping suspected duplicate measurement: {source}"
+        msg2 = f"{matches} {instrument, mode, obs_date, reference, spectrum}"
         logger.warning(msg)
         logger.debug(msg2)
         flags["message"] = msg
