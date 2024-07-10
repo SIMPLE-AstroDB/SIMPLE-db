@@ -25,7 +25,21 @@ from simple.utils.spectra import (
     ),
 )
 @pytest.mark.parametrize("test_input, message", [
-    ({"source": "apple"}, "Value required for regime"),  # missing regime
+    ({"source": "apple",
+      "telescope": "IRTF", 
+      "instrument": "SpeX", 
+      "mode": "Prism",
+      }, "Value required for regime"),  # missing regime
+    ({"source": "apple",
+      "regime": "nir", 
+      "instrument": "SpeX", 
+      "obs_date": "2020-01-01",
+      }, "Value required for telescope"),  # missing telescope
+    ({"source": "apple",
+      "regime": "nir", 
+      "telescope": "IRTF", 
+      "obs_date": "2020-01-01",
+      }, "Value required for instrument"),  # missing instrument
     ({"source": "apple", 
       "telescope": "IRTF", 
       "instrument": "SpeX", 

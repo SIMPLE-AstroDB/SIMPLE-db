@@ -366,9 +366,9 @@ class Spectra(Base):
         ForeignKey("Regimes.regime", ondelete="cascade", onupdate="cascade"),
         primary_key=True,
     )
-    telescope = Column(String(30))
-    instrument = Column(String(30))
-    mode = Column(String(30))  # eg, Prism, Echelle, etc
+    telescope = Column(String(30), nullable=False)
+    instrument = Column(String(30), nullable=False)
+    mode = Column(String(30), nullable=False)  # eg, Prism, Echelle, etc
     observation_date = Column(DateTime, primary_key=True)
 
     # Common metadata
@@ -390,7 +390,7 @@ class Spectra(Base):
         {},
     )
 
-    @validates("access_url", "regime", "source")
+    @validates("access_url", "regime", "source", "telescope", "instrument", "mode")
     def validate_required(self, key, value):
         if value is None:
             raise ValueError(f"Value required for {key}")
