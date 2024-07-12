@@ -29,7 +29,7 @@ if len(logger.handlers) == 0:
     logger.addHandler(ch)
 logger.setLevel(logging.INFO)
 
-DB_SAVE = False
+DB_SAVE = True
 RECREATE_DB = True
 db = load_astrodb(
     "SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES
@@ -127,7 +127,7 @@ for source in uc_sheet_table:
         comment_filter = "WFCAM filter is a guess. Check reference for actual filter and telescope used. "
 
     match = None
-    if len(MKO_name) > 0:
+    if len(MKO_name) > 0 and MKO_name != "null":
         match = find_source_in_db(
             db,
             source["name"],

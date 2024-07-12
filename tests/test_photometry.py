@@ -21,9 +21,9 @@ from astropy.io.votable.ucd import check_ucd, parse_ucd, UCDWords
         ("NIRI.Y", 21),
         ("UFTI.Y", 13),
         ("Wircam.Y", 29),
-        ("WFCAM.Y", 854),
+        ("WFCAM.Y", 1998),
         ("VisAO.Ys", 1),
-        ("VISTA.Y", 59),
+        ("VISTA.Y", 75),
         ("JWST/MIRI.F1000W", 1),
         ("JWST/MIRI.F1280W", 1),
         ("JWST/MIRI.F1800W", 1),
@@ -107,7 +107,7 @@ def test_photometrymko_y(db):
         )
         .astropy()
     )
-    assert len(t) == 969, f"found {len(t)} Y photometry entries"
+    assert len(t) == 1094, f"found {len(t)} Y photometry entries"
 
 
 def test_photometry_filters_ucds(db):
@@ -127,7 +127,7 @@ def test_magnitude_errors(db):
         .filter(db.Photometry.c.magnitude_error == None)
         .astropy()
     )
-    assert len(t) == 455, f"found {len(t)} Photometry entries with null error"
+    assert len(t) == 504, f"found {len(t)} Photometry entries with null error"
 
 
 def test_data(db):
@@ -137,8 +137,8 @@ def test_data(db):
 
     ref = "Kirk19"
     t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
-    assert len(t) == 344, f"found {len(t)} photometry entries for {ref}"
+    assert len(t) == 364, f"found {len(t)} photometry entries for {ref}"
 
     ref = "Schn15"
     t = db.query(db.Photometry).filter(db.Photometry.c.reference == ref).astropy()
-    assert len(t) == 34, f"found {len(t)} photometry entries for {ref}"
+    assert len(t) == 63, f"found {len(t)} photometry entries for {ref}"
