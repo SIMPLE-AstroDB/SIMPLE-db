@@ -1,8 +1,4 @@
-from astrodb_utils import (
-    load_astrodb,
-    find_source_in_db,
-    AstroDBError,
-)
+from astrodb_utils import load_astrodb, find_source_in_db, AstroDBError, ingest_names
 from astrodb_utils.photometry import ingest_photometry
 import sys
 
@@ -105,20 +101,22 @@ multiple_sources = 0
 ingested = 0
 already_exists = 0
 no_data = 0
+names_ingested = 0
 
 # Ingest loop
 for source in uc_sheet_table:
     comment_filter = ""
-    if len(source["designation_MKO"]) == 0:
+    MKO_name = source["designation_MKO"]
+    if len(MKO_name) == 0:
         # instrument = "WFCAM"
         telescope = "UKIRT"
         filter_name = "WFCAM"
         comment_filter = "WFCAM filter is a guess. Check reference for actual filter and telescope used. "
-    elif source["designation_MKO"][0] == "U":
+    elif MKO_name[0] == "U":
         # instrument = "WFCAM"
         telescope = "UKIRT"
         filter_name = "WFCAM"
-    elif source["designation_MKO"][0] == "V":
+    elif MKO_name[0] == "V":
         # instrument = "VIRCAM"
         telescope = "VISTA"
         filter_name = "VISTA"
@@ -127,7 +125,24 @@ for source in uc_sheet_table:
         telescope = "UKIRT"
         filter_name = "WFCAM"
         comment_filter = "WFCAM filter is a guess. Check reference for actual filter and telescope used. "
+
     match = None
+    if len(MKO_name) > 0:
+        match = find_source_in_db(
+            db,
+            source["name"],
+            ra=source["ra_j2000_formula"],
+            dec=source["dec_j2000_formula"],
+        )
+        if len(match) == 1:
+            try:
+                ingest_names(
+                    db, match[0], MKO_name
+                )  # ingest new names while were at it
+                names_ingested += 1
+            except AstroDBError as e:
+                None  # only error is if there is a preexisting name anyways.
+
     for band in ["Y", "J", "H", "K"]:
         measurement = source[f"{band}_MKO"]
         error = source[f"{band}err_MKO"]
@@ -205,6 +220,7 @@ logger.info(
 )  # 10148
 total = ingested + already_exists + no_sources + multiple_sources + no_data
 logger.info(f"total: {total}")  # 15560
+logger.info(f"names ingested: {names_ingested}")  # 2215
 
 if total != len(uc_sheet_table) * 4:
     msg = "data points tracked inconsistent with UC sheet"
