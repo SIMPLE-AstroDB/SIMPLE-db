@@ -1,4 +1,9 @@
-from astrodb_utils import load_astrodb, find_source_in_db, AstroDBError
+from astrodb_utils import (
+    load_astrodb,
+    find_source_in_db,
+    AstroDBError,
+)
+from astrodb_utils.photometry import ingest_photometry
 import sys
 
 sys.path.append(".")
@@ -53,7 +58,7 @@ uc_sheet_table = ascii.read(
 )
 
 
-def ingest_Photometry(
+def ingest_Photometry_Evan(
     source: str = None,
     band: str = None,
     magnitude: float = None,
@@ -160,21 +165,22 @@ for source in uc_sheet_table:
                     comment = None
                 else:
                     comment = comment_filter + comment_reference
-                ingest_Photometry(
+                ingest_photometry(
+                    db,
                     source=simple_source,
                     band=band_filter,
                     magnitude=measurement,
-                    mag_error=error,
+                    magnitude_error=error,
                     telescope=telescope,
                     # instrument=instrument,
-                    comment=comment,
+                    comments=comment,
                     reference=reference,
                     raise_error=True,
                 )
                 ingested += 1
             except AstroDBError as e:
                 msg = "ingest failed with error: " + str(e)
-                if "Photometry with same reference already exists" in str(e):
+                if "The measurement may be a duplicate" in str(e):
                     already_exists += 1
                 else:
                     logger.warning(msg)
@@ -196,7 +202,7 @@ logger.info(f"multiple sources:{multiple_sources}")  # 8
 logger.info(f"no data: {no_data}")  # 5412
 logger.info(
     f"data points tracked:{ingested+already_exists+no_sources+multiple_sources}"
-)
+)  # 10148
 total = ingested + already_exists + no_sources + multiple_sources + no_data
 logger.info(f"total: {total}")  # 15560
 
