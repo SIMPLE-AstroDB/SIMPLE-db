@@ -53,49 +53,6 @@ uc_sheet_table = ascii.read(
     delimiter=",",
 )
 
-
-def ingest_Photometry_Evan(
-    source: str = None,
-    band: str = None,
-    magnitude: float = None,
-    mag_error: float = None,
-    telescope: str = None,
-    # instrument: str = None,
-    comment: str = None,
-    reference: str = None,
-    raise_error: bool = True,
-):
-    table_data = {
-        "source": source,
-        "band": band,
-        "magnitude": magnitude,
-        "magnitude_error": mag_error,
-        "telescope": telescope,
-        # "instrument": instrument,
-        "comments": comment,
-        "reference": reference,
-    }
-
-    try:
-        pho_obj = Photometry(**table_data)
-        with db.session as session:
-            session.add(pho_obj)
-            session.commit()
-        logger.info(f" Photometry added to database: {table_data}\n")
-    except sqlalchemy.exc.IntegrityError as e:
-        if "UNIQUE constraint failed:" in str(e):
-            msg = f" Photometry with same reference already exists in database: {table_data}"
-            if raise_error:
-                raise AstroDBError(msg) from e
-            else:
-                msg2 = f"SKIPPING: {source}. Photometry with same reference already exists in database."
-                logger.warning(msg2)
-        else:
-            msg = f"Could not add {table_data} to database. Error: {e}"
-            logger.warning(msg)
-            raise AstroDBError(msg) from e
-
-
 no_sources = 0
 multiple_sources = 0
 ingested = 0
