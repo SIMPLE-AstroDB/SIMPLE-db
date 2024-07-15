@@ -38,7 +38,7 @@ def uc_ref_to_simple_ref(db, ref):
     if ref == "Schn23b":
         name = "Schn23.ace9"
     if ref == "Alle16b":
-        name = "alle16PhDT"
+        name = "Alle16.PhDT"
     if ref == "Stol20b":
         name = "Stol20"
     t = (
