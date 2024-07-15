@@ -100,6 +100,7 @@ no_sources = 0
 multiple_sources = 0
 ingested = 0
 already_exists = 0
+bad_reference = 0
 no_data = 0
 names_ingested = 0
 
@@ -197,6 +198,8 @@ for source in uc_sheet_table:
                 msg = "ingest failed with error: " + str(e)
                 if "The measurement may be a duplicate" in str(e):
                     already_exists += 1
+                elif "Reference match failed due to bad publication" in str(e):
+                    bad_reference += 1
                 else:
                     logger.warning(msg)
                     raise AstroDBError(msg) from e
@@ -210,17 +213,20 @@ for source in uc_sheet_table:
             logger.error(msg)
             raise AstroDBError(msg)
 
-logger.info(f"ingested:{ingested}")  # 7936
+logger.info(f"ingested:{ingested}")  # 6692
 logger.info(f"already exists:{already_exists}")  # 801
 logger.info(f"no sources:{no_sources}")  # 1403
 logger.info(f"multiple sources:{multiple_sources}")  # 8
+logger.info(f"bad references:{bad_reference}")  # 1244
 logger.info(f"no data: {no_data}")  # 5412
 logger.info(
-    f"data points tracked:{ingested+already_exists+no_sources+multiple_sources}"
+    f"data points tracked:{ingested+already_exists+no_sources+multiple_sources+bad_reference}"
 )  # 10148
-total = ingested + already_exists + no_sources + multiple_sources + no_data
+total = (
+    ingested + already_exists + no_sources + multiple_sources + no_data + bad_reference
+)
 logger.info(f"total: {total}")  # 15560
-logger.info(f"names ingested: {names_ingested}")  # 2215
+logger.info(f"names ingested: {names_ingested}")  # 155
 
 if total != len(uc_sheet_table) * 4:
     msg = "data points tracked inconsistent with UC sheet"

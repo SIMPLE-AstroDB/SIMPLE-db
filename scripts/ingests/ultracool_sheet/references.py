@@ -1,4 +1,4 @@
-from astrodb_utils import ingest_publication
+from astrodb_utils import ingest_publication, AstroDBError
 from astropy.io import ascii
 
 
@@ -29,6 +29,9 @@ for ref in uc_reference_table:
 def uc_ref_to_simple_ref(db, ref):
     if ref == "Harr15":  # Reference with no ADS.
         return ref
+    if uc_ref_to_ADS[ref][0:5] == "noADS":
+        msg = "Reference match failed due to bad publication"
+        raise AstroDBError(msg)
     t = (
         db.query(db.Publications)
         .filter(db.Publications.c.bibcode == uc_ref_to_ADS[ref])
@@ -37,5 +40,8 @@ def uc_ref_to_simple_ref(db, ref):
     if len(t) == 0:
         ingest_publication(db, bibcode=uc_ref_to_ADS[ref], reference=ref)
         return ref
-    else:
+    elif len(t) == 1:
         return t["reference"][0]
+    else:
+        msg = "Multiple reference match"
+        raise AstroDBError(msg)
