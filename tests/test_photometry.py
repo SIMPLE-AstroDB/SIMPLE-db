@@ -21,10 +21,10 @@ from astropy.io.votable.ucd import check_ucd, parse_ucd, UCDWords
         ("NIRI.Y", 21),
         ("UFTI.Y", 13),
         ("Wircam.Y", 29),
-        ("WFCAM.Y", 1581),
-        ("WFCAM.J", 2089),
-        ("WFCAM.H", 1839),
-        ("WFCAM.K", 1904),
+        ("WFCAM.Y", 1672),
+        ("WFCAM.J", 2469),
+        ("WFCAM.H", 1909),
+        ("WFCAM.K", 2093),
         ("VisAO.Ys", 1),
         ("VISTA.Y", 74),
         ("VISTA.J", 67),
@@ -61,6 +61,7 @@ def test_photometrymko_y(db):
     ]
     ref_list = [
         "Albe11",
+        "Best20.42",
         "Burn08",
         "Burn09",
         "Burn10.1885",
@@ -94,13 +95,17 @@ def test_photometrymko_y(db):
         "Luca10",
         "Male14",
         "McMa13",
+        "McMa21",
         "Minn17",
         "Naud14",
         "Pena11",
         "Pena12",
         "Pinf08",
+        "Schn23.ace9",
         "Smit18",
         "Warr07.1400",
+        "WFAU19",
+        "Wrig13",
     ]
 
     t = (
@@ -113,7 +118,7 @@ def test_photometrymko_y(db):
         )
         .astropy()
     )
-    assert len(t) == 1094, f"found {len(t)} Y photometry entries"
+    assert len(t) == 1738, f"found {len(t)} Y photometry entries"
 
 
 def test_photometry_filters_ucds(db):
@@ -133,7 +138,7 @@ def test_magnitude_errors(db):
         .filter(db.Photometry.c.magnitude_error == None)
         .astropy()
     )
-    assert len(t) == 502, f"found {len(t)} Photometry entries with null error"
+    assert len(t) == 504, f"found {len(t)} Photometry entries with null error"
 
 
 def test_data(db):

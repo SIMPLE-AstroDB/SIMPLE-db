@@ -29,6 +29,8 @@ for ref in uc_reference_table:
 def uc_ref_to_simple_ref(db, ref):
     if ref == "Harr15":
         return ref
+    if ref == "WFAU19":
+        return ref
     if uc_ref_to_ADS[ref][0:5] == "noADS":
         msg = "Reference match failed due to bad publication"
         raise AstroDBError(msg)

@@ -1,4 +1,10 @@
-from astrodb_utils import load_astrodb, find_source_in_db, AstroDBError, ingest_names
+from astrodb_utils import (
+    load_astrodb,
+    find_source_in_db,
+    AstroDBError,
+    ingest_names,
+    ingest_publication,
+)
 from astrodb_utils.photometry import ingest_photometry
 import sys
 
@@ -51,6 +57,12 @@ uc_sheet_table = ascii.read(
     guess=False,
     fast_reader=False,
     delimiter=",",
+)
+
+ingest_publication(
+    db,
+    reference="WFAU19",
+    description="UKIDSS DR11+ Release: http://wsa.roe.ac.uk/dr11plus_release.html",
 )
 
 no_sources = 0
