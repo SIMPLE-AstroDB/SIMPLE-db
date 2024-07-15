@@ -26,31 +26,7 @@ for ref in uc_reference_table:
     uc_ref_to_ADS[ref["code_ref"]] = ref["ADSkey_ref"]
 
 
-setup_completed = False
-
-
-def generate_references(db):
-    setup_completed = True
-
-    for ref in uc_reference_table:
-        if uc_ref_to_ADS[ref["code_ref"]][0:5] == "noADS":
-            continue
-        try:
-            t = (
-                db.query(db.Publications)
-                .filter(db.Publications.c.bibcode == uc_ref_to_ADS[ref["code_ref"]])
-                .astropy()
-            )
-            if len(t) == 0:
-                ingest_publication(db, bibcode=uc_ref_to_ADS[ref["code_ref"]])
-        except AstroDBError as e:
-            msg = f"reference generation failed with error {e}"
-            raise AstroDBError(msg)
-
-
 def uc_ref_to_simple_ref(db, ref):
-    # if not setup_completed:
-    # generate_references(db)
     if ref == "Harr15":
         return ref
     if uc_ref_to_ADS[ref][0:5] == "noADS":
