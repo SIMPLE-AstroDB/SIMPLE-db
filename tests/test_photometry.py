@@ -21,9 +21,15 @@ from astropy.io.votable.ucd import check_ucd, parse_ucd, UCDWords
         ("NIRI.Y", 21),
         ("UFTI.Y", 13),
         ("Wircam.Y", 29),
-        ("WFCAM.Y", 1998),
+        ("WFCAM.Y", 1581),
+        ("WFCAM.J", 2089),
+        ("WFCAM.H", 1839),
+        ("WFCAM.K", 1904),
         ("VisAO.Ys", 1),
-        ("VISTA.Y", 75),
+        ("VISTA.Y", 74),
+        ("VISTA.J", 67),
+        ("VISTA.H", 39),
+        ("VISTA.Ks", 20),
         ("JWST/MIRI.F1000W", 1),
         ("JWST/MIRI.F1280W", 1),
         ("JWST/MIRI.F1800W", 1),
@@ -127,7 +133,7 @@ def test_magnitude_errors(db):
         .filter(db.Photometry.c.magnitude_error == None)
         .astropy()
     )
-    assert len(t) == 504, f"found {len(t)} Photometry entries with null error"
+    assert len(t) == 502, f"found {len(t)} Photometry entries with null error"
 
 
 def test_data(db):
