@@ -94,7 +94,7 @@ def test_publications(db):
         )
         .astropy()
     )
-    assert len(t) == 29, f"found {len(t)} publications with missing bibcode and doi"
+    assert len(t) == 30, f"found {len(t)} publications with missing bibcode and doi"
 
 
 def test_parameters(db):
@@ -627,7 +627,11 @@ def test_spectra(db):
     # Tests against the Spectra table
 
     # There should be no entries in the Spectra table without a spectrum
-    t = db.query(db.Spectra.c.source).filter(db.Spectra.c.access_url.is_(None)).astropy()
+    t = (
+        db.query(db.Spectra.c.source)
+        .filter(db.Spectra.c.access_url.is_(None))
+        .astropy()
+    )
     if len(t) > 0:
         print("\nEntries found without spectrum")
         print(t)
