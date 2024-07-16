@@ -153,12 +153,12 @@ def ingest_spectrum(
     if len(matches) > 0:
         msg = f"Skipping suspected duplicate measurement: {source}"
         msg2 = f"{matches} {instrument, mode, obs_date, reference, spectrum}"
-        logger.warning(msg)
         logger.debug(msg2)
         flags["message"] = msg
         if raise_error:
             raise AstroDBError(msg)
         else:
+            logger.warning(msg)
             return flags
 
     # Check if spectrum is plottable
@@ -200,17 +200,18 @@ def ingest_spectrum(
         if raise_error:
             raise AstroDBError(msg)
         else:
+            logger.error(msg)
             return flags
     except Exception as e:
         msg = (
             f"Spectrum for {source} could not be added to the database "
             f"for unexpected reason: {e}"
         )
-        logger.error(msg)
         flags["message"] = msg
         if raise_error:
             raise AstroDBError(msg)
         else:
+            logger.warning(msg)
             return flags
 
     return flags
