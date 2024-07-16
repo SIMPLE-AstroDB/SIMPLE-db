@@ -195,7 +195,6 @@ def ingest_spectrum(
         logger.info(f"Added {source} : \n" f"{row_data}")
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         msg = f"Integrity Error: {source} \n {e}"
-        logger.error(msg)
         flags["message"] = msg
         if raise_error:
             raise AstroDBError(msg)
