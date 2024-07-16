@@ -168,7 +168,7 @@ def ingest_spectral_type(
             .count()
             == 0
         ):
-            msg = f"The publication does not exist in the database: {references[i]}"
+            msg = f"The publication does not exist in the database: {reference}"
             msg1 = "Add it with ingest_publication function."
             logger.debug(msg + msg1)
             raise AstroDBError(msg)
