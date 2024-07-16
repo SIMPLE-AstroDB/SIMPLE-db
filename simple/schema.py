@@ -403,6 +403,7 @@ class Spectra(Base):
         elif not isinstance(value, datetime):
             # Convert to datetime for storing in the database
             # Will throw error if unable to convert
+            print("WARNING: Value will be converted to ISO format.")
             value = datetime.fromisoformat(value)
         return value
 
