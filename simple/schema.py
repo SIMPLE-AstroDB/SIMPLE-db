@@ -300,7 +300,7 @@ class SpectralTypes(Base):
         nullable=False,
         primary_key=True,
     )
-    spectral_type_string = Column(String(10), nullable=False, primary_key=True)
+    spectral_type_string = Column(String(20), nullable=False, primary_key=True)
     spectral_type_code = Column(Float, nullable=False, primary_key=True)
     spectral_type_error = Column(Float)
     regime = Column(
@@ -310,12 +310,19 @@ class SpectralTypes(Base):
         primary_key=True,
     )
     adopted = Column(Boolean)
+    photometric = Column(Boolean)
     comments = Column(String(1000))
     reference = Column(
         String(30),
         ForeignKey("Publications.reference", onupdate="cascade"),
         primary_key=True,
     )
+
+    @validates("source", "spectral_type_code", "reference")
+    def validate_required(self, key, value):
+        if value is None:
+            raise ValueError(f"Value required for {key}")
+        return value
 
 
 class Gravities(Base):
