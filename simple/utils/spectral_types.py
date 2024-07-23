@@ -11,7 +11,7 @@ from astrodb_utils import (
 
 
 __all__ = [
-    "ingest_spectral_types",
+    "ingest_spectral_type",
     "convert_spt_string_to_code",
     "convert_spt_code_to_string_to_code",
 ]
@@ -34,24 +34,23 @@ def ingest_spectral_type(
     ----------
     db: astrodbkit2.astrodb.Database
         Database object created by astrodbkit2
-    sources: str
+    source: str
         Name of source
-    spectral_types: str
+    spectral_type: str
         Spectral Type of source
     spectral_type_error: str, optional
         Spectral Type Error of source
-    regimes: str
+    regime: str
         String
-    comments: str, optional
+    comment: str, optional
         Comments
-    references: str
+    reference: str
         Reference of the Spectral Type
     Returns
     -------
 
     None
     """
-    None
 
     db_name = find_source_in_db(db, source)
 

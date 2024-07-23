@@ -5,7 +5,7 @@ from astrodb_utils.utils import (
 )
 from simple.utils.spectral_types import (
     convert_spt_string_to_code,
-    ingest_spectral_types,
+    ingest_spectral_type,
 )
 from simple.utils.companions import ingest_companion_relationships
 
@@ -64,30 +64,53 @@ def test_convert_spt_string_to_code():
     assert convert_spt_string_to_code(["Y2pec"]) == [92]
 
 
-def test_ingest_spectral_types(temp_db):
-    data1 = Table(
-        [
-            {
-                "source": "Fake 1",
-                "spectral_type": "M5.6",
-                "regime": "nir",
-                "reference": "Ref 1",
-            },
-            {
-                "source": "Fake 2",
-                "spectral_type": "T0.1",
-                "regime": "nir",
-                "reference": "Ref 1",
-            },
-            {
-                "source": "Fake 3",
-                "spectral_type": "Y2pec",
-                "regime": "nir",
-                "reference": "Ref 2",
-            },
-        ]
-    )
+def test_ingest_spectral_type(temp_db):
+    spt_data1 = {
+        "source": "Fake 1",
+        "spectral_type": "M5.6",
+        "regime": "nir",
+        "reference": "Ref 1",
+    }
+    spt_data2 = {
+        "source": "Fake 2",
+        "spectral_type": "T0.1",
+        "regime": "nir",
+        "reference": "Ref 1",
+    }
+    spt_data3 = {
+        "source": "Fake 3",
+        "spectral_type": "Y2pec",
+        "regime": "nir",
+        "reference": "Ref 2",
+    }
+    for spt_data in [spt_data1, spt_data2, spt_data3]:
+        ingest_spectral_type(
+            temp_db,
+            source=spt_data["source"],
+            spectral_type=spt_data["spectral_type"],
+            reference=spt_data["reference"],
+            regime=spt_data["regime"],
+        )
 
+    assert (
+        temp_db.query(temp_db.SpectralTypes)
+        .filter(temp_db.SpectralTypes.c.reference == "Ref 1")
+        .count()
+        == 2
+    )
+    results = (
+        temp_db.query(temp_db.SpectralTypes)
+        .filter(temp_db.SpectralTypes.c.reference == "Ref 2")
+        .table()
+    )
+    assert len(results) == 1
+    assert results["source"][0] == "Fake 3"
+    assert results["spectral_type_string"][0] == "Y2pec"
+    assert results["spectral_type_code"][0] == [92]
+
+
+def test_ingest_spectral_type_errors(temp_db):
+    # testing for publication error
     data3 = Table(
         [
             {
@@ -110,31 +133,9 @@ def test_ingest_spectral_types(temp_db):
             },
         ]
     )
-    ingest_spectral_types(
-        temp_db,
-        data1["source"],
-        data1["spectral_type"],
-        data1["reference"],
-        data1["regime"],
-    )
-    assert (
-        temp_db.query(temp_db.SpectralTypes)
-        .filter(temp_db.SpectralTypes.c.reference == "Ref 1")
-        .count()
-        == 2
-    )
-    results = (
-        temp_db.query(temp_db.SpectralTypes)
-        .filter(temp_db.SpectralTypes.c.reference == "Ref 2")
-        .table()
-    )
-    assert len(results) == 1
-    assert results["source"][0] == "Fake 3"
-    assert results["spectral_type_string"][0] == "Y2pec"
-    assert results["spectral_type_code"][0] == [92]
-    # testing for publication error
+
     with pytest.raises(AstroDBError) as error_message:
-        ingest_spectral_types(
+        ingest_spectral_type(
             temp_db,
             data3["source"],
             data3["spectral_type"],
