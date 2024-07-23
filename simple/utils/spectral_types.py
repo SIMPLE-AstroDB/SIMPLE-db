@@ -134,7 +134,11 @@ def ingest_spectral_type(
     )
     if check == 1:
         msg = f"Spectral type for {db_name} already in the database"
-        raise AstroDBError(msg)
+        if raise_error:
+            logger.error(msg)
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
 
     logger.debug(f"Trying to insert {spt_data} into Spectral Types table ")
 
@@ -181,17 +185,20 @@ def ingest_spectral_type(
             == 0
         ):
             msg = f"The publication does not exist in the database: {reference}"
-            msg1 = "Add it with ingest_publication function."
+            msg1 = "Add it with astrodb_utils.ingest_publication function."
             logger.debug(msg + msg1)
-            raise AstroDBError(msg)
-        elif "NOT NULL constraint failed: SpectralTypes.regime" in str(e):
-            msg = f"The regime was not provided for {source}"
-            logger.error(msg)
-            raise AstroDBError(msg)
+            if raise_error:
+                logger.error(msg)
+                raise AstroDBError(msg + msg1)
+            else:
+                logger.warning(msg)
         else:
             msg = f"Spectral type ingest failed with error {e}\n"
-            logger.error(msg)
-            raise AstroDBError(msg)
+            if raise_error:
+                logger.error(msg)
+                raise AstroDBError(msg)
+            else:
+                logger.warning(msg)
 
 
 def convert_spt_string_to_code(spectral_type_string):
