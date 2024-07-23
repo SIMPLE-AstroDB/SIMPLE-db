@@ -5,6 +5,7 @@ from astrodb_utils.utils import (
 )
 from simple.utils.spectral_types import (
     convert_spt_string_to_code,
+    convert_spt_code_to_string,
     ingest_spectral_type,
 )
 from simple.utils.companions import ingest_companion_relationships
@@ -59,9 +60,16 @@ def t_pm():
 
 def test_convert_spt_string_to_code():
     # Test conversion of spectral types into numeric values
-    assert convert_spt_string_to_code(["M5.6"]) == [65.6]
-    assert convert_spt_string_to_code(["T0.1"]) == [80.1]
-    assert convert_spt_string_to_code(["Y2pec"]) == [92]
+    assert convert_spt_string_to_code("M5.6") == 65.6
+    assert convert_spt_string_to_code("T0.1") == 80.1
+    assert convert_spt_string_to_code("Y2pec") == 92
+
+
+def test_convert_spt_code_to_string():
+    # Test conversion of spectral types into numeric values
+    assert convert_spt_code_to_string(65.6) == "M5.6"
+    assert convert_spt_code_to_string(80.1) == "T0.1"
+    assert convert_spt_code_to_string(92, decimals=0) == "Y2"
 
 
 def test_ingest_spectral_type(temp_db):
@@ -87,7 +95,7 @@ def test_ingest_spectral_type(temp_db):
         ingest_spectral_type(
             temp_db,
             source=spt_data["source"],
-            spectral_type=spt_data["spectral_type"],
+            spectral_type_string=spt_data["spectral_type"],
             reference=spt_data["reference"],
             regime=spt_data["regime"],
         )
@@ -134,9 +142,9 @@ def test_ingest_spectral_type_errors(temp_db):
         ingest_spectral_type(
             temp_db,
             spt_data4["source"],
-            spt_data4["spectral_type"],
-            spt_data4["reference"],
-            spt_data4["regime"],
+            spectral_type_string=spt_data4["spectral_type"],
+            reference=spt_data4["reference"],
+            regime=spt_data4["regime"],
         )
     assert "Spectral type for Fake 1 already in the database" in str(
         error_message.value

@@ -22,11 +22,14 @@ logger = logging.getLogger("SIMPLE")
 def ingest_spectral_type(
     db,
     source: str = None,
-    spectral_type: str = None,
-    reference: str = None,
-    regime: str = None,
+    *,
+    spectral_type_string: str = None,
+    spectral_type_code: float = None,
     spectral_type_error: float = None,
+    regime: str = None,
+    photometric: bool = False,
     comments: str = None,
+    reference: str = None,
 ):
     """
     Script to ingest spectral types
@@ -46,6 +49,7 @@ def ingest_spectral_type(
         Comments
     reference: str
         Reference of the Spectral Type
+
     Returns
     -------
 
@@ -55,10 +59,7 @@ def ingest_spectral_type(
     db_name = find_source_in_db(db, source)
 
     if len(db_name) != 1:
-        msg = (
-            f"No unique source match for {source} in the database "
-            f"(with SpT: {spectral_type} from {reference})"
-        )
+        msg = f"No unique source match for {source} in the database "
         raise AstroDBError(msg)
     else:
         db_name = db_name[0]
@@ -86,7 +87,12 @@ def ingest_spectral_type(
         adopted_ind = source_spt_data["adopted"] == 1
         if sum(adopted_ind):
             old_adopted = source_spt_data[adopted_ind]
-            if spectral_type_error is not None:
+            print("spt_error:", spectral_type_error)
+            print("source spt data:", source_spt_data["spectral_type_error"])
+            if (
+                spectral_type_error is not None
+                and source_spt_data["spectral_type_error"] is not None
+            ):
                 if spectral_type_error < min(source_spt_data["spectral_type_error"]):
                     adopted = True
                 logger.debug(f"The new spectral type's adopted flag is:, {adopted}")
@@ -95,18 +101,20 @@ def ingest_spectral_type(
         logger.error(msg)
         raise RuntimeError
 
-    spectral_type_code = convert_spt_string_to_code(spectral_type)[0]
-    msg = f"Converted {spectral_type} to {spectral_type_code}"
-    logger.debug(msg)
+    if spectral_type_code is None:
+        spectral_type_code = convert_spt_string_to_code(spectral_type_string)
+        msg = f"Converted {spectral_type_string} to {spectral_type_code}"
+        logger.debug(msg)
 
     # Construct the data to be added
     spt_data = {
         "source": db_name,
-        "spectral_type_string": spectral_type,
+        "spectral_type_string": spectral_type_string,
         "spectral_type_code": spectral_type_code,
         "spectral_type_error": spectral_type_error,
         "regime": regime,
         "adopted": adopted,
+        "photometric": photometric,
         "comments": comments,
         "reference": reference,
     }
@@ -184,7 +192,7 @@ def ingest_spectral_type(
             raise AstroDBError(msg)
 
 
-def convert_spt_string_to_code(spectral_types):
+def convert_spt_string_to_code(spectral_type_string):
     """
     normal tests: M0, M5.5, L0, L3.5, T0, T3, T4.5, Y0, Y5, Y9.
     weird TESTS: sdM4, ≥Y4, T5pec, L2:, L0blue, Lpec, >L9, >M10, >L, T, Y
@@ -192,84 +200,71 @@ def convert_spt_string_to_code(spectral_types):
     :param spectral_types:
     :return:
     """
-    if isinstance(spectral_types, str):
-        spectral_types = [spectral_types]
 
-    spectral_type_codes = []
-    for spt in spectral_types:
-        logger.debug(f"Trying to convert: `{spt}`")
-        spt_code = np.nan
-        if spt == "":
-            spectral_type_codes.append(spt_code)
-            logger.debug("Appended NAN")
-            continue
-        if spt == "null":
-            spt_code = 0
-            spectral_type_codes.append(spt_code)
-            logger.debug("Appended Null")
-            continue
-        # identify main spectral class, loop over any prefix text to identify MLTY
-        for i, item in enumerate(spt):
-            if item == "M":
-                spt_code = 60
-                break
-            elif item == "L":
-                spt_code = 70
-                break
-            elif item == "T":
-                spt_code = 80
-                break
-            elif item == "Y":
-                spt_code = 90
-                break
-            else:  # only trigger if not MLTY
-                i = 0
-        # find integer or decimal subclass and add to spt_code
-        if re.search(r"\d*\.?\d+", spt[i + 1 :]) is None:
-            spt_code = spt_code
-        else:
-            spt_code += float(re.findall(r"\d*\.?\d+", spt[i + 1 :])[0])
+    logger.debug(f"Trying to convert: `{spectral_type_string}`")
+    spt_code = np.nan
+    if spectral_type_string == "":
+        logger.debug("Empty spectral_type_string")
+        return None
+    if spectral_type_string == "null":
+        return None
+    # identify main spectral class, loop over any prefix text to identify MLTY
+    for i, item in enumerate(spectral_type_string):
+        if item == "M":
+            spt_code = 60
+            break
+        elif item == "L":
+            spt_code = 70
+            break
+        elif item == "T":
+            spt_code = 80
+            break
+        elif item == "Y":
+            spt_code = 90
+            break
+        else:  # only trigger if not MLTY
+            i = 0
+    # find integer or decimal subclass and add to spt_code
+    if re.search(r"\d*\.?\d+", spectral_type_string[i + 1 :]) is None:
+        spt_code = spt_code
+    else:
+        spt_code += float(re.findall(r"\d*\.?\d+", spectral_type_string[i + 1 :])[0])
 
-        spectral_type_codes.append(spt_code)
-    return spectral_type_codes
+    return spt_code
 
 
-def convert_spt_code_to_string_to_code(spectral_codes, decimals=1):
+def convert_spt_code_to_string(spectral_code, decimals=1):
     """
     Convert spectral type codes to string values
 
     Parameters
     ----------
-    spectral_codes : list[float]
-        List of spectral type codes
+    spectral_code : float
+        A spectral type code
+
+    decimals : int
+        Number of decimal places to include in the spectral type string
 
     Returns
     -------
-    spectral_types : list[str]
-        List of spectral types
+    spectral_type_string : str
+        spectral type string
     """
-    if isinstance(spectral_codes, float):
-        spectral_codes = [spectral_codes]
+    spt_type = ""
 
-    spectral_types = []
-    for spt in spectral_codes:
-        spt_type = ""
+    # Identify major type
+    if 60 <= spectral_code < 70:
+        spt_type = "M"
+    elif 70 <= spectral_code < 80:
+        spt_type = "L"
+    elif 80 <= spectral_code < 90:
+        spt_type = "T"
+    elif 90 <= spectral_code < 100:
+        spt_type = "Y"
 
-        # Identify major type
-        if 60 <= spt < 70:
-            spt_type = "M"
-        elif 70 <= spt < 80:
-            spt_type = "L"
-        elif 80 <= spt < 90:
-            spt_type = "T"
-        elif 90 <= spt < 100:
-            spt_type = "Y"
+    # Numeric part of type
+    format = f".{decimals}f"
+    spt_type = f"{spt_type}{spectral_code% 10:{format}}"
+    logger.debug(f"Converting: {spectral_code} -> {spt_type}")
 
-        # Numeric part of type
-        format = f".{decimals}f"
-        spt_type = f"{spt_type}{spt % 10:{format}}"
-        logger.debug(f"Converting: {spt} -> {spt_type}")
-
-        spectral_types.append(spt_type)
-
-    return spectral_types
+    return spt_type
