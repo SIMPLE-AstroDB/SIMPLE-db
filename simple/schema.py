@@ -306,7 +306,6 @@ class SpectralTypes(Base):
     regime = Column(
         String(30),
         ForeignKey("Regimes.regime", ondelete="cascade", onupdate="cascade"),
-        nullable=True,
         primary_key=True,
     )
     adopted = Column(Boolean)
@@ -318,7 +317,7 @@ class SpectralTypes(Base):
         primary_key=True,
     )
 
-    @validates("source", "spectral_type_code", "reference")
+    @validates("source", "spectral_type_code", "regime", "reference")
     def validate_required(self, key, value):
         if value is None:
             raise ValueError(f"Value required for {key}")

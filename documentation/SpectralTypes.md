@@ -10,7 +10,7 @@ Columns marked with an asterisk (*) may not be empty.
 | spectral_type_string | Spectral type string |  | String(20)  |   |
 | *spectral_type_code | Numeric code corresponding to spectral type |  | Float  | primary  |
 | spectral_type_error | Uncertainty of spectral type |  | Float  |   |
-| regime | Regime for spectral type value |  |  | primary and foreign:Regimes.regime |
+| *regime | Regime for spectral type value |  |  | primary and foreign:Regimes.regime |
 | adopted    | Flag indicating if this is the adopted measurement |  | Boolean  |   |
 | photometric    | Flag indicating if this is a photometric spectral type |  | Boolean  |   |
 | comments  | Free form comments |   | String(1000) |   |
@@ -22,3 +22,5 @@ Spectral Type Codes:
  - 70 = L0 
  - 80 = T0
  - 90 = Y0
+
+ Regime is required however, regime = "unkwown" can be used when the regime is unknown. 
