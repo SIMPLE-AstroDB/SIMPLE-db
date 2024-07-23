@@ -60,6 +60,8 @@ def ingest_spectral_type(
             f"(with SpT: {spectral_type} from {reference})"
         )
         raise AstroDBError(msg)
+    else:
+        db_name = db_name[0]
 
     adopted = False
     old_adopted = None
@@ -84,9 +86,10 @@ def ingest_spectral_type(
         adopted_ind = source_spt_data["adopted"] == 1
         if sum(adopted_ind):
             old_adopted = source_spt_data[adopted_ind]
-            if spectral_type_error < min(source_spt_data["spectral_type_error"]):
-                adopted = True
-            logger.debug(f"The new spectral type's adopted flag is:, {adopted}")
+            if spectral_type_error is not None:
+                if spectral_type_error < min(source_spt_data["spectral_type_error"]):
+                    adopted = True
+                logger.debug(f"The new spectral type's adopted flag is:, {adopted}")
     else:
         msg = "Unexpected state"
         logger.error(msg)

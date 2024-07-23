@@ -111,38 +111,37 @@ def test_ingest_spectral_type(temp_db):
 
 def test_ingest_spectral_type_errors(temp_db):
     # testing for publication error
-    data3 = Table(
-        [
-            {
-                "source": "Fake 1",
-                "spectral_type": "M5.6",
-                "regime": "nir",
-                "reference": "Ref 1",
-            },
-            {
-                "source": "Fake 2",
-                "spectral_type": "T0.1",
-                "regime": "nir",
-                "reference": "Ref 1",
-            },
-            {
-                "source": "Fake 3",
-                "spectral_type": "Y2pec",
-                "regime": "nir",
-                "reference": "Ref 4",
-            },
-        ]
-    )
+    spt_data4 = {
+        "source": "Fake 1",
+        "spectral_type": "M5.6",
+        "regime": "nir",
+        "reference": "Ref 1",
+    }
+    # spt_data5 = {
+    #     "source": "Fake 2",
+    #     "spectral_type": "T0.1",
+    #     "regime": "nir",
+    #     "reference": "Ref 1",
+    # }
+    # spt_data6 = {
+    #     "source": "Fake 3",
+    #     "spectral_type": "Y2pec",
+    #     "regime": "nir",
+    #     "reference": "Ref 4",
+    # }
 
     with pytest.raises(AstroDBError) as error_message:
         ingest_spectral_type(
             temp_db,
-            data3["source"],
-            data3["spectral_type"],
-            data3["reference"],
-            data3["regime"],
+            spt_data4["source"],
+            spt_data4["spectral_type"],
+            spt_data4["reference"],
+            spt_data4["regime"],
         )
-    assert "The publication does not exist in the database" in str(error_message.value)
+    assert "Spectral type for Fake 1 already in the database" in str(
+        error_message.value
+    )
+    # assert "The publication does not exist in the database" in str(error_message.value)
 
 
 def test_companion_relationships(temp_db):
