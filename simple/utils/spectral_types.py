@@ -30,6 +30,7 @@ def ingest_spectral_type(
     photometric: bool = False,
     comments: str = None,
     reference: str = None,
+    raise_error: bool = True,
 ):
     """
     Script to ingest spectral types
@@ -49,6 +50,7 @@ def ingest_spectral_type(
         Comments
     reference: str
         Reference of the Spectral Type
+    raise_error: bool, optional
 
     Returns
     -------
