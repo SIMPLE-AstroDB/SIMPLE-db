@@ -17,6 +17,15 @@
             "other_name": "WISE J233226.49-432510.6"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 61.1,
+            "parallax_error": 2.1,
+            "adopted": true,
+            "comments": null,
+            "reference": "Kirk21"
+        }
+    ],
     "Photometry": [
         {
             "band": "IRAC.I1",
@@ -35,6 +44,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 19.4,
+            "magnitude_error": 0.18,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Kirk12"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 19.36,
+            "magnitude_error": 0.07,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "McMa13"
         }
     ],
     "ProperMotions": [

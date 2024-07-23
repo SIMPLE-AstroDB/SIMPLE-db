@@ -17,11 +17,38 @@
             "other_name": "CWISEP J102201.27+145520.2"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 76.0,
+            "parallax_error": 16.4,
+            "adopted": true,
+            "comments": null,
+            "reference": "Kirk21"
+        }
+    ],
     "Photometry": [
         {
             "band": "IRAC.I1",
             "magnitude": 17.77,
             "magnitude_error": 0.09,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "IRAC.I1",
+            "magnitude": 17.77,
+            "magnitude_error": 0.09,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Meis20.74"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 15.83,
+            "magnitude_error": 0.03,
             "telescope": "Spitzer",
             "epoch": null,
             "comments": null,
@@ -34,7 +61,16 @@
             "telescope": "Spitzer",
             "epoch": null,
             "comments": null,
-            "reference": "Kirk21"
+            "reference": "Meis20.74"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 19.76,
+            "magnitude_error": null,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Meis20.74"
         }
     ],
     "SpectralTypes": [

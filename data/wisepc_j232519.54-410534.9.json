@@ -17,7 +17,25 @@
             "other_name": "WISEPC J232519.54-410534.9"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 108.4,
+            "parallax_error": 3.7,
+            "adopted": true,
+            "comments": "other references: Kirk19",
+            "reference": "Tinn14"
+        }
+    ],
     "Photometry": [
+        {
+            "band": "IRAC.I1",
+            "magnitude": 16.26,
+            "magnitude_error": 0.03,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk11"
+        },
         {
             "band": "IRAC.I1",
             "magnitude": 16.26,
@@ -34,7 +52,34 @@
             "telescope": "Spitzer",
             "epoch": null,
             "comments": null,
+            "reference": "Kirk11"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 14.09,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 19.216,
+            "magnitude_error": 0.114,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Kirk11"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 19.745,
+            "magnitude_error": 0.05,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Kirk11"
         }
     ],
     "ProperMotions": [

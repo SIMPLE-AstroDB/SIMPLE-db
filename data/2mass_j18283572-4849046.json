@@ -54,6 +54,15 @@
             "other_name": "WISEP J182835.97-484903.0"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 87.9,
+            "parallax_error": 2.0,
+            "adopted": true,
+            "comments": null,
+            "reference": "Smar13"
+        }
+    ],
     "Photometry": [
         {
             "band": "2MASS.H",
@@ -81,6 +90,33 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "IRAC.I1",
+            "magnitude": 13.67,
+            "magnitude_error": 0.01,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 12.76,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 14.85,
+            "magnitude_error": 0.01,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "McMa13"
         },
         {
             "band": "WISE.W1",

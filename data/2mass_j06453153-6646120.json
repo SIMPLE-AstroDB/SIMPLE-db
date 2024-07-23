@@ -17,6 +17,15 @@
             "other_name": "2MASS J06453153-6646120"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 53.8,
+            "parallax_error": 2.9,
+            "adopted": true,
+            "comments": null,
+            "reference": "Kirk21"
+        }
+    ],
     "Photometry": [
         {
             "band": "2MASS.H",
@@ -44,6 +53,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 13.3,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 15.52,
+            "magnitude_error": 0.01,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "McMa13"
         }
     ],
     "ProperMotions": [

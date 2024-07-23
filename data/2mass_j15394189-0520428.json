@@ -77,6 +77,13 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "parallax": 60.08,
+            "parallax_error": 1.25,
+            "adopted": false,
+            "comments": null,
+            "reference": "Wein16"
         }
     ],
     "Photometry": [
@@ -198,6 +205,42 @@
             "reference": "Patt06"
         },
         {
+            "band": "WFCAM.H",
+            "magnitude": 13.12,
+            "magnitude_error": 0.01,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "McMa13"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 13.777,
+            "magnitude_error": 0.002,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "McMa13"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 12.54,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Fahe12"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 15.101,
+            "magnitude_error": 0.005,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "McMa13"
+        },
+        {
             "band": "WISE.W1",
             "magnitude": 12.004,
             "magnitude_error": 0.023,
@@ -261,6 +304,15 @@
             "adopted": false,
             "comments": null,
             "reference": "Wein16"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": 27.33,
+            "radial_velocity_error_km_s": 0.24,
+            "adopted": null,
+            "comments": null,
+            "reference": "Blak10"
         }
     ],
     "Spectra": [

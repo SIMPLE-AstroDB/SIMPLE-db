@@ -28,6 +28,13 @@
     ],
     "Parallaxes": [
         {
+            "parallax": 80.1,
+            "parallax_error": 4.8,
+            "adopted": false,
+            "comments": null,
+            "reference": "Ditt14"
+        },
+        {
             "parallax": 64.04123274564924,
             "parallax_error": 0.3052549847238648,
             "adopted": false,
@@ -105,6 +112,33 @@
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 11.29,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Liu_16"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 11.93,
+            "magnitude_error": 0.02,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Liu_16"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 10.81,
+            "magnitude_error": 0.02,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Liu_16"
         }
     ],
     "ProperMotions": [
@@ -134,6 +168,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": 40.03,
+            "radial_velocity_error_km_s": 0.11,
+            "adopted": null,
+            "comments": null,
+            "reference": "Desh13"
         }
     ],
     "Spectra": [

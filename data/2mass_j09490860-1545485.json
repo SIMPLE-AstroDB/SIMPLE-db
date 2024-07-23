@@ -58,9 +58,16 @@
         {
             "parallax": 32.9,
             "parallax_error": 4.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Best20.257"
+        },
+        {
+            "parallax": 42.22,
+            "parallax_error": 2.69,
+            "adopted": true,
+            "comments": null,
+            "reference": "Kirk21"
         }
     ],
     "Photometry": [
@@ -99,6 +106,42 @@
             "epoch": null,
             "comments": null,
             "reference": "DENIS"
+        },
+        {
+            "band": "IRAC.I1",
+            "magnitude": 14.47,
+            "magnitude_error": 0.01,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 14.11,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 15.82,
+            "magnitude_error": 0.02,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.257"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 17.092,
+            "magnitude_error": 0.054,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
         },
         {
             "band": "WISE.W1",

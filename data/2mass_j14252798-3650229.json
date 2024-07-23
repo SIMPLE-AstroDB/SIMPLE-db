@@ -65,6 +65,13 @@
     ],
     "Parallaxes": [
         {
+            "parallax": 86.45,
+            "parallax_error": 0.83,
+            "adopted": false,
+            "comments": null,
+            "reference": "Diet14"
+        },
+        {
             "parallax": 84.51813475001734,
             "parallax_error": 0.34351709389824686,
             "adopted": false,
@@ -162,6 +169,24 @@
             "reference": "GaiaEDR3"
         },
         {
+            "band": "IRAC.I1",
+            "magnitude": 10.77,
+            "magnitude_error": 0.01,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 10.58,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
             "band": "Johnson.V",
             "magnitude": 22.81,
             "magnitude_error": 0.06,
@@ -169,6 +194,33 @@
             "epoch": null,
             "comments": null,
             "reference": "Diet14"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 12.666,
+            "magnitude_error": 0.027,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 13.63,
+            "magnitude_error": 0.01,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "McMa13"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 11.775,
+            "magnitude_error": 0.027,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
         },
         {
             "band": "WISE.W1",
@@ -234,6 +286,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": 5.37,
+            "radial_velocity_error_km_s": 0.25,
+            "adopted": null,
+            "comments": null,
+            "reference": "Blak10"
         }
     ],
     "Spectra": [

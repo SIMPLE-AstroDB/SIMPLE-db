@@ -17,11 +17,38 @@
             "other_name": "WISEPA J181210.85+272144.3"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 98.5,
+            "parallax_error": 4.4,
+            "adopted": true,
+            "comments": null,
+            "reference": "Kirk19"
+        }
+    ],
     "Photometry": [
         {
             "band": "IRAC.I1",
             "magnitude": 16.32,
             "magnitude_error": 0.03,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
+        },
+        {
+            "band": "IRAC.I1",
+            "magnitude": 16.32,
+            "magnitude_error": 0.03,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Mace13.6"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 14.17,
+            "magnitude_error": 0.02,
             "telescope": "Spitzer",
             "epoch": null,
             "comments": null,
@@ -34,7 +61,25 @@
             "telescope": "Spitzer",
             "epoch": null,
             "comments": null,
-            "reference": "Kirk19"
+            "reference": "Mace13.6"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 18.83,
+            "magnitude_error": 0.16,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Kirk11"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 18.19,
+            "magnitude_error": 0.06,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Kirk11"
         }
     ],
     "ProperMotions": [

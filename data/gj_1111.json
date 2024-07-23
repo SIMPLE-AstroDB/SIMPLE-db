@@ -73,6 +73,9 @@
         },
         {
             "other_name": "LSPM J0829+2646"
+        },
+        {
+            "other_name": "ULAS J082948.58+264628.2"
         }
     ],
     "Parallaxes": [
@@ -89,6 +92,13 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "parallax": 275.8,
+            "parallax_error": 3.0,
+            "adopted": false,
+            "comments": null,
+            "reference": "vanA95"
         }
     ],
     "Photometry": [
@@ -174,6 +184,24 @@
             "reference": "GaiaEDR3"
         },
         {
+            "band": "IRAC.I1",
+            "magnitude": 6.84,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Patt06"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 6.84,
+            "magnitude_error": 0.04,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Patt06"
+        },
+        {
             "band": "Johnson.V",
             "magnitude": 14.94,
             "magnitude_error": 0.033,
@@ -181,6 +209,42 @@
             "epoch": null,
             "comments": null,
             "reference": "Diet14"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 7.666,
+            "magnitude_error": 0.024,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 8.21,
+            "magnitude_error": 0.021,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 7.237,
+            "magnitude_error": 0.024,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 8.922,
+            "magnitude_error": 0.054,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best20.42"
         },
         {
             "band": "WISE.W1",
@@ -237,6 +301,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": 10.62,
+            "radial_velocity_error_km_s": 0.011,
+            "adopted": null,
+            "comments": null,
+            "reference": "Fouq18"
         }
     ],
     "Spectra": [

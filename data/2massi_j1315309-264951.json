@@ -40,6 +40,13 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "parallax": 52.12,
+            "parallax_error": 1.2,
+            "adopted": false,
+            "comments": null,
+            "reference": "Wein16"
         }
     ],
     "Photometry": [
@@ -105,6 +112,51 @@
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "band": "IRAC.I1",
+            "magnitude": 12.38,
+            "magnitude_error": 0.01,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 12.33,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 14.135,
+            "magnitude_error": 0.043,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 14.97,
+            "magnitude_error": 0.01,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "McMa13"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 13.446,
+            "magnitude_error": 0.043,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
         }
     ],
     "ProperMotions": [
@@ -134,6 +186,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Wein16"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -8.0,
+            "radial_velocity_error_km_s": 3.0,
+            "adopted": null,
+            "comments": null,
+            "reference": "Burg15.18"
         }
     ],
     "SpectralTypes": [

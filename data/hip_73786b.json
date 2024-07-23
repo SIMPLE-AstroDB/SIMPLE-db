@@ -27,9 +27,16 @@
         {
             "parallax": 56.7,
             "parallax_error": 4.3,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Best20.257"
+        },
+        {
+            "parallax": 53.8,
+            "parallax_error": 2.8,
+            "adopted": true,
+            "comments": null,
+            "reference": "vanL07"
         }
     ],
     "Photometry": [
@@ -50,6 +57,33 @@
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 17.051,
+            "magnitude_error": 0.037,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr12"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 16.594,
+            "magnitude_error": 0.016,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "WFAU19"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 17.413,
+            "magnitude_error": 0.093,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr12"
         },
         {
             "band": "WFCAM.Y",
@@ -79,6 +113,15 @@
             "adopted": true,
             "comments": null,
             "reference": "vanL07"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -84.79,
+            "radial_velocity_error_km_s": 0.12,
+            "adopted": null,
+            "comments": null,
+            "reference": "Halb18"
         }
     ],
     "SpectralTypes": [

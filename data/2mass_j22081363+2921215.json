@@ -54,6 +54,15 @@
             "other_name": "2MASSW J2208136+292121"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 25.1,
+            "parallax_error": 1.63,
+            "adopted": true,
+            "comments": null,
+            "reference": "Liu_16"
+        }
+    ],
     "Photometry": [
         {
             "band": "2MASS.H",
@@ -164,6 +173,24 @@
             "reference": "Ahn_12"
         },
         {
+            "band": "WFCAM.J",
+            "magnitude": 15.859,
+            "magnitude_error": 0.009,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 14.031,
+            "magnitude_error": 0.007,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
+        },
+        {
             "band": "WISE.W1",
             "magnitude": 13.354,
             "magnitude_error": 0.027,
@@ -209,6 +236,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Liu_16"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -15.59,
+            "radial_velocity_error_km_s": 1.93,
+            "adopted": null,
+            "comments": null,
+            "reference": "Fahe16"
         }
     ],
     "Spectra": [

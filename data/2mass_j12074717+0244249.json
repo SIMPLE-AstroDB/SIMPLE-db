@@ -26,6 +26,9 @@
             "other_name": "SDSS J120747.17+024424.8"
         },
         {
+            "other_name": "ULAS J120746.84+024426.1"
+        },
+        {
             "other_name": "WISEP J120746.83+024426.3"
         }
     ],
@@ -36,6 +39,13 @@
             "adopted": true,
             "comments": null,
             "reference": "Best20.257"
+        },
+        {
+            "parallax": 44.5,
+            "parallax_error": 12.2,
+            "adopted": false,
+            "comments": null,
+            "reference": "Fahe12"
         }
     ],
     "Photometry": [
@@ -92,6 +102,24 @@
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "band": "IRAC.I1",
+            "magnitude": 12.86,
+            "magnitude_error": 0.03,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Legg07.1079"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 12.73,
+            "magnitude_error": 0.03,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Legg07.1079"
         },
         {
             "band": "NSFCam.Lp",
@@ -175,6 +203,33 @@
             "reference": "Knap04"
         },
         {
+            "band": "WFCAM.H",
+            "magnitude": 14.71,
+            "magnitude_error": 0.005,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr12"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 15.455,
+            "magnitude_error": 0.006,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr12"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 14.187,
+            "magnitude_error": 0.007,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr12"
+        },
+        {
             "band": "WFCAM.Y",
             "magnitude": 16.616,
             "magnitude_error": 0.009,
@@ -238,6 +293,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Fahe12"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": 78.0,
+            "radial_velocity_error_km_s": 165.0,
+            "adopted": null,
+            "comments": null,
+            "reference": "Abaz09"
         }
     ],
     "Spectra": [

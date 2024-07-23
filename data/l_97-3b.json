@@ -29,6 +29,15 @@
             "other_name": "WD 0806-661B"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 52.17,
+            "parallax_error": 1.67,
+            "adopted": true,
+            "comments": null,
+            "reference": "Suba09"
+        }
+    ],
     "Photometry": [
         {
             "band": "IRAC.I1",
@@ -40,6 +49,15 @@
             "reference": "Legg17"
         },
         {
+            "band": "IRAC.I1",
+            "magnitude": 19.65,
+            "magnitude_error": 0.15,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Luhm12.135"
+        },
+        {
             "band": "IRAC.I2",
             "magnitude": 16.78,
             "magnitude_error": 0.05,
@@ -47,6 +65,42 @@
             "epoch": null,
             "comments": null,
             "reference": "Legg17"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 16.88,
+            "magnitude_error": 0.05,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Luhm12.135"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 25.29,
+            "magnitude_error": 0.14,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Legg17"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 25.0,
+            "magnitude_error": 0.1,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Legg15"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 23.5,
+            "magnitude_error": null,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Legg15"
         }
     ],
     "ProperMotions": [

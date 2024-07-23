@@ -17,6 +17,26 @@
             "other_name": "GQ Lup b"
         }
     ],
+    "Photometry": [
+        {
+            "band": "WFCAM.H",
+            "magnitude": 14.02,
+            "magnitude_error": 0.13,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Stol21"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 13.37,
+            "magnitude_error": 0.12,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Maro07"
+        }
+    ],
     "ProperMotions": [
         {
             "mu_ra": -26.63,
@@ -26,6 +46,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Teix00"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -3.6,
+            "radial_velocity_error_km_s": 1.3,
+            "adopted": null,
+            "comments": null,
+            "reference": "Fras17"
         }
     ],
     "SpectralTypes": [

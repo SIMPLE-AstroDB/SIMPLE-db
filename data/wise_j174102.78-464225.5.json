@@ -20,6 +20,15 @@
             "other_name": "WISE J174102.78-464225.5"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 50.5,
+            "parallax_error": 2.9,
+            "adopted": true,
+            "comments": null,
+            "reference": "Kirk21"
+        }
+    ],
     "Photometry": [
         {
             "band": "2MASS.H",
@@ -47,6 +56,51 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "IRAC.I1",
+            "magnitude": 11.96,
+            "magnitude_error": 0.01,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 11.75,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 14.642,
+            "magnitude_error": 0.035,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 15.95,
+            "magnitude_error": 0.01,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "McMa13"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 13.392,
+            "magnitude_error": 0.035,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
         }
     ],
     "ProperMotions": [
@@ -56,6 +110,15 @@
             "mu_dec": -343.0,
             "mu_dec_error": 13.7,
             "adopted": true,
+            "comments": null,
+            "reference": "Schn14"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -5.7,
+            "radial_velocity_error_km_s": 5.1,
+            "adopted": null,
             "comments": null,
             "reference": "Schn14"
         }

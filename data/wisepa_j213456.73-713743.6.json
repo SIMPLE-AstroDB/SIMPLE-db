@@ -17,7 +17,25 @@
             "other_name": "WISEPA J213456.73-713743.6"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 109.7,
+            "parallax_error": 3.7,
+            "adopted": true,
+            "comments": "other references: Kirk19",
+            "reference": "Tinn14"
+        }
+    ],
     "Photometry": [
+        {
+            "band": "IRAC.I1",
+            "magnitude": 16.17,
+            "magnitude_error": 0.03,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk11"
+        },
         {
             "band": "IRAC.I1",
             "magnitude": 16.17,
@@ -34,7 +52,34 @@
             "telescope": "Spitzer",
             "epoch": null,
             "comments": null,
+            "reference": "Kirk11"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 13.96,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 19.7,
+            "magnitude_error": 0.12,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Kirk21"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 19.81,
+            "magnitude_error": 0.1,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Kirk21"
         }
     ],
     "ProperMotions": [

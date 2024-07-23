@@ -17,11 +17,38 @@
             "other_name": "WISE J200520.38+542433.9"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 53.9,
+            "parallax_error": 2.7,
+            "adopted": true,
+            "comments": null,
+            "reference": "Kirk21"
+        }
+    ],
     "Photometry": [
         {
             "band": "IRAC.I1",
             "magnitude": 15.87,
             "magnitude_error": 0.03,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
+        },
+        {
+            "band": "IRAC.I1",
+            "magnitude": 15.87,
+            "magnitude_error": 0.03,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Mace13.36"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 14.63,
+            "magnitude_error": 0.02,
             "telescope": "Spitzer",
             "epoch": null,
             "comments": null,
@@ -34,7 +61,25 @@
             "telescope": "Spitzer",
             "epoch": null,
             "comments": null,
-            "reference": "Kirk19"
+            "reference": "Mace13.36"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 19.572,
+            "magnitude_error": 0.079,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Mace13.36"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 19.64,
+            "magnitude_error": 0.089,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Mace13.36"
         }
     ],
     "ProperMotions": [
@@ -46,6 +91,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Kirk19"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -107.6,
+            "radial_velocity_error_km_s": null,
+            "adopted": null,
+            "comments": null,
+            "reference": "Gizi97"
         }
     ],
     "SpectralTypes": [

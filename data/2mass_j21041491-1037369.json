@@ -62,6 +62,13 @@
     ],
     "Parallaxes": [
         {
+            "parallax": 58.76,
+            "parallax_error": 0.5,
+            "adopted": false,
+            "comments": null,
+            "reference": "Dahn17"
+        },
+        {
             "parallax": 58.165817223904014,
             "parallax_error": 0.4050856931768777,
             "adopted": false,
@@ -204,6 +211,42 @@
             "reference": "Diet14"
         },
         {
+            "band": "WFCAM.H",
+            "magnitude": 13.048,
+            "magnitude_error": 0.024,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 13.773,
+            "magnitude_error": 0.002,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "McMa13"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 12.348,
+            "magnitude_error": 0.024,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 15.03,
+            "magnitude_error": 0.003,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "McMa13"
+        },
+        {
             "band": "WISE.W1",
             "magnitude": 11.915,
             "magnitude_error": 0.023,
@@ -267,6 +310,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -30.9,
+            "radial_velocity_error_km_s": 1.58,
+            "adopted": null,
+            "comments": null,
+            "reference": "Fahe16"
         }
     ],
     "Spectra": [

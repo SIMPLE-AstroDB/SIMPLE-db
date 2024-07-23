@@ -30,9 +30,16 @@
         {
             "parallax": 270.6580324694526,
             "parallax_error": 0.6895573139190674,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "parallax": 276.06,
+            "parallax_error": 0.28,
+            "adopted": true,
+            "comments": null,
+            "reference": "vanL07"
         }
     ],
     "Photometry": [
@@ -98,6 +105,51 @@
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "band": "IRAC.I1",
+            "magnitude": 9.97,
+            "magnitude_error": 0.01,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Patt06"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 9.44,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Patt06"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 11.41,
+            "magnitude_error": 0.02,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "King10"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 11.76,
+            "magnitude_error": 0.02,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "King10"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 11.29,
+            "magnitude_error": 0.02,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "King10"
         }
     ],
     "ProperMotions": [
@@ -118,6 +170,15 @@
             "adopted": true,
             "comments": null,
             "reference": "vanL07"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -40.035,
+            "radial_velocity_error_km_s": 0.0008,
+            "adopted": null,
+            "comments": null,
+            "reference": "Soub18"
         }
     ],
     "Spectra": [

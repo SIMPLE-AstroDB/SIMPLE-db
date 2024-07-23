@@ -20,6 +20,15 @@
             "other_name": "SDSS J175805.46+463311.9"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 70.99,
+            "parallax_error": 1.86,
+            "adopted": true,
+            "comments": null,
+            "reference": "vanL07"
+        }
+    ],
     "Photometry": [
         {
             "band": "2MASS.H",
@@ -65,6 +74,33 @@
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 16.2,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Knap04"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 15.922,
+            "magnitude_error": 0.011,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 16.12,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Knap04"
         }
     ],
     "ProperMotions": [
@@ -76,6 +112,15 @@
             "adopted": true,
             "comments": null,
             "reference": "vanL07"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -31.9,
+            "radial_velocity_error_km_s": 1.1,
+            "adopted": null,
+            "comments": null,
+            "reference": "Sper16"
         }
     ],
     "SpectralTypes": [

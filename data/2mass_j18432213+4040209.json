@@ -83,6 +83,13 @@
     ],
     "Parallaxes": [
         {
+            "parallax": 70.33,
+            "parallax_error": 0.84,
+            "adopted": false,
+            "comments": null,
+            "reference": "Dahn17"
+        },
+        {
             "parallax": 69.45688074496422,
             "parallax_error": 0.09059635180423187,
             "adopted": false,
@@ -243,6 +250,33 @@
             "reference": "Ahn_12"
         },
         {
+            "band": "WFCAM.H",
+            "magnitude": 10.7,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Legg98"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 11.31,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Legg98"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 10.35,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Legg98"
+        },
+        {
             "band": "WISE.W1",
             "magnitude": 10.072,
             "magnitude_error": 0.022,
@@ -306,6 +340,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -19.3,
+            "radial_velocity_error_km_s": 2.0,
+            "adopted": null,
+            "comments": null,
+            "reference": "Desh12"
         }
     ],
     "Spectra": [

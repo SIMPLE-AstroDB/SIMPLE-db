@@ -37,9 +37,16 @@
         {
             "parallax": 60.01024691973345,
             "parallax_error": 0.18134529888629913,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "parallax": 60.06,
+            "parallax_error": 0.05,
+            "adopted": true,
+            "comments": null,
+            "reference": "Sahl14"
         }
     ],
     "Photometry": [
@@ -105,6 +112,15 @@
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 13.34,
+            "magnitude_error": 0.01,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "McMa13"
         }
     ],
     "ProperMotions": [

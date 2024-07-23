@@ -29,6 +29,15 @@
             "other_name": "WISEP J092012.04+351740.1"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 32.3,
+            "parallax_error": 0.6,
+            "adopted": true,
+            "comments": null,
+            "reference": "Dupu17"
+        }
+    ],
     "Photometry": [
         {
             "band": "2MASS.H",
@@ -56,6 +65,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 15.468,
+            "magnitude_error": 0.008,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 14.015,
+            "magnitude_error": 0.006,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
         }
     ],
     "ProperMotions": [

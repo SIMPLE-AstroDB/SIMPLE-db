@@ -17,6 +17,35 @@
             "other_name": "GJ 758B"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 63.45,
+            "parallax_error": 0.35,
+            "adopted": true,
+            "comments": null,
+            "reference": "vanL07"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "WFCAM.H",
+            "magnitude": 19.148,
+            "magnitude_error": 0.2,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Jans11"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 18.568,
+            "magnitude_error": 0.2,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Jans11"
+        }
+    ],
     "ProperMotions": [
         {
             "mu_ra": 83.4,
@@ -26,6 +55,15 @@
             "adopted": true,
             "comments": null,
             "reference": "vanL07"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -21.24,
+            "radial_velocity_error_km_s": 0.02,
+            "adopted": null,
+            "comments": null,
+            "reference": "Soub18"
         }
     ]
 }

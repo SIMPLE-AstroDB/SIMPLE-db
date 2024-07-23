@@ -35,9 +35,16 @@
         {
             "parallax": 43.3,
             "parallax_error": 3.7,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Best20.257"
+        },
+        {
+            "parallax": 40.03,
+            "parallax_error": 0.58,
+            "adopted": true,
+            "comments": null,
+            "reference": "vanL07"
         }
     ],
     "Photometry": [
@@ -67,6 +74,42 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 15.082,
+            "magnitude_error": 0.014,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Deac14.119"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 16.126,
+            "magnitude_error": 0.017,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Deac14.119"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 14.298,
+            "magnitude_error": 0.019,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Deac14.119"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 17.299,
+            "magnitude_error": 0.054,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
         }
     ],
     "ProperMotions": [
@@ -87,6 +130,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Deac14.119"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -35.19,
+            "radial_velocity_error_km_s": 0.03,
+            "adopted": null,
+            "comments": null,
+            "reference": "Soub18"
         }
     ],
     "SpectralTypes": [

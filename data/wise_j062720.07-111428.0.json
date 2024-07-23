@@ -26,6 +26,15 @@
             "other_name": "WISEPA J062720.07-111428.8"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 74.8,
+            "parallax_error": 3.6,
+            "adopted": true,
+            "comments": null,
+            "reference": "Kirk19"
+        }
+    ],
     "Photometry": [
         {
             "band": "2MASS.H",
@@ -57,6 +66,15 @@
         {
             "band": "IRAC.I1",
             "magnitude": 14.27,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk11"
+        },
+        {
+            "band": "IRAC.I1",
+            "magnitude": 14.27,
             "magnitude_error": 0.03,
             "telescope": "Spitzer",
             "epoch": null,
@@ -70,7 +88,43 @@
             "telescope": "Spitzer",
             "epoch": null,
             "comments": null,
+            "reference": "Kirk11"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 13.32,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 15.5,
+            "magnitude_error": 0.181,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 15.24,
+            "magnitude_error": 0.01,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "McMa13"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 15.512,
+            "magnitude_error": 0.181,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
         }
     ],
     "ProperMotions": [
@@ -82,6 +136,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Kirk19"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": 1.2,
+            "radial_velocity_error_km_s": 1.0,
+            "adopted": null,
+            "comments": null,
+            "reference": "Hsu_21"
         }
     ],
     "SpectralTypes": [

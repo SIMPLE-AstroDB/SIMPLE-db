@@ -36,7 +36,7 @@
         {
             "parallax": 31.6438955640115,
             "parallax_error": 1.013089167329184,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "GaiaDR2"
         },
@@ -46,6 +46,13 @@
             "adopted": null,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "parallax": 30.66,
+            "parallax_error": 0.71,
+            "adopted": true,
+            "comments": null,
+            "reference": "Wein16"
         }
     ],
     "Photometry": [
@@ -113,6 +120,42 @@
             "reference": "GaiaEDR3"
         },
         {
+            "band": "WFCAM.H",
+            "magnitude": 13.22,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Fahe12"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 13.94,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Fahe12"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 12.62,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Fahe12"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 15.038,
+            "magnitude_error": 0.058,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
             "band": "WISE.W1",
             "magnitude": 12.322,
             "magnitude_error": 0.023,
@@ -176,6 +219,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Wein16"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -30.36,
+            "radial_velocity_error_km_s": 3.53,
+            "adopted": null,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ],
     "Spectra": [

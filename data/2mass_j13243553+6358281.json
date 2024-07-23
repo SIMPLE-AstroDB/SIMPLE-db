@@ -17,6 +17,15 @@
             "other_name": "2MASS J13243553+6358281"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 99.7,
+            "parallax_error": 5.6,
+            "adopted": true,
+            "comments": null,
+            "reference": "Kirk21"
+        }
+    ],
     "Photometry": [
         {
             "band": "2MASS.H",
@@ -44,6 +53,60 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "IRAC.I1",
+            "magnitude": 12.61,
+            "magnitude_error": 0.01,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 12.36,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 14.677,
+            "magnitude_error": 0.06,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 15.435,
+            "magnitude_error": 0.067,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 14.082,
+            "magnitude_error": 0.06,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 16.52,
+            "magnitude_error": 0.084,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
         }
     ],
     "ProperMotions": [
@@ -53,6 +116,15 @@
             "mu_dec": -68.0,
             "mu_dec_error": 5.7,
             "adopted": true,
+            "comments": null,
+            "reference": "Gagn18.27"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -23.7,
+            "radial_velocity_error_km_s": 0.4,
+            "adopted": null,
             "comments": null,
             "reference": "Gagn18.27"
         }

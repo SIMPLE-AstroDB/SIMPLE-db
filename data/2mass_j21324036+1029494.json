@@ -20,6 +20,15 @@
             "other_name": "SDSS J213240.36+102949.4"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 22.4,
+            "parallax_error": 0.9,
+            "adopted": true,
+            "comments": null,
+            "reference": "Sang23"
+        }
+    ],
     "Photometry": [
         {
             "band": "2MASS.H",
@@ -47,6 +56,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 16.333,
+            "magnitude_error": 0.014,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 14.605,
+            "magnitude_error": 0.01,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
         }
     ],
     "ProperMotions": [

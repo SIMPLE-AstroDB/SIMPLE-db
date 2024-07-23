@@ -63,6 +63,9 @@
             "other_name": "SDSS J130041.93+122114.7"
         },
         {
+            "other_name": "ULAS J130041.73+122114.7"
+        },
+        {
             "other_name": "ULAS J130041.74+122114.7"
         },
         {
@@ -76,6 +79,13 @@
             "adopted": true,
             "comments": null,
             "reference": "Missing"
+        },
+        {
+            "parallax": 85.54,
+            "parallax_error": 1.53,
+            "adopted": false,
+            "comments": null,
+            "reference": "vanL07"
         }
     ],
     "Photometry": [
@@ -197,6 +207,33 @@
             "reference": "Lawr07"
         },
         {
+            "band": "WFCAM.H",
+            "magnitude": 17.014,
+            "magnitude_error": 0.038,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr12"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 16.691,
+            "magnitude_error": 0.015,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "WFAU19"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 16.903,
+            "magnitude_error": 0.057,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr12"
+        },
+        {
             "band": "WFCAM.Y",
             "magnitude": 17.715,
             "magnitude_error": 0.025,
@@ -251,6 +288,15 @@
             "adopted": true,
             "comments": null,
             "reference": "vanL07"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -11.23,
+            "radial_velocity_error_km_s": 0.11,
+            "adopted": null,
+            "comments": null,
+            "reference": "Nide02"
         }
     ],
     "Spectra": [

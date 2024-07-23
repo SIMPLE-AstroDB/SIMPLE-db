@@ -20,6 +20,15 @@
             "other_name": "SDSS J154849.02+172235.4"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 46.0,
+            "parallax_error": 8.5,
+            "adopted": true,
+            "comments": null,
+            "reference": "Sang23"
+        }
+    ],
     "Photometry": [
         {
             "band": "2MASS.H",
@@ -47,6 +56,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 16.123,
+            "magnitude_error": 0.011,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 14.487,
+            "magnitude_error": 0.009,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
         }
     ],
     "ProperMotions": [
@@ -58,6 +85,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Fahe09"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": 21.0,
+            "radial_velocity_error_km_s": 156.0,
+            "adopted": null,
+            "comments": null,
+            "reference": "Abaz09"
         }
     ],
     "SpectralTypes": [

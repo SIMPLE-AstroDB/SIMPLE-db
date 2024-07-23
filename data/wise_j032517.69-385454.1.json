@@ -17,11 +17,38 @@
             "other_name": "WISE J032517.69-385454.1"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 60.2,
+            "parallax_error": 3.5,
+            "adopted": true,
+            "comments": null,
+            "reference": "Kirk21"
+        }
+    ],
     "Photometry": [
         {
             "band": "IRAC.I1",
             "magnitude": 17.12,
             "magnitude_error": 0.05,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
+        },
+        {
+            "band": "IRAC.I1",
+            "magnitude": 17.12,
+            "magnitude_error": 0.05,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Mace13.6"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 14.98,
+            "magnitude_error": 0.02,
             "telescope": "Spitzer",
             "epoch": null,
             "comments": null,
@@ -34,7 +61,25 @@
             "telescope": "Spitzer",
             "epoch": null,
             "comments": null,
+            "reference": "Mace13.6"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 19.58,
+            "magnitude_error": 0.2,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Kirk19"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 19.4,
+            "magnitude_error": null,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Mace13.6"
         }
     ],
     "ProperMotions": [

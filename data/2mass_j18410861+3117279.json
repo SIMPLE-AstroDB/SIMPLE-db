@@ -54,6 +54,15 @@
             "other_name": "2MASSW J1841086+311727"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 23.57,
+            "parallax_error": 1.89,
+            "adopted": true,
+            "comments": null,
+            "reference": "Vrba04"
+        }
+    ],
     "Photometry": [
         {
             "band": "2MASS.H",
@@ -81,6 +90,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 15.952,
+            "magnitude_error": 0.01,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 14.312,
+            "magnitude_error": 0.009,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
         },
         {
             "band": "WISE.W1",

@@ -17,6 +17,26 @@
             "other_name": "SDSS J135825.72+423434.4"
         }
     ],
+    "Photometry": [
+        {
+            "band": "WFCAM.J",
+            "magnitude": 16.013,
+            "magnitude_error": 0.013,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 14.789,
+            "magnitude_error": 0.012,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
+        }
+    ],
     "ProperMotions": [
         {
             "mu_ra": -101.4,
@@ -26,6 +46,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Gagn15.73"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -12.0,
+            "radial_velocity_error_km_s": 57.0,
+            "adopted": null,
+            "comments": null,
+            "reference": "Abaz09"
         }
     ],
     "SpectralTypes": [

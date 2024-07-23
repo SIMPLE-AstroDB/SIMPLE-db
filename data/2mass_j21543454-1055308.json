@@ -23,6 +23,15 @@
             "other_name": "SIMP J21543454-1055308"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 32.62,
+            "parallax_error": 1.01,
+            "adopted": true,
+            "comments": null,
+            "reference": "Liu_16"
+        }
+    ],
     "Photometry": [
         {
             "band": "2MASS.H",
@@ -50,6 +59,42 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 15.14,
+            "magnitude_error": 0.069,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 16.344,
+            "magnitude_error": 0.121,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 14.159,
+            "magnitude_error": 0.069,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 17.735,
+            "magnitude_error": 0.131,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
         },
         {
             "band": "WISE.W1",
@@ -97,6 +142,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Liu_16"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -20.7,
+            "radial_velocity_error_km_s": 1.0,
+            "adopted": null,
+            "comments": null,
+            "reference": "Vos_22"
         }
     ],
     "Spectra": [

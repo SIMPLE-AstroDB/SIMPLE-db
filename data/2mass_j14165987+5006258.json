@@ -65,6 +65,15 @@
             "other_name": "SDSS J141659.78+500626.4"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 21.9,
+            "parallax_error": 0.62,
+            "adopted": true,
+            "comments": null,
+            "reference": "vanL07"
+        }
+    ],
     "Photometry": [
         {
             "band": "2MASS.H",
@@ -139,6 +148,42 @@
             "reference": "Ahn_12"
         },
         {
+            "band": "WFCAM.H",
+            "magnitude": 16.03,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Chiu06"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 16.861,
+            "magnitude_error": 0.019,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 15.349,
+            "magnitude_error": 0.021,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 17.96,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Chiu06"
+        },
+        {
             "band": "WISE.W1",
             "magnitude": 14.7,
             "magnitude_error": 0.028,
@@ -184,6 +229,15 @@
             "adopted": true,
             "comments": null,
             "reference": "vanL07"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -47.282,
+            "radial_velocity_error_km_s": 0.005,
+            "adopted": null,
+            "comments": null,
+            "reference": "Soub18"
         }
     ],
     "Spectra": [

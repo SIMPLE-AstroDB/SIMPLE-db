@@ -23,11 +23,38 @@
             "other_name": "WISEA J221216.3-693121.6"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 80.6,
+            "parallax_error": 1.9,
+            "adopted": true,
+            "comments": null,
+            "reference": "Kirk21"
+        }
+    ],
     "Photometry": [
         {
             "band": "IRAC.I1",
             "magnitude": 17.36,
             "magnitude_error": 0.06,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk19"
+        },
+        {
+            "band": "IRAC.I1",
+            "magnitude": 17.36,
+            "magnitude_error": 0.06,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Schn15"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 14.97,
+            "magnitude_error": 0.02,
             "telescope": "Spitzer",
             "epoch": null,
             "comments": null,
@@ -40,7 +67,34 @@
             "telescope": "Spitzer",
             "epoch": null,
             "comments": null,
-            "reference": "Kirk19"
+            "reference": "Schn15"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 20.225,
+            "magnitude_error": 0.036,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn15"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 19.737,
+            "magnitude_error": 0.024,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn15"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 20.282,
+            "magnitude_error": 0.023,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn15"
         }
     ],
     "ProperMotions": [

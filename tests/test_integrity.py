@@ -1,13 +1,14 @@
 # Test to verify database integrity
 # database object 'db' defined in conftest.py
 import pytest
-from sqlalchemy import func, and_
-from astropy.table import unique
-from astropy import units as u
-from astroquery.simbad import Simbad
-from astrodbkit2.utils import _name_formatter
 from astrodbkit2.astrodb import or_
-# from simple.schema import ParallaxView  # , PhotometryView
+from astrodbkit2.utils import _name_formatter
+from astropy import units as u
+from astropy.table import unique
+from astroquery.simbad import Simbad
+from sqlalchemy import and_, func
+
+from simple.schema import ParallaxView  # , PhotometryView
 
 
 def test_reference_uniqueness(db):
@@ -93,7 +94,7 @@ def test_publications(db):
         )
         .astropy()
     )
-    assert len(t) == 29, f"found {len(t)} publications with missing bibcode and doi"
+    assert len(t) == 30, f"found {len(t)} publications with missing bibcode and doi"
 
 
 def test_parameters(db):
@@ -626,7 +627,11 @@ def test_spectra(db):
     # Tests against the Spectra table
 
     # There should be no entries in the Spectra table without a spectrum
-    t = db.query(db.Spectra.c.source).filter(db.Spectra.c.access_url.is_(None)).astropy()
+    t = (
+        db.query(db.Spectra.c.source)
+        .filter(db.Spectra.c.access_url.is_(None))
+        .astropy()
+    )
     if len(t) > 0:
         print("\nEntries found without spectrum")
         print(t)
@@ -703,7 +708,6 @@ def test_special_characters(db):
                     assert all(check), f"{char} in {table_name}"
 
 
-@pytest.mark.skip(reason="ParallaxView not working")
 def test_database_views(db):
     # Tests to verify views exist and work as intended
 

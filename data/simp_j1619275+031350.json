@@ -20,6 +20,15 @@
             "other_name": "SIMP J1619275+031350"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 44.9,
+            "parallax_error": 3.3,
+            "adopted": true,
+            "comments": null,
+            "reference": "Kirk21"
+        }
+    ],
     "Photometry": [
         {
             "band": "2MASS.H",
@@ -47,6 +56,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 13.32,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 15.326,
+            "magnitude_error": 0.007,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
         }
     ],
     "ProperMotions": [

@@ -3,6 +3,7 @@ import pytest
 from astrodb_utils.utils import (
     AstroDBError,
 )
+
 from simple.utils.spectra import (
     ingest_spectrum,
     # ingest_spectrum_from_fits,
@@ -10,8 +11,6 @@ from simple.utils.spectra import (
 )
 
 
-@pytest.mark.filterwarnings("ignore::UserWarning")
-@pytest.mark.filterwarnings("ignore", message=".*not FITS standard.*")
 @pytest.mark.filterwarnings(
     "ignore", message=".*Note: astropy.io.fits uses zero-based indexing.*"
 )
@@ -25,163 +24,78 @@ from simple.utils.spectra import (
         "which is discouraged by the FITS standard.*",
     ),
 )
-def test_ingest_spectrum_errors(temp_db):
+@pytest.mark.parametrize("test_input, message", [
+    ({"source": "apple",
+      "telescope": "IRTF", 
+      "instrument": "SpeX", 
+      "mode": "Prism",
+      }, "Value required for regime"),  # missing regime
+    ({"source": "apple",
+      "regime": "nir", 
+      "instrument": "SpeX", 
+      "obs_date": "2020-01-01",
+      }, "Value required for telescope"),  # missing telescope
+    ({"source": "apple",
+      "regime": "nir", 
+      "telescope": "IRTF", 
+      "obs_date": "2020-01-01",
+      }, "Value required for instrument"),  # missing instrument
+    ({"source": "apple", 
+      "telescope": "IRTF", 
+      "instrument": "SpeX", 
+      "mode": "Prism", 
+      "regime": "nir", 
+      "obs_date": "2020-01-01",
+      }, "NOT NULL constraint failed: Spectra.reference"),  # missing reference
+    ({"source": "apple", 
+      "telescope": "IRTF", 
+      "instrument": "SpeX", 
+      "mode": "Prism", 
+      "regime": "nir", 
+      "obs_date": "2020-01-01",
+      "reference": "Ref 5",
+      }, "FOREIGN KEY constraint failed"),  # invalid reference
+    ({"source": "kiwi", 
+      "telescope": "IRTF", 
+      "instrument": "SpeX", 
+      "mode": "Prism", 
+      "regime": "nir", 
+      "obs_date": "2020-01-01",
+      "reference": "Ref 1",
+      }, "No unique source match for kiwi in the database"),  # invalid source
+    ({"source": "apple", 
+      "telescope": "IRTF", 
+      "instrument": "SpeX", 
+      "mode": "Prism", 
+      "regime": "nir", 
+      "reference": "Ref 1",
+      }, "Invalid date received: None"),  # missing date
+    ({"source": "apple", 
+      "telescope": "IRTF", 
+      "instrument": "SpeX", 
+      "mode": "Prism", 
+      "regime": "fake regime", 
+      "obs_date": "2020-01-01",
+      "reference": "Ref 1",
+      }, "FOREIGN KEY constraint failed"),  # invalid regime
+])
+def test_ingest_spectrum_errors(temp_db, test_input, message):
+    # Test for ingest_spectrum that is expected to return errors
+
+    # Prepare parameters to send to ingest_spectrum
     spectrum = "https://bdnyc.s3.amazonaws.com/tests/U10176.fits"
-    with pytest.raises(AstroDBError) as error_message:
-        ingest_spectrum(temp_db, source="apple", spectrum=spectrum)
-    assert "Regime is required" in str(error_message.value)
-    result = ingest_spectrum(
-        temp_db, source="apple", spectrum=spectrum, raise_error=False
-    )
-    assert result["added"] is False
-    assert result["skipped"] is True
+    parameters = {"db": temp_db, "spectrum": spectrum}
+    parameters.update(test_input)
 
+    # Check that error was raised
     with pytest.raises(AstroDBError) as error_message:
-        ingest_spectrum(
-            temp_db,
-            source="apple",
-            telescope="IRTF",
-            instrument="SpeX",
-            mode="Prism",
-            regime="nir",
-            spectrum=spectrum,
-        )
-    assert "Reference is required" in str(error_message.value)
-    ingest_spectrum(
-        temp_db, source="apple", regime="nir", spectrum=spectrum, raise_error=False
-    )
-    assert result["added"] is False
-    assert result["skipped"] is True
+        _ = ingest_spectrum(**parameters)
+    assert message in str(error_message.value)
 
-    with pytest.raises(AstroDBError) as error_message:
-        ingest_spectrum(
-            temp_db,
-            source="apple",
-            regime="nir",
-            spectrum=spectrum,
-            telescope="IRTF",
-            instrument="SpeX",
-            mode="Prism",
-            reference="Ref 5",
-        )
-    assert "not in Publications table" in str(error_message.value)
-    ingest_spectrum(
-        temp_db,
-        source="apple",
-        regime="nir",
-        spectrum=spectrum,
-        telescope="IRTF",
-        instrument="SpeX",
-        mode="Prism",
-        reference="Ref 5",
-        raise_error=False,
-    )
+    # Suppress error but check that it was still captured
+    result = ingest_spectrum(**parameters, raise_error=False)
     assert result["added"] is False
-    assert result["skipped"] is True
-
-    with pytest.raises(AstroDBError) as error_message:
-        ingest_spectrum(
-            temp_db,
-            source="kiwi",
-            regime="nir",
-            spectrum=spectrum,
-            reference="Ref 1",
-            telescope="IRTF",
-            instrument="SpeX",
-            mode="Prism",
-        )
-    assert "No unique source match for kiwi in the database" in str(error_message.value)
-    result = ingest_spectrum(
-        temp_db,
-        source="kiwi",
-        regime="nir",
-        spectrum=spectrum,
-        reference="Ref 1",
-        raise_error=False,
-        telescope="IRTF",
-        instrument="SpeX",
-        mode="Prism",
-    )
-    assert result["added"] is False
-    assert result["skipped"] is True
-
-    with pytest.raises(AstroDBError) as error_message:
-        ingest_spectrum(
-            temp_db,
-            source="apple",
-            regime="nir",
-            spectrum=spectrum,
-            reference="Ref 1",
-            telescope="IRTF",
-            instrument="SpeX",
-            mode="Prism",
-        )
-    assert "missing observation date" in str(error_message.value)
-    result = ingest_spectrum(
-        temp_db,
-        source="apple",
-        regime="nir",
-        spectrum=spectrum,
-        reference="Ref 1",
-        telescope="IRTF",
-        instrument="SpeX",
-        mode="Prism",
-        raise_error=False,
-    )
-    assert result["added"] is False
-    assert result["skipped"] is False
-    assert result["no_obs_date"] is True
-
-    # with pytest.raises(AstroDBError) as error_message:
-    #     ingest_spectrum(
-    #         db,
-    #         source="orange",
-    #         regime="nir",
-    #         spectrum=spectrum,
-    #         reference="Ref 1",
-    #         obs_date="Jan20",
-    #     )
-    # assert "Can't convert obs date to Date Time object" in str(error_message.value)
-    # result = ingest_spectrum(
-    #     db,
-    #     source="orange",
-    #     regime="nir",
-    #     spectrum=spectrum,
-    #     reference="Ref 1",
-    #     obs_date="Jan20",
-    #     raise_error=False,
-    # )
-    # assert result["added"] is False
-    # assert result["skipped"] is False
-    # assert result["no_obs_date"] is True
-
-    with pytest.raises(AstroDBError) as error_message:
-        result = ingest_spectrum(
-            temp_db,
-            source="orange",
-            regime="far-uv",
-            spectrum=spectrum,
-            reference="Ref 1",
-            obs_date="1/1/2024",
-            telescope="Keck I",
-            instrument="LRIS",
-            mode="OG570",
-        )
-    assert "not in Regimes table" in str(error_message.value)
-    result = ingest_spectrum(
-        temp_db,
-        source="orange",
-        regime="far-uv",
-        spectrum=spectrum,
-        reference="Ref 1",
-        obs_date="1/1/2024",
-        telescope="Keck I",
-        instrument="LRIS",
-        mode="OG570",
-        raise_error=False,
-    )
-    assert result["added"] is False
-    assert result["skipped"] is True
+    assert message in result["message"]
 
 
 @pytest.mark.filterwarnings("ignore:Verification")

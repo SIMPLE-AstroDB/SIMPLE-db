@@ -18,6 +18,9 @@
         },
         {
             "other_name": "SDSS J121951.45+312849.4"
+        },
+        {
+            "other_name": "UGCS J121951.36+312849.4"
         }
     ],
     "Parallaxes": [
@@ -27,6 +30,13 @@
             "adopted": true,
             "comments": null,
             "reference": "Best20.257"
+        },
+        {
+            "parallax": 63.9,
+            "parallax_error": 7.2,
+            "adopted": false,
+            "comments": null,
+            "reference": "Kirk21"
         }
     ],
     "Photometry": [
@@ -58,6 +68,51 @@
             "reference": "Cutr03"
         },
         {
+            "band": "IRAC.I1",
+            "magnitude": 13.04,
+            "magnitude_error": 0.01,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 12.91,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 15.025,
+            "magnitude_error": 0.007,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr12"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 15.951,
+            "magnitude_error": 0.009,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Lawr07"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 14.363,
+            "magnitude_error": 0.005,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "WFAU19"
+        },
+        {
             "band": "WFCAM.Y",
             "magnitude": 17.146,
             "magnitude_error": 0.014,
@@ -85,6 +140,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Fahe09"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -19.0,
+            "radial_velocity_error_km_s": 4.2,
+            "adopted": null,
+            "comments": null,
+            "reference": "Tann21"
         }
     ],
     "Spectra": [

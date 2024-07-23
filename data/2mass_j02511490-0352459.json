@@ -22,9 +22,16 @@
     ],
     "Parallaxes": [
         {
+            "parallax": 90.62,
+            "parallax_error": 3.02,
+            "adopted": true,
+            "comments": null,
+            "reference": "Bart17"
+        },
+        {
             "parallax": 78.0,
             "parallax_error": 3.5,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Best20.257"
         }
@@ -56,6 +63,51 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "IRAC.I1",
+            "magnitude": 10.88,
+            "magnitude_error": 0.01,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 10.87,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk21"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 12.3,
+            "magnitude_error": 0.02,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 12.94,
+            "magnitude_error": 0.02,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.257"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 11.64,
+            "magnitude_error": 0.02,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
         }
     ],
     "ProperMotions": [
@@ -76,6 +128,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Jame08"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": 1.26,
+            "radial_velocity_error_km_s": 0.13,
+            "adopted": null,
+            "comments": null,
+            "reference": "Blak10"
         }
     ],
     "Spectra": [

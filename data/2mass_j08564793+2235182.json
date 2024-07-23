@@ -28,9 +28,16 @@
     ],
     "Parallaxes": [
         {
+            "parallax": 32.4,
+            "parallax_error": 1.0,
+            "adopted": true,
+            "comments": null,
+            "reference": "Dupu12.19"
+        },
+        {
             "parallax": 31.81011228963163,
             "parallax_error": 1.3319491147994995,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "GaiaEDR3"
         }
@@ -98,6 +105,33 @@
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 14.63,
+            "magnitude_error": 0.05,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Best20.42"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 15.527,
+            "magnitude_error": 0.007,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 13.892,
+            "magnitude_error": 0.005,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Schn23.ace9"
         }
     ],
     "ProperMotions": [
@@ -118,6 +152,15 @@
             "adopted": false,
             "comments": null,
             "reference": "GaiaEDR3"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": 132.39,
+            "radial_velocity_error_km_s": 14.58,
+            "adopted": null,
+            "comments": null,
+            "reference": "Kima19"
         }
     ],
     "Spectra": [

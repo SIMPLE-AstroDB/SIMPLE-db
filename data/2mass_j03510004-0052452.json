@@ -70,9 +70,19 @@
         },
         {
             "other_name": "SDSS J035100.02-005245.8"
+        },
+        {
+            "other_name": "ULAS J035100.04-005248.2"
         }
     ],
     "Parallaxes": [
+        {
+            "parallax": 68.25,
+            "parallax_error": 1.86,
+            "adopted": false,
+            "comments": null,
+            "reference": "Dahn17"
+        },
         {
             "parallax": 68.03254976552468,
             "parallax_error": 0.18508927231091224,
@@ -252,6 +262,33 @@
             "reference": "Ahn_12"
         },
         {
+            "band": "WFCAM.H",
+            "magnitude": 10.53,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Legg98"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 11.24,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Legg98"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 10.15,
+            "magnitude_error": 0.03,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": null,
+            "reference": "Legg98"
+        },
+        {
             "band": "WISE.W1",
             "magnitude": 9.968,
             "magnitude_error": 0.023,
@@ -315,6 +352,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        }
+    ],
+    "RadialVelocities": [
+        {
+            "radial_velocity_km_s": -12.63,
+            "radial_velocity_error_km_s": 0.1,
+            "adopted": null,
+            "comments": null,
+            "reference": "Schn19"
         }
     ],
     "Spectra": [

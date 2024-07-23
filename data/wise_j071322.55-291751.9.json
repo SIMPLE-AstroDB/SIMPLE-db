@@ -21,12 +21,28 @@
         {
             "parallax": 107.5,
             "parallax_error": 2.4,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "parallax": 109.3,
+            "parallax_error": 2.1,
+            "adopted": true,
+            "comments": null,
+            "reference": "Kirk21"
         }
     ],
     "Photometry": [
+        {
+            "band": "IRAC.I1",
+            "magnitude": 16.67,
+            "magnitude_error": 0.04,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk12"
+        },
         {
             "band": "IRAC.I1",
             "magnitude": 16.673,
@@ -35,6 +51,15 @@
             "epoch": null,
             "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "band": "IRAC.I2",
+            "magnitude": 14.22,
+            "magnitude_error": 0.02,
+            "telescope": "Spitzer",
+            "epoch": null,
+            "comments": null,
+            "reference": "Kirk12"
         },
         {
             "band": "IRAC.I2",
@@ -52,6 +77,42 @@
             "telescope": "Gemini North",
             "epoch": null,
             "comments": null,
+            "reference": "Legg15"
+        },
+        {
+            "band": "WFCAM.H",
+            "magnitude": 20.19,
+            "magnitude_error": 0.08,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Legg15"
+        },
+        {
+            "band": "WFCAM.J",
+            "magnitude": 19.98,
+            "magnitude_error": 0.05,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Legg15"
+        },
+        {
+            "band": "WFCAM.K",
+            "magnitude": 21.3,
+            "magnitude_error": 0.31,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
+            "reference": "Legg15"
+        },
+        {
+            "band": "WFCAM.Y",
+            "magnitude": 20.34,
+            "magnitude_error": 0.08,
+            "telescope": "UKIRT",
+            "epoch": null,
+            "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Legg15"
         }
     ],
