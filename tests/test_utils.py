@@ -146,9 +146,7 @@ def test_ingest_spectral_type_errors(temp_db):
             reference=spt_data4["reference"],
             regime=spt_data4["regime"],
         )
-    assert "Spectral type for Fake 1 already in the database" in str(
-        error_message.value
-    )
+    assert "Spectral type already in the database" in str(error_message.value)
     # assert "The publication does not exist in the database" in str(error_message.value)
 
 
