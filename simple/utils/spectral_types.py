@@ -150,35 +150,7 @@ def ingest_spectral_type(
                 logger.warning(msg)
 
     # check that there is only one adopted measurement
-    results = (
-        db.query(db.SpectralTypes)
-        .filter(
-            and_(
-                db.SpectralTypes.c.source == db_name, db.SpectralTypes.c.adopted == True
-            )
-        )
-        .table()
-    )
-    logger.debug(f"Adopted measurements for {db_name}:{results}")
-    if logger.level <= 10:
-        results.pprint_all()
-    logger.debug(f"adopted column: {results['adopted']}")
-    if len(results) == 1:
-        logger.debug(f"One adopted measurement for {db_name}")
-    elif len(results) > 2:
-        msg = f"Multiple adopted measurements for {db_name}"
-        if raise_error:
-            logger.error(msg)
-            raise AstroDBError(msg)
-        else:
-            logger.warning(msg)
-    elif len(results) == 0:
-        msg = f"No adopted measurements for {db_name}"
-        if raise_error:
-            logger.error(msg)
-            raise AstroDBError(msg)
-        else:
-            logger.warning(msg)
+    check_one_adopted_sptype(db, db_name, raise_error=raise_error)
 
 
 def convert_spt_string_to_code(spectral_type_string):
@@ -329,3 +301,36 @@ def unset_previously_adopted(db, source):
                 conn.commit()
         else:
             logger.debug("No previously adopted data found, doing nothing")
+
+
+def check_one_adopted_sptype(db, source, raise_error=True):
+    results = (
+        db.query(db.SpectralTypes)
+        .filter(
+            and_(
+                db.SpectralTypes.c.source == source,
+                db.SpectralTypes.c.adopted == True,  # noqa: E712
+            )
+        )
+        .table()
+    )
+    logger.debug(f"Adopted measurements for {source}:{results}")
+    if logger.level <= 10:
+        results.pprint_all()
+    logger.debug(f"adopted column: {results['adopted']}")
+    if len(results) == 1:
+        logger.debug(f"One adopted measurement for {source}")
+    elif len(results) > 2:
+        msg = f"Multiple adopted measurements for {source}"
+        if raise_error:
+            logger.error(msg)
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+    elif len(results) == 0:
+        msg = f"No adopted measurements for {source}"
+        if raise_error:
+            logger.error(msg)
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
