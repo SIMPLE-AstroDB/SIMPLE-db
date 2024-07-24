@@ -13,7 +13,7 @@ from astrodb_utils import (
 __all__ = [
     "ingest_spectral_type",
     "convert_spt_string_to_code",
-    "convert_spt_code_to_string_to_code",
+    "convert_spt_code_to_string",
 ]
 
 logger = logging.getLogger("SIMPLE")
@@ -35,22 +35,30 @@ def ingest_spectral_type(
 ):
     """
     Script to ingest spectral types
+
     Parameters
     ----------
     db: astrodbkit2.astrodb.Database
         Database object created by astrodbkit2
+
     source: str
-        Name of source
-    spectral_type: str
+        Name of source. Constrained by the Sources table
+
+    spectral_type_string: str
         Spectral Type of source
+
     spectral_type_error: str, optional
         Spectral Type Error of source
+
     regime: str
-        String
+        String. Constrained by Regimes table
+
     comment: str, optional
         Comments
+
     reference: str
         Reference of the Spectral Type
+
     raise_error: bool, optional
 
     Returns
@@ -196,7 +204,7 @@ def ingest_spectral_type(
                 logger.error(msg)
                 raise AstroDBError(msg + msg1)
             else:
-                logger.warning(msg)
+                logger.warning(msg + msg1)
         else:
             msg = f"Spectral type ingest failed with error {e}\n"
             if raise_error:

@@ -117,6 +117,11 @@ def test_ingest_spectral_type(temp_db):
     assert results["spectral_type_code"][0] == [92]
 
 
+def test_ingest_spectral_type_adopted(temp_db):
+    # TODO: write test for adopted spectral type
+    pass
+
+
 def test_ingest_spectral_type_errors(temp_db):
     # testing for publication error
     spt_data4 = {
@@ -141,13 +146,32 @@ def test_ingest_spectral_type_errors(temp_db):
     with pytest.raises(AstroDBError) as error_message:
         ingest_spectral_type(
             temp_db,
+            source="not a source",
+            spectral_type_string=spt_data4["spectral_type"],
+            reference=spt_data4["reference"],
+            regime=spt_data4["regime"],
+        )
+    assert "No unique source match" in str(error_message.value)
+
+    with pytest.raises(AstroDBError) as error_message:
+        ingest_spectral_type(
+            temp_db,
             spt_data4["source"],
             spectral_type_string=spt_data4["spectral_type"],
             reference=spt_data4["reference"],
             regime=spt_data4["regime"],
         )
     assert "Spectral type already in the database" in str(error_message.value)
-    # assert "The publication does not exist in the database" in str(error_message.value)
+
+    with pytest.raises(AstroDBError) as error_message:
+        ingest_spectral_type(
+            temp_db,
+            spt_data4["source"],
+            spectral_type_string="M6",
+            reference="not a reference",
+            regime=spt_data4["regime"],
+        )
+    assert "The publication does not exist in the database" in str(error_message.value)
 
 
 def test_companion_relationships(temp_db):
