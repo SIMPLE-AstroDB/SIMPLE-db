@@ -176,20 +176,6 @@ def ingest_spectral_type(
                     .values(adopted=False)
                 )
                 conn.commit()
-            # check that adopted flag is successfully changed
-            old_adopted_data = (
-                db.query(db.SpectralTypes)
-                .filter(
-                    and_(
-                        db.SpectralTypes.c.source == old_adopted["source"][0],
-                        db.SpectralTypes.c.regime == old_adopted["regime"][0],
-                        db.SpectralTypes.c.reference == old_adopted["reference"][0],
-                    )
-                )
-                .table()
-            )
-            logger.debug("Old adopted measurement unset")
-            logger.debug(f"Old adopted data:\n {old_adopted_data}")
     except sqlalchemy.exc.IntegrityError as e:
         if (
             db.query(db.Publications)
@@ -212,6 +198,48 @@ def ingest_spectral_type(
                 raise AstroDBError(msg)
             else:
                 logger.warning(msg)
+
+    # check that adopted flag is successfully changed
+    if old_adopted is not None:
+        old_adopted_data = (
+            db.query(db.SpectralTypes)
+            .filter(
+                and_(
+                    db.SpectralTypes.c.source == old_adopted["source"][0],
+                    db.SpectralTypes.c.regime == old_adopted["regime"][0],
+                    db.SpectralTypes.c.reference == old_adopted["reference"][0],
+                )
+            )
+            .table()
+        )
+        logger.debug("Old adopted measurement unset")
+        logger.debug(f"Old adopted data:\n {old_adopted_data}")
+
+    # check that there is only one adopted measurement
+    results = (
+        db.query(db.SpectralTypes)
+        .filter(
+            and_(db.SpectralTypes.c.source == db_name, db.SpectralTypes.c.adopted == 1)
+        )
+        .table()
+    )
+    logger.debug(f"Adopted measurements for {db_name}: {results}")
+    if len(results) > 1:
+        msg = f"Multiple adopted measurements for {db_name}"
+        if raise_error:
+            logger.error(msg)
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+    elif len(results) == 0:
+        msg = f"No adopted measurements for {db_name}"
+        if raise_error:
+            logger.error(msg)
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+    else:
+        logger.debug(f"Adopted measurement for {db_name}: {results}")
 
 
 def convert_spt_string_to_code(spectral_type_string):
