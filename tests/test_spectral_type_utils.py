@@ -23,57 +23,63 @@ def test_convert_spt_code_to_string():
     assert convert_spt_code_to_string(92, decimals=0) == "Y2"
 
 
-def test_ingest_spectral_type(temp_db):
-    spt_data1 = {
-        "source": "Fake 1",
-        "spectral_type": "M5.6",
-        "regime": "nir",
-        "reference": "Ref 1",
-    }
-    spt_data2 = {
-        "source": "Fake 2",
-        "spectral_type": "T0.1",
-        "regime": "nir",
-        "reference": "Ref 1",
-    }
-    spt_data3 = {
-        "source": "Fake 3",
-        "spectral_type": "Y2pec",
-        "regime": "nir",
-        "reference": "Ref 2",
-    }
-    for spt_data in [spt_data1, spt_data2, spt_data3]:
-        ingest_spectral_type(
-            temp_db,
-            source=spt_data["source"],
-            spectral_type_string=spt_data["spectral_type"],
-            spectral_type_error=1.0,
-            reference=spt_data["reference"],
-            regime=spt_data["regime"],
-        )
-        results = (
-            temp_db.query(temp_db.SpectralTypes)
-            .filter(temp_db.SpectralTypes.c.source == spt_data["source"])
-            .table()
-        )
-        assert len(results) == 1, f"Expecting this data: {spt_data} in \n {results}"
-        assert results["adopted"][0] == True  # noqa: E712
+@pytest.mark.parametrize(
+    "test_input",
+    [
+        {
+            "source": "Fake 1",
+            "spectral_type": "M5.6",
+            "regime": "nir",
+            "reference": "Ref 1",
+        },
+        {
+            "source": "Fake 2",
+            "spectral_type": "T0.1",
+            "regime": "nir",
+            "reference": "Ref 1",
+        },
+        {
+            "source": "Fake 3",
+            "spectral_type": "Y2pec",
+            "regime": "nir",
+            "reference": "Ref 2",
+        },
+    ],
+)
+def test_ingest_spectral_type(temp_db, test_input):
+    ingest_spectral_type(
+        temp_db,
+        source=test_input["source"],
+        spectral_type_string=test_input["spectral_type"],
+        spectral_type_error=1.0,
+        reference=test_input["reference"],
+        regime=test_input["regime"],
+    )
+    results = (
+        temp_db.query(temp_db.SpectralTypes)
+        .filter(temp_db.SpectralTypes.c.source == test_input["source"])
+        .table()
+    )
+    assert len(results) == 1, f"Expecting this data: {test_input} in \n {results}"
+    assert results["adopted"][0] == True  # noqa: E712
 
+
+def test_ingest_spectral_type_multiple(temp_db):
     assert (
         temp_db.query(temp_db.SpectralTypes)
         .filter(temp_db.SpectralTypes.c.reference == "Ref 1")
         .count()
         == 2
     )
-    results = (
+    results_ref2 = (
         temp_db.query(temp_db.SpectralTypes)
         .filter(temp_db.SpectralTypes.c.reference == "Ref 2")
         .table()
     )
-    assert len(results) == 1
-    assert results["source"][0] == "Fake 3"
-    assert results["spectral_type_string"][0] == "Y2pec"
-    assert results["spectral_type_code"][0] == [92]
+    assert len(results_ref2) == 1
+    assert results_ref2["source"][0] == "Fake 3"
+    assert results_ref2["spectral_type_string"][0] == "Y2pec"
+    assert results_ref2["spectral_type_code"][0] == [92]
 
 
 def test_ingest_spectral_type_adopted(temp_db):
