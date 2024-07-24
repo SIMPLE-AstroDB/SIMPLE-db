@@ -17,7 +17,6 @@ __all__ = [
 ]
 
 logger = logging.getLogger("AstroDB")
-logger.setLevel(logging.DEBUG)
 
 
 def ingest_spectral_type(
