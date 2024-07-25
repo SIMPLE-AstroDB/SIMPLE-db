@@ -179,6 +179,11 @@ def test_ingest_spectral_type_errors(temp_db):
     assert "The publication does not exist in the database" in str(error_message.value)
 
 
-def test_ingest_spectral_type_logger(temp_db):
-    # https://stackoverflow.com/questions/59875983/why-is-caplog-text-empty-even-though-the-function-im-testing-is-logging
-    pass
+# TODO: test the logger
+# def test_ingest_spectral_type_logger(temp_db):
+# https://stackoverflow.com/questions/59875983/why-is-caplog-text-empty-even-though-the-function-im-testing-is-logging
+# pass
+
+# TODO: test adopt_spectral_type
+# TODO: test unset_previously_adopted
+# TODO: test check_one_adopted_sptype
