@@ -35,3 +35,11 @@ For example: `$ASTRODB_SPECTRA/infrared/filename.fits`
    indicated in the *comments* field.
    One of the dates should be used for the *observation_date*.
  - Spectra for companions should be associated with individual sources and not grouped with the primary source.
+
+# Check if spectra are plottable by the website
+   ```Python
+   from simple.utils.spectra import spectrum_plottable
+   file = <path to file>
+   spectrum_plottable(file, show_plot=True)
+   ```
+   
