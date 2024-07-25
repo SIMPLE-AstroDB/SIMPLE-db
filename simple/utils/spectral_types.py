@@ -13,11 +13,10 @@ from astrodb_utils import (
 __all__ = [
     "ingest_spectral_type",
     "convert_spt_string_to_code",
-    "convert_spt_code_to_string_to_code",
+    "convert_spt_code_to_string",
 ]
 
-logger = logging.getLogger("SIMPLE")
-logger.setLevel(logging.INFO)  # set default log level to INFO
+logger = logging.getLogger("AstroDB")
 
 
 def ingest_spectral_type(
@@ -35,22 +34,29 @@ def ingest_spectral_type(
 ):
     """
     Script to ingest spectral types
+
     Parameters
     ----------
     db: astrodbkit2.astrodb.Database
         Database object created by astrodbkit2
     source: str
-        Name of source
-    spectral_type: str
+        Name of source. Constrained by the Sources table
+
+    spectral_type_string: str
         Spectral Type of source
+
     spectral_type_error: str, optional
         Spectral Type Error of source
+
     regime: str
-        String
+        String. Constrained by Regimes table
+
     comment: str, optional
         Comments
+
     reference: str
         Reference of the Spectral Type
+
     raise_error: bool, optional
 
     Returns
@@ -58,7 +64,6 @@ def ingest_spectral_type(
 
     None
     """
-
     db_name = find_source_in_db(db, source)
 
     if len(db_name) != 1:
@@ -66,12 +71,6 @@ def ingest_spectral_type(
         raise AstroDBError(msg)
     else:
         db_name = db_name[0]
-
-    adopted = False
-    old_adopted = None
-    source_spt_data = (
-        db.query(db.SpectralTypes).filter(db.SpectralTypes.c.source == db_name).table()
-    )
 
     # Check for duplicates
     duplicate_check = (
@@ -85,6 +84,7 @@ def ingest_spectral_type(
         )
         .count()
     )
+    logger.debug(f"Duplicate check: {duplicate_check}")
     if duplicate_check > 0:
         msg = f"Spectral type already in the database: {db_name}, {regime}, {reference}"
         if raise_error:
@@ -92,40 +92,12 @@ def ingest_spectral_type(
             raise AstroDBError(msg)
         else:
             logger.warning(msg)
-
-    # set adopted flag
-    if source_spt_data is None or len(source_spt_data) == 0:
-        adopted = True
-        logger.debug("No Spectral Type data for this source in the database")
-    elif len(source_spt_data) > 0:
-        # Spectral Type Data already exists
-        dupe_ind = source_spt_data["reference"] == reference
-        if sum(dupe_ind):
-            logger.debug(f"Duplicate measurement\n, {source_spt_data[dupe_ind]}")
-        else:
-            logger.debug("Another Spectral Type exists,")
-            if logger.level == 10:
-                source_spt_data.pprint_all()
-
-        adopted_ind = source_spt_data["adopted"] == 1
-        if sum(adopted_ind):
-            old_adopted = source_spt_data[adopted_ind]
-            print("spt_error:", spectral_type_error)
-            print("source spt data:", source_spt_data["spectral_type_error"])
-            if (
-                spectral_type_error is not None
-                and source_spt_data["spectral_type_error"] is not None
-            ):
-                if spectral_type_error < min(source_spt_data["spectral_type_error"]):
-                    adopted = True
-                logger.debug(f"The new spectral type's adopted flag is:, {adopted}")
     else:
-        msg = f"Unexpected state while ingesting {source}"
-        if raise_error:
-            logger.error(msg)
-            raise RuntimeError
-        else:
-            logger.warning(msg)
+        logger.debug(f"No duplicates found for : {db_name}, {regime}, {reference}")
+
+    adopted = adopt_spectral_type(db, db_name, spectral_type_error)
+    if adopted:
+        unset_previously_adopted(db, db_name)
 
     if spectral_type_code is None:
         spectral_type_code = convert_spt_string_to_code(spectral_type_string)
@@ -153,35 +125,6 @@ def ingest_spectral_type(
             session.add(spt_obj)
             session.commit()
         logger.info(f"Spectral type added to database: {spt_data}\n")
-
-        # unset old adopted only after ingest is successful!
-        if adopted and old_adopted is not None:
-            with db.engine.connect() as conn:
-                conn.execute(
-                    db.SpectralTypes.update()
-                    .where(
-                        and_(
-                            db.SpectralTypes.c.source == old_adopted["source"][0],
-                            db.SpectralTypes.c.reference == old_adopted["reference"][0],
-                        )
-                    )
-                    .values(adopted=False)
-                )
-                conn.commit()
-            # check that adopted flag is successfully changed
-            old_adopted_data = (
-                db.query(db.SpectralTypes)
-                .filter(
-                    and_(
-                        db.SpectralTypes.c.source == old_adopted["source"][0],
-                        db.SpectralTypes.c.reference == old_adopted["reference"][0],
-                    )
-                )
-                .table()
-            )
-            logger.debug("Old adopted measurement unset")
-            if logger.level == 10:
-                old_adopted_data.pprint_all()
     except sqlalchemy.exc.IntegrityError as e:
         if (
             db.query(db.Publications)
@@ -196,7 +139,7 @@ def ingest_spectral_type(
                 logger.error(msg)
                 raise AstroDBError(msg + msg1)
             else:
-                logger.warning(msg)
+                logger.warning(msg + msg1)
         else:
             msg = f"Spectral type ingest failed with error {e}\n"
             if raise_error:
@@ -204,6 +147,9 @@ def ingest_spectral_type(
                 raise AstroDBError(msg)
             else:
                 logger.warning(msg)
+
+    # check that there is only one adopted measurement
+    check_one_adopted_sptype(db, db_name, raise_error=raise_error)
 
 
 def convert_spt_string_to_code(spectral_type_string):
@@ -282,3 +228,108 @@ def convert_spt_code_to_string(spectral_code, decimals=1):
     logger.debug(f"Converting: {spectral_code} -> {spt_type}")
 
     return spt_type
+
+
+def adopt_spectral_type(db, source, spectral_type_error):
+    source_spt_data = (
+        db.query(db.SpectralTypes).filter(db.SpectralTypes.c.source == source).table()
+    )
+
+    # set adopted flag
+    if len(source_spt_data) == 0:
+        logger.debug(
+            "No Spectral Type data for this source in the database, setting adopted flag to True"
+        )
+        return True
+    elif len(source_spt_data) > 0:
+        # Spectral Type Data already exists
+        logger.debug("Pre-existing Spectral Type data:")
+        if logger.level <= 10:
+            source_spt_data.pprint_all()
+        adopted_ind = source_spt_data["adopted"] == 1
+        if sum(adopted_ind):
+            old_adopted = source_spt_data[adopted_ind]
+            logger.debug(f"Old adopted data: {old_adopted}")
+            if (
+                old_adopted["spectral_type_error"] is not None
+                and spectral_type_error is not None
+            ):
+                if spectral_type_error < min(old_adopted["spectral_type_error"]):
+                    adopted = True
+                    logger.debug(f"The new spectral type's adopted flag is:, {adopted}")
+                else:
+                    adopted = False
+                    logger.debug(f"The new spectral type's adopted flag is: {adopted}")
+                return adopted
+            else:
+                return True
+                logger.debug(
+                    "No spectral type error found, setting adopted flag to True"
+                )
+        else:
+            return True
+            logger.debug("No adopted data found, setting adopted flag to True")
+
+
+def unset_previously_adopted(db, source):
+    source_spt_data = (
+        db.query(db.SpectralTypes).filter(db.SpectralTypes.c.source == source).table()
+    )
+    logger.debug(f"Pre-existing Spectral Type data: \n {source_spt_data}")
+
+    if len(source_spt_data) == 0:
+        logger.debug("No previous data for this source in the database, doing nothing")
+        return
+    elif len(source_spt_data) > 0:
+        # Spectral Type Data already exists
+        adopted_ind = source_spt_data["adopted"] == 1
+        if sum(adopted_ind):
+            old_adopted = source_spt_data[adopted_ind]
+            with db.engine.connect() as conn:
+                conn.execute(
+                    db.SpectralTypes.update()
+                    .where(
+                        and_(
+                            db.SpectralTypes.c.source == old_adopted["source"][0],
+                            db.SpectralTypes.c.regime == old_adopted["regime"][0],
+                            db.SpectralTypes.c.reference == old_adopted["reference"][0],
+                        )
+                    )
+                    .values(adopted=False)
+                )
+                conn.commit()
+        else:
+            logger.debug("No previously adopted data found, doing nothing")
+
+
+def check_one_adopted_sptype(db, source, raise_error=True):
+    results = (
+        db.query(db.SpectralTypes)
+        .filter(
+            and_(
+                db.SpectralTypes.c.source == source,
+                db.SpectralTypes.c.adopted == True,  # noqa: E712
+            )
+        )
+        .table()
+    )
+    logger.debug(f"Adopted measurements for {source}:{results}")
+    if logger.level <= 10:
+        results.pprint_all()
+    logger.debug(f"adopted column: {results['adopted']}")
+    if len(results) == 1:
+        logger.debug(f"One adopted measurement for {source}")
+    elif len(results) > 2:
+        msg = f"Multiple adopted measurements for {source}"
+        if raise_error:
+            logger.error(msg)
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+    elif len(results) == 0:
+        msg = f"No adopted measurements for {source}"
+        if raise_error:
+            logger.error(msg)
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)

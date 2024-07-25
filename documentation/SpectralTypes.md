@@ -23,4 +23,4 @@ Spectral Type Codes:
  - 80 = T0
  - 90 = Y0
 
- Regime is required however, regime = "unkwown" can be used when the regime is unknown. 
+Regime is required and is constrained by the [Regimes table](/data/Regimes.json). However, `regime = "unknown"` can be used when the regime is unknown. 
