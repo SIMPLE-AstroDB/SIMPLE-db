@@ -348,9 +348,7 @@ def test_spectral_types(db):
     print(f"found {n_spectral_types} total spectral types")
 
     n_photometric_spectral_types = (
-        db.query(db.SpectralTypes)
-        .filter(db.SpectralTypes.c.photometric is True)
-        .count()
+        db.query(db.SpectralTypes).filter(db.SpectralTypes.c.photometric == 1).count()
     )
     assert (
         n_photometric_spectral_types == 0
@@ -358,12 +356,13 @@ def test_spectral_types(db):
     print(f"found {n_photometric_spectral_types} photometric spectral types")
 
     n_adopted_spectral_types = (
-        db.query(db.SpectralTypes).filter(db.SpectralTypes.c.adopted is True).count()
+        db.query(db.SpectralTypes).filter(db.SpectralTypes.c.adopted == 1).count()
     )
     assert (
-        n_adopted_spectral_types == 0
+        n_adopted_spectral_types == 1
     ), f"found {n_adopted_spectral_types} adopted spectral types"
     print(f"found {n_adopted_spectral_types} adopted spectral types")
+
 
 # Individual ingest tests
 # -----------------------------------------------------------------------------------------
