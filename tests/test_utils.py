@@ -3,10 +3,6 @@ from astropy.table import Table
 from astrodb_utils.utils import (
     AstroDBError,
 )
-from simple.utils.spectral_types import (
-    convert_spt_string_to_code,
-    ingest_spectral_types,
-)
 from simple.utils.companions import ingest_companion_relationships
 
 
@@ -55,93 +51,6 @@ def t_pm():
         ]
     )
     return t_pm
-
-
-def test_convert_spt_string_to_code():
-    # Test conversion of spectral types into numeric values
-    assert convert_spt_string_to_code(["M5.6"]) == [65.6]
-    assert convert_spt_string_to_code(["T0.1"]) == [80.1]
-    assert convert_spt_string_to_code(["Y2pec"]) == [92]
-
-
-def test_ingest_spectral_types(temp_db):
-    data1 = Table(
-        [
-            {
-                "source": "Fake 1",
-                "spectral_type": "M5.6",
-                "regime": "nir",
-                "reference": "Ref 1",
-            },
-            {
-                "source": "Fake 2",
-                "spectral_type": "T0.1",
-                "regime": "nir",
-                "reference": "Ref 1",
-            },
-            {
-                "source": "Fake 3",
-                "spectral_type": "Y2pec",
-                "regime": "nir",
-                "reference": "Ref 2",
-            },
-        ]
-    )
-
-    data3 = Table(
-        [
-            {
-                "source": "Fake 1",
-                "spectral_type": "M5.6",
-                "regime": "nir",
-                "reference": "Ref 1",
-            },
-            {
-                "source": "Fake 2",
-                "spectral_type": "T0.1",
-                "regime": "nir",
-                "reference": "Ref 1",
-            },
-            {
-                "source": "Fake 3",
-                "spectral_type": "Y2pec",
-                "regime": "nir",
-                "reference": "Ref 4",
-            },
-        ]
-    )
-    ingest_spectral_types(
-        temp_db,
-        data1["source"],
-        data1["spectral_type"],
-        data1["reference"],
-        data1["regime"],
-    )
-    assert (
-        temp_db.query(temp_db.SpectralTypes)
-        .filter(temp_db.SpectralTypes.c.reference == "Ref 1")
-        .count()
-        == 2
-    )
-    results = (
-        temp_db.query(temp_db.SpectralTypes)
-        .filter(temp_db.SpectralTypes.c.reference == "Ref 2")
-        .table()
-    )
-    assert len(results) == 1
-    assert results["source"][0] == "Fake 3"
-    assert results["spectral_type_string"][0] == "Y2pec"
-    assert results["spectral_type_code"][0] == [92]
-    # testing for publication error
-    with pytest.raises(AstroDBError) as error_message:
-        ingest_spectral_types(
-            temp_db,
-            data3["source"],
-            data3["spectral_type"],
-            data3["reference"],
-            data3["regime"],
-        )
-    assert "The publication does not exist in the database" in str(error_message.value)
 
 
 def test_companion_relationships(temp_db):

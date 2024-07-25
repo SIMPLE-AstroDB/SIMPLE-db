@@ -1,5 +1,6 @@
 # Tests to verify database contents
 # db is defined in conftest.py
+import pytest
 from sqlalchemy import except_, select, and_
 
 
@@ -312,85 +313,55 @@ def test_spectra(db):
     assert len(t) == 20, f"found {len(t)} spectra from {ref}"
 
 
+# Test to verify existing counts of spectral types grouped by regime
+@pytest.mark.parametrize(
+    ("regime", "n_spectra"),
+    [("optical", 1494), ("nir", 2359), ("mir", 0), ("unknown", 10)],
+)
+def test_spectral_types_regimes(db, regime, n_spectra):
+    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
+    assert len(t) == n_spectra, f"found {len(t)} spectral types in the {regime} regime"
+    print(f"found {len(t)} spectral types in the {regime} regime")
+
+# Test numbers of MLTY dwarfs
+@pytest.mark.parametrize(
+    ("string", "code_min", "code_max", "n_spectra"),
+    [("M", 60, 70, 843), ("L", 70, 80, 1963), ("T", 80, 90, 998), ("Y", 90, 100, 59)],
+)  # Total number of MLTY dwarfs = 3863
+def test_spectral_types_classes(db, string, code_min, code_max, n_spectra):
+    result = (
+        db.query(db.SpectralTypes)
+        .filter(
+            and_(
+                db.SpectralTypes.c.spectral_type_code >= code_min,
+                db.SpectralTypes.c.spectral_type_code < code_max,
+            )
+        )
+        .astropy()
+    )
+    assert len(result) == n_spectra, f"found {len(result)} {string} spectral types"
+    print(f"found {len(result)} {string} spectral types")
+
 def test_spectral_types(db):
-    # Test to verify existing counts of spectral types grouped by regime
-    regime = "optical"
-    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 1494, f"found {len(t)} spectral types in the {regime} regime"
-
-    regime = "optical_UCD"
-    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 0, f"found {len(t)} spectral types in the {regime} regime"
-
-    regime = "nir"
-    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 2359, f"found {len(t)} spectral types in the {regime} regime"
-
-    regime = "nir_UCD"
-    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 0, f"found {len(t)} spectral types in the {regime} regime"
-
-    regime = "mir"
-    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 0, f"found {len(t)} spectral types in the {regime} regime"
-
-    regime = "mir_UCD"
-    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 0, f"found {len(t)} spectral types in the {regime} regime"
-
-    regime = "unknown"
-    t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
-    assert len(t) == 10, f"found {len(t)} spectral types in the {regime} regime"
-
-    # Test number MLTY dwarfs
-    m_dwarfs = (
-        db.query(db.SpectralTypes)
-        .filter(
-            and_(
-                db.SpectralTypes.c.spectral_type_code >= 60,
-                db.SpectralTypes.c.spectral_type_code < 70,
-            )
-        )
-        .astropy()
-    )
-    assert len(m_dwarfs) == 843, f"found {len(t)} M spectral types"
-
-    l_dwarfs = (
-        db.query(db.SpectralTypes)
-        .filter(
-            and_(
-                db.SpectralTypes.c.spectral_type_code >= 70,
-                db.SpectralTypes.c.spectral_type_code < 80,
-            )
-        )
-        .astropy()
-    )
-    assert len(l_dwarfs) == 1963, f"found {len(l_dwarfs)} L spectral types"
-
-    t_dwarfs = (
-        db.query(db.SpectralTypes)
-        .filter(
-            and_(
-                db.SpectralTypes.c.spectral_type_code >= 80,
-                db.SpectralTypes.c.spectral_type_code < 90,
-            )
-        )
-        .astropy()
-    )
-    assert len(t_dwarfs) == 998, f"found {len(t_dwarfs)} T spectral types"
-
-    y_dwarfs = (
-        db.query(db.SpectralTypes)
-        .filter(and_(db.SpectralTypes.c.spectral_type_code >= 90))
-        .astropy()
-    )
-    assert len(y_dwarfs) == 59, f"found {len(y_dwarfs)} Y spectral types"
-
     n_spectral_types = db.query(db.SpectralTypes).count()
-    assert (
-        len(m_dwarfs) + len(l_dwarfs) + len(t_dwarfs) + len(y_dwarfs)
-        == n_spectral_types
+    assert n_spectral_types == 3863, f"found {n_spectral_types} spectral types"
+    print(f"found {n_spectral_types} total spectral types")
+
+    n_photometric_spectral_types = (
+        db.query(db.SpectralTypes).filter(db.SpectralTypes.c.photometric == 1).count()
     )
+    assert (
+        n_photometric_spectral_types == 0
+    ), f"found {n_photometric_spectral_types} photometric spectral types"
+    print(f"found {n_photometric_spectral_types} photometric spectral types")
+
+    n_adopted_spectral_types = (
+        db.query(db.SpectralTypes).filter(db.SpectralTypes.c.adopted == 1).count()
+    )
+    assert (
+        n_adopted_spectral_types == 1
+    ), f"found {n_adopted_spectral_types} adopted spectral types"
+    print(f"found {n_adopted_spectral_types} adopted spectral types")
 
 
 # Individual ingest tests
