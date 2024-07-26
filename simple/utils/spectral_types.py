@@ -39,7 +39,6 @@ def ingest_spectral_type(
     ----------
     db: astrodbkit2.astrodb.Database
         Database object created by astrodbkit2
-
     source: str
         Name of source. Constrained by the Sources table
 
@@ -245,8 +244,8 @@ def adopt_spectral_type(db, source, spectral_type_error):
     elif len(source_spt_data) > 0:
         # Spectral Type Data already exists
         logger.debug("Pre-existing Spectral Type data:")
-        if logger.level <= 10:
-            source_spt_data.pprint_all()
+        #if logger.level <= 10:
+         #   source_spt_data.pprint_all()
         adopted_ind = source_spt_data["adopted"] == 1
         if sum(adopted_ind):
             old_adopted = source_spt_data[adopted_ind]
@@ -315,8 +314,8 @@ def check_one_adopted_sptype(db, source, raise_error=True):
         .table()
     )
     logger.debug(f"Adopted measurements for {source}:{results}")
-    if logger.level <= 10:
-        results.pprint_all()
+    #if logger.level <= 10:
+       # results.pprint_all()
     logger.debug(f"adopted column: {results['adopted']}")
     if len(results) == 1:
         logger.debug(f"One adopted measurement for {source}")
