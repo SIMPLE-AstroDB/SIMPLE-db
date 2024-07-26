@@ -344,7 +344,7 @@ def test_spectral_types_classes(db, string, code_min, code_max, n_spectra):
 
 def test_spectral_types(db):
     n_spectral_types = db.query(db.SpectralTypes).count()
-    assert n_spectral_types == 3863, f"found {n_spectral_types} spectral types"
+    assert n_spectral_types == 3950, f"found {n_spectral_types} spectral types"
     print(f"found {n_spectral_types} total spectral types")
     
     n_photometric_spectral_types = (
@@ -352,7 +352,7 @@ def test_spectral_types(db):
     )
 
     assert (
-        n_photometric_spectral_types == 0
+        n_photometric_spectral_types == 54
     ), f"found {n_photometric_spectral_types} photometric spectral types"
     print(f"found {n_photometric_spectral_types} photometric spectral types")
 
@@ -360,7 +360,7 @@ def test_spectral_types(db):
         db.query(db.SpectralTypes).filter(db.SpectralTypes.c.adopted == 1).count()
     )
     assert (
-        n_adopted_spectral_types == 1
+        n_adopted_spectral_types == 88
     ), f"found {n_adopted_spectral_types} adopted spectral types"
     print(f"found {n_adopted_spectral_types} adopted spectral types")
 
