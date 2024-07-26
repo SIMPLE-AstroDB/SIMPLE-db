@@ -1,14 +1,16 @@
 from astrodb_utils import load_astrodb
 from astrodb_utils import ingest_publication
+import sys
+sys.path.append(".")
 from simple.schema import *
 from simple.schema import REFERENCE_TABLES
 from astropy.io import ascii
 from simple.utils.spectral_types import ingest_spectral_type
 import logging
 
-logger = logging.getLogger("SIMPLE")
+logger = logging.getLogger("AstroDB")
 logger.setLevel(logging.INFO)
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 # LOAD THE DATABASE
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES)
@@ -46,7 +48,6 @@ for row in byw_table:  # skip the header row - [1:10]runs only first 10 rows
             spectral_type_string=row["spectral_type_string"],
             spectral_type_error=row["spectral_type_error"],
             regime=row["regime"],
-            comments=row["comments"],
             photometric=photometric,
             reference=row["Reference"],
             raise_error=False,
