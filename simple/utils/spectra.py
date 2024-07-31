@@ -21,7 +21,6 @@ from simple.schema import Spectra
 __all__ = [
     "ingest_spectrum",
     "ingest_spectrum_from_fits",
-    "spectrum_plottable",
     "find_spectra",
 ]
 
@@ -263,79 +262,6 @@ def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
         wavelength_units=w_unit,
         flux_units=flux_unit,
     )
-
-
-def spectrum_plottable(spectrum_path, raise_error=True, show_plot=False):
-    """
-    Check if spectrum is plottable
-    """
-    # load the spectrum and make sure it's a Spectrum1D object
-
-    try:
-        # spectrum: Spectrum1D = load_spectrum(spectrum_path) #astrodbkit2 method
-        spectrum = Spectrum1D.read(spectrum_path)
-    except Exception as e:
-        msg = (
-            str(e) + f"\nSkipping {spectrum_path}: \n"
-            "unable to load file as Spectrum1D object"
-        )
-        if raise_error:
-            logger.error(msg)
-            raise AstroDBError(msg)
-        else:
-            logger.warning(msg)
-            return False
-
-    # checking spectrum has good units and not only NaNs
-    try:
-        wave: np.ndarray = spectrum.spectral_axis.to(u.micron).value
-        flux: np.ndarray = spectrum.flux.value
-    except AttributeError as e:
-        msg = str(e) + f"Skipping {spectrum_path}: unable to parse spectral axis"
-        if raise_error:
-            logger.error(msg)
-            raise AstroDBError(msg)
-        else:
-            logger.warning(msg)
-            return False
-    except u.UnitConversionError as e:
-        msg = (
-            f"{e} \n"
-            f"Skipping {spectrum_path}: unable to convert spectral axis to microns"
-        )
-        if raise_error:
-            logger.error(msg)
-            raise AstroDBError(msg)
-        else:
-            logger.warning(msg)
-            return False
-    except ValueError as e:
-        msg = f"{e} \nSkipping {spectrum_path}: Value error"
-        if raise_error:
-            logger.error(msg)
-            raise AstroDBError(msg)
-        else:
-            logger.warning(msg)
-            return False
-
-    # check for NaNs
-    nan_check: np.ndarray = ~np.isnan(flux) & ~np.isnan(wave)
-    wave = wave[nan_check]
-    flux = flux[nan_check]
-    if not len(wave):
-        msg = f"Skipping {spectrum_path}: spectrum is all NaNs"
-        if raise_error:
-            logger.error(msg)
-            raise AstroDBError(msg)
-        else:
-            logger.warning(msg)
-            return False
-
-    if show_plot:
-        plt.plot(wave, flux)
-        plt.show()
-
-    return True
 
 
 def find_spectra(
