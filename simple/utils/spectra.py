@@ -2,9 +2,6 @@ import logging
 import sqlite3
 from typing import Optional
 
-import astropy.units as u
-import matplotlib.pyplot as plt
-import numpy as np
 import requests
 import sqlalchemy.exc
 from astrodb_utils import (
@@ -12,9 +9,9 @@ from astrodb_utils import (
     find_source_in_db,
     internet_connection,
 )
+from astrodb_utils.spectra import check_spectrum_plottable
 from astrodbkit2.astrodb import Database
 from astropy.io import fits
-from specutils import Spectrum1D
 
 from simple.schema import Spectra
 
@@ -161,7 +158,7 @@ def ingest_spectrum(
             return flags
 
     # Check if spectrum is plottable
-    flags["plottable"] = spectrum_plottable(spectrum, raise_error=raise_error)
+    flags["plottable"] = check_spectrum_plottable(spectrum, raise_error=raise_error)
 
     # Compile fields into a dictionary
     row_data = {
@@ -183,7 +180,7 @@ def ingest_spectrum(
 
     try:
         # Attempt to add spectrum to database
-        # This will throw errors based on validation in schema.py 
+        # This will throw errors based on validation in schema.py
         # and any database checks (as for example IntegrityError)
         obj = Spectra(**row_data)
         with db.session as session:
