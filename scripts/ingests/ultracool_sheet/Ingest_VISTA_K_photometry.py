@@ -86,6 +86,8 @@ for source in uc_sheet_table:
         uc_name,
         ra=source["ra_j2000_formula"],
         dec=source["dec_j2000_formula"],
+        ra_col_name="ra",
+        dec_col_name="dec",
     )
 
     if len(match) == 1:
@@ -124,19 +126,19 @@ for source in uc_sheet_table:
         logger.error(msg)
         raise AstroDBError(msg)
 
-logger.info(f"ingested:{ingested}")  #
-logger.info(f"already exists:{already_exists}")  #
-logger.info(f"no sources:{no_sources}")  #
-logger.info(f"multiple sources:{multiple_sources}")  #
-logger.info(f"bad references:{bad_reference}")  #
-logger.info(f"no data: {no_data}")  #
+logger.info(f"ingested:{ingested}")  # 84
+logger.info(f"already exists:{already_exists}")  # 0
+logger.info(f"no sources:{no_sources}")  # 114
+logger.info(f"multiple sources:{multiple_sources}")  # 0
+logger.info(f"bad references:{bad_reference}")  # 3692
+logger.info(f"no data: {no_data}")  # 0
 logger.info(
     f"data points tracked:{ingested+already_exists+no_sources+multiple_sources+bad_reference}"
-)  #
+)  # 3890
 total = (
     ingested + already_exists + no_sources + multiple_sources + no_data + bad_reference
 )
-logger.info(f"total: {total}")  #
+logger.info(f"total: {total}")  # 3890
 
 if total != len(uc_sheet_table):
     msg = "data points tracked inconsistent with UC sheet"
