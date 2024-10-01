@@ -4,7 +4,7 @@ import sys
 import pytest
 import requests
 from astrodb_utils.utils import internet_connection
-from astrodbkit2.astrodb import Database, create_database
+from astrodbkit.astrodb import Database, create_database
 from tqdm import tqdm
 
 sys.path.append(".")

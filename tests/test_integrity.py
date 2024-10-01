@@ -1,8 +1,8 @@
 # Test to verify database integrity
 # database object 'db' defined in conftest.py
 import pytest
-from astrodbkit2.astrodb import or_
-from astrodbkit2.utils import _name_formatter
+from astrodbkit.astrodb import or_
+from astrodbkit.utils import _name_formatter
 from astropy import units as u
 from astropy.table import unique
 from astroquery.simbad import Simbad

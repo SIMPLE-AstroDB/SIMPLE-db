@@ -45,7 +45,7 @@ We recommend using a conda environment to handle python dependencies. The follow
 
     This step generates a "SIMPLE.sqlite" file which can be opened, explored, and modified using a variety of tools.
 
-4. Use `astrodbkit2` to [explore](https://astrodbkit2.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit2.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit2.readthedocs.io/en/latest/#modifying-data) the database.
+4. Use `astrodbkit` to [explore](https://astrodbkit.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit.readthedocs.io/en/latest/#modifying-data) the database.
 For example:
     - Find all objects in the database with "0141" in the name
         ```python

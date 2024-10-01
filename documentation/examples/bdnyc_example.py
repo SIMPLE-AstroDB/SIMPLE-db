@@ -1,6 +1,6 @@
-# Example on how to use the BDNYC database with Astrodbkit2
+# Example on how to use the BDNYC database with Astrodbkit
 
-from astrodbkit2.astrodb import Database, copy_database_schema
+from astrodbkit.astrodb import Database, copy_database_schema
 from sqlalchemy import types  # for BDNYC column overrides
 
 # Establish connection to database

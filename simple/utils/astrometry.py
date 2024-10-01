@@ -5,7 +5,7 @@ import sqlalchemy.exc
 from simple.schema import Parallaxes
 from astropy.units import Quantity
 from astropy.table import Table
-from astrodbkit2.astrodb import Database
+from astrodbkit.astrodb import Database
 from astrodb_utils import AstroDBError, find_source_in_db, find_publication
 
 
@@ -30,7 +30,7 @@ def ingest_parallax(
 
     Parameters
     ----------
-    db: astrodbkit2.astrodb.Database
+    db: astrodbkit.astrodb.Database
         Database object
     source: str
         source name
@@ -183,7 +183,7 @@ def ingest_proper_motions(
 
     Parameters
     ----------
-    db: astrodbkit2.astrodb.Database
+    db: astrodbkit.astrodb.Database
         Database object
     sources: list[str]
         list of source names
@@ -366,7 +366,7 @@ def ingest_radial_velocity(
 
     Parameters
     ----------
-    db: astrodbkit2.astrodb.Database
+    db: astrodbkit.astrodb.Database
         Database object
     source: str
         source name

@@ -6,7 +6,7 @@ import astropy.units as u
 from sqlalchemy import func, and_, Integer, cast
 from scripts.ingests.utils import load_simpledb, logger
 from scripts.utils.simple_utils import convert_spt_code_to_string_to_code
-from astrodbkit2.spectra import load_spectrum
+from astrodbkit.spectra import load_spectrum
 
 plt.interactive(False)
 logger.setLevel(logging.INFO)

@@ -37,8 +37,8 @@ def ingest_spectral_type(
 
     Parameters
     ----------
-    db: astrodbkit2.astrodb.Database
-        Database object created by astrodbkit2
+    db: astrodbkit.astrodb.Database
+        Database object created by astrodbkit
     source: str
         Name of source. Constrained by the Sources table
 
