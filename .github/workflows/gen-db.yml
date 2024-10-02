@@ -29,8 +29,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install astrodbkit2
-        pip install git+https://github.com/astrodbtoolkit/astrodb_utils.git@main
+        pip install astrodbkit
+        pip install astrodb_utils
 
     - name: Generate sqlite (file) database
       run: |

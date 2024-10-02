@@ -1,7 +1,7 @@
 import pytest
 import os
 import logging
-from astrodbkit2.astrodb import create_database, Database
+from astrodbkit.astrodb import create_database, Database
 import sys
 
 sys.path.append("./")  # needed for github actions to find the simple module
