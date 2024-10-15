@@ -32,7 +32,7 @@ We recommend using a conda environment to handle python dependencies. The follow
     ```bash
     conda  create -n "simple-db" python=3.10
     conda activate simple-db
-    pip install -r requirements.txt
+    pip install -e .
     ```
    
 3. In Python, connect a database file `SIMPLE.sqlite` as a Database object called `db` and recreate the database using the JSON files in the `data/` directory. Run these commands from within Python. 
