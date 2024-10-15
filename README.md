@@ -1,4 +1,6 @@
 # SIMPLE
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13760568.svg)](https://doi.org/10.5281/zenodo.13760568)
+
 
 The vision of the SIMPLE project is to create a *collaborative* database of low-mass stars, brown dwarfs, and directly 
 imaged exoplanets: a simple archive of complex objects. The tables and fields currently included in the 
