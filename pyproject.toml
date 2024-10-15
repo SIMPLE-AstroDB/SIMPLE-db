@@ -1,0 +1,42 @@
+[build-system]
+requires = [
+  "setuptools>=75",
+  "setuptools_scm",
+  ]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "simple"
+description = "SIMPLE Archive Software"
+dynamic = ["version"]
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Kelle Cruz", email = "kellecruz@gmail.com"},
+    {name = "David Rodriguez", email = "drodriguez@stsci.edu"},
+]
+requires-python = ">= 3.10"
+dependencies = [
+    "astrodbkit",
+    "astrodb_utils",
+    "ads",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+]
+all = ["simple[test]"]
+
+[project.urls]
+Repository = "https://github.com/SIMPLE-AstroDB/SIMPLE-db"
+Documentation = "https://github.com/SIMPLE-AstroDB/SIMPLE-db/documentation"
+
+
+[tool.setuptools]
+packages = ["simple"]
+
+[tool.setuptools_scm]
+write_to = "simple/version.py"

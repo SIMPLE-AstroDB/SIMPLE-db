@@ -13,7 +13,7 @@
 	"forwardPorts": [5432],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip install -r requirements.txt",
+	"postCreateCommand": "pip install -e .",
 	// python scripts/tutorials/generate_database.py sqlite
 	// python scripts/tutorials/generate_database.py postgres postgres://postgres@localhost:5432
 
