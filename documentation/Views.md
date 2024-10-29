@@ -4,11 +4,11 @@ SIMPLE offers several database views for ease of searching.
 A database view is a virtual table that is defined by a query. 
 It does not store any data itself, but rather provides a way to access data from one or more tables in a database.
 
-Because views are not part of the standard SIMPLE schema, they must be activated when using `astrodbkit2`. 
+Because views are not part of the standard SIMPLE schema, they must be activated when using `astrodbkit`. 
 
 ```python
 import sqlalchemy as sa
-from astrodbkit2.astrodb import Database, and_, or_
+from astrodbkit.astrodb import Database, and_, or_
 
 # Establish connection to database; your connection string may be different
 connection_string = 'sqlite:///SIMPLE.db'
@@ -23,7 +23,7 @@ print(insp.get_view_definition('ParallaxView'))  # view definition
 
 # Create object reflecting the view
 # DO NOT USE db.metadata or you will treat the view as a real table 
-# and break other astrodbkit2 functionality
+# and break other astrodbkit functionality
 PhotometryView = sa.Table('PhotometryView', sa.MetaData())  
 insp.reflect_table(PhotometryView, include_columns=None)
 

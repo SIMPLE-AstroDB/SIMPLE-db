@@ -28,8 +28,8 @@ def ingest_companion_relationships(
 
     Parameters
     ----------
-    db: astrodbkit2.astrodb.Database
-        Database object created by astrodbkit2
+    db: astrodbkit.astrodb.Database
+        Database object created by astrodbkit
     source: str
         Name of source as it appears in sources table
     relationship: str

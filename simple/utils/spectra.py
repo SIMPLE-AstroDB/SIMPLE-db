@@ -10,7 +10,7 @@ from astrodb_utils import (
     internet_connection,
 )
 from astrodb_utils.spectra import check_spectrum_plottable
-from astrodbkit2.astrodb import Database
+from astrodbkit.astrodb import Database
 from astropy.io import fits
 
 from simple.schema import Spectra
@@ -45,8 +45,8 @@ def ingest_spectrum(
     """
     Parameters
     ----------
-    db: astrodbkit2.astrodb.Database
-        Database object created by astrodbkit2
+    db: astrodbkit.astrodb.Database
+        Database object created by astrodbkit
     source: str
         source name
     spectrum: str
@@ -280,8 +280,8 @@ def find_spectra(
 
     Parameters
     ----------
-    db: astrodbkit2.astrodb.Database
-        Database object created by astrodbkit2
+    db: astrodbkit.astrodb.Database
+        Database object created by astrodbkit
     source: str
         source name
 

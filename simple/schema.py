@@ -6,8 +6,8 @@ import enum
 from datetime import datetime
 
 import sqlalchemy as sa
-from astrodbkit2.astrodb import Base
-from astrodbkit2.views import view
+from astrodbkit.astrodb import Base
+from astrodbkit.views import view
 from astropy.io.votable.ucd import check_ucd
 from sqlalchemy import (
     Boolean,

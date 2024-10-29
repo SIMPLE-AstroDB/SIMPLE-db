@@ -1,4 +1,5 @@
 # SIMPLE
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13937301.svg)](https://doi.org/10.5281/zenodo.13937301)
 
 The vision of the SIMPLE project is to create a *collaborative* database of low-mass stars, brown dwarfs, and directly 
 imaged exoplanets: a simple archive of complex objects. The tables and fields currently included in the 
@@ -31,7 +32,7 @@ We recommend using a conda environment to handle python dependencies. The follow
     ```bash
     conda  create -n "simple-db" python=3.10
     conda activate simple-db
-    pip install -r requirements.txt
+    pip install -e .
     ```
    
 3. In Python, connect a database file `SIMPLE.sqlite` as a Database object called `db` and recreate the database using the JSON files in the `data/` directory. Run these commands from within Python. 
@@ -45,7 +46,7 @@ We recommend using a conda environment to handle python dependencies. The follow
 
     This step generates a "SIMPLE.sqlite" file which can be opened, explored, and modified using a variety of tools.
 
-4. Use `astrodbkit2` to [explore](https://astrodbkit2.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit2.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit2.readthedocs.io/en/latest/#modifying-data) the database.
+4. Use `astrodbkit` to [explore](https://astrodbkit.readthedocs.io/en/latest/#exploring-the-schema), [query](https://astrodbkit.readthedocs.io/en/latest/#querying-the-database), and/or [modify](https://astrodbkit.readthedocs.io/en/latest/#modifying-data) the database.
 For example:
     - Find all objects in the database with "0141" in the name
         ```python

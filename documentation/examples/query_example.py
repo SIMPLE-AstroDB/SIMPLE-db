@@ -1,6 +1,6 @@
 # Query examples against the database
 
-from astrodbkit2.astrodb import Database, and_, or_
+from astrodbkit.astrodb import Database, and_, or_
 
 # Establish connection to database
 connection_string = 'sqlite:///SIMPLE.db'
