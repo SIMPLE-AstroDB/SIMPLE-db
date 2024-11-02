@@ -1,13 +1,10 @@
 import os
-import sys
-
 import pytest
 import requests
 from astrodb_utils.utils import internet_connection
 from astrodbkit.astrodb import Database, create_database
 from tqdm import tqdm
 
-sys.path.append(".")
 from simple.schema import *
 from simple.schema import REFERENCE_TABLES
 
@@ -62,8 +59,13 @@ def test_spectra_urls(db):
             if status_code != 200 and status_code != 301:
                 broken_urls.append(spectrum_url)
                 codes.append(status_code)
+        # Display broken spectra regardless if it's the number we expect or not
+        print(f"checked {len(spectra_urls)} spectra urls")
+        print(f"found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}")
 
-    # Display broken spectra regardless if it's the number we expect or not
-    print(f"found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}")
+        assert (
+            4 <= len(broken_urls) <= 4
+        )  # https://github.com/SIMPLE-AstroDB/SIMPLE-db/issues/413
 
-    assert 4 <= len(broken_urls) <= 4
+    else:
+        assert False, "No internet connection. Unable to run test."
