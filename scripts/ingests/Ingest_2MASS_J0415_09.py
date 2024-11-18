@@ -46,9 +46,7 @@ spectras = [
         "mode": "Echelle",
         "obs_date": "2010-09-20",
         "reference": "Simc13",
-        "comments": "FIRE: A Facility Class Near-Infrared Echelle Spectrometer for the Magellan Telescopes", 
         "bibcode": "2013PASP..125..270S", 
-        "doi": "10.1086/670241",
     },
     {
         "file": "https://bdnyc.s3.us-east-1.amazonaws.com/LRIS/KECK_LRIS_2MASSJ04151954-0935066_T8_LRIS_Burg03.fits",
