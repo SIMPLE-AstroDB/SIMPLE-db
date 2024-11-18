@@ -31,10 +31,7 @@ spectras = [
         "instrument": "IRC",
         "mode": "NIR",
         "obs_date": "2007-08-23",
-        "reference": "Sora12",
         "bibcode": "2012ApJ...760..151S", 
-        "comments":"AKARI Observations of Brown Dwarfs. III. CO, CO2, and CH4 Fundamental Bands and Physical Parameters",
-        "doi": "10.1088/0004-637X/760/1/6",
 
     },
     {
