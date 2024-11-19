@@ -20,7 +20,7 @@ from simple.schema import REFERENCE_TABLES
 #Load in Database
 db = load_astrodb("SIMPLE.sqlite", recreatedb=True, reference_tables=REFERENCE_TABLES)
 
-#Ingest data
+Ingest data
 ingest_publication(
     db, 
     bibcode = "2012ApJ...760..151S"
@@ -36,6 +36,11 @@ ingest_publication(
     bibcode="2007PASJ...59S.369M"
 )
 
+ingest_publication(
+    db,
+    bibcode = "2007PASJ...59S.401O"
+)
+
 ingest_spectrum(
     db,
     source="2MASS J04151954-0935066",
@@ -43,7 +48,7 @@ ingest_spectrum(
     regime="nir",
     telescope="AKARI",
     instrument="IRC",
-    mode="NIR",
+    mode="IRC04",
     obs_date="2007-08-23",
     reference="Sora12"
 
@@ -66,7 +71,7 @@ ingest_spectrum(
     db,
     source="2MASS J04151954-0935066",
     spectrum="https://bdnyc.s3.us-east-1.amazonaws.com/LRIS/KECK_LRIS_2MASS_J04151954-0935066_2006-12-26.fits",
-    regime="nir",
+    regime="optical",
     instrument="LRIS",
     telescope="Keck I",
     mode="Missing",
@@ -78,7 +83,7 @@ ingest_spectrum(
     db,
     source="2MASS J04151954-0935066",
     spectrum="https://bdnyc.s3.us-east-1.amazonaws.com/LRIS/KECK_LRIS_2MASSJ04151954-0935066_T8_LRIS_Burg03.fits",
-    regime="nir",
+    regime="optical",
     instrument="LRIS",
     telescope="Keck I",
     mode="Missing",
