@@ -20,7 +20,7 @@ from simple.schema import REFERENCE_TABLES
 #Load in Database
 db = load_astrodb("SIMPLE.sqlite", recreatedb=True, reference_tables=REFERENCE_TABLES)
 
-Ingest data
+# Ingest data
 ingest_publication(
     db, 
     bibcode = "2012ApJ...760..151S"
