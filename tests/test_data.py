@@ -246,7 +246,7 @@ def test_spectra(db):
 
     regime = "nir"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 578, f"found {len(t)} spectra in the {regime} regime"
+    assert len(t) == 582, f"found {len(t)} spectra in the {regime} regime"
 
     regime = "mir"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
