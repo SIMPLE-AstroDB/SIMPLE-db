@@ -627,3 +627,15 @@ def test_radial_velocities(db):
         .astropy()
     )
     assert len(t) == 89, f"found {len(t)} radial velociies with no uncertainty"
+
+def test_companion_relations(db):
+    t = db.query(db.CompanionRelationships).astropy()
+    assert len(t) == 102, f"found {len(t)} companion relationships"
+
+    ref = "Roth24"
+    t = (
+        db.query(db.CompanionRelationships)
+        .filter(db.CompanionRelationships.c.reference == ref)
+        .astropy()
+    )
+    assert len(t) == 89, f"found {len(t)} companion relationships with {ref} reference"
