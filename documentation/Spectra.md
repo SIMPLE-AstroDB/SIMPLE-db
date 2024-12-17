@@ -20,7 +20,7 @@ Columns marked with an asterisk (*) may not be empty.
 | *reference        | Primary Reference |   | String(30)   | primary and foreign: Publications.reference |
 | other_references  | Other References |   | String(100)  |   |
 
-Relevant functions: `spectra.ingest_spectrum`, `spectra.spectrum_plottable`, `spectra.find_spectra`
+Relevant functions: `spectra.ingest_spectrum`, `spectra.find_spectra`
 
 If the spectrum provided has been modified from the author-provided one, 
 a link to the original spectrum can be provided in the `original_spectrum` column.
@@ -37,9 +37,12 @@ For example: `$ASTRODB_SPECTRA/infrared/filename.fits`
  - Spectra for companions should be associated with individual sources and not grouped with the primary source.
 
 # Check if spectra are plottable by the website
+Use the [`check_spectrum_plottable`](https://astrodb-utils.readthedocs.io/en/latest/pages/using_existing_db/ingesting/ingesting_spectra.html#astrodb_utils.spectra.check_spectrum_plottable) function from `astrodb_utils`. The `matplotlib` package needs to be installed to display the spectrum using `show_plot=True`.
    ```Python
-   from simple.utils.spectra import spectrum_plottable
+   from astrodb_utils.spectra import check_spectrum_plottable
    file = <path to file>
-   spectrum_plottable(file, show_plot=True)
+   plottable = check_spectrum_plottable(file, show_plot=True)
+   print plottable
+   > True
    ```
    
