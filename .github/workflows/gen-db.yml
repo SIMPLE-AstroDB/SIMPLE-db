@@ -31,6 +31,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install astrodbkit
         pip install astrodb_utils
+        pip install .
 
     - name: Generate sqlite (file) database
       run: |
