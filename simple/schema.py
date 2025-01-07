@@ -432,12 +432,14 @@ class ModeledParameters(Base):
     value = Column(Float, nullable=False)
     value_error = Column(Float)
     unit = Column(String(20))
+    model = Column(String(20))
     comments = Column(String(1000))
     reference = Column(
         String(30),
         ForeignKey("Publications.reference", onupdate="cascade"),
         primary_key=True,
     )
+    
 
 
 class CompanionRelationships(Base):
