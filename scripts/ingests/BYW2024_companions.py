@@ -10,7 +10,7 @@ import logging
 
 logger = logging.getLogger("AstroDB")
 logger.setLevel(logging.INFO)
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 # LOAD THE DATABASE
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES)
@@ -18,6 +18,7 @@ db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFE
 # Load Google sheet
 
 link = 'scripts/ingests/Companion_relations.csv'
+#Link to google sheet used for CSV: https://docs.google.com/spreadsheets/d/1JFa8F4Ngzp3qAW8NOBurkz4bMKo9zXYeF6N1vMtqDZs/edit?usp=sharing
 
 # read the csv data into an astropy table
 # ascii.read attempts to read data from local files rather from URLs so using a library like requests helps get data and create object that can be passed to ascii.read
@@ -32,7 +33,8 @@ byw_table = ascii.read(
 )
 
 for row in byw_table:  # skip the header row - [1:10]runs only first 10 rows
-
+    if row['Source'] == 'CWISE J210640.16+250729.0':
+        continue
     
     ingest_companion_relationships(
         db,
