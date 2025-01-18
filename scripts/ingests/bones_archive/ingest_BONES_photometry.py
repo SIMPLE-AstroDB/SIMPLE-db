@@ -22,6 +22,9 @@ from simple.utils.astrometry import ingest_parallax
 
 logger = logging.getLogger(__name__)
 names_ingested = 0
+photometry_ingested = 0
+skipped = 0
+total =0
 
 # Logger setup
 # This will stream all logger messages to the standard output and
@@ -37,7 +40,7 @@ if len(logger.handlers) == 0:
     logger.addHandler(ch)
 logger.setLevel(logging.INFO)
 
-DB_SAVE = True
+DB_SAVE = False
 RECREATE_DB = True
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES)
 
@@ -104,8 +107,16 @@ for source in bones_sheet_table:
                     raise_error = True,
                     regime = "optical",
                 )
-                ingest_names+=1
+                photometry_ingested+=1
             except AstroDBError as e:
                 msg = "ingest failed with error: " + str(e)
                 logger.warning(msg)
+                skipped +=1
                 raise AstroDBError(msg) from e
+
+total = len(bones_sheet_table)
+logger.info(f"skipped:{skipped}")
+logger.info(f"photometry_ingested:{photometry_ingested}")
+logger.info(f"total:{total}")
+if DB_SAVE:
+    db.save_database(directory="data/")
