@@ -43,7 +43,7 @@ if len(logger.handlers) == 0:
     logger.addHandler(ch)
 logger.setLevel(logging.INFO)
 
-DB_SAVE = False
+DB_SAVE = True
 RECREATE_DB = True
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES)
 

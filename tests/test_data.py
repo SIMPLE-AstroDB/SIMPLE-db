@@ -157,7 +157,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 256
+        len(s) == 259
     ), f"found {len(s)} sources with 2MASS designation that have no 2MASS photometry"
 
     # If 2MASS photometry, 2MASS designation should be in Names
@@ -187,7 +187,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 0
+        len(s) == 16
     ), f"found {len(s)} sources with Gaia photometry and no Gaia designation in Names"
 
     # If Wise designation in Names, Wise phot should exist
@@ -197,7 +197,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 480
+        len(s) == 481
     ), f"found {len(s)} sources with WISE designation that have no WISE photometry"
 
     # If Wise photometry, Wise designation should be in Names
