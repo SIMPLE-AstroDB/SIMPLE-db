@@ -216,6 +216,7 @@ class Photometry(Base):
     telescope = Column(String(30), ForeignKey('Telescopes.telescope'))
     epoch = Column(Float)  # decimal year
     comments = Column(String(1000))
+    regime = Column(String(30), ForeignKey("Regimes.regime"))
     reference = Column(
         String(30),
         ForeignKey("Publications.reference", onupdate="cascade"),
