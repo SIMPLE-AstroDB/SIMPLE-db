@@ -20,7 +20,7 @@ from simple.schema import REFERENCE_TABLES
 from math import isnan
 import sqlalchemy.exc
 from simple.utils.astrometry import ingest_parallax
-from scripts.ingests.ultracool_sheet.references import uc_ref_to_simple_ref
+
 
 
 logger = logging.getLogger(__name__)
@@ -65,6 +65,7 @@ no_sources = 0
 multiple_sources = 0
 ingested = 0
 already_exists = 0
+skipped= 0
 
 for source in bones_sheet_table:
     bones_name = source["NAME"]
@@ -73,18 +74,33 @@ for source in bones_sheet_table:
     ##tries to find match of name in database
     ##if found, ingest
     if len(bones_name) > 0 and bones_name != "null":
-        """match = find_source_in_db(
+        match = find_source_in_db(
             db,
             source["NAME"],
             ra=source["RA"],
             dec=source["DEC"],
-        )"""
+        )
         if len(match) == 1:
             try:
+                reference = source["Discovery Ref."]
+                ra = source["RA"]
+                dec = source["DEC"]
+                comment = "comments"
+                equinox = "equinox"
+                other_references = "other_references"
+                epoch = "epoch"
                 ingest_source(
                     db, 
                     match[0], 
-                    reference = source["Discovery Ref."],
+                    reference = reference,
+                    ra = ra,
+                    dec = dec,
+                    epoch = epoch,
+                    equinox = equinox,
+                    other_reference = other_references,
+                    comment = comment,
+                    raise_error = True,
+                    search_db = True,
                 )  # ingest new sources
                 ingested += 1
             except AstroDBError as e:
@@ -102,17 +118,47 @@ for source in bones_sheet_table:
             no_sources +=1
         elif len(match) > 1:
             multiple_sources += 1
-        if len(match) == 1:
+            skipped+=1
+        if len(match) == 0:
             simple_source = match[0]
             try: 
+                reference = source["Discovery Ref."]
+                ra = source["RA"]
+                dec = source["DEC"]
+                comment = "comments"
+                equinox = "equinox"
+                other_references = "other_references"
+                epoch = "epoch"
                 ingest_source(
                     db,
                     source = simple_source,
-                    reference = source["Discovery Ref."],
+                    reference = reference,
+                    ra = ra,
+                    dec = dec,
+                    epoch = epoch,
+                    equinox = equinox,
+                    other_reference = other_references,
+                    comment = comment,
+                    raise_error = True,
+                    search_db = True,
+                    
                 )
                 ingested+=1
             except AstroDBError as e:
                 msg = "ingest failed with error: " + str(e)
                 logger.warning(msg)
-                raise AstroDBError(msg) from e
+                if "Already in database" in str(e):
+                    already_exists+=1
+                    continue
+                else:
+                    raise AstroDBError(msg) from e
+                
+logger.info(f"ingested:{ingested}")  #  ingested
+logger.info(f"already exists:{already_exists}")  #  due to preexisting data
+logger.info(f"no sources:{no_sources}")  # due to 0 matches
+logger.info(f"multiple sources:{multiple_sources}")  # multiple matches
+logger.info(f"skipped:{skipped}")  # 
+if DB_SAVE:
+    db.save_database(directory="data/")
+
 
