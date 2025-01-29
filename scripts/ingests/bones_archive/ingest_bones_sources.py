@@ -9,7 +9,7 @@ from astrodb_utils import (
     ingest_source,
     ingest_publication,
 )
-from astrodb_utils.photometry import ingest_photometry
+
 import sys
 
 sys.path.append(".")
@@ -67,10 +67,6 @@ bones_sheet_table = ascii.read(
 for source in bones_sheet_table:
     bones_name = source["NAME"]
     match = None
-
-    if isnan(source["GAIA_G"]):
-        skipped +=1
-        continue
 
     if len(bones_name) > 0 and bones_name != "null":
         match = find_source_in_db(
@@ -132,7 +128,7 @@ for source in bones_sheet_table:
             msg = "ingest failed with error " + str(e)
             logger.warning(msg)
             skipped += 1
-            if "The measurement may be a duplicate" in str(e):
+            if "Already in database" in str(e):
                 duplicate_measurement += 1
             else: 
                 raise AstroDBError(msg) from e
@@ -151,5 +147,6 @@ logger.info(f"sources:{sources_ingested}") # 17 ingsted
 logger.info(f"total: {total}") # 209 total
 logger.info(f"no_sources:{no_sources}") # 69 no sources
 logger.info(f"multiple_sources: {multiple_sources}") # 0 multiple sources
+logger.info(f"duplicate_sources: {duplicate_measurement}") # 0 multiple sources
 if DB_SAVE:
     db.save_database(directory="data/")
