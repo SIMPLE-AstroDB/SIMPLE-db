@@ -45,7 +45,7 @@ db = load_astrodb(
     "SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES
 )
 
-# Load Ultracool sheet
+# Load photometry sheet
 link = (
     "scripts/ingests/bones_archive/bones_archive_photometry.csv"
 )
@@ -72,15 +72,28 @@ for source in bones_sheet_table:
     match = None
 
     ##tries to find match of name in database
-    ##if found, ingest
     if len(bones_name) > 0 and bones_name != "null":
         match = find_source_in_db(
             db,
             source["NAME"],
             ra=source["RA"],
             dec=source["DEC"],
+            ra_col_name = "ra",
+            dec_col_name = "dec",
         )
-        if len(match) == 1:
+
+        if (match == None):
+            match = find_source_in_db(
+                db,
+                source["NAME"],
+                ra=source["RA"],
+                dec=source["DEC"],
+                ra_col_name="ra",
+                dec_col_name="dec"
+            )
+                
+        if len(match) == 0:
+
             try:
                 reference = source["Discovery Ref."]
                 ra = source["RA"]
@@ -90,8 +103,8 @@ for source in bones_sheet_table:
                 other_references = "other_references"
                 epoch = "epoch"
                 ingest_source(
-                    db, 
-                    match[0], 
+                    db,
+                    source = source["NAME"],
                     reference = reference,
                     ra = ra,
                     dec = dec,
@@ -104,47 +117,7 @@ for source in bones_sheet_table:
                 )  # ingest new sources
                 ingested += 1
             except AstroDBError as e:
-                None  # only error is if there is a preexisting source anyways.
-
-        if(match == None):
-            match = find_source_in_db(
-                db,
-                source("NAME"),
-                ra=source["RA"],
-                dec=source["DEC"],
-            )
-        
-        if len(match) == 0:
-            no_sources +=1
-        elif len(match) > 1:
-            multiple_sources += 1
-            skipped+=1
-        if len(match) == 0:
-            simple_source = match[0]
-            try: 
-                reference = source["Discovery Ref."]
-                ra = source["RA"]
-                dec = source["DEC"]
-                comment = "comments"
-                equinox = "equinox"
-                other_references = "other_references"
-                epoch = "epoch"
-                ingest_source(
-                    db,
-                    source = simple_source,
-                    reference = reference,
-                    ra = ra,
-                    dec = dec,
-                    epoch = epoch,
-                    equinox = equinox,
-                    other_reference = other_references,
-                    comment = comment,
-                    raise_error = True,
-                    search_db = True,
-                    
-                )
-                ingested+=1
-            except AstroDBError as e:
+                #None only error is if there is a preexisting source anyways.
                 msg = "ingest failed with error: " + str(e)
                 logger.warning(msg)
                 if "Already in database" in str(e):
@@ -152,7 +125,13 @@ for source in bones_sheet_table:
                     continue
                 else:
                     raise AstroDBError(msg) from e
-                
+        
+        if len(match) > 1:
+            multiple_sources += 1
+            skipped+=1
+        elif len(match) == 1:
+            skipped+=1
+
 logger.info(f"ingested:{ingested}")  #  ingested
 logger.info(f"already exists:{already_exists}")  #  due to preexisting data
 logger.info(f"no sources:{no_sources}")  # due to 0 matches
