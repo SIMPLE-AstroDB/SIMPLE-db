@@ -26,9 +26,10 @@ names_ingested = 0
 sources_ingested = 0
 skipped = 0
 total = 0
-duplicate_measurement = 0
+duplicate_source = 0
 multiple_sources = 0
 no_sources = 0
+inside_if = 0
 
 # Logger setup
 # This will stream all logger messages to the standard output and
@@ -87,7 +88,7 @@ for source in bones_sheet_table:
                 None  # only error is if there is a preexisting name anyways.
 
     if match == None:
-        match = find_source_in_db(
+         match = find_source_in_db(
             db,
             source["NAME"],
             ra=source["RA"],
@@ -95,28 +96,28 @@ for source in bones_sheet_table:
             ra_col_name="ra",
             dec_col_name="dec",
         )
+        
+      
 
-    if len(match) == 1:
-        simple_source = match[0]
+    if len(match) == 0:
         try:
             reference = source["Discovery Ref."]
-            epoch = "epoch"
-            ra=source["RA"]
-            dec=source["DEC"]
-            comment = "comments"
-            equinox = "equinox"
-            other_reference= "other_references"
+            source_name = source["NAME"]
+            source_ra=source["RA"]
+            source_dec=source["DEC"]
+            source_comment = "comments"
+            source_equinox = "equinox"
+            source_other_reference= "other_references"
 
             ingest_source(
                 db,
-                source = simple_source,
+                source = source_name,
                 reference = reference,
-                ra = ra,
-                dec = dec,
-                epoch = epoch,
-                equinox = equinox,
-                other_reference= other_reference,
-                comment = comment,
+                ra = source_ra,
+                dec = source_dec,
+                equinox = source_equinox,
+                other_reference= source_other_reference,
+                comment = source_comment,
                 raise_error = True,
                 search_db = True
 
@@ -129,12 +130,13 @@ for source in bones_sheet_table:
             logger.warning(msg)
             skipped += 1
             if "Already in database" in str(e):
-                duplicate_measurement += 1
+                duplicate_source += 1
             else: 
                 raise AstroDBError(msg) from e
-    elif len(match) == 0:
+        
+    elif len(match) == 1:
         skipped+=1
-        no_sources += 1
+
     else:
         skipped +=1
         multiple_sources +=1
@@ -143,10 +145,11 @@ for source in bones_sheet_table:
 
 total = len(bones_sheet_table)
 logger.info(f"skipped:{skipped}") # 192 skipped
-logger.info(f"sources:{sources_ingested}") # 17 ingsted
+logger.info(f"sources_ingested:{sources_ingested}") # 17 ingsted 
 logger.info(f"total: {total}") # 209 total
-logger.info(f"no_sources:{no_sources}") # 69 no sources
 logger.info(f"multiple_sources: {multiple_sources}") # 0 multiple sources
-logger.info(f"duplicate_sources: {duplicate_measurement}") # 0 multiple sources
+logger.info(f"duplicate_sources: {duplicate_source}") # 0 multiple sources
+
+logger.info(f"names_ingested:{names_ingested}")
 if DB_SAVE:
     db.save_database(directory="data/")
