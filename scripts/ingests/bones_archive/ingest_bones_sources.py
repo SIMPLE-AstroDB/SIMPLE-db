@@ -8,6 +8,7 @@ from astrodb_utils import (
     ingest_names,
     ingest_source,
     ingest_publication,
+    find_publication
 )
 
 import sys
@@ -50,7 +51,7 @@ RECREATE_DB = True
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES)
 
 link = (
-    "scripts/ingests/bones_archive/theBonesArchivePhotometry.csv"
+    "scripts/ingests/bones_archive/theBonesArchivePhotometryWithADS.csv"
 )
 
 # read the csv data into an astropy table
@@ -100,24 +101,35 @@ for source in bones_sheet_table:
       
 
     if len(match) == 0:
+        #ingest_publications for the ADS link
+        ads = source["ADS_Link"]
+        adsMatch = None
+        adsRef = source["Discovery Ref."]
+        adsMatch = find_publication(
+            db,
+            reference = adsRef,
+            bibcode = ads
+        )
+
+        if adsMatch[0] == False:
+            ingest_publication(
+                db,
+                ads,
+                reference = adsRef
+            )
+
         try:
-            reference = source["Discovery Ref."]
+            source_reference = source["Discovery Ref."]
             source_name = source["NAME"]
             source_ra=source["RA"]
             source_dec=source["DEC"]
-            source_comment = "comments"
-            source_equinox = "equinox"
-            source_other_reference= "other_references"
 
             ingest_source(
                 db,
                 source = source_name,
-                reference = reference,
+                reference = source_reference,
                 ra = source_ra,
                 dec = source_dec,
-                equinox = source_equinox,
-                other_reference= source_other_reference,
-                comment = source_comment,
                 raise_error = True,
                 search_db = True
 
