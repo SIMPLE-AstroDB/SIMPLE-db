@@ -5,6 +5,7 @@ from astrodb_utils import (
     ingest_names,
     ingest_source,
     ingest_publication,
+    find_publication,
 )
 from astrodb_utils.photometry import ingest_photometry
 import sys
@@ -47,7 +48,7 @@ db = load_astrodb(
 
 # Load photometry sheet
 link = (
-    "scripts/ingests/bones_archive/bones_archive_photometry.csv"
+    "scripts/ingests/bones_archive/bones_archive_photometry_ads.csv"
 )
 
 # read the csv data into an astropy table
@@ -78,8 +79,7 @@ for source in bones_sheet_table:
             source["NAME"],
             ra=source["RA"],
             dec=source["DEC"],
-            ra_col_name = "ra",
-            dec_col_name = "dec",
+
         )
 
         if (match == None):
@@ -88,30 +88,30 @@ for source in bones_sheet_table:
                 source["NAME"],
                 ra=source["RA"],
                 dec=source["DEC"],
-                ra_col_name="ra",
-                dec_col_name="dec"
             )
                 
         if len(match) == 0:
+            #ingest_publications for ads
+            ads = source["ADS_Link"]
+            ads_match = None
+            ref = source["Discovery Ref."]
+            ads_match = find_publication(db = db, bibcode = ads)
 
+            #if ads not in db, ingest
+            if ads_match[0] == False:
+                ingest_publication(db = db, bibcode = ads, reference = ref)
+            
             try:
+                #change this
                 reference = source["Discovery Ref."]
                 ra = source["RA"]
                 dec = source["DEC"]
-                comment = "comments"
-                equinox = "equinox"
-                other_references = "other_references"
-                epoch = "epoch"
                 ingest_source(
                     db,
                     source = source["NAME"],
                     reference = reference,
                     ra = ra,
                     dec = dec,
-                    epoch = epoch,
-                    equinox = equinox,
-                    other_reference = other_references,
-                    comment = comment,
                     raise_error = True,
                     search_db = True,
                 )  # ingest new sources
