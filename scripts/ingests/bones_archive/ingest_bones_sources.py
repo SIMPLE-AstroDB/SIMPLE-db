@@ -27,7 +27,7 @@ names_ingested = 0
 sources_ingested = 0
 skipped = 0
 total = 0
-duplicate_source = 0
+already_exists = 0
 multiple_sources = 0
 no_sources = 0
 inside_if = 0
@@ -65,6 +65,12 @@ bones_sheet_table = ascii.read(
     delimiter=",",
 )
 
+def extractADS(link):
+    start = link.find('abs/') + 4
+    end = link.find('/abstract')
+    ads = link[start:end]
+    return ads
+
 
 for source in bones_sheet_table:
     bones_name = source["NAME"]
@@ -76,8 +82,6 @@ for source in bones_sheet_table:
             source["NAME"],
             ra=source["RA"],
             dec=source["DEC"],
-            ra_col_name="ra",
-            dec_col_name="dec"
         )
         if len(match) == 1:
             try:
@@ -94,32 +98,29 @@ for source in bones_sheet_table:
             source["NAME"],
             ra=source["RA"],
             dec=source["DEC"],
-            ra_col_name="ra",
-            dec_col_name="dec",
         )
         
       
 
     if len(match) == 0:
         #ingest_publications for the ADS link
-        ads = source["ADS_Link"]
+        ads = extractADS(source["ADS_Link"])
         adsMatch = None
         adsRef = source["Discovery Ref."]
         adsMatch = find_publication(
             db,
-            reference = adsRef,
             bibcode = ads
         )
 
         if adsMatch[0] == False:
             ingest_publication(
                 db,
-                ads,
+                bibcode = ads,
                 reference = adsRef
             )
 
         try:
-            source_reference = source["Discovery Ref."]
+            source_reference = find_publication(db, bibcode=ads)
             source_name = source["NAME"]
             source_ra=source["RA"]
             source_dec=source["DEC"]
@@ -127,7 +128,7 @@ for source in bones_sheet_table:
             ingest_source(
                 db,
                 source = source_name,
-                reference = source_reference,
+                reference = source_reference[1],
                 ra = source_ra,
                 dec = source_dec,
                 raise_error = True,
@@ -142,26 +143,31 @@ for source in bones_sheet_table:
             logger.warning(msg)
             skipped += 1
             if "Already in database" in str(e):
-                duplicate_source += 1
+                already_exists += 1
             else: 
                 raise AstroDBError(msg) from e
         
     elif len(match) == 1:
         skipped+=1
+        already_exists += 1
 
     else:
-        skipped +=1
-        multiple_sources +=1
+        skipped+=1
+        a = AstroDBError
+        logger.warning("ingest failed with error: " + str(a))
+        raise AstroDBError(msg) from a
 
             
 
 total = len(bones_sheet_table)
-logger.info(f"skipped:{skipped}") # 192 skipped
-logger.info(f"sources_ingested:{sources_ingested}") # 17 ingsted 
+logger.info(f"skipped:{skipped}") # 92 skipped
+logger.info(f"sources_ingested:{sources_ingested}") # 117 ingsted 
 logger.info(f"total: {total}") # 209 total
-logger.info(f"multiple_sources: {multiple_sources}") # 0 multiple sources
-logger.info(f"duplicate_sources: {duplicate_source}") # 0 multiple sources
+logger.info(f"already_exists: {already_exists}") # 92 already exists
 
 logger.info(f"names_ingested:{names_ingested}")
 if DB_SAVE:
     db.save_database(directory="data/")
+
+
+
