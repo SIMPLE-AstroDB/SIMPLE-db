@@ -62,11 +62,17 @@ bones_sheet_table = ascii.read(
     delimiter=",",
 )
 
-no_sources = 0
-multiple_sources = 0
 ingested = 0
 already_exists = 0
 skipped= 0
+
+#helper method for extracting ads key from link
+def extractADS(link):
+    start = link.find('abs/')+4
+    end = link.find('/abstract')
+    ads = link[start:end]
+    return ads
+
 
 for source in bones_sheet_table:
     bones_name = source["NAME"]
@@ -92,7 +98,7 @@ for source in bones_sheet_table:
                 
         if len(match) == 0:
             #ingest_publications for ads
-            ads = source["ADS_Link"]
+            ads = extractADS(source["ADS_Link"])
             ads_match = None
             ref = source["Discovery Ref."]
             ads_match = find_publication(db = db, bibcode = ads)
@@ -102,14 +108,15 @@ for source in bones_sheet_table:
                 ingest_publication(db = db, bibcode = ads, reference = ref)
             
             try:
-                #change this
-                reference = source["Discovery Ref."]
+                #change this to access ads instead of discovery ref?
+                #wrong...............
+                reference = find_publication(db = db, bibcode = ads)
                 ra = source["RA"]
                 dec = source["DEC"]
                 ingest_source(
                     db,
                     source = source["NAME"],
-                    reference = reference,
+                    reference = reference[1],
                     ra = ra,
                     dec = dec,
                     raise_error = True,
@@ -126,18 +133,18 @@ for source in bones_sheet_table:
                 else:
                     raise AstroDBError(msg) from e
         
-        if len(match) > 1:
-            multiple_sources += 1
-            skipped+=1
         elif len(match) == 1:
+            already_exists+=1
             skipped+=1
-
+        else:
+            skipped+=1
+            a = AstroDBError
+            logger.warning("ingest failed with error: " + str(a))
+            raise AstroDBError(msg) from a
+total = ingested+ skipped
 logger.info(f"ingested:{ingested}")  #  ingested
 logger.info(f"already exists:{already_exists}")  #  due to preexisting data
-logger.info(f"no sources:{no_sources}")  # due to 0 matches
-logger.info(f"multiple sources:{multiple_sources}")  # multiple matches
 logger.info(f"skipped:{skipped}")  # 
+logger.info(f"total:{total}")
 if DB_SAVE:
     db.save_database(directory="data/")
-
-
