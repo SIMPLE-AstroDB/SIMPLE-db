@@ -23,12 +23,24 @@ no_sources = 0
 inside_if = 0
 
 
-DB_SAVE = False
-RECREATE_DB = True
+DB_SAVE = True
+RECREATE_DB = False
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES)
 
+
+ingest_publication(db, doi="10.1088/0004-637X/748/2/93")  # Roja12
 ingest_publication(db, bibcode="2018MNRAS.479.1383Z", reference="Zhan18.1352")
 ingest_publication(db, bibcode="2018MNRAS.480.5447Z", reference="Zhan18.2054")
+
+ingest_source(
+    db,
+    "LHS 292",
+    search_db=False,
+    reference="Roja12",
+    ra_col_name="ra",
+    dec_col_name="deg",
+    epoch_col_name="epoch",
+)
 
 link = (
     "scripts/ingests/bones_archive/theBonesArchivePhotometryWithADS.csv"
@@ -54,7 +66,7 @@ def extractADS(link):
     return ads
 
 
-for source in bones_sheet_table[:60]:
+for source in bones_sheet_table:
     bones_name = source["NAME"].replace("\u2212", "-")
     match = None
 
@@ -99,11 +111,7 @@ for source in bones_sheet_table[:60]:
 
         if not adsMatch[0]:
             logger.debug(f"ingesting publication {ads}")
-            ingest_publication(
-                db,
-                bibcode = ads,
-                reference=adsRef
-            )
+            ingest_publication(db, bibcode=ads)
 
         try:
             source_reference = find_publication(db, bibcode=ads)
