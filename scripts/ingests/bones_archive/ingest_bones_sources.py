@@ -2,22 +2,17 @@ from simple.schema import *
 from simple.schema import REFERENCE_TABLES
 from astrodb_utils import (
     load_astrodb,
-    find_source_in_db,
     AstroDBError,
-    ingest_names,
-    ingest_source,
-    ingest_publication,
-    find_publication,
-    
 )
+from astrodb_utils.sources import ingest_names, ingest_source, find_source_in_db
+from astrodb_utils.publications import ingest_publication, find_publication
 
 import sys
 from astrodb_utils.utils import logger
 sys.path.append(".")
-import logging
 from astropy.io import ascii
 
-#logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 names_ingested = 0
 sources_ingested = 0
 skipped = 0
@@ -58,14 +53,15 @@ def extractADS(link):
     logger.debug(f"ads: {ads}")
     return ads
 
-for source in bones_sheet_table:
-    bones_name = source["NAME"]
+
+for source in bones_sheet_table[:60]:
+    bones_name = source["NAME"].replace("\u2212", "-")
     match = None
 
     if len(bones_name) > 0 and bones_name != "null":
         match = find_source_in_db(
             db,
-            source["NAME"],
+            bones_name,
             ra=source["RA"],
             dec=source["DEC"],
             ra_col_name="ra",
@@ -122,6 +118,7 @@ for source in bones_sheet_table:
                 search_db=True,
                 ra_col_name="ra",
                 dec_col_name="dec",
+                epoch_col_name="epoch",
             )
             sources_ingested +=1
         except AstroDBError as e:
@@ -142,9 +139,9 @@ for source in bones_sheet_table:
         a = AstroDBError
         logger.warning("ingest failed with error: " + str(a))
         raise AstroDBError(msg) from a
-    
+
 else:
-    skipped +=1
+    skipped += 1
 
 
 total = len(bones_sheet_table)
