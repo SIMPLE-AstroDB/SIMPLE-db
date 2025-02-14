@@ -30,7 +30,7 @@ If you'd like to set up your own copy of the SIMPLE database, here's what we rec
 We recommend using a conda environment to handle python dependencies. The following commands will use that file to create and activate an 
    environment called `simple-db`. Run these commands at the terminal command prompt
     ```bash
-    conda  create -n "simple-db" python=3.10
+    conda  create -n "simple-db" python=3.12
     conda activate simple-db
     pip install -e .
     ```
