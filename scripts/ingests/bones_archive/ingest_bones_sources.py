@@ -1,4 +1,3 @@
-from astrodb_utils import load_astrodb
 from simple.schema import *
 from simple.schema import REFERENCE_TABLES
 from astrodb_utils import (
@@ -17,11 +16,6 @@ from astrodb_utils.utils import logger
 sys.path.append(".")
 import logging
 from astropy.io import ascii
-from simple.schema import Photometry
-from simple.schema import REFERENCE_TABLES
-from math import isnan
-import sqlalchemy.exc
-from simple.utils.astrometry import ingest_parallax
 
 #logger = logging.getLogger(__name__)
 names_ingested = 0
@@ -74,6 +68,8 @@ for source in bones_sheet_table:
             source["NAME"],
             ra=source["RA"],
             dec=source["DEC"],
+            ra_col_name="ra",
+            dec_col_name="dec",
         )
         if len(match) == 1:
             try:
@@ -82,20 +78,20 @@ for source in bones_sheet_table:
                 )  # ingest new names while were at it
                 names_ingested += 1
             except AstroDBError as e:
-                None  # only error is if there is a preexisting name anyways.
+                raise e  # only error is if there is a preexisting name anyways.
 
-    if match == None:
-         match = find_source_in_db(
+    if match is None:
+        match = find_source_in_db(
             db,
             source["NAME"],
             ra=source["RA"],
             dec=source["DEC"],
+            ra_col_name="ra",
+            dec_col_name="dec",
         )
-        
-      
 
     if len(match) == 0:
-        #ingest_publications for the ADS link
+        # ingest_publications for the ADS link
         ads = extractADS(source["ADS_Link"])
         adsMatch = None
         adsRef = source["Discovery Ref."]
@@ -103,8 +99,10 @@ for source in bones_sheet_table:
             db,
             bibcode = ads
         )
+        logger.debug(f"adsMatch: {adsMatch}")
 
-        if adsMatch[0] == False:
+        if not adsMatch[0]:
+            logger.debug(f"ingesting publication {ads}")
             ingest_publication(
                 db,
                 bibcode = ads,
@@ -113,21 +111,17 @@ for source in bones_sheet_table:
 
         try:
             source_reference = find_publication(db, bibcode=ads)
-            source_name = source["NAME"]
-            source_ra=source["RA"]
-            source_dec=source["DEC"]
 
             ingest_source(
                 db,
-                source = source_name,
-                reference = source_reference[1],
-                ra = source_ra,
-                dec = source_dec,
-                raise_error = True,
-                search_db = True
-
-               
-                
+                source=source["NAME"],
+                reference=source_reference[1],
+                ra=source["RA"],
+                dec=source["DEC"],
+                raise_error=True,
+                search_db=True,
+                ra_col_name="ra",
+                dec_col_name="dec",
             )
             sources_ingested +=1
         except AstroDBError as e:
@@ -138,7 +132,7 @@ for source in bones_sheet_table:
                 already_exists += 1
             else: 
                 raise AstroDBError(msg) from e
-        
+
     elif len(match) == 1:
         skipped+=1
         already_exists += 1
@@ -152,7 +146,6 @@ for source in bones_sheet_table:
 else:
     skipped +=1
 
-            
 
 total = len(bones_sheet_table)
 logger.info(f"skipped:{skipped}") # 92 skipped
@@ -163,6 +156,3 @@ logger.info(f"already_exists: {already_exists}") # 92 already exists
 logger.info(f"names_ingested:{names_ingested}") #92
 if DB_SAVE:
     db.save_database(directory="data/")
-
-
-
