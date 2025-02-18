@@ -35,6 +35,17 @@ db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFE
 ingest_publication(db, bibcode="2018MNRAS.479.1383Z", reference="Zhan18.1352")
 ingest_publication(db, bibcode="2018MNRAS.480.5447Z", reference="Zhan18.2054")
 
+
+ingest_source(
+    db,
+    "LHS 292",
+    search_db=False,
+    reference="Roja12",
+    ra="ra",
+    dec="deg",
+    epoch="epoch",
+)
+
 link = (
     "scripts/ingests/bones_archive/theBonesArchivePhotometryWithADS.csv"
 )
@@ -59,7 +70,7 @@ def extractADS(link):
     return ads
 
 for source in bones_sheet_table:
-    bones_name = source["NAME"]
+    bones_name = source["NAME"].replace("\u2212", "-")
     match = None
 
     if len(bones_name) > 0 and bones_name != "null":
