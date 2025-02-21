@@ -3,9 +3,13 @@ from simple.schema import REFERENCE_TABLES
 from astrodb_utils import (
     load_astrodb,
     AstroDBError,
+    find_source_in_db,
+    ingest_names,
+    ingest_source,
+    ingest_publication,
+    find_publication
 )
-from astrodb_utils.sources import ingest_names, ingest_source, find_source_in_db 
-from astrodb_utils.publications import ingest_publication, find_publication 
+
 
 import sys
 from astrodb_utils.utils import logger
@@ -37,9 +41,9 @@ ingest_source(
     "LHS 292",
     search_db=False,
     reference="Roja12",
-    ra="ra",
-    dec="deg",
-    epoch="epoch",
+    #ra="ra",
+    #dec="deg",
+    #epoch="epoch",
 )
 
 link = (
@@ -76,8 +80,7 @@ for source in bones_sheet_table:
             bones_name,
             ra=source["RA"],
             dec=source["DEC"],
-            ra_col_name="ra",
-            dec_col_name="dec",
+    
         )
         if len(match) == 1:
             try:
@@ -94,8 +97,6 @@ for source in bones_sheet_table:
             source["NAME"],
             ra=source["RA"],
             dec=source["DEC"],
-            ra_col_name="ra",
-            dec_col_name="dec",
         )
 
     if len(match) == 0:
@@ -124,9 +125,6 @@ for source in bones_sheet_table:
                 dec=source["DEC"],
                 raise_error=True,
                 search_db=True,
-                ra_col_name="ra",
-                dec_col_name="dec",
-                epoch_col_name="epoch",
             )
             sources_ingested +=1
         except AstroDBError as e:
