@@ -29,8 +29,27 @@ db = load_astrodb(
     "SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES
 )
 
+#ingest doi publications because it isn't compatible with extractADS function
+ingest_publication(db, doi="10.1088/0004-637X/748/2/93") #Roja12
+ingest_publication(db, doi = "10.1088/0067-0049/203/2/21") #
 ingest_publication (db, bibcode = "2018MNRAS.479.1383Z", reference = "Zhan18.1352")
 ingest_publication (db, bibcode = "2018MNRAS.480.5447Z", reference = "Zhan18.2054")
+ingest_source(
+    db,
+    "ULAS J074431.30+283915.6",
+    search_db = False,
+    reference = "AhnC12",
+)
+
+ingest_source(
+    db,
+    "LHS 292",
+    search_db=False,
+    reference="Roja12",
+    #ra="ra",
+    #dec="deg",
+    #epoch="epoch",
+)
 
 # Load photometry sheet
 link = (
@@ -62,7 +81,7 @@ def extractADS(link):
 
 
 for source in bones_sheet_table:
-    bones_name = source["NAME"]
+    bones_name = source["NAME"].replace("\u2212", "-")
     match = None
 
     ##tries to find match of name in database
@@ -92,14 +111,22 @@ for source in bones_sheet_table:
 
             #if ads not in db, ingest
             if ads_match[0] == False:
-                ingest_publication(db = db, bibcode = ads, reference = ref)
+                ingest_publication(db = db, bibcode = ads,)
             
             try:
+
                 #change this to access ads instead of discovery ref?
                 #wrong...............
                 reference = find_publication(db = db, bibcode = ads)
                 ra = source["RA"]
                 dec = source["DEC"]
+
+                #if publication not found in database, skip
+                # doesn't make sense because we're supposed to ingest publications before...
+                if reference[1] == 0:
+                    skipped+=1
+                    continue
+
                 ingest_source(
                     db,
                     source = source["NAME"],
@@ -131,10 +158,10 @@ for source in bones_sheet_table:
     else:
         skipped+=1
         
-total = ingested+ skipped
-logger.info(f"ingested:{ingested}")  # 117 ingested
-logger.info(f"already exists:{already_exists}")  # 92 due to preexisting data
-logger.info(f"skipped:{skipped}")  # 92 skipped
+total = len(bones_sheet_table)
+logger.info(f"ingested:{ingested}")  # 105 ingested
+logger.info(f"already exists:{already_exists}")  # 103 due to preexisting data
+logger.info(f"skipped:{skipped}")  # 104 skipped
 logger.info(f"total:{total}") # 209 total
 if DB_SAVE:
     db.save_database(directory="data/")
