@@ -1,16 +1,16 @@
-from astrodb_utils import (
-    load_astrodb,
+from astrodb_utils import load_astrodb
+from astrodb_utils.sources import (
     find_source_in_db,
     AstroDBError,
-    ingest_names,
     ingest_source,
-    ingest_publication,
     find_publication,
 )
 
-from astrodb_utils.utils import logger
+from astrodb_utils.publications import (
+    ingest_publication,
+    logger,
+)
 
-from astrodb_utils.photometry import ingest_photometry
 import sys
 
 sys.path.append(".")
@@ -19,7 +19,6 @@ from astropy.io import ascii
 from simple.schema import REFERENCE_TABLES
 from math import isnan
 import sqlalchemy.exc
-from simple.utils.astrometry import ingest_parallax
 
 """logger = logging.getLogger(__name__)"""
 
@@ -30,15 +29,15 @@ db = load_astrodb(
 )
 
 #ingest doi publications because it isn't compatible with extractADS function
-ingest_publication(db, doi="10.1088/0004-637X/748/2/93") #Roja12
-ingest_publication(db, doi = "10.1088/0067-0049/203/2/21") #
+ingest_publication(db, doi="10.1088/0004-637X/748/2/93", reference="Roja12") #Roja12
+#ingest_publication(db, doi = "10.1088/0067-0049/203/2/21", reference = "Ahn_12") #Ahn_12
 ingest_publication (db, bibcode = "2018MNRAS.479.1383Z", reference = "Zhan18.1352")
 ingest_publication (db, bibcode = "2018MNRAS.480.5447Z", reference = "Zhan18.2054")
 ingest_source(
     db,
     "ULAS J074431.30+283915.6",
     search_db = False,
-    reference = "AhnC12",
+    reference = "Ahn_12",
 )
 
 ingest_source(
@@ -46,9 +45,6 @@ ingest_source(
     "LHS 292",
     search_db=False,
     reference="Roja12",
-    #ra="ra",
-    #dec="deg",
-    #epoch="epoch",
 )
 
 # Load photometry sheet
