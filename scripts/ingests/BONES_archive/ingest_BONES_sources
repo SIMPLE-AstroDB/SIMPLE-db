@@ -29,8 +29,13 @@ db = load_astrodb(
 )
 
 #ingest doi publications because it isn't compatible with extractADS function
+<<<<<<< Updated upstream
 ingest_publication(db, doi="10.1088/0004-637X/748/2/93", reference="Roja12") #Roja12
 #ingest_publication(db, doi = "10.1088/0067-0049/203/2/21", reference = "Ahn_12") #Ahn_12
+=======
+ingest_publication(db, doi="10.1088/0004-637X/7s48/2/93", reference = "Roja12") #Roja12
+ingest_publication(db, doi = "10.1088/0067-0049/203/2/21") #ahn_12
+>>>>>>> Stashed changes
 ingest_publication (db, bibcode = "2018MNRAS.479.1383Z", reference = "Zhan18.1352")
 ingest_publication (db, bibcode = "2018MNRAS.480.5447Z", reference = "Zhan18.2054")
 ingest_source(
