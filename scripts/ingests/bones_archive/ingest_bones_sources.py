@@ -1,19 +1,21 @@
-from simple.schema import *
+import sys
+sys.path.append(".")
 from simple.schema import REFERENCE_TABLES
-from astrodb_utils import (
-    load_astrodb,
+from astrodb_utils import load_astrodb
+from astrodb_utils.sources import (
     AstroDBError,
     find_source_in_db,
     ingest_names,
     ingest_source,
-    ingest_publication,
     find_publication
 )
 
 
-import sys
-from astrodb_utils.utils import logger
-sys.path.append(".")
+from astrodb_utils.publications import (
+    logger,
+    ingest_publication
+)
+
 from astropy.io import ascii
 
 # logger = logging.getLogger(__name__)
@@ -33,7 +35,7 @@ db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFE
 
 #separate for cases that don't work in our code/ads key stuff
 
-ingest_publication(db, doi="10.1088/0004-637X/748/2/93")  # Roja12
+ingest_publication(db, doi="10.1088/0004-637X/748/2/93", reference = "Roja12")  # Roja12
 ingest_publication(db, doi = "10.1088/0067-0049/203/2/21") # ULAS J074431.30+283915.6 
 
 ingest_publication(db, bibcode="2018MNRAS.479.1383Z", reference="Zhan18.1352")
