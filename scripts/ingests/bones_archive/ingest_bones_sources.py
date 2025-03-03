@@ -29,11 +29,11 @@ no_sources = 0
 inside_if = 0
 
 
-DB_SAVE = False
+DB_SAVE = True
 RECREATE_DB = True
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES)
 
-#separate for cases that don't work in our code/ads key stuff
+# separate for cases that don't work in our code/ads key stuff
 
 ingest_publication(db, doi="10.1088/0004-637X/748/2/93", reference = "Roja12")  # Roja12
 ingest_publication(db, doi = "10.1088/0067-0049/203/2/21") # ULAS J074431.30+283915.6 
@@ -46,16 +46,19 @@ ingest_source(
     "LHS 292",
     search_db=False,
     reference="Roja12",
-    #ra="ra",
-    #dec="deg",
-    #epoch="epoch",
+    ra_col_name="ra",
+    dec_col_name="dec",
+    epoch_col_name="epoch",
 )
 
 ingest_source(
-    db, 
+    db,
     "ULAS J074431.30+283915.6",
-    search_db= False,
-    reference = "AhnC12"
+    search_db=False,
+    reference="AhnC12",
+    ra_col_name="ra",
+    dec_col_name="dec",
+    epoch_col_name="epoch",
 )
 
 link = (
@@ -92,7 +95,8 @@ for source in bones_sheet_table:
             bones_name,
             ra=source["RA"],
             dec=source["DEC"],
-    
+            ra_col_name="ra",
+            dec_col_name="dec",
         )
         if len(match) == 1:
             try:
@@ -141,6 +145,9 @@ for source in bones_sheet_table:
                     dec=source["DEC"],
                     raise_error=True,
                     search_db=True,
+                    ra_col_name="ra",
+                    dec_col_name="dec",
+                    epoch_col_name="epoch",
                 )
                 sources_ingested +=1
             except AstroDBError as e:
@@ -173,3 +180,9 @@ logger.info(f"already_exists: {already_exists}") # 92 already exists
 
 if DB_SAVE:
     db.save_database(directory="data/")
+
+
+# INFO: skipped:103
+# 03/03/2025 05:49:56PM INFO: sources_ingested:106
+# 03/03/2025 05:49:56PM INFO: total: 209
+# 03/03/2025 05:49:56PM INFO: already_exists: 103
