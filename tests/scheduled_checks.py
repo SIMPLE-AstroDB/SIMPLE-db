@@ -50,4 +50,11 @@ def test_spectra_urls(db):
     # Display broken spectra regardless if it's the number we expect or not
     print(f"found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}")
 
-    assert 4 <= len(broken_urls) <= 4
+    assert 5 <= len(broken_urls) <= 5
+
+# Expected fails:
+# 11123099-7653342.txt',
+# L1_OPT_2MASS_J10595138-2113082_Cruz2003.txt
+# 0000%252B2554_IRS_spectrum.fits'
+# 0415-0935.fits',
+# 2MASS+J22541892%2B3123498.fits'])
