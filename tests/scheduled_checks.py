@@ -6,6 +6,8 @@ import requests
 from astrodb_utils.utils import internet_connection
 from astrodb_utils import load_astrodb
 from tqdm import tqdm
+from astroquery.simbad import Simbad
+from astrodbkit.utils import _name_formatter
 
 sys.path.append(".")
 from simple.schema import REFERENCE_TABLES
@@ -35,17 +37,17 @@ def test_spectra_urls(db):
     broken_urls = []
     codes = []
     internet, _ = internet_connection()
-    if internet:
-        for spectrum_url in tqdm(spectra_urls["access_url"]):
-            request_response = requests.head(spectrum_url)
-            status_code = request_response.status_code
-            # The website is up if the status code is 200
-            # cuny academic commons links give 301 status code
-            if status_code != 200 and status_code != 301:
-                broken_urls.append(spectrum_url)
-                codes.append(status_code)
-    else:
-        print("No internet connection to check URLs")
+    if not internet:
+        assert False, "No internet connection to check spectra urls"
+
+    for spectrum_url in tqdm(spectra_urls["access_url"]):
+        request_response = requests.head(spectrum_url)
+        status_code = request_response.status_code
+        # The website is up if the status code is 200
+        # cuny academic commons links give 301 status code
+        if status_code != 200 and status_code != 301:
+            broken_urls.append(spectrum_url)
+            codes.append(status_code)
 
     # Display broken spectra regardless if it's the number we expect or not
     print(f"found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}")
@@ -58,3 +60,74 @@ def test_spectra_urls(db):
 # 0000%252B2554_IRS_spectrum.fits'
 # 0415-0935.fits',
 # 2MASS+J22541892%2B3123498.fits'])
+
+
+def test_source_simbad(db):
+    # Query Simbad and confirm that there are no duplicates with different names
+
+    # Get list of all source names
+    results = db.query(db.Sources.c.source).all()
+    name_list = [s[0] for s in results]
+
+    # Add all IDS to the Simbad output as well as the user-provided id
+    Simbad.add_votable_fields("ids")
+
+    internet, _ = internet_connection()
+    if not internet:
+        assert False, "No internet connection to check Simbad names"
+
+    simbad_results = Simbad.query_objects(name_list)
+    # print(simbad_results.colnames)
+    # ['main_id', 'ra', 'dec', 'coo_err_maj', 'coo_err_min', 'coo_err_angle', 'coo_wavelength', 'coo_bibcode', 'ids', 'user_specified_id', 'object_number_id']
+
+    # Get a nicely formatted list of Simbad names for each input row
+    duplicate_count = 0
+    not_in_simbad = []
+    in_simbad = []
+
+    for row in tqdm(simbad_results[["main_id", "ids", "user_specified_id"]].iterrows()):
+        # simbad_main_id = row[0]
+        simple_name = row[2]
+        try:
+            simbad_ids = row[1].decode("utf-8")
+        except AttributeError:
+            # Catch decoding error
+            simbad_ids = row[1]
+
+        # print(f"Checking {simple_name} with Simbad IDs: {simbad_ids}")
+
+        simbad_names = [
+            _name_formatter(s)
+            for s in simbad_ids.split("|")
+            if _name_formatter(s) != "" and _name_formatter(s) is not None
+        ]
+
+        if len(simbad_names) == 0:
+            # print(f"No Simbad match for {simple_name}")
+            not_in_simbad.append(simple_name)
+            continue
+        else:
+            # print(f"Simbad match {simbad_main_id} for {simple_name}")
+            in_simbad.append(simple_name)
+
+        # Examine DB for each input, displaying results when more than one source matches
+        t = db.search_object(
+            simbad_names,
+            output_table="Sources",
+            fmt="astropy",
+            fuzzy_search=False,
+            verbose=False,
+        )
+        if len(t) > 1:
+            print(f"Multiple matches for {simple_name}: {simbad_names}")
+            print(
+                db.query(db.Names).filter(db.Names.c.source.in_(t["source"])).astropy()
+            )
+            duplicate_count += 1
+
+    assert duplicate_count == 0, "Duplicate sources identified via Simbad queries"
+    assert len(not_in_simbad) == 425, f"Sources not found in Simbad: {not_in_simbad}"
+    assert len(in_simbad) == 3012, "Sources found in Simbad"
+    assert len(not_in_simbad) + len(in_simbad) == len(
+        name_list
+    ), "Not all sources checked"
