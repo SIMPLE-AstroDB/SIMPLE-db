@@ -3,7 +3,7 @@ import sys
 
 import pytest
 import requests
-from astrodb_utils.utils import internet_connection
+# from astrodb_utils.utils import internet_connection
 from astrodb_utils import load_astrodb
 from tqdm import tqdm
 from astroquery.simbad import Simbad
@@ -36,9 +36,9 @@ def test_spectra_urls(db):
     spectra_urls = db.query(db.Spectra.c.access_url).astropy()
     broken_urls = []
     codes = []
-    internet, _ = internet_connection()
-    if not internet:
-        assert False, "No internet connection to check spectra urls"
+    # internet, _ = internet_connection()
+    # if not internet:
+    #    assert False, "No internet connection to check spectra urls"
 
     for spectrum_url in tqdm(spectra_urls["access_url"]):
         request_response = requests.head(spectrum_url)
@@ -72,19 +72,21 @@ def test_source_simbad(db):
     # Add all IDS to the Simbad output as well as the user-provided id
     Simbad.add_votable_fields("ids")
 
-    internet, _ = internet_connection()
-    if not internet:
-        assert False, "No internet connection to check Simbad names"
+    # internet_connection() is not working in the test environment
+    # internet, _ = internet_connection()
+    # if not internet:
+    #    assert False, "No internet connection to check Simbad names"
 
+    print("Querying SIMBAD for all SIMPLE sources")
     simbad_results = Simbad.query_objects(name_list)
     # print(simbad_results.colnames)
     # ['main_id', 'ra', 'dec', 'coo_err_maj', 'coo_err_min', 'coo_err_angle', 'coo_wavelength', 'coo_bibcode', 'ids', 'user_specified_id', 'object_number_id']
 
-    # Get a nicely formatted list of Simbad names for each input row
     duplicate_count = 0
     not_in_simbad = []
     in_simbad = []
 
+    print("Checking all SIMPLE sources for Simbad names")
     for row in tqdm(simbad_results[["main_id", "ids", "user_specified_id"]].iterrows()):
         # simbad_main_id = row[0]
         simple_name = row[2]
@@ -94,8 +96,7 @@ def test_source_simbad(db):
             # Catch decoding error
             simbad_ids = row[1]
 
-        # print(f"Checking {simple_name} with Simbad IDs: {simbad_ids}")
-
+        # Get a nicely formatted list of Simbad names for each input row
         simbad_names = [
             _name_formatter(s)
             for s in simbad_ids.split("|")
@@ -126,8 +127,16 @@ def test_source_simbad(db):
             duplicate_count += 1
 
     assert duplicate_count == 0, "Duplicate sources identified via Simbad queries"
-    assert len(not_in_simbad) == 425, f"Sources not found in Simbad: {not_in_simbad}"
+    assert (
+        len(not_in_simbad) == 425
+    ), f"Expecting {len(not_in_simbad)} sources not found in Simbad"
+
     assert len(in_simbad) == 3012, "Sources found in Simbad"
+    print(f"Found {len(in_simbad)} SIMPLE sources in Simbad")
+
     assert len(not_in_simbad) + len(in_simbad) == len(
         name_list
     ), "Not all sources checked"
+
+    print(f"Found {len(not_in_simbad)} SIMPLE sources not in Simbad")
+    print("\n".join(not_in_simbad))
