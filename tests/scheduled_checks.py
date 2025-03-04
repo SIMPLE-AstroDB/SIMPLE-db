@@ -4,48 +4,30 @@ import sys
 import pytest
 import requests
 from astrodb_utils.utils import internet_connection
-from astrodbkit.astrodb import Database, create_database
+from astrodb_utils import load_astrodb
 from tqdm import tqdm
 
 sys.path.append(".")
-from simple.schema import *
 from simple.schema import REFERENCE_TABLES
 
-DB_NAME = "temp.sqlite"
+DB_NAME = "temp_SIMPLE.sqlite"
 DB_PATH = "data"
 
 
-# Load the database for use in individual tests
+# Load the SIMPLE database
 @pytest.fixture(scope="module")
 def db():
-    # Create a fresh temporary database and assert it exists
-    # Because we've imported simple.schema, we will be using that schema for the database
-
-    if os.path.exists(DB_NAME):
-        os.remove(DB_NAME)
-    connection_string = "sqlite:///" + DB_NAME
-    create_database(connection_string)
-    assert os.path.exists(DB_NAME)
 
     # Connect to the new database and confirm it has the Sources table
-    db = Database(connection_string, reference_tables=REFERENCE_TABLES)
-    assert db
-    assert "source" in [c.name for c in db.Sources.columns]
-
-    # Load data into an in-memory sqlite database first, for performance
-
-    # create and connects to a temporary in-memory database
-    temp_db = Database("sqlite://", reference_tables=REFERENCE_TABLES)
-
-    # load the data from the data files into the database
-    temp_db.load_database(DB_PATH, verbose=False)
-
-    # dump in-memory database to file
-    temp_db.dump_sqlite(DB_NAME)
-    # replace database object with new file version
-    db = Database("sqlite:///" + DB_NAME, reference_tables=REFERENCE_TABLES)
+    db = load_astrodb(DB_NAME, data_path=DB_PATH, reference_tables=REFERENCE_TABLES)
 
     return db
+
+
+def test_db(db):
+    assert os.path.exists(DB_NAME)
+    assert db
+    assert "source" in [c.name for c in db.Sources.columns]
 
 
 def test_spectra_urls(db):
@@ -62,6 +44,8 @@ def test_spectra_urls(db):
             if status_code != 200 and status_code != 301:
                 broken_urls.append(spectrum_url)
                 codes.append(status_code)
+    else:
+        print("No internet connection to check URLs")
 
     # Display broken spectra regardless if it's the number we expect or not
     print(f"found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}")
