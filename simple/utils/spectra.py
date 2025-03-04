@@ -6,9 +6,9 @@ import requests
 import sqlalchemy.exc
 from astrodb_utils import (
     AstroDBError,
-    find_source_in_db,
     internet_connection,
 )
+from astrodb_utils.sources import find_source_in_db
 from astrodb_utils.spectra import check_spectrum_plottable
 from astrodbkit.astrodb import Database
 from astropy.io import fits

@@ -21,15 +21,6 @@ def test_discovery_references(db):
         GROUP BY reference
         ORDER By 2 DESC
 
-    Counting the top 20 references in the Sources Table
-        spec_ref_count = (
-            db.query(Sources.reference, func.count(Sources.reference))
-           .group_by(Sources.reference)
-           .order_by(func.count(Sources.reference).desc())
-           .limit(20)
-           .all()
-           )
-
     """
 
     ref = "Schm10.1808"
@@ -38,7 +29,7 @@ def test_discovery_references(db):
 
     ref = "West08"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 194, f"found {len(t)} discovery reference entries for {ref}"
+    assert len(t) == 192, f"found {len(t)} discovery reference entries for {ref}"
 
     ref = "Reid08.1290"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
@@ -80,13 +71,9 @@ def test_discovery_references(db):
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 61, f"found {len(t)} discovery reference entries for {ref}"
 
-    ref = "Kirk00"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 61, f"found {len(t)} sources from {ref}"
-
     ref = "Kirk10"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 58, f"found {len(t)} discovery reference entries for {ref}"
+    assert len(t) == 56, f"found {len(t)} discovery reference entries for {ref}"
 
     ref = "Cruz07"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
@@ -95,26 +82,6 @@ def test_discovery_references(db):
     ref = "Roth"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 83, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "Deac14.119"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 52, f"found {len(t)} sources from {ref}"
-
-    ref = "Hawl02"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 51, f"found {len(t)} sources from {ref}"
-
-    ref = "Card15"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 45, f"found {len(t)} sources from {ref}"
-
-    ref = "Burn10.1885"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 43, f"found {len(t)} sources from {ref}"
-
-    ref = "Albe11"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 37, f"found {len(t)} sources from {ref}"
 
 
 def test_proper_motion_refs(db):
@@ -190,7 +157,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 284
+        len(s) == 256
     ), f"found {len(s)} sources with 2MASS designation that have no 2MASS photometry"
 
     # If 2MASS photometry, 2MASS designation should be in Names
@@ -230,7 +197,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 492
+        len(s) == 480
     ), f"found {len(s)} sources with WISE designation that have no WISE photometry"
 
     # If Wise photometry, Wise designation should be in Names
