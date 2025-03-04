@@ -1,11 +1,9 @@
 # Test to verify database integrity
 # database object 'db' defined in conftest.py
-import pytest
 from astrodbkit.astrodb import or_
-from astrodbkit.utils import _name_formatter
 from astropy import units as u
 from astropy.table import unique
-from astroquery.simbad import Simbad
+
 from sqlalchemy import and_, func
 
 from simple.schema import ParallaxView  # , PhotometryView
@@ -245,52 +243,6 @@ def test_source_uniqueness2(db):
     duplicate_names = db.sql_query(sql_text, fmt="astropy")
     # if duplicate_names is non_zero, print out duplicate names
     assert len(duplicate_names) == 0
-
-
-@pytest.mark.skip(reason="SIMBAD unreliable")
-def test_source_simbad(db):
-    # Query Simbad and confirm that there are no duplicates with different names
-
-    # Get list of all source names
-    results = db.query(db.Sources.c.source).all()
-    name_list = [s[0] for s in results]
-
-    # Add all IDS to the Simbad output as well as the user-provided id
-    Simbad.add_votable_fields("ids")
-    Simbad.add_votable_fields("typed_id")
-
-    simbad_results = Simbad.query_objects(name_list)
-    # Get a nicely formatted list of Simbad names for each input row
-    duplicate_count = 0
-    for row in simbad_results[["TYPED_ID", "IDS"]].iterrows():
-        try:
-            name, ids = row[0].decode("utf-8"), row[1].decode("utf-8")
-        except AttributeError:
-            # Catch decoding error
-            name, ids = row[0], row[1]
-
-        simbad_names = [
-            _name_formatter(s)
-            for s in ids.split("|")
-            if _name_formatter(s) != "" and _name_formatter(s) is not None
-        ]
-
-        if len(simbad_names) == 0:
-            print(f"No Simbad names for {name}")
-            continue
-
-        # Examine DB for each input, displaying results when more than one source matches
-        t = db.search_object(
-            simbad_names, output_table="Sources", fmt="astropy", fuzzy_search=False
-        )
-        if len(t) > 1:
-            print(f"Multiple matches for {name}: {simbad_names}")
-            print(
-                db.query(db.Names).filter(db.Names.c.source.in_(t["source"])).astropy()
-            )
-            duplicate_count += 1
-
-    assert duplicate_count == 0, "Duplicate sources identified via Simbad queries"
 
 
 def test_photometry(db):
