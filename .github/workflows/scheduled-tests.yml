@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-
+    if: github.repository == 'SIMPLE-AstroDB/SIMPLE-db'
     runs-on: ubuntu-latest
     strategy:
       matrix:
