@@ -36,7 +36,7 @@ for _, source in newsources.iterrows():
 
 ## Ingest New Fundamental Parameters
 #evo_cols = ["name", "name_simbadable", "ra_j2000_formula", "dec_j2000_formula", "teff_evo", "teff_evo_err", "radius_evo", "radius_evo_err", "mass_evo", "mass_evo_err", "logg_evo", "logg_evo_err"]
-evo_table = pd.read_csv('sanghi23/FundamentalPropertiesbyEvoModel.csv')
+evo_table = pd.read_csv('FundamentalPropertiesbyEvoModel.csv')
 
 modeled_parameters_evo_ingest_dict = [
     {'sourceName': row['name'],
@@ -51,7 +51,7 @@ modeled_parameters_evo_ingest_dict = [
      } for _, row in evo_table.iterrows()
 ]
 #atmo_cols = ["name", "name_simbadable", "ra_j2000_formula", "dec_j2000_formula", "teff_atmo", "radius_atmo", "logg_atmo", "log_lbol_lsun", "log_lbol_lsun_err"]
-atmo_table = pd.read_csv('sanghi23/FundamentalPropertiesbyAtmoModel.csv')
+atmo_table = pd.read_csv('FundamentalPropertiesbyAtmoModel.csv')
 modeled_parameters_atmo_ingest_dict = [
     {'source': atmo["name"],
      'ra': atmo["ra_j2000_formula"], 'dec': atmo["dec_j2000_formula"],
@@ -115,4 +115,4 @@ with db.engine.connect() as conn:
     conn.commit()  
 
 # Save to Database
-db.save_database(directory="data/")
+db.save_database()
