@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append(".")
 from simple.schema import REFERENCE_TABLES
 from astrodb_utils import load_astrodb
@@ -29,7 +30,7 @@ no_sources = 0
 inside_if = 0
 
 
-DB_SAVE = True
+DB_SAVE = False
 RECREATE_DB = True
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES)
 
