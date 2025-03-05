@@ -30,7 +30,7 @@ no_sources = 0
 inside_if = 0
 
 
-DB_SAVE = False
+DB_SAVE = True
 RECREATE_DB = True
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES)
 
@@ -174,10 +174,10 @@ for source in bones_sheet_table:
 
 
 total = len(bones_sheet_table)
-logger.info(f"skipped:{skipped}") # 92 skipped
-logger.info(f"sources_ingested:{sources_ingested}") # 117 ingsted 
+logger.info(f"skipped:{skipped}") # 142 skipped
+logger.info(f"sources_ingested:{sources_ingested}") # 67 ingsted 
 logger.info(f"total: {total}") # 209 total
-logger.info(f"already_exists: {already_exists}") # 92 already exists
+logger.info(f"already_exists: {already_exists}") # 103 already exists
 
 if DB_SAVE:
     db.save_database(directory="data/")
