@@ -36,7 +36,7 @@ db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFE
 #separate for cases that don't work in our code/ads key stuff
 
 ingest_publication(db, doi="10.1088/0004-637X/748/2/93", reference = "Roja12")  # Roja12
-ingest_publication(db, doi = "10.1088/0067-0049/203/2/21") # ULAS J074431.30+283915.6 
+ingest_publication(db, doi = "10.1088/0067-0049/203/2/21", reference = "AhnC12") # ULAS J074431.30+283915.6 
 
 ingest_publication(db, bibcode="2018MNRAS.479.1383Z", reference="Zhan18.1352")
 ingest_publication(db, bibcode="2018MNRAS.480.5447Z", reference="Zhan18.2054")
