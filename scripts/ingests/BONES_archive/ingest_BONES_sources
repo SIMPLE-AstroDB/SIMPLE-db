@@ -29,26 +29,22 @@ db = load_astrodb(
 )
 
 #ingest doi publications because it isn't compatible with extractADS function
-<<<<<<< Updated upstream
-ingest_publication(db, doi="10.1088/0004-637X/748/2/93", reference="Roja12") #Roja12
-#ingest_publication(db, doi = "10.1088/0067-0049/203/2/21", reference = "Ahn_12") #Ahn_12
-=======
-ingest_publication(db, doi="10.1088/0004-637X/7s48/2/93", reference = "Roja12") #Roja12
-ingest_publication(db, doi = "10.1088/0067-0049/203/2/21") #ahn_12
->>>>>>> Stashed changes
+#comment out when DB_SAVE = True because publications and sources already exist in db
+ingest_publication(db, doi="10.1088/0004-637X/748/2/93", reference = "Roja12") #Roja12
+ingest_publication(db, doi = "10.1088/0067-0049/203/2/21", reference = "Ahn_12") #ahn_12
 ingest_publication (db, bibcode = "2018MNRAS.479.1383Z", reference = "Zhan18.1352")
 ingest_publication (db, bibcode = "2018MNRAS.480.5447Z", reference = "Zhan18.2054")
 ingest_source(
     db,
     "ULAS J074431.30+283915.6",
-    search_db = False,
+    search_db = True,
     reference = "Ahn_12",
 )
 
 ingest_source(
     db,
     "LHS 292",
-    search_db=False,
+    search_db=True,
     reference="Roja12",
 )
 
@@ -82,14 +78,15 @@ def extractADS(link):
 
 
 for source in bones_sheet_table:
-    bones_name = source["NAME"].replace("\u2212", "-")
+    bones_name = source["NAME"].replace("\\u2212", "-")
+    bones_name = source["NAME"].replace("\\u2013", "-")
     match = None
 
     ##tries to find match of name in database
     if len(bones_name) > 0 and bones_name != "null":
         match = find_source_in_db(
             db,
-            source["NAME"],
+            bones_name,
             ra=source["RA"],
             dec=source["DEC"],
 
@@ -98,7 +95,7 @@ for source in bones_sheet_table:
         if (match == None):
             match = find_source_in_db(
                 db,
-                source["NAME"],
+                bones_name,
                 ra=source["RA"],
                 dec=source["DEC"],
             )
@@ -116,8 +113,6 @@ for source in bones_sheet_table:
             
             try:
 
-                #change this to access ads instead of discovery ref?
-                #wrong...............
                 reference = find_publication(db = db, bibcode = ads)
                 ra = source["RA"]
                 dec = source["DEC"]
@@ -130,7 +125,7 @@ for source in bones_sheet_table:
 
                 ingest_source(
                     db,
-                    source = source["NAME"],
+                    source = bones_name,
                     reference = reference[1],
                     ra = ra,
                     dec = dec,

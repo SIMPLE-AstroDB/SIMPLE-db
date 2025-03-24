@@ -6,7 +6,7 @@ from simple.schema import Parallaxes
 from astropy.units import Quantity
 from astropy.table import Table
 from astrodbkit.astrodb import Database
-from astrodb_utils import AstroDBError, find_source_in_db, find_publication
+from astrodb_utils.sources import AstroDBError, find_source_in_db, find_publication
 
 
 __all__ = [

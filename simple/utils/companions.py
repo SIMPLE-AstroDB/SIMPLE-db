@@ -1,6 +1,6 @@
 import logging
 import sqlalchemy.exc
-from astrodb_utils import (
+from astrodb_utils.sources import (
     AstroDBError, find_source_in_db
 )
 
