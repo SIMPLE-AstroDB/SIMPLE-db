@@ -18,6 +18,8 @@ from astrodb_utils.publications import (
 )
 
 from astropy.io import ascii
+from math import isnan
+import logging
 
 # logger = logging.getLogger(__name__)
 names_ingested = 0
@@ -30,37 +32,31 @@ no_sources = 0
 inside_if = 0
 
 
-DB_SAVE = False
+DB_SAVE = True
 RECREATE_DB = True
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES)
 
 # separate for cases that don't work in our code/ads key stuff
 
-ingest_publication(db, doi="10.1088/0004-637X/748/2/93", reference = "Roja12")  # Roja12
-ingest_publication(db, doi = "10.1088/0067-0049/203/2/21", reference = "AhnC12") # ULAS J074431.30+283915.6 
+#ingest_publication(db, doi="10.1088/0004-637X/748/2/93", reference = "Roja12")  # Roja12
+#ingest_publication(db, doi = "10.1088/0067-0049/203/2/21", reference = "AhnC12") # ULAS J074431.30+283915.6 
 
-ingest_publication(db, bibcode="2018MNRAS.479.1383Z", reference="Zhan18.1352")
-ingest_publication(db, bibcode="2018MNRAS.480.5447Z", reference="Zhan18.2054")
+#ingest_publication(db, bibcode="2018MNRAS.479.1383Z", reference="Zhan18.1352")
+#ingest_publication(db, bibcode="2018MNRAS.480.5447Z", reference="Zhan18.2054")
 
-ingest_source(
+"""ingest_source(
     db,
     "LHS 292",
-    search_db=False,
-    reference="Roja12",
-    ra_col_name="ra",
-    dec_col_name="dec",
-    epoch_col_name="epoch",
-)
+    search_db=True,
+    reference="Roja12"
+)"""
 
-ingest_source(
+"""ingest_source(
     db,
     "ULAS J074431.30+283915.6",
-    search_db=False,
-    reference="AhnC12",
-    ra_col_name="ra",
-    dec_col_name="dec",
-    epoch_col_name="epoch",
-)
+    search_db=True,
+    reference="AhnC12"
+)"""
 
 link = (
     "scripts/ingests/bones_archive/theBonesArchivePhotometryMain.csv"
@@ -87,7 +83,8 @@ def extractADS(link):
 
 
 for source in bones_sheet_table:
-    bones_name = source["NAME"].replace("\u2212", "-")
+    bones_name = source["NAME"].replace("\\u2212", "-")
+    bones_name = bones_name.replace("\\u2013", "-")
     match = None
 
     if len(bones_name) > 0 and bones_name != "null":
@@ -99,7 +96,7 @@ for source in bones_sheet_table:
             ra_col_name="ra",
             dec_col_name="dec",
         )
-        if len(match) == 1:
+        """if len(match) == 1:
             try:
                 ingest_names(
                     db, match[0], bones_name
@@ -107,6 +104,7 @@ for source in bones_sheet_table:
                 names_ingested += 1
             except AstroDBError as e:
                 raise e  # only error is if there is a preexisting name anyways.
+    """
 
         if match is None:
             match = find_source_in_db(
@@ -174,10 +172,10 @@ for source in bones_sheet_table:
 
 
 total = len(bones_sheet_table)
-logger.info(f"skipped:{skipped}") # 92 skipped
-logger.info(f"sources_ingested:{sources_ingested}") # 117 ingsted 
+logger.info(f"skipped:{skipped}") # 172 skipped
+logger.info(f"sources_ingested:{sources_ingested}") # 37 ingsted 
 logger.info(f"total: {total}") # 209 total
-logger.info(f"already_exists: {already_exists}") # 92 already exists
+logger.info(f"already_exists: {already_exists}") # 172 already exists
 
 if DB_SAVE:
     db.save_database(directory="data/")
