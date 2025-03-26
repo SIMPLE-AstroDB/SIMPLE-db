@@ -29,7 +29,7 @@ def test_discovery_references(db):
 
     ref = "West08"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 194, f"found {len(t)} discovery reference entries for {ref}"
+    assert len(t) == 192, f"found {len(t)} discovery reference entries for {ref}"
 
     ref = "Reid08.1290"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
@@ -73,7 +73,7 @@ def test_discovery_references(db):
 
     ref = "Kirk10"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 58, f"found {len(t)} discovery reference entries for {ref}"
+    assert len(t) == 56, f"found {len(t)} discovery reference entries for {ref}"
 
     ref = "Cruz07"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
@@ -157,7 +157,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 282
+        len(s) == 256
     ), f"found {len(s)} sources with 2MASS designation that have no 2MASS photometry"
 
     # If 2MASS photometry, 2MASS designation should be in Names
@@ -197,7 +197,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 486
+        len(s) == 480
     ), f"found {len(s)} sources with WISE designation that have no WISE photometry"
 
     # If Wise photometry, Wise designation should be in Names
