@@ -35,7 +35,7 @@ RECREATE_DB = True
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES)
 
 # separate for cases that don't work in our code/ads key stuff
-
+"""
 ingest_publication(db, doi="10.1088/0004-637X/748/2/93", reference = "Roja12")  # Roja12
 ingest_publication(db, doi = "10.1088/0067-0049/203/2/21", reference = "AhnC12") # ULAS J074431.30+283915.6 
 
@@ -61,7 +61,7 @@ ingest_source(
     dec_col_name="dec",
     epoch_col_name="epoch",
 )
-
+"""
 link = (
     "scripts/ingests/bones_archive/theBonesArchivePhotometryMain.csv"
 )
@@ -87,7 +87,9 @@ def extractADS(link):
 
 
 for source in bones_sheet_table:
-    bones_name = source["NAME"].replace("\u2212", "-")
+    bones_name = source["NAME"].replace("\\u2212", "-")
+    bones_name = bones_name.replace("\\u2013", "-")
+    bones_name = bones_name.replace("\\u2014", "-")
     match = None
 
     if len(bones_name) > 0 and bones_name != "null":
@@ -99,6 +101,7 @@ for source in bones_sheet_table:
             ra_col_name="ra",
             dec_col_name="dec",
         )
+        """
         if len(match) == 1:
             try:
                 ingest_names(
@@ -107,11 +110,11 @@ for source in bones_sheet_table:
                 names_ingested += 1
             except AstroDBError as e:
                 raise e  # only error is if there is a preexisting name anyways.
-
+"""
         if match is None:
             match = find_source_in_db(
                 db,
-                source["NAME"],
+                bones_name,
                 ra=source["RA"],
                 dec=source["DEC"],
             )
@@ -127,9 +130,11 @@ for source in bones_sheet_table:
             )
             logger.debug(f"adsMatch: {adsMatch}")
 
-            if not adsMatch[0]:
-                logger.debug(f"ingesting publication {ads}")
-                ingest_publication(db, bibcode=ads)
+            try:
+                if adsMatch[0] == False:
+                    ingest_publication(db = db, bibcode=ads)
+            except:
+                logger.warning("Find and ingest pattern didn't work" + ads)
 
             try:
                 source_reference = find_publication(db, bibcode=ads)
@@ -140,7 +145,7 @@ for source in bones_sheet_table:
 
                 ingest_source(
                     db,
-                    source=source["NAME"],
+                    source=bones_name,
                     reference=source_reference[1],
                     ra=source["RA"],
                     dec=source["DEC"],
@@ -174,10 +179,10 @@ for source in bones_sheet_table:
 
 
 total = len(bones_sheet_table)
-logger.info(f"skipped:{skipped}") # 92 skipped
-logger.info(f"sources_ingested:{sources_ingested}") # 117 ingsted 
+logger.info(f"skipped:{skipped}") # 105 skipped
+logger.info(f"sources_ingested:{sources_ingested}") # 104 ingsted 
 logger.info(f"total: {total}") # 209 total
-logger.info(f"already_exists: {already_exists}") # 92 already exists
+logger.info(f"already_exists: {already_exists}") # 101 already exists
 
 if DB_SAVE:
     db.save_database(directory="data/")
