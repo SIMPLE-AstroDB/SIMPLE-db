@@ -4,7 +4,8 @@ from astrodb_utils.sources import (
     AstroDBError,
     ingest_source,
     find_publication,
-)
+    ingest_names,
+    )
 
 from astrodb_utils.publications import (
     ingest_publication,
@@ -22,7 +23,7 @@ import sqlalchemy.exc
 
 """logger = logging.getLogger(__name__)"""
 
-DB_SAVE = False
+DB_SAVE = True
 RECREATE_DB = True
 db = load_astrodb(
     "SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES
@@ -30,7 +31,7 @@ db = load_astrodb(
 
 #ingest doi publications because it isn't compatible with extractADS function
 #comment out when DB_SAVE = True because publications and sources already exist in db
-ingest_publication(db, doi="10.1088/0004-637X/748/2/93", reference = "Roja12") #Roja12
+"""ingest_publication(db, doi="10.1088/0004-637X/748/2/93", reference = "Roja12") #Roja12
 ingest_publication(db, doi = "10.1088/0067-0049/203/2/21", reference = "Ahn_12") #ahn_12
 ingest_publication (db, bibcode = "2018MNRAS.479.1383Z", reference = "Zhan18.1352")
 ingest_publication (db, bibcode = "2018MNRAS.480.5447Z", reference = "Zhan18.2054")
@@ -46,11 +47,11 @@ ingest_source(
     "LHS 292",
     search_db=True,
     reference="Roja12",
-)
+)"""
 
 # Load photometry sheet
 link = (
-    "scripts/ingests/bones_archive/bones_archive_photometry_ads.csv"
+    "scripts/ingests/bones_archive/fixed_bones_archive_photometry.csv"
 )
 
 # read the csv data into an astropy table
@@ -78,19 +79,15 @@ def extractADS(link):
 
 
 for source in bones_sheet_table:
-    bones_name = source["NAME"].replace("\\u2212", "-")
-    bones_name = source["NAME"].replace("\\u2013", "-")
+    bones_name = source["NAME"].replace("\u2212", "-")
+    bones_name = bones_name.replace("\u2212", "-")
+    bones_name = bones_name.replace("\u2013", "-")
+    bones_name = bones_name.replace("\2014", "-")
     match = None
+    print(bones_name)
 
     ##tries to find match of name in database
-    if len(bones_name) > 0 and bones_name != "null":
-        match = find_source_in_db(
-            db,
-            bones_name,
-            ra=source["RA"],
-            dec=source["DEC"],
-
-        )
+    if len(bones_name) > 0:
 
         if (match == None):
             match = find_source_in_db(
@@ -106,10 +103,14 @@ for source in bones_sheet_table:
             ads_match = None
             ref = source["Discovery Ref."]
             ads_match = find_publication(db = db, bibcode = ads)
+            print(ads_match)
 
             #if ads not in db, ingest
-            if ads_match[0] == False:
-                ingest_publication(db = db, bibcode = ads,)
+            try:
+                if ads_match[0] == False:
+                    ingest_publication(db = db, bibcode = ads)
+            except:
+                logger.warning("Find and ingest pattern didn't work" + ads)
             
             try:
 
@@ -118,14 +119,14 @@ for source in bones_sheet_table:
                 dec = source["DEC"]
 
                 #if publication not found in database, skip
-                # doesn't make sense because we're supposed to ingest publications before...
                 if reference[1] == 0:
                     skipped+=1
+                    logger.warning("Reference does not exist.")
                     continue
 
                 ingest_source(
                     db,
-                    source = bones_name,
+                    source = str(bones_name),
                     reference = reference[1],
                     ra = ra,
                     dec = dec,
@@ -144,6 +145,10 @@ for source in bones_sheet_table:
                     raise AstroDBError(msg) from e
         
         elif len(match) == 1:
+            ingest_names(
+                db, source=match[0], other_name =bones_name
+            )  # ingest new names while were at it
+            logger.warning("Source already exists in the database.")
             already_exists+=1
             skipped+=1
         else:
@@ -152,12 +157,13 @@ for source in bones_sheet_table:
             logger.warning("ingest failed with error: " + str(a))
             raise AstroDBError(msg) from a
     else:
+        logger.warning("Bones_name is null and doesn't exist.")
         skipped+=1
         
 total = len(bones_sheet_table)
-logger.info(f"ingested:{ingested}")  # 105 ingested
-logger.info(f"already exists:{already_exists}")  # 103 due to preexisting data
-logger.info(f"skipped:{skipped}")  # 104 skipped
+logger.info(f"ingested:{ingested}")  # 115 ingested
+logger.info(f"already exists:{already_exists}")  # 91 due to preexisting data
+logger.info(f"skipped:{skipped}")  # 94 skipped
 logger.info(f"total:{total}") # 209 total
 if DB_SAVE:
     db.save_database(directory="data/")
