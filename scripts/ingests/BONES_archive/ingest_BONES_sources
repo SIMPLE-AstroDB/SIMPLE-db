@@ -99,7 +99,7 @@ for source in bones_sheet_table:
                 
         if len(match) == 0:
             #ingest_publications for ads
-            ads = extractADS(source["ADS_Link"])
+            ads = extractADS(source["ADS_LINK"])
             ads_match = None
             ref = source["Discovery Ref."]
             ads_match = find_publication(db = db, bibcode = ads)
