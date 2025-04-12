@@ -531,7 +531,7 @@ def test_sources(db):
 
     ref = "Kirk10"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 58, f"found {len(t)} sources from {ref}"
+    assert len(t) == 59, f"found {len(t)} sources from {ref}"
 
     ref = "Deac14.119"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
