@@ -20,6 +20,37 @@ tables:
 # ###################################################
 
   - name: Publications
+    "@id": "#Publications"
+    description: Reference information (DOI, bibcodes, etc)
+    primaryKey: 
+    - "#Publications.reference"
+
+    columns:
+    - name: reference
+      "@id": "#Publications.reference"
+      datatype: string
+      length: 30
+      description: Publication reference identifier
+      ivoa:ucd: meta.ref;meta.main
+      nullable: false
+    - name: bibcode
+      "@id": "#Publications.bibcode"
+      datatype: string
+      length: 100
+      description: Publication bibcode
+      ivoa:ucd: meta.bib.bibcode
+    - name: doi
+      "@id": "#Publications.doi"
+      datatype: string
+      length: 100
+      description: Publication DOI
+      ivoa:ucd: meta.ref.doi
+    - name: description
+      "@id": "#Publications.description"
+      datatype: string
+      length: 1000
+      description: Publication description
+
   - name: Telescopes
   - name: Instruments
   - name: Parameters
