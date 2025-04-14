@@ -1,12 +1,13 @@
-import pytest
-import os
 import logging
-from astrodbkit.astrodb import create_database, Database
+import os
 import sys
+
+import pytest
+from astrodb_utils import load_astrodb
+from astrodbkit.astrodb import Database, create_database
 
 sys.path.append("./")  # needed for github actions to find the simple module
 from simple import REFERENCE_TABLES
-
 
 logger = logging.getLogger("AstroDB")
 
@@ -26,24 +27,10 @@ def db():
     assert os.path.exists(DB_NAME)
 
     # Connect to the new database
-    db = Database(connection_string, reference_tables=REFERENCE_TABLES)
-
-    # Load the data into the database
-    db.load_database(DB_PATH, verbose=False)
-
-    # TODO: Need to check if this still works with the new felis approach
-    # # Load data into an in-memory sqlite database first, for performance
-    # db = Database(
-    #     "sqlite://", reference_tables=REFERENCE_TABLES
-    # )  # creates and connects to a temporary in-memory database
-    # db.load_database(
-    #     DB_PATH, verbose=False
-    # )  # loads the data from the data files into the database
-    # db.dump_sqlite(DB_NAME)  # dump in-memory database to file
-    # db = Database(
-    #     "sqlite:///" + DB_NAME, reference_tables=REFERENCE_TABLES
-    # )  # replace database object with new file version
-    # logger.info("Loaded SIMPLE database using db function in conftest")
+    db = load_astrodb(DB_NAME,
+                      data_path=DB_PATH,
+                      reference_tables=REFERENCE_TABLES,
+                      felis_schema=SCHEMA_PATH)
 
     return db
 
