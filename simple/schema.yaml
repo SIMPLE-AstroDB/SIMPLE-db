@@ -173,6 +173,39 @@ tables:
         - "#Parameters.parameter"
 
   - name: PhotometryFilters
+    "@id": "#PhotometryFilters"
+    description: Photometry filter information. This stores relationships between filters and instruments, telescopes, as well as wavelength and width
+    primaryKey: 
+    - "#PhotometryFilters.band"
+
+    columns:
+    - name: band
+      "@id": "#PhotometryFilters.band"
+      datatype: string
+      length: 30
+      description: Band name. Must be of the form instrument.filter
+      ivoa:ucd: instr.bandpass;meta.main
+      nullable: false
+    - name: ucd
+      "@id": "#PhotometryFilters.ucd"
+      datatype: string
+      length: 100
+      description: Unified Content Descriptor of the photometry filter
+    - name: effective_wavelength
+      "@id": "#PhotometryFilters.effective_wavelength_angstroms"
+      datatype: double
+      description: Effective wavelength of the photometry filter in Angstroms
+      fits:tunit: Angstrom
+      nullable: false
+    - name: width
+      "@id": "#PhotometryFilters.width_angstroms"
+      datatype: double
+      fits:tunit: Angstrom
+      description: Width of the ephotometry filter in Angstroms
+      ivoa:ucd: instr.bandwidth
+
+  # TODO: Consider constrait to avoid negative width
+
   - name: Versions
   - name: Regimes
 
