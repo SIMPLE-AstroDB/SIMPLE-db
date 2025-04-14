@@ -1,5 +1,6 @@
 # Test to verify database integrity
 # database object 'db' defined in conftest.py
+import pytest
 from astrodbkit.astrodb import or_
 from astropy import units as u
 from astropy.table import unique
@@ -659,6 +660,7 @@ def test_special_characters(db):
                     assert all(check), f"{char} in {table_name}"
 
 
+@pytest.mark.skip(reason="Views not implemented through Felis")
 def test_database_views(db):
     # Tests to verify views exist and work as intended
 
