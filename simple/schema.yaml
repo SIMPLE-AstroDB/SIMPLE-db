@@ -1008,23 +1008,11 @@ tables:
         description: Link Spectra telescope to Instruments table
         columns:
         - "#Spectra.telescope"
-        referencedColumns:
-        - "#Instruments.telescope"
-      - name: Spectra_instrument_Instruments_instrument
-        "@type": "ForeignKey"
-        "@id": "#FK_Spectra_instrument_Instruments_instrument"
-        description: Link Spectra instrument to Instruments table
-        columns:
         - "#Spectra.instrument"
-        referencedColumns:
-        - "#Instruments.instrument"
-      - name: Spectra_mode_Instruments_mode
-        "@type": "ForeignKey"
-        "@id": "#FK_Spectra_mode_Instruments_mode"
-        description: Link Spectra mode to Instruments table
-        columns:
         - "#Spectra.mode"
         referencedColumns:
+        - "#Instruments.telescope"
+        - "#Instruments.instrument"
         - "#Instruments.mode"
       - name: Spectra_reference_Publications_reference
         "@type": "ForeignKey"
