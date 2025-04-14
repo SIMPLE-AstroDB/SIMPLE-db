@@ -338,12 +338,12 @@ tables:
         "@type": Check
         "@id": "#Sources_check_ra_bounds"
         description: Validate RA range
-        expression: ra_deg >= 0 AND ra_deg <= 360
+        expression: ra >= 0 AND ra <= 360
       - name: check_dec
         "@type": Check
         "@id": "#Sources_check_dec_bounds"
         description: Validate Dec range
-        expression: dec_deg >= -90 AND dec_deg <= 90
+        expression: dec >= -90 AND dec <= 90
       - name: Source_reference_Publications_reference
         "@type": "ForeignKey"
         "@id": "#FK_Sources_reference_Publications_reference"
@@ -721,7 +721,7 @@ tables:
         "@type": Check
         "@id": "#check_radial_velocity_error"
         description: Validate radial velocity error
-        expression: rv_error >= 0
+        expression: radial_velocity_error_km_s >= 0
 
   - name: SpectralTypes
     "@id": "#SpectralTypes"
