@@ -940,7 +940,7 @@ tables:
       "@id": "#Spectra.telescope"
       datatype: string
       length: 30
-      description: Telescope, mission, or survey name; links to Telescopes table
+      description: Telescope, mission, or survey name; links to reference in the Instruments table
     - name: instrument
       "@id": "#Spectra.instrument"
       datatype: string
@@ -1004,12 +1004,12 @@ tables:
         - "#Regimes.regime"
       - name: Spectra_telescope_Telescopes_telescope
         "@type": "ForeignKey"
-        "@id": "#FK_Spectra_telescope_Telescopes_telescope"
-        description: Link Spectra telescope to Telescopes table
+        "@id": "#FK_Spectra_telescope_Instruments_telescope"
+        description: Link Spectra telescope to Instruments table
         columns:
         - "#Spectra.telescope"
         referencedColumns:
-        - "#Telescopes.telescope"
+        - "#Instruments.telescope"
       - name: Spectra_instrument_Instruments_instrument
         "@type": "ForeignKey"
         "@id": "#FK_Spectra_instrument_Instruments_instrument"
