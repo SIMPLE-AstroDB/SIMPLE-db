@@ -7,7 +7,7 @@ description: "Schema for the SIMPLE Database"
 # CONVENTIONS
 # - Source length is 50 characters
 # - Reference is 30 characters. ivoa:ucd: meta.ref
-# - Comments are 100 characters. ivoa:ucd: meta.note
+# - Comments are 1000 characters. ivoa:ucd: meta.note
 # - Description is 100 characters. ivoa:ucd: meta.note
 # - Values are datatype: double
 # - Adopted: ivoa:ucd: meta.code
@@ -496,8 +496,156 @@ tables:
         - "#Publications.reference"
 
   - name: Parallaxes
+    "@id": "#Parallaxes"
+    description: Parallaxes for Sources
+    primaryKey: 
+    - "#Parallaxes.source"
+    - "#Parallaxes.reference"
+
+    columns:
+    - name: source
+      "@id": "#Parallaxes.source"
+      datatype: string
+      length: 100
+      description: Main identifier for an object; links to Sources table
+      ivoa:ucd: meta.id;meta.main
+      nullable: false
+    - name: parallax
+      "@id": "#Parallaxes.parallax"
+      datatype: double
+      description: Parallax value for this entry, in mas
+      fits:tunit: mas
+      ivoa:ucd: pos.parallax
+    - name: parallax_error
+      "@id": "#Parallaxes.magnitude_error"
+      datatype: double
+      description: Uncertainty of this parallax value
+      fits:tunit: mas
+      ivoa:ucd: stat.error;pos.parallax
+    - name: adopted
+      "@id": "#Parallaxes.adopted"
+      datatype: boolean
+      description: Flag to indicate if this is the adopted entry
+    - name: comments
+      "@id": "#Parallaxes.comments"
+      datatype: string
+      length: 1000
+      description: Free-form comments for this entry
+      ivoa:ucd: meta.note
+    - name: reference
+      "@id": "#Parallaxes.reference"
+      datatype: string
+      length: 30
+      description: Publication reference; links to Publications table
+      ivoa:ucd: meta.ref
+      nullable: false
+    
+    indexes:
+      - name: PK_Parallaxes
+        "@id": "#PK_Parallaxes"
+        description: Primary key for Parallaxes table
+        columns: 
+        - "#Parallaxes.source"
+        - "#Parallaxes.reference"
+    constraints:
+      - name: Parallaxes_source_Sources_source
+        "@type": "ForeignKey"
+        "@id": "#FK_Parallaxes_source_Sources_source"
+        description: Link Parallaxes source to Sources table
+        columns:
+        - "#Parallaxes.source"
+        referencedColumns:
+        - "#Sources.source"
+      - name: Parallaxes_reference_Publications_reference
+        "@type": "ForeignKey"
+        "@id": "#FK_Parallaxes_reference_Publications_reference"
+        description: Link Parallaxes reference to Publications table
+        columns:
+        - "#Parallaxes.reference"
+        referencedColumns:
+        - "#Publications.reference"
+  
+  # TODO: Add constraint to avoid negative parallax
+
   - name: ProperMotions
+
+
   - name: RadialVelocities
+    "@id": "#RadialVelocities"
+    description: Radial Velocities of Sources
+    primaryKey: 
+    - "#RadialVelocities.source"
+    - "#RadialVelocities.reference"
+
+    columns:
+    - name: source
+      "@id": "#RadialVelocities.source"
+      datatype: string
+      length: 50
+      description: Main identifier for an object; links to Sources table
+      ivoa:ucd: meta.id;meta.main
+      nullable: false
+    - name: radial_velocity_km_s
+      "@id": "#RadialVelocities.radial_velocity_km_s"
+      datatype: double
+      description: Radial velocity value for this entry
+      fits:tunit: km/s
+      ivoa:ucd: spect.dopplerVeloc
+    - name: radial_velocity_error_km_s
+      "@id": "#RadialVelocities.radial_velocity_error_km_s"
+      datatype: double
+      description: Uncertainty of the radial velocity value
+      fits:tunit: km/s
+      ivoa:ucd: stat.error;spect.dopplerVeloc
+    - name: adopted
+      "@id": "#RadialVelocities.adopted"
+      datatype: boolean
+      description: Flag to indicate if this is the adopted entry
+      ivoa:ucd: meta.code
+    - name: comments
+      "@id": "#RadialVelocities.comments"
+      datatype: string
+      length: 1000
+      description: Free-form comments for this entry
+      ivoa:ucd: meta.note
+    - name: reference
+      "@id": "#RadialVelocities.reference"
+      datatype: string
+      length: 30
+      description: Publication reference; links to Publications table
+      ivoa:ucd: meta.ref
+      nullable: false
+
+    indexes:
+      - name: PK_RadialVelocities
+        "@id": "#PK_RadialVelocities"
+        description: Primary key for Radial Velocities table
+        columns: 
+        - "#RadialVelocities.source"
+        - "#RadialVelocities.reference"
+    constraints:
+      - name: RadialVelocities_source_Sources_source
+        "@type": "ForeignKey"
+        "@id": "#FK_RadialVelocities_source_Sources_source"
+        description: Link RadialVelocities source to Sources table
+        columns:
+        - "#RadialVelocities.source"
+        referencedColumns:
+        - "#Sources.source"
+      - name: RadialVelocities_reference_Publications_reference
+        "@type": "ForeignKey"
+        "@id": "#FK_RadialVelocities_reference_Publications_reference"
+        description: Link RadialVelocities reference to Publications table
+        columns:
+        - "#RadialVelocities.reference"
+        referencedColumns:
+        - "#Publications.reference"
+      - name: check_radial_velocity_error
+        "@type": Check
+        "@id": "#check_radial_velocity_error"
+        description: Validate radial velocity error
+        expression: rv_error >= 0
+
   - name: SpectralTypes
   - name: Gravities
   - name: Spectra
