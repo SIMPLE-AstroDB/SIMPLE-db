@@ -15,13 +15,9 @@ from astrodb_utils.publications import (
 import sys
 
 sys.path.append(".")
-import logging
 from astropy.io import ascii
 from simple.schema import REFERENCE_TABLES
-from math import isnan
-import sqlalchemy.exc
 
-"""logger = logging.getLogger(__name__)"""
 
 DB_SAVE = True
 RECREATE_DB = True
