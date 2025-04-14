@@ -90,7 +90,7 @@ def temp_db():
         {"source": "orange", "ra": 90.0673755, "dec": 19.352889, "reference": "Ref 2"},
         {
             "source": "banana",
-            "ra": 360.0673755,
+            "ra": 60.0673755,
             "dec": -18.352889,
             "reference": "Burn08",
         },
