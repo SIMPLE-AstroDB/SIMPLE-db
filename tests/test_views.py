@@ -26,6 +26,10 @@ def test_parallax_view(db):
     with db.engine.begin() as conn:
         db.metadata.create_all(conn)
 
+     # Inspect the database to check if the view exists
+    inspector = sa.inspect(db.engine)
+    assert "ParallaxView" in inspector.get_view_names()
+
     # Views do not exist as attributes to db so db.ViewName does not work
     # TODO: Figure out other ways to refer to it in db.metadata info
     t = db.query(ParallaxView).table()
@@ -64,6 +68,10 @@ def test_photometry_view(db):
     # Create the view in the database
     with db.engine.begin() as conn:
         db.metadata.create_all(conn)
+
+    # Inspect the database to check if the view exists
+    inspector = sa.inspect(db.engine)
+    assert "PhotometryView" in inspector.get_view_names()
 
     # Views do not exist as attributes to db so db.ViewName does not work
     t = db.query(PhotometryView).table()
