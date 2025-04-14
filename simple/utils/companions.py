@@ -1,9 +1,7 @@
 import logging
 import sqlalchemy.exc
-from astrodb_utils.sources import (
-    AstroDBError, find_source_in_db
-)
-
+from astrodb_utils import AstroDBError
+from astrodb_utils.sources import find_source_in_db
 
 __all__ = [
     "ingest_companion_relationships",
