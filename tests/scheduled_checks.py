@@ -3,7 +3,6 @@ import sys
 
 import pytest
 import requests
-# from astrodb_utils.utils import internet_connection
 from astrodb_utils import load_astrodb
 from tqdm import tqdm
 from astroquery.simbad import Simbad
@@ -52,7 +51,7 @@ def test_spectra_urls(db):
     # Display broken spectra regardless if it's the number we expect or not
     print(f"found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}")
 
-    assert 5 <= len(broken_urls) <= 5
+    assert 5 == len(broken_urls)
 
 # Expected fails:
 # 11123099-7653342.txt',
@@ -72,15 +71,8 @@ def test_source_simbad(db):
     # Add all IDS to the Simbad output as well as the user-provided id
     Simbad.add_votable_fields("ids")
 
-    # internet_connection() is not working in the test environment
-    # internet, _ = internet_connection()
-    # if not internet:
-    #    assert False, "No internet connection to check Simbad names"
-
     print("Querying SIMBAD for all SIMPLE sources")
     simbad_results = Simbad.query_objects(name_list)
-    # print(simbad_results.colnames)
-    # ['main_id', 'ra', 'dec', 'coo_err_maj', 'coo_err_min', 'coo_err_angle', 'coo_wavelength', 'coo_bibcode', 'ids', 'user_specified_id', 'object_number_id']
 
     duplicate_count = 0
     not_in_simbad = []
@@ -88,7 +80,6 @@ def test_source_simbad(db):
 
     print("Checking all SIMPLE sources for Simbad names")
     for row in tqdm(simbad_results[["main_id", "ids", "user_specified_id"]].iterrows()):
-        # simbad_main_id = row[0]
         simple_name = row[2]
         try:
             simbad_ids = row[1].decode("utf-8")
@@ -104,11 +95,9 @@ def test_source_simbad(db):
         ]
 
         if len(simbad_names) == 0:
-            # print(f"No Simbad match for {simple_name}")
             not_in_simbad.append(simple_name)
             continue
         else:
-            # print(f"Simbad match {simbad_main_id} for {simple_name}")
             in_simbad.append(simple_name)
 
         # Examine DB for each input, displaying results when more than one source matches
