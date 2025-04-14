@@ -1,0 +1,56 @@
+---
+name: simple
+"@id": "#simple"
+description: "Schema for the SIMPLE Database"
+
+######################################################
+# CONVENTIONS
+# - Source length is 50 characters
+# - Reference is 30 characters. ivoa:ucd: meta.ref
+# - Comments are 100 characters. ivoa:ucd: meta.note
+# - Description is 100 characters. ivoa:ucd: meta.note
+# - Values are datatype: double
+# - Adopted: ivoa:ucd: meta.code
+######################################################
+
+tables:
+#####################################################
+# LOOKUP TABLES 
+# These tables are expected and used by other tables
+# ###################################################
+
+  - name: Publications
+  - name: Telescopes
+  - name: Instruments
+  - name: Parameters
+  - name: PhotometryFilters
+  - name: Versions
+  - name: Regimes
+
+  # Remove Gravity enum?
+
+##########################################################
+# MAIN TABLES
+# Sources - primary table for the database 
+# Names - used to store additional identifiers for sources
+##########################################################
+
+  - name: Sources
+  - name: Names
+
+##########################################################
+# DATA TABLES
+# These store data for the entries in the Sources table
+##########################################################
+
+  - name: Photometry
+  - name: Parallaxes
+  - name: ProperMotions
+  - name: RadialVelocities
+  - name: SpectralTypes
+  - name: Gravities
+  - name: Spectra
+  - name: ModeledParameters
+  - name: CompanionRelationships
+
+  # Figure out how to handle views
