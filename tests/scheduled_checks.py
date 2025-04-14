@@ -35,9 +35,6 @@ def test_spectra_urls(db):
     spectra_urls = db.query(db.Spectra.c.access_url).astropy()
     broken_urls = []
     codes = []
-    # internet, _ = internet_connection()
-    # if not internet:
-    #    assert False, "No internet connection to check spectra urls"
 
     for spectrum_url in tqdm(spectra_urls["access_url"]):
         request_response = requests.head(spectrum_url)
