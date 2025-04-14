@@ -45,7 +45,7 @@ def test_spectra_urls(db):
         status_code = request_response.status_code
         # The website is up if the status code is 200
         # cuny academic commons links give 301 status code
-        if status_code != 200 and status_code != 301:
+        if status_code not in (200, 301):
             broken_urls.append(spectrum_url)
             codes.append(status_code)
 
