@@ -1,9 +1,7 @@
 import logging
 import sqlalchemy.exc
-from astrodb_utils import (
-    AstroDBError,
-)
-
+from astrodb_utils import AstroDBError
+from astrodb_utils.sources import find_source_in_db
 
 __all__ = [
     "ingest_companion_relationships",
@@ -90,6 +88,14 @@ def ingest_companion_relationships(
         msg = f"{source}: Source cannot be the same as companion name"
         logger.error(msg)
         raise AstroDBError(msg)
+    
+    source_name = find_source_in_db(db, source)
+    if len(source_name) != 1:
+        msg = f"{source}: No source or multiple sources found: {source_name}"
+        logger.error(msg)
+        raise AstroDBError(msg)
+    else:
+        source_name = source_name[0]
 
     if projected_separation_arcsec is not None and projected_separation_arcsec < 0:
         msg = f"Projected separation: {projected_separation_arcsec}, cannot be negative"
@@ -118,7 +124,7 @@ def ingest_companion_relationships(
             conn.execute(
                 db.CompanionRelationships.insert().values(
                     {
-                        "source": source,
+                        "source": source_name,
                         "companion_name": companion_name,
                         "projected_separation_arcsec": projected_separation_arcsec,
                         "projected_separation_error": projected_separation_error,
@@ -133,7 +139,7 @@ def ingest_companion_relationships(
         logger.info(
             "ComapnionRelationship added: ",
             [
-                source,
+                source_name,
                 companion_name,
                 relationship,
                 projected_separation_arcsec,
