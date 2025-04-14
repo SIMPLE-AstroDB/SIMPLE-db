@@ -52,6 +52,41 @@ tables:
       description: Publication description
 
   - name: Telescopes
+    "@id": "#Telescopes"
+    description: Telescope, mission, and survey information
+    primaryKey: 
+    - "#Telescopes.telescope"
+
+    columns:
+    - name: telescope
+      "@id": "#Telescopes.telescope"
+      datatype: string
+      length: 30
+      description: Telescope, mission, or survey name
+      ivoa:ucd: meta.id;meta.main
+      nullable: false
+    - name: description
+      "@id": "#Telescopes.description"
+      datatype: string
+      length: 1000
+      description: Telescope description
+      ivoa:ucd: meta.note
+    - name: reference
+      "@id": "#Telescopes.reference"
+      datatype: string
+      length: 30
+      description: Publication reference; links to Publications table
+
+    constraints:
+      - name: Telescopes_reference_Publications_reference
+        "@type": "ForeignKey"
+        "@id": "#FK_Telescopes_reference_Publications_reference"
+        description: Link Telescopes reference to Publications table
+        columns:
+        - "#Telescopes.reference"
+        referencedColumns:
+        - "#Publications.reference"
+
   - name: Instruments
   - name: Parameters
   - name: PhotometryFilters
