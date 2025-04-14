@@ -822,6 +822,79 @@ tables:
         - "#Regimes.regime"
 
   - name: Gravities
+    "@id": "#Gravities"
+    description: Surface gravities for Sources
+    primaryKey: 
+    - "#Gravities.source"
+    - "#Gravities.gravity"
+    - "#Gravities.reference"
+
+    columns:
+    - name: source
+      "@id": "#Gravities.source"
+      datatype: string
+      length: 100
+      description: Main identifier for an object; links to Sources table
+      ivoa:ucd: meta.id;meta.main
+      nullable: false
+    - name: gravity
+      "@id": "#Gravities.gravity"
+      datatype: string
+      length: 20
+      description: Gravity from enumerated values (alpha, beta, etc)
+      ivoa:ucd: meta.code;phys.gravity
+    - name: regime
+      "@id": "#Gravities.regime"
+      datatype: string
+      length: 30
+      description: Gravity regime; links to Regimes table
+      ivoa:ucd: meta.id
+    - name: comments
+      "@id": "#Gravities.comments"
+      datatype: string
+      length: 1000
+      description: Free-form comments for this entry
+      ivoa:ucd: meta.note
+    - name: reference
+      "@id": "#Gravities.reference"
+      datatype: string
+      length: 30
+      description: Publication reference; links to Publications table
+
+    indexes:
+      - name: PK_Gravities
+        "@id": "#PK_Gravities"
+        description: Primary key for Gravities table
+        columns:
+        - "#Gravities.source"
+        - "#Gravities.gravity"
+        - "#Gravities.reference"
+    constraints:
+      - name: Gravities_source_Sources_source
+        "@type": "ForeignKey"
+        "@id": "#FK_Gravities_source_Sources_source"
+        description: Link Gravities source to Sources table
+        columns:
+        - "#Gravities.source"
+        referencedColumns:
+        - "#Sources.source"
+      - name: Gravities_reference_Publications_reference
+        "@type": "ForeignKey"
+        "@id": "#FK_Gravities_reference_Publications_reference"
+        description: Link Gravities reference to Publications table
+        columns:
+        - "#Gravities.reference"
+        referencedColumns:
+        - "#Publications.reference"
+      - name: Gravities_regime_Regimes_regime
+        "@type": "ForeignKey"
+        "@id": "#FK_Gravities_regime_Regimes_regime"
+        description: Link Gravities regime to Regimes table
+        columns:
+        - "#Gravities.regime"
+        referencedColumns:
+        - "#Regimes.regime"
+
   - name: Spectra
   - name: ModeledParameters
   - name: CompanionRelationships
