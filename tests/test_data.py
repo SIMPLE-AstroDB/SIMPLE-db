@@ -21,6 +21,15 @@ def test_discovery_references(db):
         GROUP BY reference
         ORDER By 2 DESC
 
+        # Counting the top 20 references in the Sources Table
+    # spec_ref_count = (
+    #     db.query(Sources.reference, func.count(Sources.reference))
+    #     .group_by(Sources.reference)
+    #     .order_by(func.count(Sources.reference).desc())
+    #     .limit(20)
+    #     .all()
+    # )
+
     """
 
     ref = "Schm10.1808"
@@ -82,6 +91,26 @@ def test_discovery_references(db):
     ref = "Roth"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 83, f"found {len(t)} discovery reference entries for {ref}"
+
+    ref = "Deac14.119"
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 52, f"found {len(t)} sources from {ref}"
+
+    ref = "Hawl02"
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 51, f"found {len(t)} sources from {ref}"
+
+    ref = "Card15"
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 45, f"found {len(t)} sources from {ref}"
+
+    ref = "Burn10.1885"
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 43, f"found {len(t)} sources from {ref}"
+
+    ref = "Albe11"
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == 37, f"found {len(t)} sources from {ref}"
 
 
 def test_proper_motion_refs(db):
