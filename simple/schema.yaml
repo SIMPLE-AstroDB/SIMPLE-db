@@ -266,7 +266,132 @@ tables:
 ##########################################################
 
   - name: Sources
+    "@id": "#Sources"
+    description: "Main identifiers for objects along with coordinates."
+    primaryKey:
+    - "#Sources.source"
+
+    columns:
+    - name: source
+      "@id": "#Sources.source"
+      datatype: string
+      length: 100
+      description: Unique identifier for an object
+      ivoa:ucd: meta.id;src;meta.main
+      nullable: false
+    - name: ra
+      "@id": "#Sources.ra"
+      datatype: double
+      description: ICRS Right Ascension of object
+      fits:tunit: deg
+      ivoa:ucd: pos.eq.ra;meta.main
+    - name: dec
+      "@id": "#Sources.de"
+      datatype: double
+      description: ICRS Declination of object
+      fits:tunit: deg
+      ivoa:ucd: pos.eq.dec;meta.main
+    - name: epoch
+      "@id": "#Sources.epoch"
+      datatype: double
+      description: Decimal year for coordinates (eg, 2015.5)
+      fits:tunit: yr
+    - name: equinox
+      "@id": "#Sources.equinox"
+      datatype: string
+      length: 10
+      description: Equinox reference frame year (eg, J2000)
+    - name: shortname
+      "@id": "#Sources.shortname"
+      datatype: string
+      length: 30
+      description: Short name for the source
+      ivoa:ucd: meta.id;src
+    - name: reference
+      "@id": "#Sources.reference"
+      datatype: string
+      length: 30
+      description: Publication reference; links to Publications table
+      ivoa:ucd: meta.ref;meta.main
+      nullable: false
+    - name: other_references
+      "@id": "#Sources.other_references"
+      datatype: string
+      length: 100
+      description: Additional references
+      ivoa:ucd: meta.ref
+    - name: comments
+      "@id": "#Sources.comments"
+      datatype: string
+      length: 1000
+      description: Free-form comments on this Source
+      ivoa:ucd: meta.note
+
+    indexes:
+      - name: PK_Sources_source
+        "@id": "#PK_Sources_source"
+        description: Primary key for Sources table
+        columns: 
+        - "#Sources.source"
+    constraints:
+      - name: check_ra
+        "@type": Check
+        "@id": "#Sources_check_ra_bounds"
+        description: Validate RA range
+        expression: ra_deg >= 0 AND ra_deg <= 360
+      - name: check_dec
+        "@type": Check
+        "@id": "#Sources_check_dec_bounds"
+        description: Validate Dec range
+        expression: dec_deg >= -90 AND dec_deg <= 90
+      - name: Source_reference_Publications_reference
+        "@type": "ForeignKey"
+        "@id": "#FK_Sources_reference_Publications_reference"
+        description: Link Source reference to Publications table
+        columns:
+        - "#Sources.reference"
+        referencedColumns:
+        - "#Publications.reference"
+
   - name: Names
+    "@id": "#Names"
+    description: "Additional identifiers for objects in Sources table"
+    primaryKey:
+    - "#Names.source"
+    - "#Names.other_name"
+
+    columns:
+    - name: source
+      "@id": "#Names.source"
+      datatype: string
+      length: 100
+      description: Main identifier for an object; links to Sources table
+      ivoa:ucd: meta.id;meta.main
+      nullable: false
+    - name: other_name
+      "@id": "#Names.other_name"
+      datatype: string
+      length: 100
+      description: Alternate identifier for an object
+      ivoa:ucd: meta.id
+      nullable: false
+
+    indexes:
+      - name: PK_Names_source
+        "@id": "#PK_Names_source"
+        description: Primary key for Names table
+        columns: 
+        - "#Names.source"
+        - "#Names.other_name"
+    constraints:
+      - name: Names_source_Source_source
+        "@type": "ForeignKey"
+        "@id": "#FK_Names_source_Source_source"
+        description: Link Names primary identifer to Sources table
+        columns:
+        - "#Names.source"
+        referencedColumns:
+        - "#Sources.source"
 
 ##########################################################
 # DATA TABLES
