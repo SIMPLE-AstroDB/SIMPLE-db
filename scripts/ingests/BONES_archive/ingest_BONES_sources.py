@@ -23,7 +23,7 @@ import sqlalchemy.exc
 
 """logger = logging.getLogger(__name__)"""
 
-DB_SAVE = False
+DB_SAVE = True
 RECREATE_DB = True
 db = load_astrodb(
     "SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES
@@ -151,20 +151,16 @@ for source in bones_sheet_table:
                 epoch_col_name="epoch",
                 raise_error=True,
                 search_db=True,
+                comment="Discovery reference from the BONES archive",
             )  # ingest new sources
             ingested += 1
         except AstroDBError as e:
             # None only error is if there is a preexisting source anyways.
-            msg = "ingest failed with error: " + str(e)
-            logger.warning(msg)
-            if "Already in database" in str(e):
-                already_exists += 1
-                continue
-            else:
-                raise AstroDBError(msg) from e
+            raise AstroDBError from e
 
     elif len(match) == 1:
         logger.warning("Source already exists in the database.")
+        already_exists += 1
         try:
             ingest_name(
                 db, source=match[0], other_name=bones_name, raise_error=True
@@ -176,12 +172,12 @@ for source in bones_sheet_table:
         skipped += 1
         a = AstroDBError
         logger.warning("ingest failed with error: " + str(a))
-        raise AstroDBError(msg) from a
+        raise AstroDBError from a
 
 total = len(bones_sheet_table)
 logger.info(f"ingested:{ingested}")  # 118 ingested
-logger.info(f"already exists:{already_exists}")  # 93 due to preexisting data
-logger.info(f"name added:{name_added}")  # 118 names added
+logger.info(f"already exists:{already_exists-2}")  # 93-2=91 due to preexisting data
+logger.info(f"name added:{name_added}")  # 21 alt names added
 logger.info(f"skipped:{skipped}")  # 0 skipped
 logger.info(f"total:{total}")  # 209 total
 if DB_SAVE:
