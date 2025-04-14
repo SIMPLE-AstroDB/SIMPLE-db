@@ -9,10 +9,11 @@ from astroquery.simbad import Simbad
 from astrodbkit.utils import _name_formatter
 
 sys.path.append(".")
-from simple.schema import REFERENCE_TABLES
+from simple import REFERENCE_TABLES
 
 DB_NAME = "temp_SIMPLE.sqlite"
 DB_PATH = "data"
+SCHEMA_PATH = "simple/schema.yaml"
 
 
 # Load the SIMPLE database
@@ -20,7 +21,10 @@ DB_PATH = "data"
 def db():
 
     # Connect to the new database and confirm it has the Sources table
-    db = load_astrodb(DB_NAME, data_path=DB_PATH, reference_tables=REFERENCE_TABLES)
+    db = load_astrodb(DB_NAME,
+                      data_path=DB_PATH,
+                      reference_tables=REFERENCE_TABLES,
+                      felis_schema=SCHEMA_PATH)
 
     return db
 

@@ -6,8 +6,6 @@ from astropy import units as u
 from astropy.table import unique
 from sqlalchemy import and_, func
 
-from simple.schema import ParallaxView  # , PhotometryView
-
 
 def test_reference_uniqueness(db):
     # Verify that all Publications.name values are unique
@@ -663,6 +661,7 @@ def test_special_characters(db):
 @pytest.mark.skip(reason="Views not implemented through Felis")
 def test_database_views(db):
     # Tests to verify views exist and work as intended
+    from simple.schema import ParallaxView  # , PhotometryView
 
     # Views do not exist as attributes to db so db.ViewName does not work
     # TODO: Figure out other ways to refer to it in db.metadata info

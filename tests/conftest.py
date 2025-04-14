@@ -5,7 +5,7 @@ from astrodbkit.astrodb import create_database, Database
 import sys
 
 sys.path.append("./")  # needed for github actions to find the simple module
-from simple.schema import REFERENCE_TABLES
+from simple import REFERENCE_TABLES
 
 
 logger = logging.getLogger("AstroDB")
