@@ -896,6 +896,145 @@ tables:
         - "#Regimes.regime"
 
   - name: Spectra
+    "@id": "#Spectra"
+    description: Spectra for Sources
+    primaryKey: 
+    - "#Spectra.source"
+    - "#Spectra.regime"
+    - "#Spectra.observation_date"
+    - "#Spectra.reference"
+
+    columns:
+    - name: source
+      "@id": "#Spectra.source"
+      datatype: string
+      length: 100
+      description: Main identifier for an object; links to Sources table
+      ivoa:ucd: meta.id;meta.main
+      nullable: false
+    - name: access_url
+      "@id": "#Spectra.access_url"
+      datatype: string
+      length: 100
+      description: URL for accessing the spectrum
+      ivoa:ucd: meta.ref.url
+    - name: original_spectrum
+      "@id": "#Spectra.original_spectrum"
+      datatype: string
+      length: 1000
+      description: URL for the original spectrum
+      ivoa:ucd: meta.ref.url
+    - name: local_spectrum
+      "@id": "#Spectra.local_spectrum"
+      datatype: string
+      length: 1000
+      description: Local path (via environment variable) to the spectrum file
+      ivoa:ucd: meta.ref
+    - name: regime
+      "@id": "#Spectra.regime"
+      datatype: string
+      length: 30
+      description: Spectral regime; links to Regimes table
+      ivoa:ucd: meta.id
+    - name: telescope
+      "@id": "#Spectra.telescope"
+      datatype: string
+      length: 30
+      description: Telescope, mission, or survey name; links to Telescopes table
+    - name: instrument
+      "@id": "#Spectra.instrument"
+      datatype: string
+      length: 30
+      description: Instrument name; links to Instruments table
+    - name: mode
+      "@id": "#Spectra.mode"
+      datatype: string
+      length: 30
+      description: Instrument mode; links to Instruments table
+    - name: observation_date
+      "@id": "#Spectra.observation_date"
+      datatype: timestamp
+      description: Date of the observation
+      ivoa:ucd: time.epoch
+    - name: comments
+      "@id": "#Spectra.comments"
+      datatype: string
+      length: 1000
+      description: Free-form comments for this entry
+      ivoa:ucd: meta.note
+    - name: reference
+      "@id": "#Spectra.reference"
+      datatype: string
+      length: 30
+      description: Publication reference; links to Publications table
+      ivoa:ucd: meta.ref
+      nullable: false
+    - name: other_references
+      "@id": "#Spectra.other_references"
+      datatype: string
+      length: 100
+      description: Additional references
+      ivoa:ucd: meta.ref
+
+    indexes:
+      - name: PK_Spectra
+        "@id": "#PK_Spectra"
+        description: Primary key for Spectra table
+        columns: 
+        - "#Spectra.source"
+        - "#Spectra.regime"
+        - "#Spectra.observation_date"
+        - "#Spectra.reference"
+    constraints:
+      - name: Spectra_source_Sources_source
+        "@type": "ForeignKey"
+        "@id": "#FK_Spectra_source_Sources_source"
+        description: Link Spectra source to Sources table
+        columns:
+        - "#Spectra.source"
+        referencedColumns:
+        - "#Sources.source"
+      - name: Spectra_regime_Regimes_regime
+        "@type": "ForeignKey"
+        "@id": "#FK_Spectra_regime_Regimes_regime"
+        description: Link Spectra regime to Regimes table
+        columns:
+        - "#Spectra.regime"
+        referencedColumns:
+        - "#Regimes.regime"
+      - name: Spectra_telescope_Telescopes_telescope
+        "@type": "ForeignKey"
+        "@id": "#FK_Spectra_telescope_Telescopes_telescope"
+        description: Link Spectra telescope to Telescopes table
+        columns:
+        - "#Spectra.telescope"
+        referencedColumns:
+        - "#Telescopes.telescope"
+      - name: Spectra_instrument_Instruments_instrument
+        "@type": "ForeignKey"
+        "@id": "#FK_Spectra_instrument_Instruments_instrument"
+        description: Link Spectra instrument to Instruments table
+        columns:
+        - "#Spectra.instrument"
+        referencedColumns:
+        - "#Instruments.instrument"
+      - name: Spectra_mode_Instruments_mode
+        "@type": "ForeignKey"
+        "@id": "#FK_Spectra_mode_Instruments_mode"
+        description: Link Spectra mode to Instruments table
+        columns:
+        - "#Spectra.mode"
+        referencedColumns:
+        - "#Instruments.mode"
+      - name: Spectra_reference_Publications_reference
+        "@type": "ForeignKey"
+        "@id": "#FK_Spectra_reference_Publications_reference"
+        description: Link Spectra reference to Publications table
+        columns:
+        - "#Spectra.reference"
+        referencedColumns:
+        - "#Publications.reference"
+
   - name: ModeledParameters
   - name: CompanionRelationships
 
