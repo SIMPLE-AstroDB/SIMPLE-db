@@ -13,7 +13,39 @@ def reference_verifier(t, name, bibcode, doi):
     assert t[ind]["doi"][0] == doi, f"{name} did not match doi"
 
 
-def test_discovery_references(db):
+def test_sources(db):
+    # Test to verify existing counts of sources
+    n_sources = db.query(db.Sources).count()
+    assert n_sources == 3555, f"found {n_sources} sources"
+    print(f"found {n_sources} sources")
+
+
+@pytest.mark.parametrize(
+    ("ref", "n_sources"),
+    [
+        ("Schm10.1808", 208),
+        ("West08", 194),
+        ("Reid08.1290", 206),
+        ("Cruz03", 165),
+        ("Maro15", 113),
+        ("Best15", 101),
+        ("Kirk11", 100),
+        ("Mace13.6", 93),
+        ("Burn13", 69),
+        ("Gagn15.33", 68),
+        ("Chiu06", 62),
+        ("DayJ13", 61),
+        ("Kirk10", 59),
+        ("Cruz07", 91),
+        ("Roth", 83),
+        ("Deac14.119", 52),
+        ("Hawl02", 51),
+        ("Card15", 45),
+        ("Burn10.1885", 43),
+        ("Albe11", 37),
+    ],
+)
+def test_discovery_references(db, ref, n_sources):
     """
     Values found with this SQL query:
         SELECT reference, count(*)
@@ -32,85 +64,8 @@ def test_discovery_references(db):
 
     """
 
-    ref = "Schm10.1808"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 208, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "West08"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 194, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "Reid08.1290"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 206, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "Cruz03"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 165, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "Maro15"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 113, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "Best15"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 101, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "Kirk11"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 100, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "Mace13.6"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 93, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "Burn13"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 69, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "Gagn15.33"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 68, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "Chiu06"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 62, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "DayJ13"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 61, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "Kirk10"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 59, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "Cruz07"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 91, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "Roth"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 83, f"found {len(t)} discovery reference entries for {ref}"
-
-    ref = "Deac14.119"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 52, f"found {len(t)} sources from {ref}"
-
-    ref = "Hawl02"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 51, f"found {len(t)} sources from {ref}"
-
-    ref = "Card15"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 45, f"found {len(t)} sources from {ref}"
-
-    ref = "Burn10.1885"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 43, f"found {len(t)} sources from {ref}"
-
-    ref = "Albe11"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 37, f"found {len(t)} sources from {ref}"
+    assert len(t) == n_sources, f"found {len(t)} discovery reference entries for {ref}"
 
 
 def test_proper_motion_refs(db):
@@ -371,11 +326,12 @@ def test_spectral_types_classes(db, string, code_min, code_max, n_spectra):
     assert len(result) == n_spectra, f"found {len(result)} {string} spectral types"
     print(f"found {len(result)} {string} spectral types")
 
+
 def test_spectral_types(db):
     n_spectral_types = db.query(db.SpectralTypes).count()
     assert n_spectral_types == 3950, f"found {n_spectral_types} spectral types"
     print(f"found {n_spectral_types} total spectral types")
-    
+
     n_photometric_spectral_types = (
         db.query(db.SpectralTypes).filter(db.SpectralTypes.c.photometric == 1).count()
     )
@@ -392,6 +348,85 @@ def test_spectral_types(db):
         n_adopted_spectral_types == 88
     ), f"found {n_adopted_spectral_types} adopted spectral types"
     print(f"found {n_adopted_spectral_types} adopted spectral types")
+
+
+@pytest.mark.parametrize(
+    ("param", "n_counts"),
+    [
+        ("T eff", 176),
+        ("log g", 176),
+        ("mass", 176),
+        ("radius", 175),
+        ("metallicity", 2),
+    ],
+)
+def test_modeledparameters_params(db, param, n_counts):
+    # Test to verify existing counts of modeled parameters
+    t = (
+        db.query(db.ModeledParameters)
+        .filter(db.ModeledParameters.c.parameter == param)
+        .astropy()
+    )
+    assert (
+        len(t) == n_counts
+    ), f"found {len(t)} modeled parameters with {param} parameter"
+
+
+@pytest.mark.parametrize(
+    ("ref", "n_counts"),
+    [
+        ("Fili15", 696),
+        ("Lodi22", 5),
+    ],
+)
+def test_modeledparameters_refs(db, ref, n_counts):
+    t = (
+        db.query(db.ModeledParameters)
+        .filter(db.ModeledParameters.c.reference == ref)
+        .astropy()
+    )
+    assert len(t) == n_counts, f"found {len(t)} modeled parameters with {ref} reference"
+
+
+def test_radial_velocities(db):
+    t = db.query(db.RadialVelocities).astropy()
+    assert len(t) == 1015, f"found {len(t)} radial velociies"
+
+    ref = "Abaz09"
+    t = (
+        db.query(db.RadialVelocities)
+        .filter(db.RadialVelocities.c.reference == ref)
+        .astropy()
+    )
+    assert len(t) == 445, f"found {len(t)} radial velociies with {ref} reference"
+
+    ref = "Fahe16"
+    t = (
+        db.query(db.RadialVelocities)
+        .filter(db.RadialVelocities.c.reference == ref)
+        .astropy()
+    )
+    assert len(t) == 47, f"found {len(t)} radial velociies with {ref} reference"
+
+    t = (
+        db.query(db.RadialVelocities)
+        .filter(db.RadialVelocities.c.radial_velocity_error_km_s == None)
+        .astropy()
+    )
+    assert len(t) == 89, f"found {len(t)} radial velociies with no uncertainty"
+
+
+def test_companion_relations(db):
+    t = db.query(db.CompanionRelationships).astropy()
+    assert len(t) == 102, f"found {len(t)} companion relationships"
+
+    ref = "Roth24"
+    t = (
+        db.query(db.CompanionRelationships)
+        .filter(db.CompanionRelationships.c.reference == ref)
+        .astropy()
+    )
+    assert len(t) == 89, f"found {len(t)} companion relationships with {ref} reference"
 
 
 # Individual ingest tests
@@ -565,106 +600,17 @@ def test_suar22_ingest(db):
     assert len(t) == 112, f"found {len(t)} spectra entries for {ref}"
 
 
-def test_modeledparameters(db):
-    # Test to verify existing counts of modeled parameters
-    ref = "Fili15"
-    t = (
-        db.query(db.ModeledParameters)
-        .filter(db.ModeledParameters.c.reference == ref)
-        .astropy()
-    )
-    assert len(t) == 696, f"found {len(t)} modeled parameters with {ref} reference"
-
-    # Test to verify log g counts
-    param = "log g"
-    t = (
-        db.query(db.ModeledParameters)
-        .filter(db.ModeledParameters.c.parameter == param)
-        .astropy()
-    )
-    assert len(t) == 176, f"found {len(t)} modeled parameters with {param} parameter"
-
-    # Test to verify metallicity counts
-    param = "metallicity"
-    t = (
-        db.query(db.ModeledParameters)
-        .filter(db.ModeledParameters.c.parameter == param)
-        .astropy()
-    )
-    assert len(t) == 2, f"found {len(t)} modeled parameters with {param} parameter"
-
-    # Test to verify radius counts
-    param = "radius"
-    t = (
-        db.query(db.ModeledParameters)
-        .filter(db.ModeledParameters.c.parameter == param)
-        .astropy()
-    )
-    assert len(t) == 175, f"found {len(t)} modeled parameters with {param} parameter"
-
-    # Test to verify mass counts
-    param = "mass"
-    t = (
-        db.query(db.ModeledParameters)
-        .filter(db.ModeledParameters.c.parameter == param)
-        .astropy()
-    )
-    assert len(t) == 176, f"found {len(t)} modeled parameters with {param} parameter"
-
-    # Test to verify T eff counts
-    param = "T eff"
-    t = (
-        db.query(db.ModeledParameters)
-        .filter(db.ModeledParameters.c.parameter == param)
-        .astropy()
-    )
-    assert len(t) == 176, f"found {len(t)} modeled parameters with {param} parameter"
-
-    # Test to verify Lodi22 reference counts
-    ref = "Lodi22"
-    t = (
-        db.query(db.ModeledParameters)
-        .filter(db.ModeledParameters.c.reference == ref)
-        .astropy()
-    )
-    assert len(t) == 5, f"found {len(t)} modeled parameters with {ref} reference"
-
-
-def test_radial_velocities(db):
-    t = db.query(db.RadialVelocities).astropy()
-    assert len(t) == 1015, f"found {len(t)} radial velociies"
-
-    ref = "Abaz09"
-    t = (
-        db.query(db.RadialVelocities)
-        .filter(db.RadialVelocities.c.reference == ref)
-        .astropy()
-    )
-    assert len(t) == 445, f"found {len(t)} radial velociies with {ref} reference"
-
-    ref = "Fahe16"
-    t = (
-        db.query(db.RadialVelocities)
-        .filter(db.RadialVelocities.c.reference == ref)
-        .astropy()
-    )
-    assert len(t) == 47, f"found {len(t)} radial velociies with {ref} reference"
-
-    t = (
-        db.query(db.RadialVelocities)
-        .filter(db.RadialVelocities.c.radial_velocity_error_km_s == None)
-        .astropy()
-    )
-    assert len(t) == 89, f"found {len(t)} radial velociies with no uncertainty"
-
-def test_companion_relations(db):
-    t = db.query(db.CompanionRelationships).astropy()
-    assert len(t) == 102, f"found {len(t)} companion relationships"
-
-    ref = "Roth24"
-    t = (
-        db.query(db.CompanionRelationships)
-        .filter(db.CompanionRelationships.c.reference == ref)
-        .astropy()
-    )
-    assert len(t) == 89, f"found {len(t)} companion relationships with {ref} reference"
+@pytest.mark.parametrize(
+    ("ref", "n_sources"),
+    [
+        ("Roja12", 1),
+        ("Burg24", 1),
+        ("Zhan18.2054", 32),
+        ("Lodi17", 28),
+        ("Lupi08", 6),
+    ],
+)
+def test_bones_refs(db, ref, n_sources):
+    # Test to verify subdwoarf sources added by the Bones Archive
+    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
+    assert len(t) == n_sources, f"found {len(t)} reference entries for {ref}"
