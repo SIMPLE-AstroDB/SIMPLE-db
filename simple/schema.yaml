@@ -724,6 +724,103 @@ tables:
         expression: rv_error >= 0
 
   - name: SpectralTypes
+    "@id": "#SpectralTypes"
+    description: Spectral types for Sources
+    primaryKey: 
+    - "#SpectralTypes.source"
+    - "#SpectralTypes.spectral_type_string"
+    - "#SpectralTypes.spectral_type_code"
+    - "#SpectralTypes.regime"
+    - "#SpectralTypes.reference"
+
+    columns:
+    - name: source
+      "@id": "#SpectralTypes.source"
+      datatype: string
+      length: 100
+      description: Main identifier for an object; links to Sources table
+      ivoa:ucd: meta.id;meta.main
+      nullable: false
+    - name: spectral_type_string
+      "@id": "#SpectralTypes.spectral_type_string"
+      datatype: string
+      length: 20
+      description: Spectral type value for this entry
+      ivoa:ucd: meta.id;src.spType
+      nullable: false
+    - name: spectral_type_code
+      "@id": "#SpectralTypes.spectral_type_code"
+      datatype: double
+      description: Spectral type code for this entry
+      ivoa:ucd: meta.code;src.spType
+      nullable: false
+    - name: spectral_type_error
+      "@id": "#SpectralTypes.spectral_type_error"
+      datatype: double
+      description: Uncertainty of the spectral type value
+      ivoa:ucd: stat.error;src.spType
+    - name: regime
+      "@id": "#SpectralTypes.regime"
+      datatype: string
+      length: 30
+      description: Spectral type regime; links to Regimes table
+      ivoa:ucd: meta.id
+    - name: adopted
+      "@id": "#SpectralTypes.adopted"
+      datatype: boolean
+      description: Flag to indicate if this is the adopted entry
+    - name: photometric
+      "@id": "#SpectralTypes.photometric"
+      datatype: boolean
+      description: Flag to indicate if this is a photometric spectral type
+    - name: comments
+      "@id": "#SpectralTypes.comments"
+      datatype: string
+      length: 1000
+      description: Free-form comments for this entry
+      ivoa:ucd: meta.note
+    - name: reference
+      "@id": "#SpectralTypes.reference"
+      datatype: string
+      length: 30
+      description: Publication reference; links to Publications table
+
+    indexes:
+      - name: PK_SpectralTypes
+        "@id": "#PK_SpectralTypes"
+        description: Primary key for Spectral Types table
+        columns:
+        - "#SpectralTypes.source"
+        - "#SpectralTypes.spectral_type_string"
+        - "#SpectralTypes.spectral_type_code"
+        - "#SpectralTypes.regime"
+        - "#SpectralTypes.reference"
+    constraints:
+      - name: SpectralTypes_source_Sources_source
+        "@type": "ForeignKey"
+        "@id": "#FK_SpectralTypes_source_Sources_source"
+        description: Link SpectralTypes source to Sources table
+        columns:
+        - "#SpectralTypes.source"
+        referencedColumns:
+        - "#Sources.source"
+      - name: SpectralTypes_reference_Publications_reference
+        "@type": "ForeignKey"
+        "@id": "#FK_SpectralTypes_reference_Publications_reference"
+        description: Link SpectralTypes reference to Publications table
+        columns:
+        - "#SpectralTypes.reference"
+        referencedColumns:
+        - "#Publications.reference"
+      - name: SpectralTypes_regime_Regimes_regime
+        "@type": "ForeignKey"
+        "@id": "#FK_SpectralTypes_regime_Regimes_regime"
+        description: Link SpectralTypes regime to Regimes table
+        columns:
+        - "#SpectralTypes.regime"
+        referencedColumns:
+        - "#Regimes.regime"
+
   - name: Gravities
   - name: Spectra
   - name: ModeledParameters
