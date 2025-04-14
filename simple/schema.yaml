@@ -145,6 +145,33 @@ tables:
         - "#Telescopes.telescope"
 
   - name: Parameters
+    "@id": "#Parameters"
+    description: Parameters lookup table
+    primaryKey: 
+    - "#Parameters.parameter"
+
+    columns:
+    - name: parameter
+      "@id": "#Parameters.parameter"
+      datatype: string
+      length: 30
+      description: Main identifier for a parameter
+      ivoa:ucd: meta.id;meta.main
+      nullable: false
+    - name: description
+      "@id": "#Parameters.description"
+      datatype: string
+      length: 1000
+      description: Description of the parameter
+      ivoa:ucd: meta.note
+
+    indexes:
+      - name: PK_Parameters
+        "@id": "#PK_Parameters"
+        description: Primary key for Parameters table
+        columns: 
+        - "#Parameters.parameter"
+
   - name: PhotometryFilters
   - name: Versions
   - name: Regimes
