@@ -88,6 +88,62 @@ tables:
         - "#Publications.reference"
 
   - name: Instruments
+    "@id": "#Instruments"
+    description: Instrument information
+    primaryKey: 
+    - "#Instruments.instrument"
+    - "#Instruments.mode"
+    - "#Instruments.telescope"
+
+    columns:
+    - name: instrument
+      "@id": "#Instruments.instrument"
+      datatype: string
+      length: 30
+      description: Instrument name
+      ivoa:ucd: instr;meta.main
+      nullable: false
+    - name: mode
+      "@id": "#Instruments.mode"
+      datatype: string
+      length: 30
+      description: Instrument mode
+    - name: telescope
+      "@id": "#Instruments.telescope"
+      datatype: string
+      length: 30
+      description: Telescope, mission, or survey name; links to Telescopes table
+    - name: description
+      "@id": "#Instruments.description"
+      datatype: string
+      length: 1000
+      description: Instrument description
+      ivoa:ucd: meta.note
+    - name: reference
+      "@id": "#Instruments.reference"
+      datatype: string
+      length: 30
+      description: Publication reference; links to Publications table
+      ivoa:ucd: meta.ref
+
+    constraints:
+      - name: Instruments_reference_Publications_reference
+        "@type": "ForeignKey"
+        "@id": "#FK_Instruments_reference_Publications_reference"
+        description: Link Instruments reference to Publications table
+        columns:
+        - "#Instruments.reference"
+        referencedColumns:
+        - "#Publications.reference"
+      - name: Instruments_reference_Telescopes_telescope
+        "@type": "ForeignKey"
+        "@id": "#FK_Instruments_telescope_Telescopes_telescope"
+        description: Link Instruments telescope to Telescopes table
+        columns:
+        - "#Instruments.telescope"
+        referencedColumns:
+        - "#Telescopes.telescope"
+
   - name: Parameters
   - name: PhotometryFilters
   - name: Versions
