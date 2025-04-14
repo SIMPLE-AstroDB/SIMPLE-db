@@ -399,6 +399,102 @@ tables:
 ##########################################################
 
   - name: Photometry
+    "@id": "#Photometry"
+    description: Photometry for Sources
+    primaryKey: 
+    - "#Photometry.source"
+    - "#Photometry.band"
+    - "#Photometry.reference"
+  
+    columns:
+    - name: source
+      "@id": "#Photometry.source"
+      datatype: string
+      length: 100
+      description: Main identifier for an object; links to Sources table
+      ivoa:ucd: meta.id;meta.main
+      nullable: false
+    - name: band
+      "@id": "#Photometry.band"
+      datatype: string
+      length: 30
+      description: Photometry band for this measurement; links to PhotometryFilters table
+    - name: magnitude
+      "@id": "#Photometry.magnitude"
+      datatype: double
+      description: Magnitude value for this entry
+      fits:tunit: mag
+      nullable: false
+    - name: magnitude_error
+      "@id": "#Photometry.magnitude_error"
+      datatype: double
+      description: Uncertainty of this magnitude value
+      fits:tunit: mag
+    - name: telescope
+      "@id": "#Photometry.telescope"
+      datatype: string
+      length: 30
+      description: Telescope, mission, or survey name; links to Telescopes table
+    - name: epoch
+      "@id": "#Photometry.epoch"
+      datatype: double
+      description: Decimal year
+      fits:tunit: yr
+    - name: comments
+      "@id": "#Photometry.comments"
+      datatype: string
+      length: 1000
+      description: Free-form comments for this entry
+      ivoa:ucd: meta.note
+    - name: reference
+      "@id": "#Photometry.reference"
+      datatype: string
+      length: 30
+      description: Publication reference; links to Publications table
+      nullable: false
+
+    indexes:
+      - name: PK_Photometry
+        "@id": "#PK_Photometry"
+        description: Primary key for Photometry table
+        columns: 
+        - "#Photometry.source"
+        - "#Photometry.band"
+        - "#Photometry.reference"
+    constraints:
+      - name: Photometry_source_Sources_source
+        "@type": "ForeignKey"
+        "@id": "#FK_Photometry_source_Sources_source"
+        description: Link Photometry source to Sources table
+        columns:
+        - "#Photometry.source"
+        referencedColumns:
+        - "#Sources.source"
+      - name: Photometry_band_PhotometryFilters_band
+        "@type": "ForeignKey"
+        "@id": "#FK_Photometry_band_PhotometryFilters_band"
+        description: Link Photometry band to PhotometryFilters table
+        columns:
+        - "#Photometry.band"
+        referencedColumns:
+        - "#PhotometryFilters.band"
+      - name: Photometry_telescope_Telescopes_telescope
+        "@type": "ForeignKey"
+        "@id": "#FK_Photometry_telescope_Telescopes_telescope"
+        description: Link Photometry telescope to Telescopes table
+        columns:
+        - "#Photometry.telescope"
+        referencedColumns:
+        - "#Telescopes.telescope"
+      - name: Photometry_reference_Publications_reference
+        "@type": "ForeignKey"
+        "@id": "#FK_Photometry_reference_Publications_reference"
+        description: Link Photometry reference to Publications table
+        columns:
+        - "#Photometry.reference"
+        referencedColumns:
+        - "#Publications.reference"
+
   - name: Parallaxes
   - name: ProperMotions
   - name: RadialVelocities
