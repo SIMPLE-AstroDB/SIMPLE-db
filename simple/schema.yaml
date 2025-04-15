@@ -367,7 +367,11 @@ tables:
 
   - name: Names
     "@id": "#Names"
-    description: "Additional identifiers for objects in Sources table"
+    description: "The Names table contains possible designations for sources in the Sources table. 
+      Every source must have an entry in the Names table.
+      This table is not meant to be a comprehensive list of all designations for a source, but rather 
+      for storing unofficial names and for quick name matching independent of external services. 
+      The combination of *source* and *other_name* is expected to be unique." 
     primaryKey:
     - "#Names.source"
     - "#Names.other_name"

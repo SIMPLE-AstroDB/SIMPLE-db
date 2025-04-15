@@ -1,5 +1,5 @@
 # Names
-Additional identifiers for objects in Sources table
+The Names table contains possible designations for sources in the Sources table. Every source must have an entry in the Names table. This table is not meant to be a comprehensive list of all designations for a source, but rather for storing unofficial names and for quick name matching independent of external services. The combination of *source* and *other_name* is expected to be unique.
 
 
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
