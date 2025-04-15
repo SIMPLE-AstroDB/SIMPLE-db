@@ -658,21 +658,6 @@ def test_special_characters(db):
                     assert all(check), f"{char} in {table_name}"
 
 
-@pytest.mark.skip(reason="Views not implemented through Felis")
-def test_database_views(db):
-    # Tests to verify views exist and work as intended
-    from simple.schema import ParallaxView  # , PhotometryView
-
-    # Views do not exist as attributes to db so db.ViewName does not work
-    # TODO: Figure out other ways to refer to it in db.metadata info
-    t = db.query(ParallaxView).table()
-    print(t)
-    assert len(t) > 0
-
-    # Check view is not part of inventory
-    assert "ParallaxView" not in db.inventory("2MASSI J0019457+521317").keys()
-
-
 def test_companion_relationship(db):
     # There should be no entries without a companion name
     t = (
