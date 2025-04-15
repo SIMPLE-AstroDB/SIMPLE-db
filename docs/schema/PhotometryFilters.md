@@ -1,6 +1,6 @@
 # PhotometryFilters
-Photometry filter information. This stores relationships between filters and instruments, telescopes, as well as wavelength and width
-Columns marked with an exclamation mark (:exclamation:) may not be empty.
+Photometry filter information. This stores relationships between filters and instruments, telescopes, as well as wavelength and width.
+ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
 | :exclamation:**band** | Band name. Must be of the form instrument.filter | string | 30 |  | instr.bandpass;meta.main  |

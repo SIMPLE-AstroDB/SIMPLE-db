@@ -1,6 +1,6 @@
 # ProperMotions
-Proper motions for Sources
-Columns marked with an exclamation mark (:exclamation:) may not be empty.
+Proper motions for Sources.
+ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
 | :exclamation:**source** | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main  |
