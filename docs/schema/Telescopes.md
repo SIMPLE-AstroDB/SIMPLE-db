@@ -1,7 +1,5 @@
-## Telescopes
-### Description
+# Telescopes
 Telescope, mission, and survey information
-### Columns
 | Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
 | --- | --- | --- | --- | --- | --- | --- |
 | telescope | Telescope, mission, or survey name | string | 30 |  | meta.id;meta.main | False |

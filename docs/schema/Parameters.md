@@ -1,7 +1,5 @@
-## Parameters
-### Description
+# Parameters
 Parameters lookup table
-### Columns
 | Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
 | --- | --- | --- | --- | --- | --- | --- |
 | parameter | Main identifier for a parameter | string | 30 |  | meta.id;meta.main | False |

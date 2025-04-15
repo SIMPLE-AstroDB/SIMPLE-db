@@ -1,7 +1,5 @@
-## CompanionRelationships
-### Description
+# CompanionRelationships
 Relationships between sources and their companions
-### Columns
 | Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
 | --- | --- | --- | --- | --- | --- | --- |
 | source | Main identifier for an object; links to Sources table | string | 50 |  | meta.id;meta.main | False |

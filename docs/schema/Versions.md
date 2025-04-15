@@ -1,7 +1,5 @@
-## Versions
-### Description
+# Versions
 Database version information
-### Columns
 | Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
 | --- | --- | --- | --- | --- | --- | --- |
 | version | Version identifier | string | 30 |  | meta.id;meta.main | False |

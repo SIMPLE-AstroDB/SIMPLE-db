@@ -14,10 +14,8 @@ with open(SCHEMA_PATH, "r") as schema_file:
 
         # Prepare a markdown file per table
         with open(f"{OUT_DIR}{table_name}.md", "w") as out_file:
-            out_file.write(f"## {table_name}\n")
-            out_file.write("### Description\n")
+            out_file.write(f"# {table_name}\n")
             out_file.write(f"{table['description']}\n")
-            out_file.write("### Columns\n")
             out_file.write(
                 "| Column Name | Description | Datatype | Length | Units  | UCD | Nullable |\n"
             )

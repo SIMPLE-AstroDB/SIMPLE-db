@@ -1,7 +1,5 @@
-## Sources
-### Description
+# Sources
 Main identifiers for objects along with coordinates.
-### Columns
 | Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
 | --- | --- | --- | --- | --- | --- | --- |
 | source | Unique identifier for an object | string | 100 |  | meta.id;src;meta.main | False |

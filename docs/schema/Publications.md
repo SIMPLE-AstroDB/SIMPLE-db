@@ -1,7 +1,5 @@
-## Publications
-### Description
+# Publications
 Reference information (DOI, bibcodes, etc)
-### Columns
 | Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
 | --- | --- | --- | --- | --- | --- | --- |
 | reference | Publication reference identifier | string | 30 |  | meta.ref;meta.main | False |

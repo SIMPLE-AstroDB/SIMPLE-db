@@ -1,7 +1,5 @@
-## Names
-### Description
+# Names
 Additional identifiers for objects in Sources table
-### Columns
 | Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
 | --- | --- | --- | --- | --- | --- | --- |
 | source | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main | False |

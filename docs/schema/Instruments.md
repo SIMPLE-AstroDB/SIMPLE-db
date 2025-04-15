@@ -1,7 +1,5 @@
-## Instruments
-### Description
+# Instruments
 Instrument information
-### Columns
 | Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
 | --- | --- | --- | --- | --- | --- | --- |
 | instrument | Instrument name | string | 30 |  | instr;meta.main | False |

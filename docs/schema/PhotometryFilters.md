@@ -1,7 +1,5 @@
-## PhotometryFilters
-### Description
+# PhotometryFilters
 Photometry filter information. This stores relationships between filters and instruments, telescopes, as well as wavelength and width
-### Columns
 | Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
 | --- | --- | --- | --- | --- | --- | --- |
 | band | Band name. Must be of the form instrument.filter | string | 30 |  | instr.bandpass;meta.main | False |

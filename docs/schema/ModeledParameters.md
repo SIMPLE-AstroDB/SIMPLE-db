@@ -1,7 +1,5 @@
-## ModeledParameters
-### Description
+# ModeledParameters
 Derived/modeled parameters for sources
-### Columns
 | Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
 | --- | --- | --- | --- | --- | --- | --- |
 | source | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main | False |
