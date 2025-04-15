@@ -1,9 +1,13 @@
 # Script to build markdown documentation from the schema/schema.yaml file
 
+import os
 import yaml
 
 SCHEMA_PATH = "simple/schema.yaml"
-OUT_DIR = "docs/schema/"
+DOCS_DIR = "docs/"
+SCHEMA_DIAGRAM = "docs/figures/auto_schema.png"
+SCHEMA_DOCS_DIR = "docs/schema/"
+SCHEMA_TOC_NAME = "Schema_TOC.md"
 
 # Loop over each table in the schema
 with open(SCHEMA_PATH, "r") as schema_file:
@@ -13,7 +17,7 @@ with open(SCHEMA_PATH, "r") as schema_file:
         table_name = table["name"]
 
         # Prepare a markdown file per table
-        with open(f"{OUT_DIR}{table_name}.md", "w") as out_file:
+        with open(f"{SCHEMA_DOCS_DIR}{table_name}.md", "w") as out_file:
             out_file.write(f"# {table_name}\n")
             # print(table_name)
             out_file.write(f"{table['description']}\n")
@@ -86,3 +90,20 @@ with open(SCHEMA_PATH, "r") as schema_file:
                     out_file.write(foreign_key_table)
                 if checks_exists:
                     out_file.write(checks_table)
+
+    # Make a table of contents-type file
+    with open(os.path.join(DOCS_DIR, SCHEMA_TOC_NAME), "w") as out_file:
+        out_file.write("# Schema Documentation\n")
+        out_file.write(f"This documentation is generated from the {SCHEMA_PATH} file.\n")
+        out_file.write("\n## Tables\n")
+        for table in schema["tables"]:
+            table_name = table["name"]
+            out_file.write(f"- [{table_name}]({table_name}.md)\n")
+        out_file.write("\n")
+
+        if os.path.exists(SCHEMA_DIAGRAM):
+            out_file.write(
+                "## Schema Diagram\n"
+                f"![Schema Diagram]({SCHEMA_DIAGRAM})\n"
+            )
+
