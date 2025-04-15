@@ -1146,7 +1146,7 @@ tables:
       "@id": "#CompanionRelationships.relationship"
       datatype: string
       length: 100
-      description: Relationship of the source to the companion, e.g., "parent", "child", "sibling"
+      description: Relationship of the source to the companion, e.g., "parent", "sibling", "child"
       nullable: false
     - name: comments
       "@id": "#CompanionRelationships.comments"
@@ -1163,7 +1163,7 @@ tables:
     - name: other_companion_names
       "@id": "#CompanionRelationships.other_companion_names"
       datatype: string
-      length: 10000
+      length: 1000
       description: Additional names for the companion object, comma delimited.
       ivoa:ucd: meta.id
 

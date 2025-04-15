@@ -18,7 +18,7 @@ with open(SCHEMA_PATH, "r") as schema_file:
             # print(table_name)
             out_file.write(f"{table['description']}\n")
             out_file.write(
-                "Columns marked with an exclamation mark ( :exclamation:) may not be empty.\n"
+                "\n\nColumns marked with an exclamation mark ( :exclamation:) may not be empty.\n"
             )
             out_file.write(
                 "| Column Name | Description | Datatype | Length | Units  | UCD |\n"
@@ -58,13 +58,25 @@ with open(SCHEMA_PATH, "r") as schema_file:
 
             # Handle any constraints
             if "constraints" in table:
-                out_file.write("## Constraints\n")
-                out_file.write(
-                    "| Type | Description | Columns | Referenced Columns |\n"
-                )
-                out_file.write("| --- | --- | --- | --- |\n")
+
+                # Do Foreign Keys
+                out_file.write("## Foreign Keys\n")
+                out_file.write("| Description | Columns | Referenced Columns |\n")
+                out_file.write("| --- | --- | --- |\n")
                 for constraint in table["constraints"]:
-                    out_file.write(
-                        f"| {constraint['@type']} | {constraint['description']} | {constraint.get('columns', '')} | {constraint.get('referencedColumns', '')} |\n"
-                    )
+                    if constraint.get("@type") == "ForeignKey":
+                        out_file.write(
+                            f"| {constraint['description']} | {constraint.get('columns', '')} | {constraint.get('referencedColumns', '')} |\n"
+                        )
+                out_file.write("\n")
+
+                # Do Checks
+                out_file.write("## Checks\n")
+                out_file.write("| Description | Expression |\n")
+                out_file.write("| --- | --- |\n")
+                for constraint in table["constraints"]:
+                    if constraint.get("@type") == "Check":
+                        out_file.write(
+                            f"| {constraint['description']} | {constraint.get('expression', '')} |\n"
+                        )
                 out_file.write("\n")

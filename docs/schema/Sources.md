@@ -1,5 +1,7 @@
 # Sources
 Main identifiers for objects along with coordinates.
+
+
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
@@ -18,10 +20,14 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | --- | --- | --- |
 | PK_Sources_source | ['#Sources.source'] | Primary key for Sources table |
 
-## Constraints
-| Type | Description | Columns | Referenced Columns |
-| --- | --- | --- | --- |
-| Check | Validate RA range |  |  |
-| Check | Validate Dec range |  |  |
-| ForeignKey | Link Source reference to Publications table | ['#Sources.reference'] | ['#Publications.reference'] |
+## Foreign Keys
+| Description | Columns | Referenced Columns |
+| --- | --- | --- |
+| Link Source reference to Publications table | ['#Sources.reference'] | ['#Publications.reference'] |
+
+## Checks
+| Description | Expression |
+| --- | --- |
+| Validate RA range | ra >= 0 AND ra <= 360 |
+| Validate Dec range | dec >= -90 AND dec <= 90 |
 
