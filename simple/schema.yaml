@@ -568,11 +568,6 @@ tables:
         - "#Parallaxes.reference"
         referencedColumns:
         - "#Publications.reference"
-      - name: check_parallax
-        "@type": Check
-        "@id": "#Parallaxes_check_parallax"
-        description: Validate parallax is not negative
-        expression: parallax >= 0
 
   - name: ProperMotions
     "@id": "#ProperMotions"
