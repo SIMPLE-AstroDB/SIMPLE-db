@@ -1034,7 +1034,10 @@ tables:
 
   - name: ModeledParameters
     "@id": "#ModeledParameters"
-    description: Derived/modeled parameters for sources
+    description: "The ModeledParameters table contains a range of derived/inferred 
+      parameters for sources listed in the Sources table. 
+      The combination of *source*, *parameter*, and *reference* is expected to be unique.
+      Note that *parameter* is linked to the Parameters table. "
     primaryKey: 
     - "#ModeledParameters.source"
     - "#ModeledParameters.parameter"
@@ -1045,40 +1048,45 @@ tables:
       "@id": "#ModeledParameters.source"
       datatype: string
       length: 100
-      description: Main identifier for an object; links to Sources table
+      description: Unique identifier for the source; links to Sources table
       ivoa:ucd: meta.id;meta.main
       nullable: false
     - name: parameter
       "@id": "#ModeledParameters.parameter"
       datatype: string
       length: 30
-      description: Parameter name
+      description: Parameter name; links to Parameters table
       ivoa:ucd: meta.id
       nullable: false
     - name: value
       "@id": "#ModeledParameters.value"
       datatype: double
       description: Value of the parameter
+      nullable: false
+      ivoa:ucd: meta.modelled
     - name: value_error
       "@id": "#ModeledParameters.value_error"
       datatype: double
       description: Uncertainty of the parameter value
+      ivoa:ucd: stat.error;meta.modelled
     - name: unit
       "@id": "#ModeledParameters.unit"
       datatype: string
       length: 20
       description: Unit of the parameter value. Should be astropy units compatible.
+      nullable: false
+      ivoa:ucd: meta.unit
     - name: comments
       "@id": "#ModeledParameters.comments"
       datatype: string
       length: 1000
-      description: Free-form comments for this entry
+      description: Free form comments
       ivoa:ucd: meta.note
     - name: reference
       "@id": "#ModeledParameters.reference"
       datatype: string
       length: 30
-      description: Publication reference; links to Publications table
+      description: Reference; links to Publications table
       ivoa:ucd: meta.ref
       nullable: false
 
