@@ -7,7 +7,7 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | --- | --- | --- | --- | --- | --- |
 | :exclamation:**source** | Unique identifier for the source; links to Sources table | string | 100 |  | meta.id;meta.main  |
 | :exclamation:**parameter** | Parameter name; links to Parameters table | string | 30 |  | meta.id  |
-| :exclamation:**value** | Value of the parameter | double |  |  | meta.modelled  |
+| :exclamation:**value** | Value of the parameter | double |  |  | stat.value;meta.modelled  |
 | value_error | Uncertainty of the parameter value | double |  |  | stat.error;meta.modelled  |
 | :exclamation:**unit** | Unit of the parameter value. Should be astropy units compatible. | string | 20 |  | meta.unit  |
 | comments | Free form comments | string | 1000 |  | meta.note  |
