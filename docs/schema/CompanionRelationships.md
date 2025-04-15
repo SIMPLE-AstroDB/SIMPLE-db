@@ -5,7 +5,7 @@ The CompanionRelationships table contains companions to sources listed in the So
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
-| :exclamation:**source** | Unique identifier for the source; links to Sources table | string | 50 |  | meta.id;meta.main  |
+| :exclamation:**source** | Unique identifier for the source; links to Sources table | string | 100 |  | meta.id;meta.main  |
 | :exclamation:**companion_name** | External identifier for the companion object. Does not link to Sources table. | string | 50 |  | meta.id  |
 | projected_separation_arcsec | Projected separation between the source and companion | double |  | arcsec | pos.angDistance  |
 | projected_separation_error | Uncertainty of the projected separation | double |  | arcsec | stat.error;pos.angDistance  |
@@ -24,8 +24,3 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | --- | --- | --- |
 | Link CompanionRelationships source to Sources table | ['#CompanionRelationships.source'] | ['#Sources.source'] |
 | Link CompanionRelationships reference to Publications table | ['#CompanionRelationships.reference'] | ['#Publications.reference'] |
-
-## Checks
-| Description | Expression |
-| --- | --- |
-

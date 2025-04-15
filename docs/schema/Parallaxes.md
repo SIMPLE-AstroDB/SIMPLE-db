@@ -1,5 +1,7 @@
 # Parallaxes
 Parallaxes for Sources
+
+
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
@@ -15,9 +17,8 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | --- | --- | --- |
 | PK_Parallaxes | ['#Parallaxes.source', '#Parallaxes.reference'] | Primary key for Parallaxes table |
 
-## Constraints
-| Type | Description | Columns | Referenced Columns |
-| --- | --- | --- | --- |
-| ForeignKey | Link Parallaxes source to Sources table | ['#Parallaxes.source'] | ['#Sources.source'] |
-| ForeignKey | Link Parallaxes reference to Publications table | ['#Parallaxes.reference'] | ['#Publications.reference'] |
-
+## Foreign Keys
+| Description | Columns | Referenced Columns |
+| --- | --- | --- |
+| Link Parallaxes source to Sources table | ['#Parallaxes.source'] | ['#Sources.source'] |
+| Link Parallaxes reference to Publications table | ['#Parallaxes.reference'] | ['#Publications.reference'] |

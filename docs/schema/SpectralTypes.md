@@ -1,5 +1,7 @@
 # SpectralTypes
 Spectral types for Sources
+
+
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
@@ -18,10 +20,9 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | --- | --- | --- |
 | PK_SpectralTypes | ['#SpectralTypes.source', '#SpectralTypes.spectral_type_string', '#SpectralTypes.spectral_type_code', '#SpectralTypes.regime', '#SpectralTypes.reference'] | Primary key for Spectral Types table |
 
-## Constraints
-| Type | Description | Columns | Referenced Columns |
-| --- | --- | --- | --- |
-| ForeignKey | Link SpectralTypes source to Sources table | ['#SpectralTypes.source'] | ['#Sources.source'] |
-| ForeignKey | Link SpectralTypes reference to Publications table | ['#SpectralTypes.reference'] | ['#Publications.reference'] |
-| ForeignKey | Link SpectralTypes regime to Regimes table | ['#SpectralTypes.regime'] | ['#Regimes.regime'] |
-
+## Foreign Keys
+| Description | Columns | Referenced Columns |
+| --- | --- | --- |
+| Link SpectralTypes source to Sources table | ['#SpectralTypes.source'] | ['#Sources.source'] |
+| Link SpectralTypes reference to Publications table | ['#SpectralTypes.reference'] | ['#Publications.reference'] |
+| Link SpectralTypes regime to Regimes table | ['#SpectralTypes.regime'] | ['#Regimes.regime'] |

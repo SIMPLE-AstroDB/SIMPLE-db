@@ -1,5 +1,7 @@
 # Photometry
 Photometry for Sources
+
+
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
@@ -17,11 +19,10 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | --- | --- | --- |
 | PK_Photometry | ['#Photometry.source', '#Photometry.band', '#Photometry.reference'] | Primary key for Photometry table |
 
-## Constraints
-| Type | Description | Columns | Referenced Columns |
-| --- | --- | --- | --- |
-| ForeignKey | Link Photometry source to Sources table | ['#Photometry.source'] | ['#Sources.source'] |
-| ForeignKey | Link Photometry band to PhotometryFilters table | ['#Photometry.band'] | ['#PhotometryFilters.band'] |
-| ForeignKey | Link Photometry telescope to Telescopes table | ['#Photometry.telescope'] | ['#Telescopes.telescope'] |
-| ForeignKey | Link Photometry reference to Publications table | ['#Photometry.reference'] | ['#Publications.reference'] |
-
+## Foreign Keys
+| Description | Columns | Referenced Columns |
+| --- | --- | --- |
+| Link Photometry source to Sources table | ['#Photometry.source'] | ['#Sources.source'] |
+| Link Photometry band to PhotometryFilters table | ['#Photometry.band'] | ['#PhotometryFilters.band'] |
+| Link Photometry telescope to Telescopes table | ['#Photometry.telescope'] | ['#Telescopes.telescope'] |
+| Link Photometry reference to Publications table | ['#Photometry.reference'] | ['#Publications.reference'] |

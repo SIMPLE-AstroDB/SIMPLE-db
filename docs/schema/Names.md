@@ -1,5 +1,7 @@
 # Names
 Additional identifiers for objects in Sources table
+
+
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
@@ -11,8 +13,7 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | --- | --- | --- |
 | PK_Names_source | ['#Names.source', '#Names.other_name'] | Primary key for Names table |
 
-## Constraints
-| Type | Description | Columns | Referenced Columns |
-| --- | --- | --- | --- |
-| ForeignKey | Link Names primary identifer to Sources table | ['#Names.source'] | ['#Sources.source'] |
-
+## Foreign Keys
+| Description | Columns | Referenced Columns |
+| --- | --- | --- |
+| Link Names primary identifer to Sources table | ['#Names.source'] | ['#Sources.source'] |

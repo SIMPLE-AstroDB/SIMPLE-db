@@ -1,5 +1,7 @@
 # Gravities
 Surface gravities for Sources
+
+
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
@@ -14,10 +16,9 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | --- | --- | --- |
 | PK_Gravities | ['#Gravities.source', '#Gravities.gravity', '#Gravities.reference'] | Primary key for Gravities table |
 
-## Constraints
-| Type | Description | Columns | Referenced Columns |
-| --- | --- | --- | --- |
-| ForeignKey | Link Gravities source to Sources table | ['#Gravities.source'] | ['#Sources.source'] |
-| ForeignKey | Link Gravities reference to Publications table | ['#Gravities.reference'] | ['#Publications.reference'] |
-| ForeignKey | Link Gravities regime to Regimes table | ['#Gravities.regime'] | ['#Regimes.regime'] |
-
+## Foreign Keys
+| Description | Columns | Referenced Columns |
+| --- | --- | --- |
+| Link Gravities source to Sources table | ['#Gravities.source'] | ['#Sources.source'] |
+| Link Gravities reference to Publications table | ['#Gravities.reference'] | ['#Publications.reference'] |
+| Link Gravities regime to Regimes table | ['#Gravities.regime'] | ['#Regimes.regime'] |

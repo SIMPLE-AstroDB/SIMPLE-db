@@ -1,5 +1,7 @@
 # Regimes
 Regime lookup table. Values used by Spectra and SpectralTypes tables
+
+
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |

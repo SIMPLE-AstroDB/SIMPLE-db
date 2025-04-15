@@ -1,5 +1,7 @@
 # Spectra
 Spectra for Sources
+
+
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
@@ -11,7 +13,7 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | telescope | Telescope, mission, or survey name; links to reference in the Instruments table | string | 30 |  |   |
 | instrument | Instrument name; links to Instruments table | string | 30 |  |   |
 | mode | Instrument mode; links to Instruments table | string | 30 |  |   |
-| observation_date | Date of the observation | timestamp |  |  | time.epoch  |
+| :exclamation:**observation_date** | Date of the observation | timestamp |  |  | time.epoch  |
 | comments | Free-form comments for this entry | string | 1000 |  | meta.note  |
 | :exclamation:**reference** | Publication reference; links to Publications table | string | 30 |  | meta.ref  |
 | other_references | Additional references | string | 100 |  | meta.ref  |
@@ -21,11 +23,10 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | --- | --- | --- |
 | PK_Spectra | ['#Spectra.source', '#Spectra.regime', '#Spectra.observation_date', '#Spectra.reference'] | Primary key for Spectra table |
 
-## Constraints
-| Type | Description | Columns | Referenced Columns |
-| --- | --- | --- | --- |
-| ForeignKey | Link Spectra source to Sources table | ['#Spectra.source'] | ['#Sources.source'] |
-| ForeignKey | Link Spectra regime to Regimes table | ['#Spectra.regime'] | ['#Regimes.regime'] |
-| ForeignKey | Link Spectra telescope to Instruments table | ['#Spectra.telescope', '#Spectra.instrument', '#Spectra.mode'] | ['#Instruments.telescope', '#Instruments.instrument', '#Instruments.mode'] |
-| ForeignKey | Link Spectra reference to Publications table | ['#Spectra.reference'] | ['#Publications.reference'] |
-
+## Foreign Keys
+| Description | Columns | Referenced Columns |
+| --- | --- | --- |
+| Link Spectra source to Sources table | ['#Spectra.source'] | ['#Sources.source'] |
+| Link Spectra regime to Regimes table | ['#Spectra.regime'] | ['#Regimes.regime'] |
+| Link Spectra telescope to Instruments table | ['#Spectra.telescope', '#Spectra.instrument', '#Spectra.mode'] | ['#Instruments.telescope', '#Instruments.instrument', '#Instruments.mode'] |
+| Link Spectra reference to Publications table | ['#Spectra.reference'] | ['#Publications.reference'] |

@@ -45,7 +45,7 @@ with open(SCHEMA_PATH, "r") as schema_file:
                 )
             out_file.write("\n")
 
-            # Handle any indexes
+            # Make the indexes table
             if "indexes" in table:
                 out_file.write("## Indexes\n")
                 out_file.write("| Name | Columns | Description |\n")
@@ -56,27 +56,33 @@ with open(SCHEMA_PATH, "r") as schema_file:
                     )
                 out_file.write("\n")
 
-            # Handle any constraints
+            # Make the constraints table
+            foreign_keys_exists = False
+            checks_exists = False
             if "constraints" in table:
 
                 # Do Foreign Keys
-                out_file.write("## Foreign Keys\n")
-                out_file.write("| Description | Columns | Referenced Columns |\n")
-                out_file.write("| --- | --- | --- |\n")
+                foreign_key_table = "## Foreign Keys\n"
+                foreign_key_table += "| Description | Columns | Referenced Columns |\n"
+                foreign_key_table += "| --- | --- | --- |\n"
+
+                checks_table = "## Checks\n"
+                checks_table += "| Description | Expression |\n"
+                checks_table += "| --- | --- |\n"
+
                 for constraint in table["constraints"]:
                     if constraint.get("@type") == "ForeignKey":
-                        out_file.write(
-                            f"| {constraint['description']} | {constraint.get('columns', '')} | {constraint.get('referencedColumns', '')} |\n"
+                        foreign_keys_exists = True
+                        foreign_key_table += f"| {constraint['description']} | {constraint.get('columns', '')} | {constraint.get('referencedColumns', '')} |\n"
+                    elif constraint.get("@type") == "Check":
+                        checks_exists = True
+                        checks_table += f"| {constraint['description']} | {constraint.get('expression', '')} |\n"
+                    else:
+                        print(
+                            f"Unknown constraint type {constraint.get('@type')} in table {table_name}"
                         )
-                out_file.write("\n")
 
-                # Do Checks
-                out_file.write("## Checks\n")
-                out_file.write("| Description | Expression |\n")
-                out_file.write("| --- | --- |\n")
-                for constraint in table["constraints"]:
-                    if constraint.get("@type") == "Check":
-                        out_file.write(
-                            f"| {constraint['description']} | {constraint.get('expression', '')} |\n"
-                        )
-                out_file.write("\n")
+                if foreign_keys_exists:
+                    out_file.write(foreign_key_table)
+                if checks_exists:
+                    out_file.write(checks_table)

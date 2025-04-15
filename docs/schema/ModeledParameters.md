@@ -1,5 +1,7 @@
 # ModeledParameters
 Derived/modeled parameters for sources
+
+
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
@@ -16,10 +18,9 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | --- | --- | --- |
 | PK_ModeledParameters | ['#ModeledParameters.source', '#ModeledParameters.parameter', '#ModeledParameters.reference'] | Primary key for ModeledParameters table |
 
-## Constraints
-| Type | Description | Columns | Referenced Columns |
-| --- | --- | --- | --- |
-| ForeignKey | Link ModeledParameters source to Sources table | ['#ModeledParameters.source'] | ['#Sources.source'] |
-| ForeignKey | Link ModeledParameters reference to Publications table | ['#ModeledParameters.reference'] | ['#Publications.reference'] |
-| ForeignKey | Link ModeledParameters parameter to Parameters table | ['#ModeledParameters.parameter'] | ['#Parameters.parameter'] |
-
+## Foreign Keys
+| Description | Columns | Referenced Columns |
+| --- | --- | --- |
+| Link ModeledParameters source to Sources table | ['#ModeledParameters.source'] | ['#Sources.source'] |
+| Link ModeledParameters reference to Publications table | ['#ModeledParameters.reference'] | ['#Publications.reference'] |
+| Link ModeledParameters parameter to Parameters table | ['#ModeledParameters.parameter'] | ['#Parameters.parameter'] |

@@ -1,5 +1,7 @@
 # ProperMotions
 Proper motions for Sources
+
+
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
@@ -17,9 +19,8 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | --- | --- | --- |
 | PK_ProperMotions | ['#ProperMotions.source', '#ProperMotions.reference'] | Primary key for Proper Motions table |
 
-## Constraints
-| Type | Description | Columns | Referenced Columns |
-| --- | --- | --- | --- |
-| ForeignKey | Link ProperMotions source to Sources table | ['#ProperMotions.source'] | ['#Sources.source'] |
-| ForeignKey | Link ProperMotions reference to Publications table | ['#ProperMotions.reference'] | ['#Publications.reference'] |
-
+## Foreign Keys
+| Description | Columns | Referenced Columns |
+| --- | --- | --- |
+| Link ProperMotions source to Sources table | ['#ProperMotions.source'] | ['#Sources.source'] |
+| Link ProperMotions reference to Publications table | ['#ProperMotions.reference'] | ['#Publications.reference'] |
