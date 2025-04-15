@@ -579,7 +579,8 @@ tables:
 
   - name: ProperMotions
     "@id": "#ProperMotions"
-    description: Proper motions for Sources
+    description: "The ProperMotions table contains proper motion measurements for sources listed in the Sources table. 
+      The combination of *source* and *reference* is expected to be unique."
     primaryKey: 
     - "#ProperMotions.source"
     - "#ProperMotions.reference"
@@ -598,6 +599,7 @@ tables:
       description: Proper motion in RA*cos(Dec) in mas/yr
       fits:tunit: mas/yr
       ivoa:ucd: pos.pm;pos.eq.ra
+      nullable: false
     - name: mu_ra_error
       "@id": "#ProperMotions.mu_ra_error"
       datatype: double
@@ -610,6 +612,7 @@ tables:
       description: Proper motion in Dec in mas/yr
       fits:tunit: mas/yr
       ivoa:ucd: pos.pm;pos.eq.dec
+      nullable: false
     - name: mu_dec_error
       "@id": "#ProperMotions.mu_dec_error"
       datatype: double
@@ -624,13 +627,14 @@ tables:
       "@id": "#ProperMotions.comments"
       datatype: string
       length: 1000
-      description: Free-form comments for this entry
+      description: Free form comments
       ivoa:ucd: meta.note
     - name: reference
       "@id": "#ProperMotions.reference"
       datatype: string
       length: 30
-      description: Publication reference; links to Publications table
+      description: Reference; links to Publications table
+      nullable: false
 
     indexes:
       - name: PK_ProperMotions
