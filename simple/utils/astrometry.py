@@ -2,7 +2,6 @@ import logging
 from typing import Optional, Union
 from sqlalchemy import and_
 import sqlalchemy.exc
-from simple.schema import Parallaxes
 from astropy.units import Quantity
 from astropy.table import Table
 from astrodbkit.astrodb import Database
@@ -114,10 +113,13 @@ def ingest_parallax(
     flags["content"] = parallax_data
 
     try:
-        plx_obj = Parallaxes(**parallax_data)
-        with db.session as session:
-            session.add(plx_obj)
-            session.commit()
+        # plx_obj = Parallaxes(**parallax_data)
+        # with db.session as session:
+        #     session.add(plx_obj)
+        #     session.commit()
+        with db.engine.connect() as conn:
+            conn.execute(db.Parallaxes.insert().values(parallax_data))
+            conn.commit()
         logger.info(f" Photometry added to database: {parallax_data}\n")
         flags["added"] = True
 

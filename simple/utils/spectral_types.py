@@ -3,7 +3,6 @@ import re
 import logging
 from sqlalchemy import and_
 import sqlalchemy.exc
-from simple.schema import SpectralTypes
 from astrodb_utils import (
     AstroDBError,
 )
@@ -120,10 +119,13 @@ def ingest_spectral_type(
     logger.debug(f"Trying to insert {spt_data} into Spectral Types table ")
 
     try:
-        spt_obj = SpectralTypes(**spt_data)
-        with db.session as session:
-            session.add(spt_obj)
-            session.commit()
+        # spt_obj = SpectralTypes(**spt_data)
+        # with db.session as session:
+        #     session.add(spt_obj)
+        #     session.commit()
+        with db.engine.connect() as conn:
+            conn.execute(db.SpectralTypes.insert().values(spt_data))
+            conn.commit()
         logger.info(f"Spectral type added to database: {spt_data}\n")
     except sqlalchemy.exc.IntegrityError as e:
         if (

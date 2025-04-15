@@ -5,9 +5,9 @@ description: "Schema for the SIMPLE Database"
 
 ######################################################
 # CONVENTIONS
-# - Source length is 50 characters
+# - Source length is 100 characters (changed from 50 in Template)
 # - Reference is 30 characters. ivoa:ucd: meta.ref
-# - Comments are 1000 characters. ivoa:ucd: meta.note
+# - Comments are 1000 characters. ivoa:ucd: meta.note (changed from 100 in Template)
 # - Description is 100 characters. ivoa:ucd: meta.note
 # - Values are datatype: double
 # - Adopted: ivoa:ucd: meta.code
@@ -658,7 +658,7 @@ tables:
     - name: source
       "@id": "#RadialVelocities.source"
       datatype: string
-      length: 50
+      length: 100
       description: Main identifier for an object; links to Sources table
       ivoa:ucd: meta.id;meta.main
       nullable: false
@@ -956,6 +956,7 @@ tables:
       datatype: timestamp
       description: Date of the observation
       ivoa:ucd: time.epoch
+      nullable: false
     - name: comments
       "@id": "#Spectra.comments"
       datatype: string
@@ -1119,7 +1120,7 @@ tables:
     - name: source
       "@id": "#CompanionRelationships.source"
       datatype: string
-      length: 50
+      length: 100
       description: Unique identifier for the source; links to Sources table
       ivoa:ucd: meta.id;meta.main
       nullable: false

@@ -13,8 +13,6 @@ from astrodb_utils.spectra import check_spectrum_plottable
 from astrodbkit.astrodb import Database
 from astropy.io import fits
 
-from simple.schema import Spectra
-
 __all__ = [
     "ingest_spectrum",
     "ingest_spectrum_from_fits",
@@ -179,13 +177,17 @@ def ingest_spectrum(
     flags["content"] = row_data
 
     try:
+        # Removing old version of ingesting with ORM, which used schema.py
         # Attempt to add spectrum to database
         # This will throw errors based on validation in schema.py
         # and any database checks (as for example IntegrityError)
-        obj = Spectra(**row_data)
-        with db.session as session:
-            session.add(obj)
-            session.commit()
+        # obj = Spectra(**row_data)
+        # with db.session as session:
+        #     session.add(obj)
+        #     session.commit()
+        with db.engine.connect() as conn:
+            conn.execute(db.Spectra.insert().values(row_data))
+            conn.commit()
 
         flags["added"] = True
         logger.info(f"Added {source} : \n" f"{row_data}")
