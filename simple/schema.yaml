@@ -663,7 +663,8 @@ tables:
 
   - name: RadialVelocities
     "@id": "#RadialVelocities"
-    description: Radial Velocities of Sources
+    description: "The RadialVelocities table contains radial velocity measurements for sources listed in the Sources table. 
+      The combination of *source* and *reference* is expected to be unique."
     primaryKey: 
     - "#RadialVelocities.source"
     - "#RadialVelocities.reference"
@@ -673,15 +674,16 @@ tables:
       "@id": "#RadialVelocities.source"
       datatype: string
       length: 100
-      description: Main identifier for an object; links to Sources table
+      description: Unique identifier for a source; links to Sources table
       ivoa:ucd: meta.id;meta.main
       nullable: false
     - name: radial_velocity_km_s
       "@id": "#RadialVelocities.radial_velocity_km_s"
       datatype: double
-      description: Radial velocity value for this entry
+      description: Radial velocity measurement for the source
       fits:tunit: km/s
       ivoa:ucd: spect.dopplerVeloc
+      nullable: false
     - name: radial_velocity_error_km_s
       "@id": "#RadialVelocities.radial_velocity_error_km_s"
       datatype: double
@@ -692,18 +694,17 @@ tables:
       "@id": "#RadialVelocities.adopted"
       datatype: boolean
       description: Flag to indicate if this is the adopted entry
-      ivoa:ucd: meta.code
     - name: comments
       "@id": "#RadialVelocities.comments"
       datatype: string
       length: 1000
-      description: Free-form comments for this entry
+      description: Free form comments
       ivoa:ucd: meta.note
     - name: reference
       "@id": "#RadialVelocities.reference"
       datatype: string
       length: 30
-      description: Publication reference; links to Publications table
+      description: Reference; links to Publications table
       ivoa:ucd: meta.ref
       nullable: false
 
