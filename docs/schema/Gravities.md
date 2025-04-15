@@ -1,15 +1,15 @@
 # Gravities
-Surface gravities for Sources
+The Gravities table contains gravity measurements for sources listed in the Sources table. The combination of *source*, *gravity*, and *reference* is expected to be unique. TODO: *gravity* to be linked to GravityList table in the future. #592
 
 
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
-| :exclamation:**source** | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main  |
-| gravity | Gravity from enumerated values (alpha, beta, etc) | string | 20 |  | meta.code;phys.gravity  |
+| :exclamation:**source** | Unique identifier for a source; links to Sources table | string | 100 |  | meta.id;meta.main  |
+| :exclamation:**gravity** | Gravity from enumerated values (alpha, beta, etc) | string | 20 |  | meta.code;phys.gravity  |
 | regime | Gravity regime; links to Regimes table | string | 30 |  | meta.id  |
-| comments | Free-form comments for this entry | string | 1000 |  | meta.note  |
-| reference | Publication reference; links to Publications table | string | 30 |  |   |
+| comments | Free form comments | string | 1000 |  | meta.note  |
+| :exclamation:**reference** | Reference; links to Publications table | string | 30 |  |   |
 
 ## Indexes
 | Name | Columns | Description |

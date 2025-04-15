@@ -850,7 +850,9 @@ tables:
 
   - name: Gravities
     "@id": "#Gravities"
-    description: Surface gravities for Sources
+    description: "The Gravities table contains gravity measurements for sources listed in the Sources table. 
+      The combination of *source*, *gravity*, and *reference* is expected to be unique.
+      TODO: *gravity* to be linked to GravityList table in the future. #592"
     primaryKey: 
     - "#Gravities.source"
     - "#Gravities.gravity"
@@ -861,7 +863,7 @@ tables:
       "@id": "#Gravities.source"
       datatype: string
       length: 100
-      description: Main identifier for an object; links to Sources table
+      description: Unique identifier for a source; links to Sources table
       ivoa:ucd: meta.id;meta.main
       nullable: false
     - name: gravity
@@ -870,6 +872,7 @@ tables:
       length: 20
       description: Gravity from enumerated values (alpha, beta, etc)
       ivoa:ucd: meta.code;phys.gravity
+      nullable: false
     - name: regime
       "@id": "#Gravities.regime"
       datatype: string
@@ -880,13 +883,14 @@ tables:
       "@id": "#Gravities.comments"
       datatype: string
       length: 1000
-      description: Free-form comments for this entry
+      description: Free form comments
       ivoa:ucd: meta.note
     - name: reference
       "@id": "#Gravities.reference"
       datatype: string
       length: 30
-      description: Publication reference; links to Publications table
+      description: Reference; links to Publications table
+      nullable: false
 
     indexes:
       - name: PK_Gravities
