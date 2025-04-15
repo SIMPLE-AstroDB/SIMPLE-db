@@ -1,6 +1,6 @@
 # RadialVelocities
-Radial Velocities of Sources.
- Columns marked with an exclamation mark ( :exclamation:) may not be empty.
+Radial Velocities of Sources
+Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
 | :exclamation:**source** | Main identifier for an object; links to Sources table | string | 50 |  | meta.id;meta.main  |

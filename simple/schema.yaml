@@ -1109,7 +1109,8 @@ tables:
 
   - name: CompanionRelationships
     "@id": "#CompanionRelationships"
-    description: Relationships between sources and their companions
+    description: The CompanionRelationships table contains companions to sources listed in the Sources table. 
+      The combination of *source* and *companion_name* is expected to be unique.
     primaryKey: 
     - "#CompanionRelationships.source"
     - "#CompanionRelationships.companion_name"
@@ -1119,26 +1120,26 @@ tables:
       "@id": "#CompanionRelationships.source"
       datatype: string
       length: 50
-      description: Main identifier for an object; links to Sources table
+      description: Unique identifier for the source; links to Sources table
       ivoa:ucd: meta.id;meta.main
       nullable: false
     - name: companion_name
       "@id": "#CompanionRelationships.companion_name"
       datatype: string
       length: 50
-      description: External identifier for a companion object. Does not link to Sources table.
+      description: External identifier for the companion object. Does not link to Sources table.
       ivoa:ucd: meta.id
       nullable: false
     - name: projected_separation_arcsec
       "@id": "#CompanionRelationships.projected_separation_arcsec"
       datatype: double
-      description: Projected separation between the source and companion in arcseconds
+      description: Projected separation between the source and companion
       fits:tunit: arcsec
       ivoa:ucd: pos.angDistance
     - name: projected_separation_error
       "@id": "#CompanionRelationships.projected_separation_error"
       datatype: double
-      description: Uncertainty of the projected separation in arcseconds
+      description: Uncertainty of the projected separation
       fits:tunit: arcsec
       ivoa:ucd: stat.error;pos.angDistance
     - name: relationship
@@ -1151,13 +1152,13 @@ tables:
       "@id": "#CompanionRelationships.comments"
       datatype: string
       length: 1000
-      description: Free-form comments for this entry
+      description: Free form comments
       ivoa:ucd: meta.note
     - name: reference
       "@id": "#CompanionRelationships.reference"
       datatype: string
       length: 30
-      description: Publication reference; links to Publications table
+      description: Reference; links to Publications table
       ivoa:ucd: meta.ref
     - name: other_companion_names
       "@id": "#CompanionRelationships.other_companion_names"

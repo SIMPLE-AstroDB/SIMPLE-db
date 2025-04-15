@@ -1,6 +1,6 @@
 # ModeledParameters
-Derived/modeled parameters for sources.
- Columns marked with an exclamation mark ( :exclamation:) may not be empty.
+Derived/modeled parameters for sources
+Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
 | :exclamation:**source** | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main  |

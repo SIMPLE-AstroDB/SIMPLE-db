@@ -1,6 +1,6 @@
 # Sources
-Main identifiers for objects along with coordinates..
- Columns marked with an exclamation mark ( :exclamation:) may not be empty.
+Main identifiers for objects along with coordinates.
+Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
 | :exclamation:**source** | Unique identifier for an object | string | 100 |  | meta.id;src;meta.main  |
