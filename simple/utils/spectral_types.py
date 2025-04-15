@@ -124,7 +124,7 @@ def ingest_spectral_type(
         #     session.add(spt_obj)
         #     session.commit()
         with db.engine.connect() as conn:
-            conn.execute(db.Parallaxes.insert().values(spt_data))
+            conn.execute(db.SpectralTypes.insert().values(spt_data))
             conn.commit()
         logger.info(f"Spectral type added to database: {spt_data}\n")
     except sqlalchemy.exc.IntegrityError as e:
