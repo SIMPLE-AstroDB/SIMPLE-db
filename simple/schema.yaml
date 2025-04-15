@@ -744,7 +744,10 @@ tables:
 
   - name: SpectralTypes
     "@id": "#SpectralTypes"
-    description: Spectral types for Sources
+    description: "The SpectralTypes table contains spectral type measurements 
+      for sources listed in the Sources table. 
+      The combination of *source*, *spectral_type_string*, *spectral_type_code*, *regime*, and *reference* 
+      is expected to be unique."
     primaryKey: 
     - "#SpectralTypes.source"
     - "#SpectralTypes.spectral_type_string"
@@ -757,20 +760,21 @@ tables:
       "@id": "#SpectralTypes.source"
       datatype: string
       length: 100
-      description: Main identifier for an object; links to Sources table
+      description: Unique identifier for a source; links to Sources table
       ivoa:ucd: meta.id;meta.main
       nullable: false
     - name: spectral_type_string
       "@id": "#SpectralTypes.spectral_type_string"
       datatype: string
       length: 20
-      description: Spectral type value for this entry
+      description: Spectral type string
       ivoa:ucd: meta.id;src.spType
       nullable: false
     - name: spectral_type_code
       "@id": "#SpectralTypes.spectral_type_code"
       datatype: double
-      description: Spectral type code for this entry
+      description: "Numeric code corresponding to spectral type. 
+        60 = M0, 69 = M9, 70 = L0, 80 = T0, 90 = Y0"
       ivoa:ucd: meta.code;src.spType
       nullable: false
     - name: spectral_type_error
@@ -784,6 +788,7 @@ tables:
       length: 30
       description: Spectral type regime; links to Regimes table
       ivoa:ucd: meta.id
+      nullable: false
     - name: adopted
       "@id": "#SpectralTypes.adopted"
       datatype: boolean
@@ -796,13 +801,13 @@ tables:
       "@id": "#SpectralTypes.comments"
       datatype: string
       length: 1000
-      description: Free-form comments for this entry
+      description: Free form comments
       ivoa:ucd: meta.note
     - name: reference
       "@id": "#SpectralTypes.reference"
       datatype: string
       length: 30
-      description: Publication reference; links to Publications table
+      description: Reference; links to Publications table
 
     indexes:
       - name: PK_SpectralTypes
