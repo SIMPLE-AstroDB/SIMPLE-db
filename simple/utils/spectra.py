@@ -1,11 +1,12 @@
 import logging
 import sqlite3
-from typing import Optional
+from datetime import datetime
+from typing import Optional, Union
 
 import requests
 import sqlalchemy.exc
+from astrodb_utils import AstroDBError, internet_connection
 from astrodb_utils.sources import find_source_in_db
-from astrodb_utils import internet_connection, AstroDBError
 from astrodb_utils.spectra import check_spectrum_plottable
 from astrodbkit.astrodb import Database
 from astropy.io import fits
@@ -31,7 +32,7 @@ def ingest_spectrum(
     telescope: str = None,
     instrument: str = None,
     mode: str = None,
-    obs_date: str = None,
+    obs_date: Union[str, datetime] = None,
     reference: str = None,
     original_spectrum: Optional[str] = None,
     comments: Optional[str] = None,
@@ -60,8 +61,8 @@ def ingest_spectrum(
     mode: str
         Instrument mode used to obtain spectrum.
         Instrument-Mode pair needs to be in Instruments table.
-    obs_date: str
-        Observation date of spectrum.
+    obs_date: str or datetime
+        Observation date of spectrum in ISO format.
 
     Returns
     -------
@@ -81,6 +82,10 @@ def ingest_spectrum(
         "content": {},
         "message": ""
     }
+
+    # If a date is provided as a string, convert it to datetime
+    if obs_date is not None and isinstance(obs_date, str):
+        obs_date = datetime.fromisoformat(obs_date)
 
     # Get source name as it appears in the database
     db_name = find_source_in_db(db, source)
