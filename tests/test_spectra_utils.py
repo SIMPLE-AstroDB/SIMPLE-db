@@ -126,7 +126,6 @@ def test_ingest_spectrum_errors(temp_db, test_input, message):
     # assert message in result["message"]  # Custom error messages from schema.py are no longer returned
 
 
-@pytest.mark.xfail(reason="ingest_spectrum needs to convert obs_date to datetime")
 def test_ingest_spectrum_works(temp_db):
     spectrum = "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J03552337%2B1133437.fits"
     result = ingest_spectrum(
