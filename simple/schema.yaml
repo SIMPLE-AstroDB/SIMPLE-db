@@ -89,7 +89,9 @@ tables:
 
   - name: Instruments
     "@id": "#Instruments"
-    description: Instrument information
+    description: "The Instruments table contains names and references for instruments 
+      (and their modes) referred to in other tables. 
+      The combination of *instrument*, *mode*, and *telescope* is expected to be unique."  
     primaryKey: 
     - "#Instruments.instrument"
     - "#Instruments.mode"
@@ -100,7 +102,7 @@ tables:
       "@id": "#Instruments.instrument"
       datatype: string
       length: 30
-      description: Instrument name
+      description: Name of the instrument
       ivoa:ucd: instr;meta.main
       nullable: false
     - name: mode
@@ -108,11 +110,13 @@ tables:
       datatype: string
       length: 30
       description: Instrument mode
+      nullable: false
     - name: telescope
       "@id": "#Instruments.telescope"
       datatype: string
       length: 30
       description: Telescope, mission, or survey name; links to Telescopes table
+      nullable: false
     - name: description
       "@id": "#Instruments.description"
       datatype: string
@@ -123,7 +127,7 @@ tables:
       "@id": "#Instruments.reference"
       datatype: string
       length: 30
-      description: Publication reference; links to Publications table
+      description: Reference for the instrument and/or mode; links to Publications table
       ivoa:ucd: meta.ref
 
     constraints:
