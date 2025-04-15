@@ -53,7 +53,9 @@ tables:
 
   - name: Telescopes
     "@id": "#Telescopes"
-    description: Telescope, mission, and survey information
+    description: "The Telescopes table contains names and references 
+      for telescopes referred to in other tables.
+      The *telescope* column is required to be unique."
     primaryKey: 
     - "#Telescopes.telescope"
 
@@ -62,8 +64,8 @@ tables:
       "@id": "#Telescopes.telescope"
       datatype: string
       length: 30
-      description: Telescope, mission, or survey name
-      ivoa:ucd: meta.id;meta.main
+      description: Short name for telescope, mission, or survey
+      ivoa:ucd: instr.tel;instr.obsty
       nullable: false
     - name: description
       "@id": "#Telescopes.description"
@@ -76,6 +78,7 @@ tables:
       datatype: string
       length: 30
       description: Publication reference; links to Publications table
+      ivoa:ucd: meta.ref
 
     constraints:
       - name: Telescopes_reference_Publications_reference
