@@ -267,7 +267,9 @@ tables:
 
   - name: Sources
     "@id": "#Sources"
-    description: "Main identifiers for objects along with coordinates."
+    description: "The Sources table contains all objects in the database alongside their coordinates. 
+      This is considered the 'primary' table in the database, as each source 
+      is expected to be unique and is referred to by all other object tables. "
     primaryKey:
     - "#Sources.source"
 
@@ -276,55 +278,55 @@ tables:
       "@id": "#Sources.source"
       datatype: string
       length: 100
-      description: Unique identifier for an object
+      description: Unique identifier for the source
       ivoa:ucd: meta.id;src;meta.main
       nullable: false
     - name: ra
       "@id": "#Sources.ra"
       datatype: double
-      description: ICRS Right Ascension of object
+      description: Right Ascension of the source, ICRS recommended
       fits:tunit: deg
       ivoa:ucd: pos.eq.ra;meta.main
     - name: dec
       "@id": "#Sources.de"
       datatype: double
-      description: ICRS Declination of object
+      description: Declination of the source, ICRS recommended
       fits:tunit: deg
       ivoa:ucd: pos.eq.dec;meta.main
     - name: epoch
       "@id": "#Sources.epoch"
       datatype: double
-      description: Decimal year for coordinates (eg, 2015.5)
+      description: Decimal year for coordinates (e.g., 2015.5). Not needed if using ICRS coordinates.
       fits:tunit: yr
     - name: equinox
       "@id": "#Sources.equinox"
       datatype: string
       length: 10
-      description: Equinox reference frame year (eg, J2000)
+      description: Equinox reference frame year (e.g., J2000)
     - name: shortname
       "@id": "#Sources.shortname"
       datatype: string
       length: 30
-      description: Short name for the source
+      description: Short name for the source. TO BE DELETED.
       ivoa:ucd: meta.id;src
     - name: reference
       "@id": "#Sources.reference"
       datatype: string
       length: 30
-      description: Publication reference; links to Publications table
+      description: Discovery reference for the source; links to Publications table
       ivoa:ucd: meta.ref;meta.main
       nullable: false
     - name: other_references
       "@id": "#Sources.other_references"
       datatype: string
       length: 100
-      description: Additional references
+      description: Additional references, comma-separated.
       ivoa:ucd: meta.ref
     - name: comments
       "@id": "#Sources.comments"
       datatype: string
       length: 1000
-      description: Free-form comments on this Source
+      description: Free form comments
       ivoa:ucd: meta.note
 
     indexes:

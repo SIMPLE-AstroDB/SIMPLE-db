@@ -21,5 +21,4 @@ Columns marked with an asterisk (*) may not be empty.
 - Epoch is the date the source is expected to be at the given coordinate. 
   This date
   is most relevant for high proper option objects and
-- In the case of multiple discovery references, for example independent discovery, choose one
-reference for the `reference` column and put the rest in the `other_references` column.
+- In the case of multiple discovery references, for example independent discovery, choose one reference for the `reference` column and put the rest in the `other_references` column.
