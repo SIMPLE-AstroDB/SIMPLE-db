@@ -1,5 +1,5 @@
 # Schema Documentation
-This documentation is generated from the simple/schema.yaml file using the scripts/build_schema_docs.py file.
+This documentation is generated from the [schema.yaml](simple/schema.yaml) file using [build_schema_docs.py](scripts/build_schema_docs.py).
 
 ## Tables
 - [Publications](schema/Publications.md)
@@ -22,4 +22,5 @@ This documentation is generated from the simple/schema.yaml file using the scrip
 - [CompanionRelationships](schema/CompanionRelationships.md)
 
 ## Schema Diagram
+This diagram is generated from the [schema.yaml](simple/schema.yaml) file using [make_erd.py](scripts/make_erd.py).
 ![Schema Diagram](figures/auto_schema.png)

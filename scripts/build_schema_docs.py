@@ -95,7 +95,9 @@ with open(SCHEMA_PATH, "r") as schema_file:
     # Make a table of contents-type file
     with open(os.path.join(DOCS_DIR, SCHEMA_TOC_NAME), "w") as out_file:
         out_file.write("# Schema Documentation\n")
-        out_file.write(f"This documentation is generated from the {SCHEMA_PATH} file using the scripts/build_schema_docs.py file.\n")
+        out_file.write(
+            f"This documentation is generated from the [schema.yaml]({SCHEMA_PATH}) file using [build_schema_docs.py](scripts/build_schema_docs.py).\n"
+        )
         out_file.write("\n## Tables\n")
         for table in schema["tables"]:
             table_name = table["name"]
@@ -106,6 +108,6 @@ with open(SCHEMA_PATH, "r") as schema_file:
         if os.path.exists(os.path.join(DOCS_DIR, SCHEMA_DIAGRAM)):
             out_file.write(
                 "## Schema Diagram\n"
+                f"This diagram is generated from the [schema.yaml]({SCHEMA_PATH}) file using [make_erd.py](scripts/make_erd.py).\n"
                 f"![Schema Diagram]({SCHEMA_DIAGRAM})\n"
             )
-
