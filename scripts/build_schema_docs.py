@@ -15,6 +15,7 @@ with open(SCHEMA_PATH, "r") as schema_file:
         # Prepare a markdown file per table
         with open(f"{OUT_DIR}{table_name}.md", "w") as out_file:
             out_file.write(f"# {table_name}\n")
+            # print(table_name)
             out_file.write(f"{table['description']}\n")
             out_file.write(
                 "| Column Name | Description | Datatype | Length | Units  | UCD | Nullable |\n"
@@ -28,15 +29,22 @@ with open(SCHEMA_PATH, "r") as schema_file:
                 if units == "":
                     units = column.get("ivoa:unit", "")
 
+                # Identify the required columns
+                if column.get("nullable", "True") is False:
+                    # If the column is required, bold and add asterisk to the name
+                    column_name = f":exclamation:**{column['name']}**"
+                else:
+                    column_name = column["name"]
+
                 # Write out the column
                 out_file.write(
-                    f"| {column['name']} | {column['description']} | {column['datatype']} | {column.get('length', '')} | {units} | {column.get('ivoa:ucd', '')} | {column.get('nullable', 'True')} |\n"
+                    f"| {column_name} | {column['description']} | {column['datatype']} | {column.get('length', '')} | {units} | {column.get('ivoa:ucd', '')} | {column.get('nullable', 'True')} |\n"
                 )
             out_file.write("\n")
 
             # Handle any indexes
             if "indexes" in table:
-                out_file.write("### Indexes\n")
+                out_file.write("## Indexes\n")
                 out_file.write("| Name | Columns | Description |\n")
                 out_file.write("| --- | --- | --- |\n")
                 for index in table["indexes"]:
@@ -47,7 +55,7 @@ with open(SCHEMA_PATH, "r") as schema_file:
 
             # Handle any constraints
             if "constraints" in table:
-                out_file.write("### Constraints\n")
+                out_file.write("## Constraints\n")
                 out_file.write(
                     "| Type | Description | Columns | Referenced Columns |\n"
                 )
