@@ -5,8 +5,8 @@ import yaml
 
 SCHEMA_PATH = "simple/schema.yaml"
 DOCS_DIR = "docs/"
-SCHEMA_DIAGRAM = "docs/figures/auto_schema.png"
-SCHEMA_DOCS_DIR = "docs/schema/"
+SCHEMA_DIAGRAM = "figures/auto_schema.png"
+SCHEMA_SUB_DIR = "schema/"
 SCHEMA_TOC_NAME = "Schema_TOC.md"
 
 # Loop over each table in the schema
@@ -15,9 +15,10 @@ with open(SCHEMA_PATH, "r") as schema_file:
 
     for table in schema["tables"]:
         table_name = table["name"]
+        table_path = os.path.join(DOCS_DIR, SCHEMA_SUB_DIR, f"{table_name}.md")
 
         # Prepare a markdown file per table
-        with open(f"{SCHEMA_DOCS_DIR}{table_name}.md", "w") as out_file:
+        with open(table_path, "w") as out_file:
             out_file.write(f"# {table_name}\n")
             # print(table_name)
             out_file.write(f"{table['description']}\n")
@@ -98,10 +99,11 @@ with open(SCHEMA_PATH, "r") as schema_file:
         out_file.write("\n## Tables\n")
         for table in schema["tables"]:
             table_name = table["name"]
-            out_file.write(f"- [{table_name}]({table_name}.md)\n")
+            table_path = os.path.join(SCHEMA_SUB_DIR, f"{table_name}.md")
+            out_file.write(f"- [{table_name}]({table_path})\n")
         out_file.write("\n")
 
-        if os.path.exists(SCHEMA_DIAGRAM):
+        if os.path.exists(os.path.join(DOCS_DIR, SCHEMA_DIAGRAM)):
             out_file.write(
                 "## Schema Diagram\n"
                 f"![Schema Diagram]({SCHEMA_DIAGRAM})\n"
