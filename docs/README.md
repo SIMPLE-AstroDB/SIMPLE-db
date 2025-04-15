@@ -1,30 +1,25 @@
-# SIMPLE Documentation
+# Schema Documentation
+This documentation is generated from the simple/schema.yaml file using the scripts/build_schema_docs.py file.
 
-Here are the tables currently in our database, with links to their documentation. 
-Object tables contain the main data for each unique source, while Reference tables contain information 
-that is used across individual sources.
+## Tables
+- [Publications](schema/Publications.md)
+- [Telescopes](schema/Telescopes.md)
+- [Instruments](schema/Instruments.md)
+- [Parameters](schema/Parameters.md)
+- [PhotometryFilters](schema/PhotometryFilters.md)
+- [Versions](schema/Versions.md)
+- [Regimes](schema/Regimes.md)
+- [Sources](schema/Sources.md)
+- [Names](schema/Names.md)
+- [Photometry](schema/Photometry.md)
+- [Parallaxes](schema/Parallaxes.md)
+- [ProperMotions](schema/ProperMotions.md)
+- [RadialVelocities](schema/RadialVelocities.md)
+- [SpectralTypes](schema/SpectralTypes.md)
+- [Gravities](schema/Gravities.md)
+- [Spectra](schema/Spectra.md)
+- [ModeledParameters](schema/ModeledParameters.md)
+- [CompanionRelationships](schema/CompanionRelationships.md)
 
-For data to be added to a new source, it must first exist in the Sources table. 
-All sources must also contain at least one entry in the Names table, 
-which can also list additional designations for the source.
-
-Object Tables:
- - [Sources](Sources.md)
- - [Names](Names.md)
- - [Photometry](Photometry.md)
- - [Parallaxes](Parallaxes.md)
- - [ProperMotions](ProperMotions.md)
- - [RadialVelocities](RadialVelocities.md)
- - [SpectralTypes](SpectralTypes.md)
- - [Gravities](Gravities.md)
- - [Spectra](Spectra.md)
- - [ModeledParameters](ModeledParameters.md)
- 
-Reference Tables:
- - [Publications](Publications.md)
- - [Telescopes](Telescopes.md)
- - [Instruments](Instruments.md)
- - [PhometeryFilters](PhotometryFilters.md)
- - Versions
-
-In addition to the physical tables, we also have database [Views](Views.md).
+## Schema Diagram
+![Schema Diagram](figures/auto_schema.png)

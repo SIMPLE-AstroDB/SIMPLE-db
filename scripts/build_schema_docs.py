@@ -7,7 +7,7 @@ SCHEMA_PATH = "simple/schema.yaml"
 DOCS_DIR = "docs/"
 SCHEMA_DIAGRAM = "figures/auto_schema.png"
 SCHEMA_SUB_DIR = "schema/"
-SCHEMA_TOC_NAME = "Schema_TOC.md"
+SCHEMA_TOC_NAME = "README.md"
 
 # Loop over each table in the schema
 with open(SCHEMA_PATH, "r") as schema_file:
@@ -95,7 +95,7 @@ with open(SCHEMA_PATH, "r") as schema_file:
     # Make a table of contents-type file
     with open(os.path.join(DOCS_DIR, SCHEMA_TOC_NAME), "w") as out_file:
         out_file.write("# Schema Documentation\n")
-        out_file.write(f"This documentation is generated from the {SCHEMA_PATH} file.\n")
+        out_file.write(f"This documentation is generated from the {SCHEMA_PATH} file using the scripts/build_schema_docs.py file.\n")
         out_file.write("\n## Tables\n")
         for table in schema["tables"]:
             table_name = table["name"]
