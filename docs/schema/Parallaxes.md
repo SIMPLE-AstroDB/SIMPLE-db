@@ -1,13 +1,13 @@
 # Parallaxes
 Parallaxes for Sources
-| Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
-| --- | --- | --- | --- | --- | --- | --- |
-| :exclamation:**source** | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main | False |
-| parallax | Parallax value for this entry, in mas | double |  | mas | pos.parallax | True |
-| parallax_error | Uncertainty of this parallax value | double |  | mas | stat.error;pos.parallax | True |
-| adopted | Flag to indicate if this is the adopted entry | boolean |  |  |  | True |
-| comments | Free-form comments for this entry | string | 1000 |  | meta.note | True |
-| :exclamation:**reference** | Publication reference; links to Publications table | string | 30 |  | meta.ref | False |
+| Column Name | Description | Datatype | Length | Units  | UCD |
+| --- | --- | --- | --- | --- | --- |
+| :exclamation:**source** | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main  |
+| parallax | Parallax value for this entry, in mas | double |  | mas | pos.parallax  |
+| parallax_error | Uncertainty of this parallax value | double |  | mas | stat.error;pos.parallax  |
+| adopted | Flag to indicate if this is the adopted entry | boolean |  |  |   |
+| comments | Free-form comments for this entry | string | 1000 |  | meta.note  |
+| :exclamation:**reference** | Publication reference; links to Publications table | string | 30 |  | meta.ref  |
 
 ## Indexes
 | Name | Columns | Description |

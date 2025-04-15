@@ -1,9 +1,9 @@
 # Names
 Additional identifiers for objects in Sources table
-| Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
-| --- | --- | --- | --- | --- | --- | --- |
-| :exclamation:**source** | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main | False |
-| :exclamation:**other_name** | Alternate identifier for an object | string | 100 |  | meta.id | False |
+| Column Name | Description | Datatype | Length | Units  | UCD |
+| --- | --- | --- | --- | --- | --- |
+| :exclamation:**source** | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main  |
+| :exclamation:**other_name** | Alternate identifier for an object | string | 100 |  | meta.id  |
 
 ## Indexes
 | Name | Columns | Description |

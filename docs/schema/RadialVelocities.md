@@ -1,13 +1,13 @@
 # RadialVelocities
 Radial Velocities of Sources
-| Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
-| --- | --- | --- | --- | --- | --- | --- |
-| :exclamation:**source** | Main identifier for an object; links to Sources table | string | 50 |  | meta.id;meta.main | False |
-| radial_velocity_km_s | Radial velocity value for this entry | double |  | km/s | spect.dopplerVeloc | True |
-| radial_velocity_error_km_s | Uncertainty of the radial velocity value | double |  | km/s | stat.error;spect.dopplerVeloc | True |
-| adopted | Flag to indicate if this is the adopted entry | boolean |  |  | meta.code | True |
-| comments | Free-form comments for this entry | string | 1000 |  | meta.note | True |
-| :exclamation:**reference** | Publication reference; links to Publications table | string | 30 |  | meta.ref | False |
+| Column Name | Description | Datatype | Length | Units  | UCD |
+| --- | --- | --- | --- | --- | --- |
+| :exclamation:**source** | Main identifier for an object; links to Sources table | string | 50 |  | meta.id;meta.main  |
+| radial_velocity_km_s | Radial velocity value for this entry | double |  | km/s | spect.dopplerVeloc  |
+| radial_velocity_error_km_s | Uncertainty of the radial velocity value | double |  | km/s | stat.error;spect.dopplerVeloc  |
+| adopted | Flag to indicate if this is the adopted entry | boolean |  |  | meta.code  |
+| comments | Free-form comments for this entry | string | 1000 |  | meta.note  |
+| :exclamation:**reference** | Publication reference; links to Publications table | string | 30 |  | meta.ref  |
 
 ## Indexes
 | Name | Columns | Description |

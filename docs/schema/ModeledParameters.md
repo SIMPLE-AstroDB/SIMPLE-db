@@ -1,14 +1,14 @@
 # ModeledParameters
 Derived/modeled parameters for sources
-| Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
-| --- | --- | --- | --- | --- | --- | --- |
-| :exclamation:**source** | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main | False |
-| :exclamation:**parameter** | Parameter name | string | 30 |  | meta.id | False |
-| value | Value of the parameter | double |  |  |  | True |
-| value_error | Uncertainty of the parameter value | double |  |  |  | True |
-| unit | Unit of the parameter value. Should be astropy units compatible. | string | 20 |  |  | True |
-| comments | Free-form comments for this entry | string | 1000 |  | meta.note | True |
-| :exclamation:**reference** | Publication reference; links to Publications table | string | 30 |  | meta.ref | False |
+| Column Name | Description | Datatype | Length | Units  | UCD |
+| --- | --- | --- | --- | --- | --- |
+| :exclamation:**source** | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main  |
+| :exclamation:**parameter** | Parameter name | string | 30 |  | meta.id  |
+| value | Value of the parameter | double |  |  |   |
+| value_error | Uncertainty of the parameter value | double |  |  |   |
+| unit | Unit of the parameter value. Should be astropy units compatible. | string | 20 |  |   |
+| comments | Free-form comments for this entry | string | 1000 |  | meta.note  |
+| :exclamation:**reference** | Publication reference; links to Publications table | string | 30 |  | meta.ref  |
 
 ## Indexes
 | Name | Columns | Description |

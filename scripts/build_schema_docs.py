@@ -18,9 +18,9 @@ with open(SCHEMA_PATH, "r") as schema_file:
             # print(table_name)
             out_file.write(f"{table['description']}\n")
             out_file.write(
-                "| Column Name | Description | Datatype | Length | Units  | UCD | Nullable |\n"
+                "| Column Name | Description | Datatype | Length | Units  | UCD |\n"
             )
-            out_file.write("| --- | --- | --- | --- | --- | --- | --- |\n")
+            out_file.write("| --- | --- | --- | --- | --- | --- |\n")
 
             # Loop over column names to get the column information
             for column in table["columns"]:
@@ -38,7 +38,7 @@ with open(SCHEMA_PATH, "r") as schema_file:
 
                 # Write out the column
                 out_file.write(
-                    f"| {column_name} | {column['description']} | {column['datatype']} | {column.get('length', '')} | {units} | {column.get('ivoa:ucd', '')} | {column.get('nullable', 'True')} |\n"
+                    f"| {column_name} | {column['description']} | {column['datatype']} | {column.get('length', '')} | {units} | {column.get('ivoa:ucd', '')}  |\n"
                 )
             out_file.write("\n")
 

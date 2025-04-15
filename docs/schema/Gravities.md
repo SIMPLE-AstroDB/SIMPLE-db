@@ -1,12 +1,12 @@
 # Gravities
 Surface gravities for Sources
-| Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
-| --- | --- | --- | --- | --- | --- | --- |
-| :exclamation:**source** | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main | False |
-| gravity | Gravity from enumerated values (alpha, beta, etc) | string | 20 |  | meta.code;phys.gravity | True |
-| regime | Gravity regime; links to Regimes table | string | 30 |  | meta.id | True |
-| comments | Free-form comments for this entry | string | 1000 |  | meta.note | True |
-| reference | Publication reference; links to Publications table | string | 30 |  |  | True |
+| Column Name | Description | Datatype | Length | Units  | UCD |
+| --- | --- | --- | --- | --- | --- |
+| :exclamation:**source** | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main  |
+| gravity | Gravity from enumerated values (alpha, beta, etc) | string | 20 |  | meta.code;phys.gravity  |
+| regime | Gravity regime; links to Regimes table | string | 30 |  | meta.id  |
+| comments | Free-form comments for this entry | string | 1000 |  | meta.note  |
+| reference | Publication reference; links to Publications table | string | 30 |  |   |
 
 ## Indexes
 | Name | Columns | Description |

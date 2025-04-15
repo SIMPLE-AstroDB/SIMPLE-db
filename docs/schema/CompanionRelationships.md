@@ -1,15 +1,15 @@
 # CompanionRelationships
 Relationships between sources and their companions
-| Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
-| --- | --- | --- | --- | --- | --- | --- |
-| :exclamation:**source** | Main identifier for an object; links to Sources table | string | 50 |  | meta.id;meta.main | False |
-| :exclamation:**companion_name** | External identifier for a companion object. Does not link to Sources table. | string | 50 |  | meta.id | False |
-| projected_separation_arcsec | Projected separation between the source and companion in arcseconds | double |  | arcsec | pos.angDistance | True |
-| projected_separation_error | Uncertainty of the projected separation in arcseconds | double |  | arcsec | stat.error;pos.angDistance | True |
-| :exclamation:**relationship** | Relationship of the source to the companion, e.g., "parent", "child", "sibling" | string | 100 |  |  | False |
-| comments | Free-form comments for this entry | string | 1000 |  | meta.note | True |
-| reference | Publication reference; links to Publications table | string | 30 |  | meta.ref | True |
-| other_companion_names | Additional names for the companion object, comma delimited. | string | 10000 |  | meta.id | True |
+| Column Name | Description | Datatype | Length | Units  | UCD |
+| --- | --- | --- | --- | --- | --- |
+| :exclamation:**source** | Main identifier for an object; links to Sources table | string | 50 |  | meta.id;meta.main  |
+| :exclamation:**companion_name** | External identifier for a companion object. Does not link to Sources table. | string | 50 |  | meta.id  |
+| projected_separation_arcsec | Projected separation between the source and companion in arcseconds | double |  | arcsec | pos.angDistance  |
+| projected_separation_error | Uncertainty of the projected separation in arcseconds | double |  | arcsec | stat.error;pos.angDistance  |
+| :exclamation:**relationship** | Relationship of the source to the companion, e.g., "parent", "child", "sibling" | string | 100 |  |   |
+| comments | Free-form comments for this entry | string | 1000 |  | meta.note  |
+| reference | Publication reference; links to Publications table | string | 30 |  | meta.ref  |
+| other_companion_names | Additional names for the companion object, comma delimited. | string | 10000 |  | meta.id  |
 
 ## Indexes
 | Name | Columns | Description |

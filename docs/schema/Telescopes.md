@@ -1,10 +1,10 @@
 # Telescopes
 Telescope, mission, and survey information
-| Column Name | Description | Datatype | Length | Units  | UCD | Nullable |
-| --- | --- | --- | --- | --- | --- | --- |
-| :exclamation:**telescope** | Telescope, mission, or survey name | string | 30 |  | meta.id;meta.main | False |
-| description | Telescope description | string | 1000 |  | meta.note | True |
-| reference | Publication reference; links to Publications table | string | 30 |  |  | True |
+| Column Name | Description | Datatype | Length | Units  | UCD |
+| --- | --- | --- | --- | --- | --- |
+| :exclamation:**telescope** | Telescope, mission, or survey name | string | 30 |  | meta.id;meta.main  |
+| description | Telescope description | string | 1000 |  | meta.note  |
+| reference | Publication reference; links to Publications table | string | 30 |  |   |
 
 ## Constraints
 | Type | Description | Columns | Referenced Columns |
