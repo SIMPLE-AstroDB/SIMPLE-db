@@ -513,7 +513,9 @@ tables:
 
   - name: Parallaxes
     "@id": "#Parallaxes"
-    description: Parallaxes for Sources
+    description: "The Parallaxes table contains parallax measurements for sources 
+      listed in the Sources table. 
+      The combination of *source* and *reference* is expected to be unique."
     primaryKey: 
     - "#Parallaxes.source"
     - "#Parallaxes.reference"
@@ -523,36 +525,37 @@ tables:
       "@id": "#Parallaxes.source"
       datatype: string
       length: 100
-      description: Main identifier for an object; links to Sources table
+      description: Unique identifier for a source; links to Sources table
       ivoa:ucd: meta.id;meta.main
       nullable: false
     - name: parallax
       "@id": "#Parallaxes.parallax"
       datatype: double
-      description: Parallax value for this entry, in mas
+      description: Parallax measurement for the source
       fits:tunit: mas
       ivoa:ucd: pos.parallax
+      nullable: false
     - name: parallax_error
       "@id": "#Parallaxes.magnitude_error"
       datatype: double
-      description: Uncertainty of this parallax value
+      description: Uncertainty of the parallax value
       fits:tunit: mas
       ivoa:ucd: stat.error;pos.parallax
     - name: adopted
       "@id": "#Parallaxes.adopted"
       datatype: boolean
-      description: Flag to indicate if this is the adopted entry
+      description: Flag to indicate if this is the adopted measurement
     - name: comments
       "@id": "#Parallaxes.comments"
       datatype: string
       length: 1000
-      description: Free-form comments for this entry
+      description: Free form comments
       ivoa:ucd: meta.note
     - name: reference
       "@id": "#Parallaxes.reference"
       datatype: string
       length: 30
-      description: Publication reference; links to Publications table
+      description: Reference; links to Publications table
       ivoa:ucd: meta.ref
       nullable: false
     
