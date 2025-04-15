@@ -204,7 +204,12 @@ tables:
       description: Width of the ephotometry filter in Angstroms
       ivoa:ucd: instr.bandwidth
 
-  # TODO: Consider constrait to avoid negative width
+    constraints:
+      - name: check_width
+        "@type": Check
+        "@id": "#PhotometryFilters_check_width"
+        description: Validate width is not negative
+        expression: width >= 0
 
   - name: Versions
     "@id": "#Versions"
@@ -256,8 +261,7 @@ tables:
       length: 1000
       description: Description of regime
 
-
-  # Remove Gravity enum?
+  # TODO: Add a GravityList lookup table in place of enumeration
 
 ##########################################################
 # MAIN TABLES
@@ -566,8 +570,6 @@ tables:
         - "#Parallaxes.reference"
         referencedColumns:
         - "#Publications.reference"
-  
-  # TODO: Add constraint to avoid negative parallax
 
   - name: ProperMotions
     "@id": "#ProperMotions"
@@ -1195,5 +1197,3 @@ tables:
         referencedColumns:
         - "#Publications.reference"
 
-
-  # TODO: Figure out how to handle views
