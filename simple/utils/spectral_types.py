@@ -3,9 +3,8 @@ import re
 import logging
 from sqlalchemy import and_
 import sqlalchemy.exc
-from astrodb_utils import (
-    AstroDBError,
-)
+from simple.schema import SpectralTypes
+from astrodb_utils import AstroDBError
 from astrodb_utils.sources import find_source_in_db
 
 
