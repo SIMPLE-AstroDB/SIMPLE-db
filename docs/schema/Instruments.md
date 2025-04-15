@@ -1,5 +1,6 @@
 # Instruments
 Instrument information
+Columns marked with an exclamation mark (:exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
 | :exclamation:**instrument** | Instrument name | string | 30 |  | instr;meta.main  |

@@ -1,5 +1,6 @@
 # Publications
 Reference information (DOI, bibcodes, etc)
+Columns marked with an exclamation mark (:exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
 | :exclamation:**reference** | Publication reference identifier | string | 30 |  | meta.ref;meta.main  |
