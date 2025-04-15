@@ -17,5 +17,5 @@ schema = Schema.model_validate(data)
 metadata = MetaDataBuilder(schema).build()
 
 # Create ER model from the database metadata
-filename = "simple/schema.png"
+filename = "docs/figures/auto_schema.png"
 render_er(metadata, filename)
