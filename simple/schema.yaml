@@ -185,7 +185,8 @@ tables:
 
   - name: PhotometryFilters
     "@id": "#PhotometryFilters"
-    description: Photometry filter information. This stores relationships between filters and instruments, telescopes, as well as wavelength and width
+    description: "The Photometry Filters table contains the names of the filters used by the Photometry table.
+      The combination of *source*, *band*, and *reference* is expected to be unique."
     primaryKey: 
     - "#PhotometryFilters.band"
 
@@ -202,6 +203,7 @@ tables:
       datatype: string
       length: 100
       description: Unified Content Descriptor of the photometry filter
+      ivoa:ucd: meta.ucd
     - name: effective_wavelength
       "@id": "#PhotometryFilters.effective_wavelength_angstroms"
       datatype: double
