@@ -6,8 +6,8 @@ import pandas as pd
 import os
 
 # Load Database
-recreate_db = True
-save_db = False
+recreate_db = False
+save_db = True
 db = load_astrodb("SIMPLE.sqlite", recreatedb=recreate_db, reference_tables=REFERENCE_TABLES)
 path = "scripts/ingests/sanghi23/"
 

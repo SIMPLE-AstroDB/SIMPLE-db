@@ -9,7 +9,7 @@ import os
 # logger.setLevel("DEBUG")
 
 # Load Database
-recreate_db = True
+recreate_db = False
 save_db = True
 db = load_astrodb("SIMPLE.sqlite", recreatedb=recreate_db, reference_tables=REFERENCE_TABLES)
 path = "scripts/ingests/sanghi23/"
