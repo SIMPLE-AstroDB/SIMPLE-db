@@ -1,18 +1,18 @@
 # Photometry
-Photometry for Sources
+The Photometry table contains photometric measurements for sources listed in the Sources table. The combination of *source*, *band*, and *reference* is expected to be unique. 
 
 
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
-| :exclamation:**source** | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main  |
+| :exclamation:**source** | Unique identifier for a source; links to Sources table | string | 100 |  | meta.id;meta.main  |
 | band | Photometry band for this measurement; links to PhotometryFilters table | string | 30 |  |   |
-| :exclamation:**magnitude** | Magnitude value for this entry | double |  | mag |   |
-| magnitude_error | Uncertainty of this magnitude value | double |  | mag |   |
-| telescope | Telescope, mission, or survey name; links to Telescopes table | string | 30 |  |   |
-| epoch | Decimal year | double |  | yr |   |
-| comments | Free-form comments for this entry | string | 1000 |  | meta.note  |
-| :exclamation:**reference** | Publication reference; links to Publications table | string | 30 |  |   |
+| :exclamation:**magnitude** | Photometric magnitude | double |  | mag | phot.mag  |
+| magnitude_error | Uncertainty of the magnitude | double |  | mag | stat.error;phot.mag  |
+| telescope | Telescope, mission, or survey name; links to Telescopes table | string | 30 |  | instr.tel;instr.obsty  |
+| epoch | Decimal year | double |  | yr | time.epoch  |
+| comments | Free form comments | string | 1000 |  | meta.note  |
+| :exclamation:**reference** | Reference; links to Publications table | string | 30 |  | meta.ref  |
 
 ## Indexes
 | Name | Columns | Description |

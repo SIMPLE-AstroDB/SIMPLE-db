@@ -421,7 +421,8 @@ tables:
 
   - name: Photometry
     "@id": "#Photometry"
-    description: Photometry for Sources
+    description: "The Photometry table contains photometric measurements for sources listed in the Sources table. 
+      The combination of *source*, *band*, and *reference* is expected to be unique. "
     primaryKey: 
     - "#Photometry.source"
     - "#Photometry.band"
@@ -432,7 +433,7 @@ tables:
       "@id": "#Photometry.source"
       datatype: string
       length: 100
-      description: Main identifier for an object; links to Sources table
+      description: Unique identifier for a source; links to Sources table
       ivoa:ucd: meta.id;meta.main
       nullable: false
     - name: band
@@ -443,36 +444,41 @@ tables:
     - name: magnitude
       "@id": "#Photometry.magnitude"
       datatype: double
-      description: Magnitude value for this entry
+      description: Photometric magnitude 
       fits:tunit: mag
       nullable: false
+      ivoa:ucd: phot.mag
     - name: magnitude_error
       "@id": "#Photometry.magnitude_error"
       datatype: double
-      description: Uncertainty of this magnitude value
+      description: Uncertainty of the magnitude
       fits:tunit: mag
+      ivoa:ucd: stat.error;phot.mag
     - name: telescope
       "@id": "#Photometry.telescope"
       datatype: string
       length: 30
       description: Telescope, mission, or survey name; links to Telescopes table
+      ivoa:ucd: instr.tel;instr.obsty
     - name: epoch
       "@id": "#Photometry.epoch"
       datatype: double
       description: Decimal year
       fits:tunit: yr
+      ivoa:ucd: time.epoch
     - name: comments
       "@id": "#Photometry.comments"
       datatype: string
       length: 1000
-      description: Free-form comments for this entry
+      description: Free form comments 
       ivoa:ucd: meta.note
     - name: reference
       "@id": "#Photometry.reference"
       datatype: string
       length: 30
-      description: Publication reference; links to Publications table
+      description: Reference; links to Publications table
       nullable: false
+      ivoa:ucd: meta.ref
 
     indexes:
       - name: PK_Photometry
