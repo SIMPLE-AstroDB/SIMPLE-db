@@ -20,7 +20,6 @@ with open(SCHEMA_PATH, "r") as schema_file:
         # Prepare a markdown file per table
         with open(table_path, "w") as out_file:
             out_file.write(f"# {table_name}\n")
-            # print(table_name)
             out_file.write(f"{table['description']}\n")
             out_file.write(
                 "\n\nColumns marked with an exclamation mark ( :exclamation:) may not be empty.\n"
