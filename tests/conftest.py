@@ -1,15 +1,17 @@
-import pytest
-import os
 import logging
-from astrodbkit.astrodb import create_database, Database
+import os
 import sys
 
-sys.path.append("./")  # needed for github actions to find the simple module
-from simple.schema import REFERENCE_TABLES
-from simple.schema import *
+import pytest
+from astrodb_utils import load_astrodb
+from astrodbkit.astrodb import Database, create_database
 
+sys.path.append("./")  # needed for github actions to find the simple module
+from simple import REFERENCE_TABLES
 
 logger = logging.getLogger("AstroDB")
+
+SCHEMA_PATH = "simple/schema.yaml"
 
 
 # Create a fresh SIMPLE database for the data and integrity tests
@@ -17,28 +19,18 @@ logger = logging.getLogger("AstroDB")
 def db():
     DB_NAME = "tests/simple_tests.sqlite"
     DB_PATH = "data"
-
+    
     if os.path.exists(DB_NAME):
         os.remove(DB_NAME)
     connection_string = "sqlite:///" + DB_NAME
-    create_database(connection_string)
+    create_database(connection_string, felis_schema=SCHEMA_PATH)
     assert os.path.exists(DB_NAME)
 
     # Connect to the new database
-    db = Database(connection_string, reference_tables=REFERENCE_TABLES)
-
-    # Load data into an in-memory sqlite database first, for performance
-    db = Database(
-        "sqlite://", reference_tables=REFERENCE_TABLES
-    )  # creates and connects to a temporary in-memory database
-    db.load_database(
-        DB_PATH, verbose=False
-    )  # loads the data from the data files into the database
-    db.dump_sqlite(DB_NAME)  # dump in-memory database to file
-    db = Database(
-        "sqlite:///" + DB_NAME, reference_tables=REFERENCE_TABLES
-    )  # replace database object with new file version
-    logger.info("Loaded SIMPLE database using db function in conftest")
+    db = load_astrodb(DB_NAME,
+                      data_path=DB_PATH,
+                      reference_tables=REFERENCE_TABLES,
+                      felis_schema=SCHEMA_PATH)
 
     return db
 
@@ -51,7 +43,7 @@ def temp_db():
     if os.path.exists(TEMP_DB_NAME):
         os.remove(TEMP_DB_NAME)
     connection_string = "sqlite:///" + TEMP_DB_NAME
-    create_database(connection_string)
+    create_database(connection_string, felis_schema=SCHEMA_PATH)
     temp_db = Database(connection_string)
 
     # Add some test data to the temp database
@@ -85,7 +77,7 @@ def temp_db():
         {"source": "orange", "ra": 90.0673755, "dec": 19.352889, "reference": "Ref 2"},
         {
             "source": "banana",
-            "ra": 360.0673755,
+            "ra": 60.0673755,
             "dec": -18.352889,
             "reference": "Burn08",
         },

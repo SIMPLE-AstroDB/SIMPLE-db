@@ -1,6 +1,6 @@
 from sqlalchemy import and_
 import pytest
-from astropy.io.votable.ucd import check_ucd, parse_ucd, UCDWords
+from astropy.io.votable.ucd import check_ucd
 
 
 @pytest.mark.parametrize(
