@@ -776,7 +776,7 @@ tables:
       datatype: string
       length: 20
       description: Spectral type string
-      ivoa:ucd: meta.id;src.spType
+      ivoa:ucd: src.spType
       nullable: false
     - name: spectral_type_code
       "@id": "#SpectralTypes.spectral_type_code"
@@ -933,7 +933,9 @@ tables:
 
   - name: Spectra
     "@id": "#Spectra"
-    description: Spectra for Sources
+    description: "The Spectra table contains spectra for sources listed in the Sources table.
+      Spectra are stored as strings representing the full URL of the spectrum location.
+      The combination of *source*, *regime*, *observation_date*, and *reference* is expected to be unique."
     primaryKey: 
     - "#Spectra.source"
     - "#Spectra.regime"
@@ -945,7 +947,7 @@ tables:
       "@id": "#Spectra.source"
       datatype: string
       length: 100
-      description: Main identifier for an object; links to Sources table
+      description: Unique identifier for a source; links to Sources table
       ivoa:ucd: meta.id;meta.main
       nullable: false
     - name: access_url
@@ -953,7 +955,7 @@ tables:
       datatype: string
       length: 100
       description: URL for accessing the spectrum
-      ivoa:ucd: meta.ref.url
+      ivoa:ucd: meta.ref.url;meta.main
     - name: original_spectrum
       "@id": "#Spectra.original_spectrum"
       datatype: string
@@ -965,23 +967,24 @@ tables:
       datatype: string
       length: 1000
       description: Local path (via environment variable) to the spectrum file
-      ivoa:ucd: meta.ref
     - name: regime
       "@id": "#Spectra.regime"
       datatype: string
       length: 30
-      description: Spectral regime; links to Regimes table
+      description: Spectral regime of spectrum; links to Regimes table
       ivoa:ucd: meta.id
     - name: telescope
       "@id": "#Spectra.telescope"
       datatype: string
       length: 30
-      description: Telescope, mission, or survey name; links to reference in the Instruments table
+      description: Telescope, mission, or survey name; links to the Telescopes table
+      ivoa:ucd: instr.tel;intsr.obsty
     - name: instrument
       "@id": "#Spectra.instrument"
       datatype: string
       length: 30
       description: Instrument name; links to Instruments table
+      ivoa:ucd: instr
     - name: mode
       "@id": "#Spectra.mode"
       datatype: string
@@ -997,14 +1000,14 @@ tables:
       "@id": "#Spectra.comments"
       datatype: string
       length: 1000
-      description: Free-form comments for this entry
+      description: Free form comments
       ivoa:ucd: meta.note
     - name: reference
       "@id": "#Spectra.reference"
       datatype: string
       length: 30
-      description: Publication reference; links to Publications table
-      ivoa:ucd: meta.ref
+      description: Reference; links to Publications table
+      ivoa:ucd: meta.ref;meta.main
       nullable: false
     - name: other_references
       "@id": "#Spectra.other_references"

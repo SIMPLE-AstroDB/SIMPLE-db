@@ -6,7 +6,7 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
 | :exclamation:**source** | Unique identifier for a source; links to Sources table | string | 100 |  | meta.id;meta.main  |
-| :exclamation:**spectral_type_string** | Spectral type string | string | 20 |  | meta.id;src.spType  |
+| :exclamation:**spectral_type_string** | Spectral type string | string | 20 |  | src.spType  |
 | :exclamation:**spectral_type_code** | Numeric code corresponding to spectral type. 60 = M0, 69 = M9, 70 = L0, 80 = T0, 90 = Y0 | double |  |  | meta.code;src.spType  |
 | spectral_type_error | Uncertainty of the spectral type value | double |  |  | stat.error;src.spType  |
 | :exclamation:**regime** | Spectral type regime; links to Regimes table | string | 30 |  | meta.id  |
