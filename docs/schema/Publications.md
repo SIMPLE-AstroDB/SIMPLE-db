@@ -1,12 +1,12 @@
 # Publications
-Reference information (DOI, bibcodes, etc)
+The Publications table contains metadata (DOI, bibcodes, etc) for each publication referred to in the database. The *reference* short identifer of each publication is required to be unique.
 
 
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
-| :exclamation:**reference** | Publication reference identifier | string | 30 |  | meta.ref;meta.main  |
-| bibcode | Publication bibcode | string | 100 |  | meta.bib.bibcode  |
-| doi | Publication DOI | string | 100 |  | meta.ref.doi  |
-| description | Publication description | string | 1000 |  |   |
+| :exclamation:**reference** | Publication short identifier | string | 30 |  | meta.ref;meta.main  |
+| bibcode | Publication bibcode from NASA ADS | string | 100 |  | meta.bib.bibcode  |
+| doi | Publication Document Object Identifier (DOI) | string | 100 |  | meta.ref.doi  |
+| description | Publication description | string | 1000 |  | meta.title  |
 

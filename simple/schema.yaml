@@ -21,7 +21,8 @@ tables:
 
   - name: Publications
     "@id": "#Publications"
-    description: Reference information (DOI, bibcodes, etc)
+    description: "The Publications table contains metadata (DOI, bibcodes, etc) for each publication referred to in the database. 
+      The *reference* short identifer of each publication is required to be unique."
     primaryKey: 
     - "#Publications.reference"
 
@@ -30,26 +31,27 @@ tables:
       "@id": "#Publications.reference"
       datatype: string
       length: 30
-      description: Publication reference identifier
+      description: Publication short identifier
       ivoa:ucd: meta.ref;meta.main
       nullable: false
     - name: bibcode
       "@id": "#Publications.bibcode"
       datatype: string
       length: 100
-      description: Publication bibcode
+      description: Publication bibcode from NASA ADS
       ivoa:ucd: meta.bib.bibcode
     - name: doi
       "@id": "#Publications.doi"
       datatype: string
       length: 100
-      description: Publication DOI
+      description: Publication Document Object Identifier (DOI)
       ivoa:ucd: meta.ref.doi
     - name: description
       "@id": "#Publications.description"
       datatype: string
       length: 1000
       description: Publication description
+      ivoa:ucd: meta.title
 
   - name: Telescopes
     "@id": "#Telescopes"
