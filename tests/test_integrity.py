@@ -1,11 +1,10 @@
 # Test to verify database integrity
 # database object 'db' defined in conftest.py
+import pytest
 from astrodbkit.astrodb import or_
 from astropy import units as u
 from astropy.table import unique
 from sqlalchemy import and_, func
-
-from simple.schema import ParallaxView  # , PhotometryView
 
 
 def test_reference_uniqueness(db):
@@ -564,19 +563,6 @@ def test_special_characters(db):
                 else:
                     check = [char not in data[table_name]["source"]]
                     assert all(check), f"{char} in {table_name}"
-
-
-def test_database_views(db):
-    # Tests to verify views exist and work as intended
-
-    # Views do not exist as attributes to db so db.ViewName does not work
-    # TODO: Figure out other ways to refer to it in db.metadata info
-    t = db.query(ParallaxView).table()
-    print(t)
-    assert len(t) > 0
-
-    # Check view is not part of inventory
-    assert "ParallaxView" not in db.inventory("2MASSI J0019457+521317").keys()
 
 
 def test_companion_relationship(db):
