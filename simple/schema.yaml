@@ -1319,7 +1319,8 @@ tables:
     - name: v_sin_i
       "@id": "#RotationalParameters.v_sin_i"
       datatype: double
-      description: Projected rotational velocity in km/s
+      description: Projected rotational velocity
+      fits:tunit: km/s
       ivoa:ucd: phys.veloc.rotat
     - name: v_sin_i_error
       "@id": "#RotationalParameters.v_sin_i_error"

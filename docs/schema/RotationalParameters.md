@@ -8,7 +8,7 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | :exclamation:<ins>source</ins> | Main identifier for an object; links to Sources table | string | 100 |  | meta.id;meta.main  |
 | period | Rotational period | double |  | hr | time.period  |
 | period_error | Uncertainty of the rotational period | double |  | hr | stat.error;time.period  |
-| v_sin_i | Projected rotational velocity in km/s | double |  |  | phys.veloc.rotat  |
+| v_sin_i | Projected rotational velocity | double |  | km/s | phys.veloc.rotat  |
 | v_sin_i_error | Uncertainty of the projected rotational velocity | double |  | km/s | stat.error;phys.veloc.rotat  |
 | inclination | Inclination of the rotation axis | double |  | deg | pos.posAng  |
 | inclination_error | Uncertainty of the inclination | double |  | deg | stat.error;pos.posAng  |
