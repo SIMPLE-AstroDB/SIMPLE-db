@@ -53,6 +53,13 @@ tables:
       description: Publication description
       ivoa:ucd: meta.title
 
+    indexes:
+      - name: PK_Publications
+        "@id": "#PK_Publications"
+        description: Primary key for Publications table
+        columns: 
+        - "#Publications.reference"
+
   - name: Telescopes
     "@id": "#Telescopes"
     description: "The Telescopes table contains names and references 
@@ -82,6 +89,12 @@ tables:
       description: Publication reference; links to Publications table
       ivoa:ucd: meta.ref
 
+    indexes:
+      - name: PK_Telescopes
+        "@id": "#PK_Telescopes"
+        description: Primary key for Telescopes table
+        columns: 
+        - "#Telescopes.telescope"
     constraints:
       - name: Telescopes_reference_Publications_reference
         "@type": "ForeignKey"
@@ -135,6 +148,14 @@ tables:
       description: Reference for the instrument and/or mode; links to Publications table
       ivoa:ucd: meta.ref
 
+    indexes:
+      - name: PK_Instruments
+        "@id": "#PK_Instruments"
+        description: Primary key for Instruments table
+        columns: 
+        - "#Instruments.instrument"
+        - "#Instruments.mode"
+        - "#Instruments.telescope"
     constraints:
       - name: Instruments_reference_Publications_reference
         "@type": "ForeignKey"
@@ -217,6 +238,12 @@ tables:
       description: Width of the ephotometry filter in Angstroms
       ivoa:ucd: instr.bandwidth
 
+    indexes:
+      - name: PK_PhotometryFilters
+        "@id": "#PK_PhotometryFilters"
+        description: Primary key for Photometry Filters table
+        columns: 
+        - "#PhotometryFilters.band"
     constraints:
       - name: check_width
         "@type": Check
@@ -253,6 +280,13 @@ tables:
       datatype: string
       length: 1000
       description: Description of changes associated with this version
+    
+    indexes:
+      - name: PK_Versions
+        "@id": "#PK_Versions"
+        description: Primary key for Versions table
+        columns: 
+        - "#Versions.version"
 
   - name: Regimes
     "@id": "#Regimes"
@@ -273,6 +307,13 @@ tables:
       datatype: string
       length: 1000
       description: Description of regime
+
+    indexes:
+      - name: PK_Regimes
+        "@id": "#PK_Regimes"
+        description: Primary key for Regimes table
+        columns: 
+        - "#Regimes.regime"
 
   # TODO: Add a GravityList lookup table in place of enumeration
 

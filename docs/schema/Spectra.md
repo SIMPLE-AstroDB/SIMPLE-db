@@ -10,7 +10,7 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | original_spectrum | URL for the original spectrum | string | 1000 |  | meta.ref.url  |
 | local_spectrum | Local path (via environment variable) to the spectrum file | string | 1000 |  |   |
 | regime | Spectral regime of spectrum; links to Regimes table | string | 30 |  | meta.id  |
-| telescope | Telescope, mission, or survey name; links to the Telescopes table | string | 30 |  | instr.tel;intsr.obsty  |
+| telescope | Telescope, mission, or survey name; links to the Telescopes table | string | 30 |  | instr.tel;instr.obsty  |
 | instrument | Instrument name; links to Instruments table | string | 30 |  | instr  |
 | mode | Instrument mode; links to Instruments table | string | 30 |  |   |
 | :exclamation:**observation_date** | Date of the observation | timestamp |  |  | time.epoch  |

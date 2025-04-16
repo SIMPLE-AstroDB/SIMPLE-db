@@ -9,6 +9,11 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | description | Telescope description | string | 1000 |  | meta.note  |
 | reference | Publication reference; links to Publications table | string | 30 |  | meta.ref  |
 
+## Indexes
+| Name | Columns | Description |
+| --- | --- | --- |
+| PK_Telescopes | ['#Telescopes.telescope'] | Primary key for Telescopes table |
+
 ## Foreign Keys
 | Description | Columns | Referenced Columns |
 | --- | --- | --- |
