@@ -1291,7 +1291,8 @@ tables:
 
   - name: RotationalParameters
     "@id": "#RotationalParameters"
-    description: Rotational parameters for sources
+    description: Rotational parameters for sources, including v_sin i, period, and inclination. 
+      The combination of *source* and *reference* is expected to be unique.
     primaryKey:
     - "#RotationalParameters.source"
     - "#RotationalParameters.reference"

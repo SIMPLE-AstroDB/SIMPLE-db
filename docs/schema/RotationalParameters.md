@@ -1,5 +1,5 @@
 # RotationalParameters
-Rotational parameters for sources
+Rotational parameters for sources, including v_sin i, period, and inclination. The combination of *source* and *reference* is expected to be unique.
 
 
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
