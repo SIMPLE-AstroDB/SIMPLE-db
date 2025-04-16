@@ -11,6 +11,11 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | description | Instrument description | string | 1000 |  | meta.note  |
 | reference | Reference for the instrument and/or mode; links to Publications table | string | 30 |  | meta.ref  |
 
+## Indexes
+| Name | Columns | Description |
+| --- | --- | --- |
+| PK_Instruments | ['#Instruments.instrument', '#Instruments.mode', '#Instruments.telescope'] | Primary key for Instruments table |
+
 ## Foreign Keys
 | Description | Columns | Referenced Columns |
 | --- | --- | --- |

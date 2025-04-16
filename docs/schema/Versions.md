@@ -10,3 +10,8 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | end_date | Release date of this version | string | 30 |  |   |
 | description | Description of changes associated with this version | string | 1000 |  |   |
 
+## Indexes
+| Name | Columns | Description |
+| --- | --- | --- |
+| PK_Versions | ['#Versions.version'] | Primary key for Versions table |
+

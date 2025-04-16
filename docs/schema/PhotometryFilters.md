@@ -10,6 +10,11 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | :exclamation:effective_wavelength | Effective wavelength of the photometry filter in Angstroms | double |  | Angstrom |   |
 | width | Width of the ephotometry filter in Angstroms | double |  | Angstrom | instr.bandwidth  |
 
+## Indexes
+| Name | Columns | Description |
+| --- | --- | --- |
+| PK_PhotometryFilters | ['#PhotometryFilters.band'] | Primary key for Photometry Filters table |
+
 ## Checks
 | Description | Expression |
 | --- | --- |

@@ -8,3 +8,8 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | :exclamation:<u>regime</u> | Regime identifier string | string | 30 |  | meta.id;meta.main  |
 | description | Description of regime | string | 1000 |  |   |
 
+## Indexes
+| Name | Columns | Description |
+| --- | --- | --- |
+| PK_Regimes | ['#Regimes.regime'] | Primary key for Regimes table |
+

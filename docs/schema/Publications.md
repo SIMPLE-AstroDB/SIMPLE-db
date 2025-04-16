@@ -10,3 +10,8 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | doi | Publication Document Object Identifier (DOI) | string | 100 |  | meta.ref.doi  |
 | description | Publication description | string | 1000 |  | meta.title  |
 
+## Indexes
+| Name | Columns | Description |
+| --- | --- | --- |
+| PK_Publications | ['#Publications.reference'] | Primary key for Publications table |
+
