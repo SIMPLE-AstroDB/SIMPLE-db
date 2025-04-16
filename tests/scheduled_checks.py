@@ -5,10 +5,7 @@ from astrodbkit.utils import _name_formatter
 from astroquery.simbad import Simbad
 from tqdm import tqdm
 
-DB_PATH = "data"
 DB_NAME = "tests/simple_tests.sqlite"
-SCHEMA_PATH = "simple/schema.yaml"
-
 
 def test_db(db):
     assert os.path.exists(DB_NAME)
