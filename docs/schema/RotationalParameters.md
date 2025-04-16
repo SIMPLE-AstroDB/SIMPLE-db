@@ -12,7 +12,7 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | v_sin_i_error | Uncertainty of the projected rotational velocity | double |  | km/s | stat.error;phys.veloc.rotat  |
 | inclination | Inclination of the rotation axis | double |  | deg | pos.posAng  |
 | inclination_error | Uncertainty of the inclination | double |  | deg | stat.error;pos.posAng  |
-| adopted | Flag to indicate if this is the adopted entry | boolean |  |  | meta.code  |
+| adopted | Flag to indicate if this is the adopted entry | boolean |  |  |   |
 | comments | Free form comments for this entry | string | 1000 |  | meta.note  |
 | :exclamation:<ins>reference</ins> | Publication reference; links to Publications table | string | 30 |  | meta.ref  |
 
