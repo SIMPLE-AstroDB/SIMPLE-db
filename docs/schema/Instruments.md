@@ -5,9 +5,9 @@ The Instruments table contains names and references for instruments (and their m
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
-| :exclamation:<u>instrument</u> | Name of the instrument | string | 30 |  | instr;meta.main  |
-| :exclamation:<u>mode</u> | Instrument mode | string | 30 |  |   |
-| :exclamation:<u>telescope</u> | Telescope, mission, or survey name; links to Telescopes table | string | 30 |  |   |
+| :exclamation:<ins>instrument</ins> | Name of the instrument | string | 30 |  | instr;meta.main  |
+| :exclamation:<ins>mode</ins> | Instrument mode | string | 30 |  |   |
+| :exclamation:<ins>telescope</ins> | Telescope, mission, or survey name; links to Telescopes table | string | 30 |  |   |
 | description | Instrument description | string | 1000 |  | meta.note  |
 | reference | Reference for the instrument and/or mode; links to Publications table | string | 30 |  | meta.ref  |
 

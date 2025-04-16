@@ -43,7 +43,7 @@ with open(SCHEMA_PATH, "r") as schema_file:
 
                 # If the column is a primary key, underline the name
                 if column["name"] in table_primary_key_list:
-                    column_name = f"<u>{column['name']}</u>"
+                    column_name = f"<ins>{column['name']}</ins>"
                 else:
                     column_name = column["name"]
 

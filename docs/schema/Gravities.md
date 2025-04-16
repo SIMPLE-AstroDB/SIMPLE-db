@@ -5,11 +5,11 @@ The Gravities table contains gravity measurements for sources listed in the Sour
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
-| :exclamation:<u>source</u> | Unique identifier for a source; links to Sources table | string | 100 |  | meta.id;meta.main  |
-| :exclamation:<u>gravity</u> | Gravity from enumerated values (alpha, beta, etc) | string | 20 |  | meta.code;phys.gravity  |
+| :exclamation:<ins>source</ins> | Unique identifier for a source; links to Sources table | string | 100 |  | meta.id;meta.main  |
+| :exclamation:<ins>gravity</ins> | Gravity from enumerated values (alpha, beta, etc) | string | 20 |  | meta.code;phys.gravity  |
 | regime | Gravity regime; links to Regimes table | string | 30 |  | meta.id  |
 | comments | Free form comments | string | 1000 |  | meta.note  |
-| :exclamation:<u>reference</u> | Reference; links to Publications table | string | 30 |  |   |
+| :exclamation:<ins>reference</ins> | Reference; links to Publications table | string | 30 |  |   |
 
 ## Indexes
 | Name | Columns | Description |

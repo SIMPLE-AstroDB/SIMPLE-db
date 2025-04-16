@@ -5,7 +5,7 @@ The Sources table contains all objects in the database alongside their coordinat
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
-| :exclamation:<u>source</u> | Unique identifier for the source | string | 100 |  | meta.id;src;meta.main  |
+| :exclamation:<ins>source</ins> | Unique identifier for the source | string | 100 |  | meta.id;src;meta.main  |
 | ra | Right Ascension of the source, ICRS recommended | double |  | deg | pos.eq.ra;meta.main  |
 | dec | Declination of the source, ICRS recommended | double |  | deg | pos.eq.dec;meta.main  |
 | epoch | Decimal year for coordinates (e.g., 2015.5). Not needed if using ICRS coordinates. | double |  | yr |   |

@@ -5,12 +5,12 @@ The Parallaxes table contains parallax measurements for sources listed in the So
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
-| :exclamation:<u>source</u> | Unique identifier for a source; links to Sources table | string | 100 |  | meta.id;meta.main  |
+| :exclamation:<ins>source</ins> | Unique identifier for a source; links to Sources table | string | 100 |  | meta.id;meta.main  |
 | :exclamation:parallax | Parallax measurement for the source | double |  | mas | pos.parallax  |
 | parallax_error | Uncertainty of the parallax value | double |  | mas | stat.error;pos.parallax  |
 | adopted | Flag to indicate if this is the adopted measurement | boolean |  |  |   |
 | comments | Free form comments | string | 1000 |  | meta.note  |
-| :exclamation:<u>reference</u> | Reference; links to Publications table | string | 30 |  | meta.ref  |
+| :exclamation:<ins>reference</ins> | Reference; links to Publications table | string | 30 |  | meta.ref  |
 
 ## Indexes
 | Name | Columns | Description |
