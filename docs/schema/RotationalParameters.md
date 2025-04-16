@@ -10,8 +10,8 @@ Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | period_error | Uncertainty of the rotational period | double |  | hr | stat.error;time.period  |
 | v_sin_i | Projected rotational velocity | double |  | km/s | phys.veloc.rotat  |
 | v_sin_i_error | Uncertainty of the projected rotational velocity | double |  | km/s | stat.error;phys.veloc.rotat  |
-| inclination | Inclination of the rotation axis | double |  | deg | pos.posAng  |
-| inclination_error | Uncertainty of the inclination | double |  | deg | stat.error;pos.posAng  |
+| inclination | Inclination of the rotation axis | double |  | deg | src.orbital.inclination  |
+| inclination_error | Uncertainty of the inclination | double |  | deg | stat.error;src.orbital.inclination  |
 | adopted | Flag to indicate if this is the adopted entry | boolean |  |  |   |
 | comments | Free form comments for this entry | string | 1000 |  | meta.note  |
 | :exclamation:<ins>reference</ins> | Publication reference; links to Publications table | string | 30 |  | meta.ref  |

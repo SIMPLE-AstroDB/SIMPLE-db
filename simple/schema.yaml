@@ -1334,13 +1334,13 @@ tables:
       datatype: double
       description: Inclination of the rotation axis
       fits:tunit: deg
-      ivoa:ucd: pos.posAng
+      ivoa:ucd: src.orbital.inclination
     - name: inclination_error
       "@id": "#RotationalParameters.inclination_error"
       datatype: double
       description: Uncertainty of the inclination
       fits:tunit: deg
-      ivoa:ucd: stat.error;pos.posAng
+      ivoa:ucd: stat.error;src.orbital.inclination
     - name: adopted
       "@id": "#RotationalParameters.adopted"
       datatype: boolean
