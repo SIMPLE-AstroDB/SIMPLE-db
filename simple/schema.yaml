@@ -1289,3 +1289,96 @@ tables:
         referencedColumns:
         - "#Publications.reference"
 
+  - name: RotationalParameters
+    "@id": "#RotationalParameters"
+    description: Rotational parameters for sources
+    primaryKey:
+    - "#RotationalParameters.source"
+    - "#RotationalParameters.reference"
+
+    columns:
+    - name: source
+      "@id": "#RotationalParameters.source"
+      datatype: string
+      length: 100
+      description: Main identifier for an object; links to Sources table
+      ivoa:ucd: meta.id;meta.main
+      nullable: false
+    - name: period
+      "@id": "#RotationalParameters.period"
+      datatype: double
+      description: Rotational period
+      fits:tunit: hr
+      ivoa:ucd: time.period
+    - name: period_error
+      "@id": "#RotationalParameters.period_error"
+      datatype: double
+      description: Uncertainty of the rotational period
+      fits:tunit: hr
+      ivoa:ucd: stat.error;time.period
+    - name: v_sin_i
+      "@id": "#RotationalParameters.v_sin_i"
+      datatype: double
+      description: Projected rotational velocity in km/s
+      ivoa:ucd: phys.veloc.rotat
+    - name: v_sin_i_error
+      "@id": "#RotationalParameters.v_sin_i_error"
+      datatype: double
+      description: Uncertainty of the projected rotational velocity
+      fits:tunit: km/s
+      ivoa:ucd: stat.error;phys.veloc.rotat
+    - name: inclination
+      "@id": "#RotationalParameters.inclination"
+      datatype: double
+      description: Inclination of the rotation axis
+      fits:tunit: deg
+      ivoa:ucd: pos.posAng
+    - name: inclination_error
+      "@id": "#RotationalParameters.inclination_error"
+      datatype: double
+      description: Uncertainty of the inclination
+      fits:tunit: deg
+      ivoa:ucd: stat.error;pos.posAng
+    - name: adopted
+      "@id": "#RotationalParameters.adopted"
+      datatype: boolean
+      description: Flag to indicate if this is the adopted entry
+      ivoa:ucd: meta.code
+    - name: comments
+      "@id": "#RotationalParameters.comments"
+      datatype: string
+      length: 1000
+      description: Free form comments for this entry
+      ivoa:ucd: meta.note
+    - name: reference
+      "@id": "#RotationalParameters.reference"
+      datatype: string
+      length: 30
+      description: Publication reference; links to Publications table
+      ivoa:ucd: meta.ref
+      nullable: false
+    
+    indexes:
+      - name: PK_RotationalParameters
+        "@id": "#PK_RotationalParameters"
+        description: Primary key for RotationalParameters table
+        columns: 
+        - "#RotationalParameters.source"
+        - "#RotationalParameters.reference"
+    constraints:
+      - name: RotationalParameters_source_Sources_source
+        "@type": "ForeignKey"
+        "@id": "#FK_RotationalParameters_source_Sources_source"
+        description: Link RotationalParameters source to Sources table
+        columns:
+        - "#RotationalParameters.source"
+        referencedColumns:
+        - "#Sources.source"
+      - name: RotationalParameters_reference_Publications_reference
+        "@type": "ForeignKey"
+        "@id": "#FK_RotationalParameters_reference_Publications_reference"
+        description: Link RotationalParameters reference to Publications table
+        columns:
+        - "#RotationalParameters.reference"
+        referencedColumns:
+        - "#Publications.reference"
