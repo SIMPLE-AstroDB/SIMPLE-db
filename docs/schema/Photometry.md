@@ -5,14 +5,14 @@ The Photometry table contains photometric measurements for sources listed in the
 Columns marked with an exclamation mark ( :exclamation:) may not be empty.
 | Column Name | Description | Datatype | Length | Units  | UCD |
 | --- | --- | --- | --- | --- | --- |
-| :exclamation:**source** | Unique identifier for a source; links to Sources table | string | 100 |  | meta.id;meta.main  |
+| :exclamation:<u>source</u> | Unique identifier for a source; links to Sources table | string | 100 |  | meta.id;meta.main  |
 | band | Photometry band for this measurement; links to PhotometryFilters table | string | 30 |  |   |
-| :exclamation:**magnitude** | Photometric magnitude | double |  | mag | phot.mag  |
+| :exclamation:magnitude | Photometric magnitude | double |  | mag | phot.mag  |
 | magnitude_error | Uncertainty of the magnitude | double |  | mag | stat.error;phot.mag  |
 | telescope | Telescope, mission, or survey name; links to Telescopes table | string | 30 |  | instr.tel;instr.obsty  |
 | epoch | Decimal year | double |  | yr | time.epoch  |
 | comments | Free form comments | string | 1000 |  | meta.note  |
-| :exclamation:**reference** | Reference; links to Publications table | string | 30 |  | meta.ref  |
+| :exclamation:<u>reference</u> | Reference; links to Publications table | string | 30 |  | meta.ref  |
 
 ## Indexes
 | Name | Columns | Description |

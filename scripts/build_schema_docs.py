@@ -17,6 +17,11 @@ with open(SCHEMA_PATH, "r") as schema_file:
         table_name = table["name"]
         table_path = os.path.join(DOCS_DIR, SCHEMA_SUB_DIR, f"{table_name}.md")
 
+        table_primary_key_list = table.get("primaryKey")
+        table_primary_key_list = [
+            key.replace(f"#{table_name}.", "") for key in table_primary_key_list
+        ]
+
         # Prepare a markdown file per table
         with open(table_path, "w") as out_file:
             out_file.write(f"# {table_name}\n")
@@ -36,10 +41,15 @@ with open(SCHEMA_PATH, "r") as schema_file:
                 if units == "":
                     units = column.get("ivoa:unit", "")
 
-                # Identify the required columns
+                # If the column is a primary key, underline the name
+                if column["name"] in table_primary_key_list:
+                    column_name = f"<u>{column['name']}</u>"
+                else:
+                    column_name = column["name"]
+
+                # If the column is required, add an exclamation mark to the name
                 if column.get("nullable", "True") is False:
-                    # If the column is required, bold and add asterisk to the name
-                    column_name = f":exclamation:**{column['name']}**"
+                    column_name = f":exclamation:{column_name}"
                 else:
                     column_name = column["name"]
 
