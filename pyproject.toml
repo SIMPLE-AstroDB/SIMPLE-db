@@ -22,12 +22,17 @@ dependencies = [
     "astrodb_utils",
     "ads",
     "matplotlib",
+    "lsst-felis",
 ]
 
 [project.optional-dependencies]
 test = [
     "pytest",
 ]
+docs = [
+    "eralchemy2"
+]
+all = ["simple[test, docs]"]
 
 [project.urls]
 Repository = "https://github.com/SIMPLE-AstroDB/SIMPLE-db"
