@@ -1,29 +1,11 @@
 import os
-import sys
 
-import pytest
 import requests
-from astrodb_utils import load_astrodb
-from tqdm import tqdm
-from astroquery.simbad import Simbad
 from astrodbkit.utils import _name_formatter
+from astroquery.simbad import Simbad
+from tqdm import tqdm
 
-sys.path.append(".")
-from simple.schema import REFERENCE_TABLES
-
-DB_NAME = "temp_SIMPLE.sqlite"
-DB_PATH = "data"
-
-
-# Load the SIMPLE database
-@pytest.fixture(scope="module")
-def db():
-
-    # Connect to the new database and confirm it has the Sources table
-    db = load_astrodb(DB_NAME, data_path=DB_PATH, reference_tables=REFERENCE_TABLES)
-
-    return db
-
+DB_NAME = "tests/simple_tests.sqlite"
 
 def test_db(db):
     assert os.path.exists(DB_NAME)
