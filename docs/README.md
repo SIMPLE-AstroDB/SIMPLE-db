@@ -20,6 +20,7 @@ This documentation is generated from the [schema.yaml](simple/schema.yaml) file 
 - [Spectra](schema/Spectra.md)
 - [ModeledParameters](schema/ModeledParameters.md)
 - [CompanionRelationships](schema/CompanionRelationships.md)
+- [RotationalParameters](schema/RotationalParameters.md)
 
 ## Schema Diagram
 This diagram is generated from the [schema.yaml](simple/schema.yaml) file using [make_erd.py](scripts/make_erd.py).
