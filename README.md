@@ -85,7 +85,7 @@ If you've made changes to the SIMPLE Archive that you would like to contribute t
 ## SIMPLE Database Schema
 
 The schema for the SIMPLE database is described
-in the [Documentation](documentation) and can be found in [`simple/schema.py`](simple/schema.py).
+in the [Documentation](documentation) and can be found in [`simple/schema.yaml`](simple/schema.yaml).
 
 A graphical representation of the SIMPLE schema:
-<img src="https://github.com/SIMPLE-AstroDB/SIMPLE-db/blob/main/documentation/figures/schema2023.png?raw=true" width=75%>
+<img src="https://github.com/SIMPLE-AstroDB/SIMPLE-db/blob/main/documentation/figures/auto_schema.png?raw=true" width=75%>
