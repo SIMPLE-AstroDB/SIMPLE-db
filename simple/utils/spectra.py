@@ -342,3 +342,33 @@ def check_spectrum_accessible(spectrum: str) -> bool:
     else:
         msg = "No internet connection. Internet is needed to check spectrum files."
         raise AstroDBError(msg)
+
+
+def check_instrument_mode(db, telescope: str, instrument: str, mode: str):
+    """
+    Check if the instrument and mode are in the database
+
+    Parameters
+    ----------
+    db: astrodbkit.astrodb.Database
+        Database object created by astrodbkit
+    telescope: str
+        Telescope name
+    instrument: str
+        Instrument name
+    mode: str
+        Mode name
+
+    Returns
+    -------
+    bool
+        True if instrument and mode are in the database, False otherwise
+    """
+    try:
+        db.query(db.Instruments).filter(
+            db.Instruments.c.instrument == instrument,
+            db.Instruments.c.mode == mode,
+        ).one()
+        return True
+    except sqlalchemy.exc.NoResultFound:
+        return False
