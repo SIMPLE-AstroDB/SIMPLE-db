@@ -6,9 +6,9 @@ import requests
 import sqlalchemy.exc
 from astrodb_utils import (
     AstroDBError,
-    find_source_in_db,
     internet_connection,
 )
+from astrodb_utils.sources import find_source_in_db
 from astrodb_utils.spectra import check_spectrum_plottable
 from astrodbkit.astrodb import Database
 from astropy.io import fits
@@ -53,7 +53,7 @@ def ingest_spectrum(
         URL or path to spectrum file
     regime: str
         Regime of spectrum (optical, infrared, radio, etc.)
-        controlled by to-be-made Regimes table
+        controlled by Regimes table
     telescope: str
         Telescope used to obtain spectrum.
         Required to be in Telescopes table.
@@ -65,6 +65,9 @@ def ingest_spectrum(
         Instrument-Mode pair needs to be in Instruments table.
     obs_date: str
         Observation date of spectrum.
+    raise_error: bool
+        If True, raise an error if the spectrum cannot be added.
+        If False, continue without raising an error.
 
     Returns
     -------
@@ -100,42 +103,8 @@ def ingest_spectrum(
 
     # Check if spectrum file is accessible
     # First check for internet
-    internet = internet_connection()
-    if internet:
-        request_response = requests.head(spectrum)
-        status_code = (
-            request_response.status_code
-        )  # The website is up if the status code is 200
-        if status_code != 200:
-            msg = (
-                "The spectrum location does not appear to be valid: \n"
-                f"spectrum: {spectrum} \n"
-                f"status code: {status_code}"
-            )
-            logger.error(msg)
-            if raise_error:
-                raise AstroDBError(msg)
-        else:
-            msg = f"The spectrum location appears up: {spectrum}"
-            logger.debug(msg)
-        if original_spectrum is not None:
-            request_response1 = requests.head(original_spectrum)
-            status_code1 = request_response1.status_code
-            if status_code1 != 200:
-                msg = (
-                    "The spectrum location does not appear to be valid: \n"
-                    f"spectrum: {original_spectrum} \n"
-                    f"status code: {status_code1}"
-                )
-                logger.error(msg)
-                if raise_error:
-                    raise AstroDBError(msg)
-            else:
-                msg = f"The spectrum location appears up: {original_spectrum}"
-                logger.debug(msg)
-    else:
-        msg = "No internet connection. Internet is needed to check spectrum files."
-        raise AstroDBError(msg)
+
+    spectrum_check = check_spectrum_accessible(spectrum)
 
     matches = find_spectra(
         db,
@@ -322,3 +291,54 @@ def find_spectra(
         n_spectra_matches = len(source_spec_data)
 
     return source_spec_data
+
+
+def check_spectrum_accessible(spectrum: str) -> bool:
+    """
+    Check if the spectrum is accessible
+    Parameters
+    ----------
+    spectrum: str
+        URL or path to spectrum file
+
+    Returns
+    -------
+    bool
+        True if the spectrum is accessible, False otherwise
+    """
+    internet = internet_connection()
+    if internet:
+        request_response = requests.head(spectrum)
+        status_code = (
+            request_response.status_code
+        )  # The website is up if the status code is 200
+        if status_code != 200:
+            msg = (
+                "The spectrum location does not appear to be valid: \n"
+                f"spectrum: {spectrum} \n"
+                f"status code: {status_code}"
+            )
+            logger.error(msg)
+            if raise_error:
+                raise AstroDBError(msg)
+        else:
+            msg = f"The spectrum location appears up: {spectrum}"
+            logger.debug(msg)
+        if original_spectrum is not None:
+            request_response1 = requests.head(original_spectrum)
+            status_code1 = request_response1.status_code
+            if status_code1 != 200:
+                msg = (
+                    "The spectrum location does not appear to be valid: \n"
+                    f"spectrum: {original_spectrum} \n"
+                    f"status code: {status_code1}"
+                )
+                logger.error(msg)
+                if raise_error:
+                    raise AstroDBError(msg)
+            else:
+                msg = f"The spectrum location appears up: {original_spectrum}"
+                logger.debug(msg)
+    else:
+        msg = "No internet connection. Internet is needed to check spectrum files."
+        raise AstroDBError(msg)
