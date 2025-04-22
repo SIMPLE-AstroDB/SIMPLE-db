@@ -38,10 +38,14 @@ We recommend using a conda environment to handle python dependencies. The follow
 3. In Python, connect a database file `SIMPLE.sqlite` as a Database object called `db` and recreate the database using the JSON files in the `data/` directory. Run these commands from within Python. 
    ```python
    from astrodb_utils import load_astrodb
-   from simple.schema import *
-   from simple.schema import REFERENCE_TABLES
-   
-   db = load_astrodb("SIMPLE.sqlite", recreatedb=True,  reference_tables=REFERENCE_TABLES)
+   from simple import REFERENCE_TABLES
+
+   SCHEMA_PATH = "simple/schema.yaml"   
+   db = load_astrodb(
+        "SIMPLE.sqlite", 
+        recreatedb=True,  
+        reference_tables=REFERENCE_TABLES, 
+        felis_schema=SCHEMA_PATH)
     ```
 
     This step generates a "SIMPLE.sqlite" file which can be opened, explored, and modified using a variety of tools.
