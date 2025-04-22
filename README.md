@@ -45,7 +45,8 @@ We recommend using a conda environment to handle python dependencies. The follow
         "SIMPLE.sqlite", 
         recreatedb=True,  
         reference_tables=REFERENCE_TABLES, 
-        felis_schema=SCHEMA_PATH)
+        felis_schema=SCHEMA_PATH
+        )
     ```
 
     This step generates a "SIMPLE.sqlite" file which can be opened, explored, and modified using a variety of tools.
