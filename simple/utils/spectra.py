@@ -372,3 +372,42 @@ def check_instrument_mode(db, telescope: str, instrument: str, mode: str):
         return True
     except sqlalchemy.exc.NoResultFound:
         return False
+
+
+def check_in_database(db, table, constraints):
+    """
+    Helper function to check that the result of the query is found in the database
+    Parameters
+    ----------
+    db: astrodbkit.astrodb.Database
+        Database object created by astrodbkit
+    table: astrodbkit.astrodb.Database.table
+        Table to be queried as an astrodbkit.astrodb.Database.table object
+    constraints: list
+        List of constraints to be used in the query as filter input in astrdbkit.astrodb.Database syntax
+
+    Example
+    -------
+    >>> check_in_database(
+        db,
+        db.Instruments,
+        [
+            db.Instruments.c.telescope == "WISE",
+            db.Instruments.c.instrument == "WISE",
+            db.Instruments.c.mode == "Imaging",
+        ],)
+    Returns True
+
+    """
+
+    t = db.query(table).filter(and_(*constraints)).table()
+    if len(t) == 0:
+        msg = f"Could not find in {table.name}"
+        logger.error(msg)
+        raise AstroDBError(msg)
+    elif len(t) > 1:
+        msg = f"Found multiple entries in {table.name}"
+        logger.error(msg)
+        raise AstroDBError(msg)
+    else:
+        return t
