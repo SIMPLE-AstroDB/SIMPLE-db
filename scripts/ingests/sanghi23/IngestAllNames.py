@@ -1,14 +1,23 @@
 # SIMPLE & Astrodb Packages
+import os
 from astrodb_utils import load_astrodb, AstroDBError
 from astrodb_utils.sources import find_source_in_db, ingest_name
-from simple.schema import REFERENCE_TABLES
+from simple import REFERENCE_TABLES
 import pandas as pd
-import os
 
 # Load Database
-recreate_db = False
+
+recreate_db = True
 save_db = True
-db = load_astrodb("SIMPLE.sqlite", recreatedb=recreate_db, reference_tables=REFERENCE_TABLES)
+
+SCHEMA_PATH = "simple/schema.yaml"   
+db = load_astrodb(
+    "SIMPLE.sqlite",
+    recreatedb=recreate_db,  
+    reference_tables=REFERENCE_TABLES, 
+    felis_schema=SCHEMA_PATH)
+
+
 path = "scripts/ingests/sanghi23/"
 
 names_added = 0
