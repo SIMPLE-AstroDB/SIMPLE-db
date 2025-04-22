@@ -38,10 +38,15 @@ We recommend using a conda environment to handle python dependencies. The follow
 3. In Python, connect a database file `SIMPLE.sqlite` as a Database object called `db` and recreate the database using the JSON files in the `data/` directory. Run these commands from within Python. 
    ```python
    from astrodb_utils import load_astrodb
-   from simple.schema import *
-   from simple.schema import REFERENCE_TABLES
-   
-   db = load_astrodb("SIMPLE.sqlite", recreatedb=True,  reference_tables=REFERENCE_TABLES)
+   from simple import REFERENCE_TABLES
+
+   SCHEMA_PATH = "simple/schema.yaml"   
+   db = load_astrodb(
+        "SIMPLE.sqlite", 
+        recreatedb=True,  
+        reference_tables=REFERENCE_TABLES, 
+        felis_schema=SCHEMA_PATH
+        )
     ```
 
     This step generates a "SIMPLE.sqlite" file which can be opened, explored, and modified using a variety of tools.
@@ -80,7 +85,7 @@ If you've made changes to the SIMPLE Archive that you would like to contribute t
 ## SIMPLE Database Schema
 
 The schema for the SIMPLE database is described
-in the [Documentation](documentation) and can be found in [`simple/schema.py`](simple/schema.py).
+in the [Documentation](documentation) and can be found in [`simple/schema.yaml`](simple/schema.yaml).
 
 A graphical representation of the SIMPLE schema:
-<img src="https://github.com/SIMPLE-AstroDB/SIMPLE-db/blob/main/documentation/figures/schema2023.png?raw=true" width=75%>
+<img src="https://github.com/SIMPLE-AstroDB/SIMPLE-db/blob/main/documentation/figures/auto_schema.png?raw=true" width=75%>
