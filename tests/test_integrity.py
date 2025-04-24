@@ -683,3 +683,4 @@ def test_names_uniqueness(db):
         print(duplicate_names)
 
     assert len(duplicate_names) == 0
+
