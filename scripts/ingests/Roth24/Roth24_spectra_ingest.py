@@ -14,14 +14,23 @@ db = load_astrodb(
     "SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES
 )
 
-ingest_instrument(db, telescope="Keck", instrument="NIRES", mode="Missing")
-ingest_instrument(db, telescope="Magellan I Baade", instrument="FIRE", mode="Prism")
-ingest_instrument(db, telescope="SOAR", instrument="TS4", mode="MISSING")
+ingest_instrument(
+    db, telescope="Keck II", instrument="NIRES", mode="spectroscopy"
+)  # https://www2.keck.hawaii.edu/inst/nires/
+ingest_instrument(
+    db, telescope="Magellan I Baade", instrument="FIRE", mode="Prism"
+)  # https://web.mit.edu/~rsimcoe/www/FIRE/
+ingest_instrument(
+    db, telescope="SOAR", instrument="TripleSpec4.1", mode="spectroscopy"
+)  # 2020SPIE11447E..6LH
+ingest_instrument(
+    db, telescope="Lick Shane 3m", instrument="Kast", mode="spectroscopy"
+)  # https://mthamilton.ucolick.org/techdocs/instruments/kast/
 
 link = 'scripts/ingests/Roth24/Spectra.csv'
 # Link to the CSV file used: https://docs.google.com/spreadsheets/d/1JFa8F4Ngzp3qAW8NOBurkz4bMKo9zXYeF6N1vMtqDZs/edit?usp=sharing
 byw_table = ascii.read(
-    link, #change this to the path for the csv file
+    link,  # change this to the path for the csv file
     format="csv",
     data_start=1,
     header_start=0,

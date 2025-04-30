@@ -8,7 +8,6 @@ import sqlalchemy.exc
 from astrodb_utils import AstroDBError, internet_connection, logger
 from astrodb_utils.sources import find_source_in_db
 from astrodb_utils.spectra import check_spectrum_plottable
-from astrodb_utils.utils import exit_function
 from astrodbkit.astrodb import Database
 from astropy.io import fits
 
@@ -129,17 +128,14 @@ def ingest_spectrum(
             logger.warning(msg)
             return flags
 
-    # Check if telescope, instrument, mode, regime, and reference are in the database
-    foreign_keys = {
-        "telescope": telescope,
-        "instrument": instrument,
-        "mode": mode,
-        "regime": regime.lower(),  # regime is expected to be lowercase
-        "reference": reference,
-    }
-    foreign_key_check = check_spectra_foreign_keys(db, foreign_keys)
-    if foreign_key_check:
-        logger.debug("Foreign key check passed")
+    reference = check_publication_in_db(db, reference)
+    regime = check_regime_in_db(db, regime)
+    instrument, mode, telescope = check_instrument_in_db(
+        db,
+        instrument=instrument,
+        mode=mode,
+        telescope=telescope,
+    )
 
     # Check if spectrum file(s) are accessible
     logger.debug(f"Checking spectrum: {spectrum}")
@@ -156,8 +152,12 @@ def ingest_spectrum(
         "access_url": spectrum,
         "original_spectrum": original_spectrum,
         "local_spectrum": local_spectrum,
+        "regime": regime,
+        "telescope": telescope,
+        "instrument": instrument,
+        "mode": mode,
         "observation_date": obs_date,
-        **foreign_keys,
+        "reference": reference,
         "comments": comments,
         "other_references": other_references,
     }
@@ -383,42 +383,73 @@ def check_in_database(db, table, constraints):
         return True
 
 
-def check_spectra_foreign_keys(db, data):
-    instrument_check = check_in_database(
-        db,
-        db.Instruments,
-        [
-            db.Instruments.c.instrument.ilike(data["instrument"]),
-            db.Instruments.c.mode.ilike(data["mode"]),
-            db.Instruments.c.telescope.ilike(data["telescope"]),
-        ],
+def check_instrument_in_db(db, instrument=None, mode=None, telescope=None):
+    instrument_table = (
+        db.query(db.Instruments)
+        .filter(
+            and_(
+                db.Instruments.c.instrument.contains(instrument),
+                db.Instruments.c.telescope.contains(telescope),
+            )
+        )
+        .table()
     )
-    if not instrument_check:
+
+    if len(instrument_table) > 1:
+        instrument_table = (
+            db.query(db.Instruments)
+            .filter(
+                and_(
+                    db.Instruments.c.instrument.contains(instrument),
+                    db.Instruments.c.mode.ilike(mode),
+                    db.Instruments.c.telescope.contains(telescope),
+                )
+            )
+            .table()
+        )
+
+    if len(instrument_table) == 0:
+        msg = f"{telescope},{instrument},{mode}, not found in database. Please add it to the Instruments table."
+        raise AstroDBError(msg)
+    elif len(instrument_table) == 1:
+        return (
+            instrument_table["instrument"][0],
+            instrument_table["mode"][0],
+            instrument_table["telescope"][0],
+        )
+
+
+def check_regime_in_db(db, regime):
+    regime_table = (
+        db.query(db.Regimes).filter(db.Regimes.c.regime.ilike(regime)).table()
+    )
+
+    if len(regime_table) == 0:
         msg = (
-            f"Instrument: {data['instrument']} with mode: {data['mode']} and telescope: {data['telescope']} "
-            "not found in database. Please add it to the Instruments table."
+            f"Regime {regime} not found in database. "
+            f"Please add it to the Regimes table or use an existing regime.\n"
+            f"Available regimes:\n {db.query(db.Regimes).table()}"
         )
         raise AstroDBError(msg)
-
-    regime_check = check_in_database(
-        db,
-        db.Regimes,
-        [
-            db.Regimes.c.regime == data["regime"],
-        ],
-    )
-    if not regime_check:
-        msg = f"Regime {data["regime"]} not found in database. Please add it to the Regimes table."
+    elif len(regime_table) > 1:
+        msg = f"Multiple entries for regime {regime} found in database. Please check the Regimes table. Matches: {regime_table}"
         raise AstroDBError(msg)
-
-    pub_check = check_in_database(
-        db, db.Publications, [db.Publications.c.reference == data["reference"]]
-    )
-    if not pub_check:
-        msg = f"Reference {data["reference"]} not found in database. Please add it to the Publications table."
-        raise AstroDBError(msg)
-
-    if instrument_check and regime_check and pub_check:
-        return True
     else:
-        return False
+        return regime_table["regime"][0]
+
+
+def check_publication_in_db(db, reference):
+    pubs_table = (
+        db.query(db.Publications)
+        .filter(db.Publications.c.reference.ilike(reference))
+        .table()
+    )
+
+    if len(pubs_table) == 0:
+        msg = f"Reference {reference} not found in database. Please add it to the Publications table."
+        raise AstroDBError(msg)
+    elif len(pubs_table) > 1:
+        msg = f"Multiple entries for reference {reference} found in database. Please check the Publications table. \n  Matches: \n {pubs_table}"
+        raise AstroDBError(msg)
+    else:
+        return pubs_table["reference"][0]
