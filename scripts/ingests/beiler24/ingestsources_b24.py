@@ -1,16 +1,17 @@
 ## Ingest Sources for Beiler24 ----
 # SIMPLE & Astrodb Packages
 from astrodb_utils import load_astrodb
-from astrodb_utils.sources import ingest_source, find_source_in_db, ingest_name
+from astrodb_utils.sources import ingest_source
 from astrodb_utils.publications import ingest_publication
 from simple import REFERENCE_TABLES
+from simple.utils.spectra import ingest_spectrum
 import os
 import openpyxl
 import pandas as pd
 
 # Load Database
 recreate_db = False
-save_db = True
+save_db = False
 
 SCHEMA_PATH = "simple/schema.yaml"   
 db = load_astrodb(
@@ -26,22 +27,22 @@ data = pd.read_excel(excel_path)
 sources_added = 0
 spectra_added = 0
 
-# Ingest Sources ----
-for _, row in data.iterrows():
-    try:
-        ingest_source(
-            db,
-            source=row['source'],
-            reference="Beil24",  
-        )
-        print(f"Source {row['source']} ingested.")
-        sources_added =+ 1
+# # Ingest Sources ----
+# for _, row in data.iterrows():
+#     try:
+#         ingest_source(
+#             db,
+#             source=row['source'],
+#             reference="Beil24",  
+#         )
+#         print(f"Source {row['source']} ingested.")
+#         sources_added =+ 1
 
-    except Exception as e:
-        print(f"Error ingesting source {row['source']}: {e}")
-        continue
+#     except Exception as e:
+#         print(f"Error ingesting source {row['source']}: {e}")
+#         continue
 
-print(f"Total sources added: {sources_added}")
+# print(f"Total sources added: {sources_added}")
 
 # Ingest Spectra ----
 """ Note: Any source containing '+' has been replaced with '%2B' in the AWS URL"""
@@ -56,20 +57,18 @@ for _, row in data.iterrows():
             spectrum_file = spectrum_file.replace("+", "%2B")
         spectrum_url = url + spectrum_file
         
-        ingest_spectrum = {
-            "db": db,
-            "source": source_name,
-            "spectrum": spectrum_url,
-            "regime": row['regime'],
-            "telescope": row['telescope'],
-            "instrument": row['instrument'],
-            "mode": row['mode'],
-            "obs_date": row['observation_date'],
-            "reference": "Beil24",
-            "bibcode": "2024ApJ...973..107B"
-        }
-        
-        
+        ingest_spectrum(
+            db,
+            source=source_name,
+            spectrum=spectrum_url,
+            regime=row['regime'],
+            telescope=row['telescope'],
+            instrument=row['instrument'],
+            mode=row['mode'],
+            obs_date=row['observation_date'],
+            reference="Beil24",
+        )
+         
         print(f"Spectrum for {source_name} ingested.")
         spectra_added += 1
 
