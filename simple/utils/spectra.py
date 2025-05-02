@@ -39,6 +39,7 @@ def ingest_spectrum(
     other_references: Optional[str] = None,
     local_spectrum: Optional[str] = None,
     raise_error: bool = True,
+    format: Optional[str] = None,
 ):
     """
     Parameters
@@ -145,7 +146,7 @@ def ingest_spectrum(
         check_spectrum_accessible(original_spectrum)
 
     # Check if spectrum is plottable
-    flags["plottable"] = check_spectrum_plottable(spectrum)
+    flags["plottable"] = check_spectrum_plottable(spectrum, format=format)
 
     row_data = {
         "source": db_name,

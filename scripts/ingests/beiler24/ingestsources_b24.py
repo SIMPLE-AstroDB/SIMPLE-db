@@ -67,13 +67,19 @@ for _, row in data.iterrows():
             mode=row['mode'],
             obs_date=row['observation_date'],
             reference="Beil24",
+            # raise_error=False,  
+            format = "tabular-fits"
         )
          
         print(f"Spectrum for {source_name} ingested.")
+        print(f'')
+        print(f'------------------')
         spectra_added += 1
 
     except Exception as e:
         print(f"Error ingesting spectrum for {source_name}: {e}")
+        print(f'')
+        print(f'------------------')
         continue
 
 print(f"Total spectra added: {spectra_added}")
