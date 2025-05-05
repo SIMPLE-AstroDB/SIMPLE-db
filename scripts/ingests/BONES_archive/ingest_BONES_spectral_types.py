@@ -72,7 +72,7 @@ for source in bones_sheet_table:
     if len(match) == 1:
         #if source exists in the database, ingest the spectral type
         try: 
-            sp_regime = find_regime(bones_name)
+            sp_regime = find_regime(source)
             ingest_spectral_type(
                 db,
                 source = match[0], 
