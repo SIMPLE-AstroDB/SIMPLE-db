@@ -4,16 +4,16 @@ from astrodb_utils.sources import (
     AstroDBError,
     logger
 )
-from simple.utils.spectral_types import(
-    ingest_spectral_type
-)
 
 import sys
 
 sys.path.append(".")
 from astropy.io import ascii
-from simple.schema import REFERENCE_TABLES
+from simple.DEPRECATED_schema import REFERENCE_TABLES
 
+from simple.utils.spectral_types import(
+    ingest_spectral_type
+)
 
 DB_SAVE = False
 RECREATE_DB = True
@@ -38,10 +38,24 @@ bones_sheet_table = ascii.read(
 
 ingested = 0
 skipped = 0
-already_exists = 0
+
+def find_regime(source):
+    regime = "unknown"
+    optical = source["OPTICAL_SPECTRUM"]
+    nir = source["NIR_SPECTRUM"]
+    if optical is not None:
+        regime = "optical"
+    if nir is not None:
+        regime = "nir"
+    return regime
+
+
 
 for source in bones_sheet_table:
-    bones_name = source["NAME"]
+    bones_name = source["NAME"].replace("\u2212", "-")
+    bones_name = bones_name.replace("\u2212", "-")
+    bones_name = bones_name.replace("\u2013", "-")
+    bones_name = bones_name.replace("\2014", "-")
     bones_spectra = source["LIT_SPT"]
     match = None
 
@@ -55,29 +69,23 @@ for source in bones_sheet_table:
         ra_col_name="ra",
         dec_col_name="dec",
     )
-
-    if(match == None):
-        match = find_source_in_db(
-            db,
-            source("NAME"),
-            ra=source["RA"],
-            dec=source["DEC"],
-            ra_col_name="ra",
-            dec_col_name="dec",
-        )
     if len(match) == 1:
+        #if source exists in the database, ingest the spectral type
         try: 
+            sp_regime = find_regime(bones_name)
             ingest_spectral_type(
-                db, source = match[0], spectral_type_string = bones_spectra,
+                db,
+                source = match[0], 
+                spectral_type_string = bones_spectra,
+                regime = sp_regime
             )
             ingested+=1
         except AstroDBError as e:
             msg = "ingest failed with error: " + str(e)
             logger.warning(msg)
             skipped +=1
-    elif len(match) == 0:
-        skipped+=1
     else:
+        #more than one source, or source doesn't exist in the database
         skipped+=1
 
 total = len(bones_sheet_table)
