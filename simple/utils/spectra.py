@@ -11,7 +11,7 @@ from astrodb_utils.spectra import check_spectrum_plottable
 from astrodbkit.astrodb import Database
 from astropy.io import fits
 
-from simple.schema import Spectra
+# from simple.schema import Spectra
 
 __all__ = [
     "ingest_spectrum",
@@ -146,7 +146,7 @@ def ingest_spectrum(
         check_spectrum_accessible(original_spectrum)
 
     # Check if spectrum is plottable
-    flags["plottable"] = check_spectrum_plottable(spectrum, format=format)
+    #flags["plottable"] = check_spectrum_plottable(spectrum, format=format)
 
     row_data = {
         "source": db_name,
@@ -164,16 +164,14 @@ def ingest_spectrum(
     }
     logger.debug(f"Trying to ingest: {row_data}")
     flags["content"] = row_data
-
+    
     try:
-        # Attempt to add spectrum to database
-        obj = Spectra(**row_data)
-        with db.session as session:
-            session.add(obj)
-            session.commit()
-
+        with db.engine.connect() as conn:
+                conn.execute(db.Spectra.insert().values(row_data))
+                conn.commit()
         flags["added"] = True
         logger.info(f"Added {source} : \n" f"{row_data}")
+
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         msg = f"Integrity Error: {source} \n {e}"
         flags["message"] = msg
@@ -182,6 +180,7 @@ def ingest_spectrum(
         else:
             logger.error(msg)
             return flags
+        
     except Exception as e:
         msg = (
             f"Spectrum for {source} could not be added to the database "

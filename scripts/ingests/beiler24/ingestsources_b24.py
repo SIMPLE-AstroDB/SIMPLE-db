@@ -1,6 +1,6 @@
 ## Ingest Sources for Beiler24 ----
 # SIMPLE & Astrodb Packages
-from astrodb_utils import load_astrodb
+from astrodb_utils import load_astrodb, ingest_instrument
 from astrodb_utils.sources import ingest_source
 from astrodb_utils.publications import ingest_publication
 from simple import REFERENCE_TABLES
@@ -10,8 +10,8 @@ import openpyxl
 import pandas as pd
 
 # Load Database
-recreate_db = False
-save_db = False
+recreate_db = True
+save_db = True
 
 SCHEMA_PATH = "simple/schema.yaml"   
 db = load_astrodb(
@@ -43,6 +43,22 @@ spectra_added = 0
 #         continue
 
 # print(f"Total sources added: {sources_added}")
+# Ingest Instruments ----
+"""Add intrument nirspec mode clear/prism"""
+modes = ["FS-CLEAR/PRISM", "FS-G395H/F290LP"]
+for mode in modes:
+    try:
+        ingest_instrument(
+            db,
+            instrument="NIRSpec",
+            mode=mode,
+            telescope="JWST",
+        )
+        print(f"Instruments NIRSpec {mode} ingested.")
+        
+    except Exception as e:
+        print(f"Error ingesting instrument NIRSpec {mode}: {e}")
+        continue
 
 # Ingest Spectra ----
 """ Note: Any source containing '+' has been replaced with '%2B' in the AWS URL"""
