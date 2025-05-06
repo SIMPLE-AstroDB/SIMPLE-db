@@ -170,6 +170,9 @@ def ingest_spectrum(
         with db.session as session:
             session.add(obj)
             session.commit()
+        # with db.engine.connect() as conn:
+        #     conn.execute(db.Spectra.insert().values(row_data))
+        #     conn.commit()
 
         flags["added"] = True
         logger.info(f"Added {source} : \n" f"{row_data}")
