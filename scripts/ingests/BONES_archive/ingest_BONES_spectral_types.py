@@ -9,16 +9,21 @@ import sys
 
 sys.path.append(".")
 from astropy.io import ascii
-from simple.DEPRECATED_schema import REFERENCE_TABLES
+
 
 from simple.utils.spectral_types import(
     ingest_spectral_type
 )
+from simple import REFERENCE_TABLES
 
 DB_SAVE = False
 RECREATE_DB = True
+SCHEMA_PATH = "simple/schema.yaml"
 db = load_astrodb(
-    "SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES
+    "SIMPLE.sqlite",
+    recreatedb=RECREATE_DB,
+    reference_tables=REFERENCE_TABLES,
+    felis_schema=SCHEMA_PATH,
 )
 
 link = (
@@ -48,7 +53,6 @@ def find_regime(source):
     if nir is not None:
         regime = "nir"
     return regime
-
 
 
 for source in bones_sheet_table:
