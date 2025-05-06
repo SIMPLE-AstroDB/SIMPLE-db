@@ -15,6 +15,7 @@ __all__ = [
 
 logger = logging.getLogger(__name__)
 
+
 def ingest_spectral_type(
     db,
     source: str = None,
@@ -114,15 +115,13 @@ def ingest_spectral_type(
     logger.debug(f"Trying to insert into Spectral Types table: \n {spt_data}")
 
     try:
-        # spt_obj = SpectralTypes(**spt_data)
-        # with db.session as session:
-        #     session.add(spt_obj)
-        #     session.commit()
         with db.engine.connect() as conn:
             conn.execute(db.SpectralTypes.insert().values(spt_data))
             conn.commit()
         logger.info(
-            f"Spectral type added to database: {spt_data["source"]} with {spt_data["spectral_type_string"]} with regime: {spt_data["regime"]} and reference: {spt_data["reference"]}"
+            f"Spectral type added to database: "
+            f"{spt_data['source']} with {spt_data['spectral_type_string']} "
+            f"with regime: {spt_data['regime']} and reference: {spt_data['reference']}"
         )
     except sqlalchemy.exc.IntegrityError as e:
         if (
