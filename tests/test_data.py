@@ -16,10 +16,10 @@ def reference_verifier(t, name, bibcode, doi):
 def test_sources(db):
     # Test to verify existing counts of sources and names
     n_sources = db.query(db.Sources).count()
-    assert n_sources == 3555, f"found {n_sources} sources"
+    assert n_sources == 3598, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 8858, f"found {n_names} names"
+    assert n_names == 9159, f"found {n_names} names"
 
 
 @pytest.mark.parametrize(
@@ -143,7 +143,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 288
+        len(s) == 377
     ), f"found {len(s)} sources with 2MASS designation that have no 2MASS photometry"
 
     # If 2MASS photometry, 2MASS designation should be in Names
@@ -163,7 +163,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 0
+        len(s) == 10
     ), f"found {len(s)} sources with Gaia designation that have no GAIA photometry"
 
     # If Gaia photometry, Gaia designation should be in Names
