@@ -1,11 +1,10 @@
 from astrodb_utils import load_astrodb
 from astrodb_utils.sources import (
-    find_source_in_db,
     AstroDBError,
-    logger
 )
 
 import sys
+import logging
 
 sys.path.append(".")
 from astropy.io import ascii
@@ -14,7 +13,11 @@ from astropy.io import ascii
 from simple.utils.spectral_types import(
     ingest_spectral_type
 )
-from simple import REFERENCE_TABLES
+from simple import REFERENCE_TABLES, logger
+
+
+logger.setLevel(logging.INFO)
+# logger.setLevel(logging.DEBUG)  # uncomment to see debug messages
 
 DB_SAVE = False
 RECREATE_DB = True
@@ -61,40 +64,25 @@ for source in bones_sheet_table:
     bones_name = bones_name.replace("\u2013", "-")
     bones_name = bones_name.replace("\2014", "-")
     bones_spectra = source["LIT_SPT"]
-    match = None
 
-    ##tries to find match of name in database
-    ##if found, ingest
-    match = find_source_in_db(
-        db,
-        source["NAME"],
-        ra=source["RA"],
-        dec=source["DEC"],
-        ra_col_name="ra",
-        dec_col_name="dec",
-    )
-    if len(match) == 1:
-        #if source exists in the database, ingest the spectral type
-        try: 
-            sp_regime = find_regime(source)
-            ingest_spectral_type(
-                db,
-                source = match[0], 
-                spectral_type_string = bones_spectra,
-                regime = sp_regime
-            )
-            ingested+=1
-        except AstroDBError as e:
-            msg = "ingest failed with error: " + str(e)
-            logger.warning(msg)
-            skipped +=1
-    else:
-        #more than one source, or source doesn't exist in the database
-        skipped+=1
+    try:
+        sp_regime = find_regime(source)
+        ingest_spectral_type(
+            db,
+            source=source["NAME"],
+            spectral_type_string=bones_spectra,
+            regime=sp_regime,
+            comment="From the BONES archive",
+        )
+        ingested += 1
+    except AstroDBError as e:
+        msg = "ingest failed with error: " + str(e)
+        logger.warning(msg)
+        skipped += 1
 
 total = len(bones_sheet_table)
-logger.info(f"skipped:{skipped}") #194 skipped
-logger.info(f"spectra_ingested:{ingested}") #15 ingested
-logger.info(f"total:{total}") #209 total
+logger.info(f"skipped: {skipped}")  # 0 skipped
+logger.info(f"spectra_ingested: {ingested}")  # 209 ingested
+logger.info(f"total: {total}")  # 209 total
 if DB_SAVE:
     db.save_database(directory="data/")
