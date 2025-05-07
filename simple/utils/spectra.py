@@ -5,13 +5,11 @@ from sqlalchemy import and_
 
 import requests
 import sqlalchemy.exc
-from astrodb_utils import AstroDBError, internet_connection, logger
+from astrodb_utils import AstroDBError, internet_connection
 from astrodb_utils.sources import find_source_in_db
 from astrodb_utils.spectra import check_spectrum_plottable
 from astrodbkit.astrodb import Database
 from astropy.io import fits
-
-# from simple.schema import Spectra
 
 __all__ = [
     "ingest_spectrum",
@@ -19,8 +17,11 @@ __all__ = [
     "find_spectra",
 ]
 
-
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(
+    "astrodb_utils.simple.spectra"
+)  # becomes a child of "astrodb_utils" logger
+# once moved to astrodb_utils, should be
+# logger = logging.getLogger(__name__)
 
 
 def ingest_spectrum(
@@ -78,6 +79,10 @@ def ingest_spectrum(
     raise_error: bool
         If True, raise an error if the spectrum cannot be added.
         If False, continue without raising an error.
+    format: str
+        Format of the spectrum file used by specutils to load the file.
+        If not set, specutils will try to guess the format.
+        Options: "tabular-fits"
 
     Returns
     -------
@@ -97,7 +102,6 @@ def ingest_spectrum(
 
     # Get source name as it appears in the database
     db_name = find_source_in_db(db, source)
-    logger.debug(f"Found db_name: {db_name} for source: {source}")
 
     if len(db_name) == 1:
         db_name = db_name[0]
@@ -119,7 +123,7 @@ def ingest_spectrum(
     )
     if len(matches) > 0:
         msg = f"Skipping suspected duplicate measurement: {source}"
-        msg2 = f"{matches} {instrument, mode, obs_date, reference, spectrum}"
+        msg2 = f"\n{matches} \n{instrument, mode, obs_date, reference, spectrum}"
         logger.debug(msg2)
         flags["message"] = msg
         # exit_function(msg, raise_error=raise_error)
@@ -127,6 +131,7 @@ def ingest_spectrum(
             raise AstroDBError(msg)
         else:
             logger.warning(msg)
+            flags["message"] = msg
             return flags
 
     reference = check_publication_in_db(db, reference)
@@ -140,13 +145,22 @@ def ingest_spectrum(
 
     # Check if spectrum file(s) are accessible
     logger.debug(f"Checking spectrum: {spectrum}")
-    check_spectrum_accessible(spectrum)
+
+    if check_spectrum_accessible(spectrum) is False:
+        msg = f"The spectrum location for {source} does not appear to be accessible."
+        if raise_error:
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            flags["message"] = msg
+            return flags
+
     if original_spectrum is not None:
         logger.debug(f"Checking original_spectrum: {original_spectrum}")
         check_spectrum_accessible(original_spectrum)
 
     # Check if spectrum is plottable
-    #flags["plottable"] = check_spectrum_plottable(spectrum, format=format)
+    # flags["plottable"] = check_spectrum_plottable(spectrum, format=format)
 
     row_data = {
         "source": db_name,
@@ -164,13 +178,15 @@ def ingest_spectrum(
     }
     logger.debug(f"Trying to ingest: {row_data}")
     flags["content"] = row_data
-    
+
     try:
         with db.engine.connect() as conn:
-                conn.execute(db.Spectra.insert().values(row_data))
-                conn.commit()
+            conn.execute(db.Spectra.insert().values(row_data))
+            conn.commit()
         flags["added"] = True
-        logger.info(f"Added {source} : \n" f"{row_data}")
+        logger.info(
+            f"Added spectrum for {source}: {telescope}-{instrument}-{mode} from {reference} on {obs_date.strftime('%Y-%m-%d')}"
+        )
 
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         msg = f"Integrity Error: {source} \n {e}"
@@ -180,7 +196,7 @@ def ingest_spectrum(
         else:
             logger.error(msg)
             return flags
-        
+
     except Exception as e:
         msg = (
             f"Spectrum for {source} could not be added to the database "
