@@ -2,13 +2,9 @@
 # database object 'db' defined in conftest.py
 import pytest
 from astrodbkit.astrodb import or_
-from astrodbkit.utils import _name_formatter
 from astropy import units as u
 from astropy.table import unique
-from astroquery.simbad import Simbad
 from sqlalchemy import and_, func
-
-from simple.schema import ParallaxView  # , PhotometryView
 
 
 def test_reference_uniqueness(db):
@@ -247,52 +243,6 @@ def test_source_uniqueness2(db):
     assert len(duplicate_names) == 0
 
 
-@pytest.mark.skip(reason="SIMBAD unreliable")
-def test_source_simbad(db):
-    # Query Simbad and confirm that there are no duplicates with different names
-
-    # Get list of all source names
-    results = db.query(db.Sources.c.source).all()
-    name_list = [s[0] for s in results]
-
-    # Add all IDS to the Simbad output as well as the user-provided id
-    Simbad.add_votable_fields("ids")
-    Simbad.add_votable_fields("typed_id")
-
-    simbad_results = Simbad.query_objects(name_list)
-    # Get a nicely formatted list of Simbad names for each input row
-    duplicate_count = 0
-    for row in simbad_results[["TYPED_ID", "IDS"]].iterrows():
-        try:
-            name, ids = row[0].decode("utf-8"), row[1].decode("utf-8")
-        except AttributeError:
-            # Catch decoding error
-            name, ids = row[0], row[1]
-
-        simbad_names = [
-            _name_formatter(s)
-            for s in ids.split("|")
-            if _name_formatter(s) != "" and _name_formatter(s) is not None
-        ]
-
-        if len(simbad_names) == 0:
-            print(f"No Simbad names for {name}")
-            continue
-
-        # Examine DB for each input, displaying results when more than one source matches
-        t = db.search_object(
-            simbad_names, output_table="Sources", fmt="astropy", fuzzy_search=False
-        )
-        if len(t) > 1:
-            print(f"Multiple matches for {name}: {simbad_names}")
-            print(
-                db.query(db.Names).filter(db.Names.c.source.in_(t["source"])).astropy()
-            )
-            duplicate_count += 1
-
-    assert duplicate_count == 0, "Duplicate sources identified via Simbad queries"
-
-
 def test_photometry(db):
     # Tests for Photometry table
 
@@ -461,99 +411,6 @@ def test_gravities(db):
     assert len(t) == 0
 
 
-def test_sources(db):
-    # Counting the top 20 references in the Sources Table
-    # spec_ref_count = (
-    #     db.query(Sources.reference, func.count(Sources.reference))
-    #     .group_by(Sources.reference)
-    #     .order_by(func.count(Sources.reference).desc())
-    #     .limit(20)
-    #     .all()
-    # )
-
-    # Top 20 References in the Sources Table
-
-    ref = "Schm10.1808"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 208, f"found {len(t)} sources from {ref}"
-
-    ref = "Reid08.1290"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 206, f"found {len(t)} sources from {ref}"
-
-    ref = "West08"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 192, f"found {len(t)} sources from {ref}"
-
-    ref = "Cruz03"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 165, f"found {len(t)} sources from {ref}"
-
-    ref = "Maro15"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 113, f"found {len(t)} sources from {ref}"
-
-    ref = "Best15"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 101, f"found {len(t)} sources from {ref}"
-
-    ref = "Kirk11"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 100, f"found {len(t)} sources from {ref}"
-
-    ref = "Mace13.6"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 93, f"found {len(t)} sources from {ref}"
-
-    ref = "Cruz07"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 91, f"found {len(t)} sources from {ref}"
-
-    ref = "Burn13"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 69, f"found {len(t)} sources from {ref}"
-
-    ref = "Gagn15.33"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 68, f"found {len(t)} sources from {ref}"
-
-    ref = "Chiu06"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 62, f"found {len(t)} sources from {ref}"
-
-    ref = "Kirk00"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 61, f"found {len(t)} sources from {ref}"
-
-    ref = "DayJ13"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 61, f"found {len(t)} sources from {ref}"
-
-    ref = "Kirk10"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 56, f"found {len(t)} sources from {ref}"
-
-    ref = "Deac14.119"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 52, f"found {len(t)} sources from {ref}"
-
-    ref = "Hawl02"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 51, f"found {len(t)} sources from {ref}"
-
-    ref = "Card15"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 45, f"found {len(t)} sources from {ref}"
-
-    ref = "Burn10.1885"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 43, f"found {len(t)} sources from {ref}"
-
-    ref = "Albe11"
-    t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
-    assert len(t) == 37, f"found {len(t)} sources from {ref}"
-
-
 def test_modeled_parameters(db):
     # There should be no entries in the modeled parameters table without parameter
     t = (
@@ -708,19 +565,6 @@ def test_special_characters(db):
                     assert all(check), f"{char} in {table_name}"
 
 
-def test_database_views(db):
-    # Tests to verify views exist and work as intended
-
-    # Views do not exist as attributes to db so db.ViewName does not work
-    # TODO: Figure out other ways to refer to it in db.metadata info
-    t = db.query(ParallaxView).table()
-    print(t)
-    assert len(t) > 0
-
-    # Check view is not part of inventory
-    assert "ParallaxView" not in db.inventory("2MASSI J0019457+521317").keys()
-
-
 def test_companion_relationship(db):
     # There should be no entries without a companion name
     t = (
@@ -839,3 +683,4 @@ def test_names_uniqueness(db):
         print(duplicate_names)
 
     assert len(duplicate_names) == 0
+

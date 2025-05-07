@@ -1,17 +1,15 @@
 import logging
 import sqlite3
-from typing import Optional
 from sqlalchemy import and_
-
+from datetime import datetime
+from typing import Optional, Union
 import requests
 import sqlalchemy.exc
-from astrodb_utils import AstroDBError, internet_connection, logger
+from astrodb_utils import AstroDBError, internet_connection,
 from astrodb_utils.sources import find_source_in_db
 from astrodb_utils.spectra import check_spectrum_plottable
 from astrodbkit.astrodb import Database
 from astropy.io import fits
-
-from simple.schema import Spectra
 
 __all__ = [
     "ingest_spectrum",
@@ -32,7 +30,7 @@ def ingest_spectrum(
     telescope: str = None,
     instrument: str = None,
     mode: str = None,
-    obs_date: str = None,
+    obs_date: Union[str, datetime] = None,
     reference: str = None,
     original_spectrum: Optional[str] = None,
     comments: Optional[str] = None,
@@ -93,6 +91,10 @@ def ingest_spectrum(
     # Compile fields into a dictionary
 
     flags = {"added": False, "content": {}, "message": ""}
+
+    # If a date is provided as a string, convert it to datetime
+    if obs_date is not None and isinstance(obs_date, str):
+        obs_date = datetime.fromisoformat(obs_date)
 
     # Get source name as it appears in the database
     db_name = find_source_in_db(db, source)
@@ -166,11 +168,9 @@ def ingest_spectrum(
 
     try:
         # Attempt to add spectrum to database
-        obj = Spectra(**row_data)
-        with db.session as session:
-            session.add(obj)
-            session.commit()
-
+        with db.engine.connect() as conn:
+            conn.execute(db.Spectra.insert().values(row_data))
+            conn.commit()
         flags["added"] = True
         logger.info(f"Added {source} : \n" f"{row_data}")
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
