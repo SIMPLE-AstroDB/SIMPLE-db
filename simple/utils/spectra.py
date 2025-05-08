@@ -2,10 +2,12 @@ import logging
 import sqlite3
 from typing import Optional
 from sqlalchemy import and_
+import datetime
+import os
 
 import requests
 import sqlalchemy.exc
-from astrodb_utils import AstroDBError, internet_connection, logger
+from astrodb_utils import AstroDBError, internet_connection, exit_function
 from astrodb_utils.sources import find_source_in_db
 from astrodb_utils.spectra import check_spectrum_plottable
 from astrodbkit.astrodb import Database
@@ -19,9 +21,11 @@ __all__ = [
     "find_spectra",
 ]
 
-
-logger.setLevel(logging.DEBUG)
-
+logger = logging.getLogger(
+    "astrodb_utils.simple.spectra"
+)  # becomes a child of "astrodb_utils" logger
+# once moved to astrodb_utils, should be
+# logger = logging.getLogger(__name__)
 
 def ingest_spectrum(
     db: Database,
@@ -138,14 +142,22 @@ def ingest_spectrum(
     )
 
     # Check if spectrum file(s) are accessible
-    logger.debug(f"Checking spectrum: {spectrum}")
     check_spectrum_accessible(spectrum)
     if original_spectrum is not None:
-        logger.debug(f"Checking original_spectrum: {original_spectrum}")
         check_spectrum_accessible(original_spectrum)
 
     # Check if spectrum is plottable
     flags["plottable"] = check_spectrum_plottable(spectrum)
+
+    if os.path.splitext(spectrum)[1] == ".fits":
+        with fits.open(spectrum) as hdul:
+            hdul.verify("warn")
+
+    parsed_date = check_obs_date(obs_date, raise_error=raise_error)
+    if parsed_date is None and raise_error is False:
+        msg = f"Observation date {obs_date} is not valid."
+        flags["message"] = msg
+        return flags
 
     row_data = {
         "source": db_name,
@@ -175,7 +187,9 @@ def ingest_spectrum(
         #     conn.commit()
 
         flags["added"] = True
-        logger.info(f"Added {source} : \n" f"{row_data}")
+        logger.info(
+            f"Added spectrum for {source}: {telescope}-{instrument}-{mode} from {reference} on {parsed_date.strftime('%d %b %Y')}"
+        )
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         msg = f"Integrity Error: {source} \n {e}"
         flags["message"] = msg
@@ -187,7 +201,7 @@ def ingest_spectrum(
     except Exception as e:
         msg = (
             f"Spectrum for {source} could not be added to the database "
-            f"for unknown reason: {e}"
+            f"for unexpected reason: {e}"
         )
         flags["message"] = msg
         if raise_error:
@@ -324,6 +338,7 @@ def check_spectrum_accessible(spectrum: str) -> bool:
     bool
         True if the spectrum is accessible, False otherwise
     """
+    logger.debug(f"Checking spectrum: {spectrum}")
     internet = internet_connection()
     if internet:
         request_response = requests.head(spectrum)
@@ -339,7 +354,7 @@ def check_spectrum_accessible(spectrum: str) -> bool:
             logger.error(msg)
             return False
         else:
-            msg = f"The spectrum location appears up: {spectrum}"
+            msg = "The spectrum location appears up."
             logger.debug(msg)
             return True
     else:
@@ -456,3 +471,32 @@ def check_publication_in_db(db, reference):
         raise AstroDBError(msg)
     else:
         return pubs_table["reference"][0]
+
+
+def check_obs_date(date, raise_error=True):
+    """
+    Check if the observation date is in the correct format
+    Parameters
+    ----------
+    date: str
+        Observation date
+
+    Returns
+    -------
+    bool
+        True if the date is in the correct format, False otherwise
+    """
+    try:
+        parsed_date = datetime.date.fromisoformat(date)
+        logger.debug(
+            f"Observation date {date} is valid: {parsed_date.strftime('%d %b %Y')}"
+        )
+        return parsed_date
+    except ValueError as e:
+        msg = f"Observation date {date} is not valid: {e}"
+        result = None
+        if raise_error:
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return result
