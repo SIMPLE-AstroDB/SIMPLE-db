@@ -3,7 +3,7 @@ import sqlite3
 from sqlalchemy import and_
 import datetime
 import os
-from typing import Optional, Union
+from typing import Optional
 import requests
 import sqlalchemy.exc
 from astrodb_utils import AstroDBError, internet_connection, exit_function
@@ -11,8 +11,6 @@ from astrodb_utils.sources import find_source_in_db
 from astrodb_utils.spectra import check_spectrum_plottable
 from astrodbkit.astrodb import Database
 from astropy.io import fits
-
-from simple.schema import Spectra
 
 __all__ = [
     "ingest_spectrum",
@@ -36,7 +34,7 @@ def ingest_spectrum(
     telescope: str = None,
     instrument: str = None,
     mode: str = None,
-    obs_date: Union[str, datetime] = None,
+    obs_date: str | datetime.datetime = None,
     reference: str = None,
     original_spectrum: Optional[str] = None,
     comments: Optional[str] = None,
@@ -100,7 +98,11 @@ def ingest_spectrum(
 
     # If a date is provided as a string, convert it to datetime
     if obs_date is not None and isinstance(obs_date, str):
-        obs_date = datetime.fromisoformat(obs_date)
+        parsed_date = check_obs_date(obs_date, raise_error=raise_error)
+    if parsed_date is None and raise_error is False:
+        msg = f"Observation date {obs_date} is not valid."
+        flags["message"] = msg
+        return flags
 
     # Get source name as it appears in the database
     db_name = find_source_in_db(db, source)
@@ -119,14 +121,14 @@ def ingest_spectrum(
         db,
         db_name,
         reference=reference,
-        obs_date=obs_date,
+        obs_date=parsed_date,
         telescope=telescope,
         instrument=instrument,
         mode=mode,
     )
     if len(matches) > 0:
         msg = f"Skipping suspected duplicate measurement: {source}"
-        msg2 = f"{matches} {instrument, mode, obs_date, reference, spectrum}"
+        msg2 = f"{matches} {instrument, mode, parsed_date, reference, spectrum}"
         logger.debug(msg2)
         flags["message"] = msg
         # exit_function(msg, raise_error=raise_error)
@@ -157,12 +159,6 @@ def ingest_spectrum(
         with fits.open(spectrum) as hdul:
             hdul.verify("warn")
 
-    parsed_date = check_obs_date(obs_date, raise_error=raise_error)
-    if parsed_date is None and raise_error is False:
-        msg = f"Observation date {obs_date} is not valid."
-        flags["message"] = msg
-        return flags
-
     row_data = {
         "source": db_name,
         "access_url": spectrum,
@@ -172,7 +168,7 @@ def ingest_spectrum(
         "telescope": telescope,
         "instrument": instrument,
         "mode": mode,
-        "observation_date": obs_date,
+        "observation_date": parsed_date,
         "reference": reference,
         "comments": comments,
         "other_references": other_references,
@@ -182,13 +178,9 @@ def ingest_spectrum(
 
     try:
         # Attempt to add spectrum to database
-        obj = Spectra(**row_data)
-        with db.session as session:
-            session.add(obj)
-            session.commit()
-        # with db.engine.connect() as conn:
-        #     conn.execute(db.Spectra.insert().values(row_data))
-        #     conn.commit()
+        with db.engine.connect() as conn:
+            conn.execute(db.Spectra.insert().values(row_data))
+            conn.commit()
 
         flags["added"] = True
         logger.info(

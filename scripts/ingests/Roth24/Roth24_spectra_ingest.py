@@ -2,7 +2,7 @@ import logging
 from astrodb_utils import load_astrodb
 import sys
 sys.path.append(".")
-from simple.schema import REFERENCE_TABLES
+from simple import REFERENCE_TABLES
 from astropy.io import ascii
 from simple.utils.spectra import ingest_spectrum
 from astropy.io.fits import getheader
@@ -15,11 +15,15 @@ logger = logging.getLogger(
 logger.setLevel(logging.INFO)  # Set logger to debug level - more verbose
 
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = True  # recreates the .db file from the data files
+SAVE_DB = False  # save the JSON files in addition to modifying the .db file
+RECREATE_DB = True  # recreates the .db file from the JSON files
 # LOAD THE DATABASE
+SCHEMA_PATH = "simple/schema.yaml"
 db = load_astrodb(
-    "SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES
+    "SIMPLE.sqlite",
+    recreatedb=RECREATE_DB,
+    reference_tables=REFERENCE_TABLES,
+    felis_schema=SCHEMA_PATH,
 )
 
 ingest_instrument(
@@ -66,7 +70,9 @@ for row in byw_table:
         obs_date=obs_date,
         reference=row["ref"],
     )
+    print("------------------\n")
 
-    # WRITE THE JSON FILES
+
+# WRITE THE JSON FILES
 if SAVE_DB:
     db.save_database(directory="data/")
