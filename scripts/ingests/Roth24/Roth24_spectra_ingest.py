@@ -1,3 +1,4 @@
+import logging
 from astrodb_utils import load_astrodb
 import sys
 sys.path.append(".")
@@ -6,6 +7,13 @@ from astropy.io import ascii
 from simple.utils.spectra import ingest_spectrum
 from astropy.io.fits import getheader
 from astrodb_utils.utils import ingest_instrument
+
+logger = logging.getLogger(
+    "astrodb_utils.roth24"
+)  # Sets up a child of the "astrodb_utils" logger
+# logger.setLevel(logging.INFO)  # Set logger to INFO level - less verbose
+logger.setLevel(logging.INFO)  # Set logger to debug level - more verbose
+
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
@@ -41,6 +49,12 @@ byw_table = ascii.read(
 
 for row in byw_table:
     header=getheader(row["Spectrum"])
+    obs_date = header["DATE-OBS"]
+
+    # fix typo in one date
+    if obs_date == "2021-09-111":
+        obs_date = "2021-09-11"
+
     ingest_spectrum(
         db,
         source=row["Source"],
@@ -49,7 +63,7 @@ for row in byw_table:
         telescope=row["Telescope"],
         instrument=row["Instrument"],
         mode=row["Mode"],
-        obs_date=header["DATE-OBS"],
+        obs_date=obs_date,
         reference=row["ref"],
     )
 
