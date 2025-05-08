@@ -1,4 +1,4 @@
-from sqlalchemy import except_, select, and_
+from sqlalchemy import and_
 
 
 def test_parallax_refs(db):

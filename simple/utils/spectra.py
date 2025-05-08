@@ -1,10 +1,9 @@
 import logging
 import sqlite3
-from typing import Optional
 from sqlalchemy import and_
 import datetime
 import os
-
+from typing import Optional, Union
 import requests
 import sqlalchemy.exc
 from astrodb_utils import AstroDBError, internet_connection, exit_function
@@ -27,6 +26,7 @@ logger = logging.getLogger(
 # once moved to astrodb_utils, should be
 # logger = logging.getLogger(__name__)
 
+
 def ingest_spectrum(
     db: Database,
     *,
@@ -36,7 +36,7 @@ def ingest_spectrum(
     telescope: str = None,
     instrument: str = None,
     mode: str = None,
-    obs_date: str = None,
+    obs_date: Union[str, datetime] = None,
     reference: str = None,
     original_spectrum: Optional[str] = None,
     comments: Optional[str] = None,
@@ -97,6 +97,10 @@ def ingest_spectrum(
     # Compile fields into a dictionary
 
     flags = {"added": False, "content": {}, "message": ""}
+
+    # If a date is provided as a string, convert it to datetime
+    if obs_date is not None and isinstance(obs_date, str):
+        obs_date = datetime.fromisoformat(obs_date)
 
     # Get source name as it appears in the database
     db_name = find_source_in_db(db, source)
