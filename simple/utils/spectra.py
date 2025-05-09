@@ -99,10 +99,14 @@ def ingest_spectrum(
     # If a date is provided as a string, convert it to datetime
     if obs_date is not None and isinstance(obs_date, str):
         parsed_date = check_obs_date(obs_date, raise_error=raise_error)
-    if parsed_date is None and raise_error is False:
-        msg = f"Observation date {obs_date} is not valid."
+    if obs_date is None or (parsed_date is None and raise_error is False):
+        msg = f"Observation date is not valid: {obs_date}"
         flags["message"] = msg
-        return flags
+        if raise_error:
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return flags
 
     # Get source name as it appears in the database
     db_name = find_source_in_db(db, source)
@@ -138,7 +142,39 @@ def ingest_spectrum(
             logger.warning(msg)
             return flags
 
-    reference = check_publication_in_db(db, reference)
+    if reference is None:
+        msg = "Reference is required."
+        flags["message"] = msg
+        if raise_error:
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return flags
+    else:
+        # reference = check_publication_in_db(db, reference)
+        pubs_table = (
+            db.query(db.Publications)
+            .filter(db.Publications.c.reference.ilike(reference))
+            .table()
+        )
+
+        if len(pubs_table) == 1:
+            reference = pubs_table["reference"][0]
+        else:
+            if len(pubs_table) == 0:
+                msg = f"Reference not found in database: {reference}. Add it to the Publications table."
+            elif len(pubs_table) > 1:
+                msg = f"Multiple entries for reference {reference} found in database. Check the Publications table. \n  Matches: \n {pubs_table}"
+            else:
+                msg = f"Unexpected condition: {reference}."
+
+            if raise_error:
+                raise AstroDBError(msg)
+            else:
+                logger.warning(msg)
+                flags["message"] = msg
+                return flags
+
     regime = check_regime_in_db(db, regime)
     instrument, mode, telescope = check_instrument_in_db(
         db,
@@ -440,8 +476,8 @@ def check_regime_in_db(db, regime):
 
     if len(regime_table) == 0:
         msg = (
-            f"Regime {regime} not found in database. "
-            f"Please add it to the Regimes table or use an existing regime.\n"
+            f"Regime not found in database: {regime}. "
+            f"Add it to the Regimes table or use an existing regime.\n"
             f"Available regimes:\n {db.query(db.Regimes).table()}"
         )
         raise AstroDBError(msg)
@@ -452,21 +488,29 @@ def check_regime_in_db(db, regime):
         return regime_table["regime"][0]
 
 
-def check_publication_in_db(db, reference):
-    pubs_table = (
-        db.query(db.Publications)
-        .filter(db.Publications.c.reference.ilike(reference))
-        .table()
-    )
+# def check_publication_in_db(db, reference):
+# if reference is None:
+#     msg = "Reference is required."
+#     if raise_error:
+#         raise AstroDBError(msg)
+#     else:
+#         logger.warning(msg)
+#         return None
 
-    if len(pubs_table) == 0:
-        msg = f"Reference {reference} not found in database. Please add it to the Publications table."
-        raise AstroDBError(msg)
-    elif len(pubs_table) > 1:
-        msg = f"Multiple entries for reference {reference} found in database. Please check the Publications table. \n  Matches: \n {pubs_table}"
-        raise AstroDBError(msg)
-    else:
-        return pubs_table["reference"][0]
+# pubs_table = (
+#     db.query(db.Publications)
+#     .filter(db.Publications.c.reference.ilike(reference))
+#     .table()
+# )
+
+# if len(pubs_table) == 0:
+#     msg = f"Reference not found in database: {reference}. Add it to the Publications table."
+#     raise AstroDBError(msg)
+# elif len(pubs_table) > 1:
+#     msg = f"Multiple entries for reference {reference} found in database. Check the Publications table. \n  Matches: \n {pubs_table}"
+#     raise AstroDBError(msg)
+# else:
+#     return pubs_table["reference"][0]
 
 
 def check_obs_date(date, raise_error=True):
