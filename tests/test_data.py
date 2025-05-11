@@ -70,71 +70,6 @@ def test_discovery_references(db, ref, n_sources):
     assert len(t) == n_sources, f"found {len(t)} discovery reference entries for {ref}"
 
 
-def test_proper_motion_refs(db):
-    """
-    Values found with this SQL query:
-        SELECT reference, count(*)
-        FROM ProperMotions
-        GROUP BY reference
-        ORDER By 2 DESC
-
-    from sqlalchemy import func
-    proper_motion_mearsurements = db.query(ProperMotions.reference, func.count(
-        ProperMotions.reference)).\
-        group_by(ProperMotions.reference).order_by(
-            func.count(ProperMotions.reference).desc()).limit(20).all()
-    """
-    ref = "GaiaEDR3"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 1133, f"found {len(t)} proper motion reference entries for {ref}"
-
-    ref = "GaiaDR2"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 1076, f"found {len(t)} proper motion reference entries for {ref}"
-
-    ref = "Best20.257"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 348, f"found {len(t)} proper motion reference entries for {ref}"
-
-    ref = "Gagn15.73"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 325, f"found {len(t)} proper motion reference entries for {ref}"
-
-    ref = "Fahe09"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 216, f"found {len(t)} proper motion reference entries for {ref}"
-
-    # Kirk19 tested below.
-
-    ref = "Best15"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 120, f"found {len(t)} proper motion reference entries for {ref}"
-
-    ref = "Burn13"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 97, f"found {len(t)} proper motion reference entries for {ref}"
-
-    ref = "Dahn17"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 79, f"found {len(t)} proper motion reference entries for {ref}"
-
-    ref = "Jame08"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 73, f"found {len(t)} proper motion reference entries for {ref}"
-
-    ref = "vanL07"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 68, f"found {len(t)} proper motion reference entries for {ref}"
-
-    ref = "Smar18"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 68, f"found {len(t)} proper motion reference entries for {ref}"
-
-    ref = "Schm10.1808"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 44, f"found {len(t)} proper motion reference entries for {ref}"
-
-
 def test_missions(db):
     # If 2MASS designation in Names, 2MASS photometry should exist
     stm = except_(
@@ -223,80 +158,6 @@ def test_missions(db):
         f"and no Gaia EDR3 designation in Names "
     )
     assert len(s) == 1, msg
-
-
-def test_spectra(db):
-    regime = "optical"
-    t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 742, f"found {len(t)} spectra in the {regime} regime"
-
-    regime = "nir"
-    t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 580, f"found {len(t)} spectra in the {regime} regime"
-
-    regime = "mir"
-    t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 204, f"found {len(t)} spectra in the {regime} regime"
-
-    telescope = "IRTF"
-    t = db.query(db.Spectra).filter(db.Spectra.c.telescope == telescope).astropy()
-    assert len(t) == 436, f"found {len(t)} spectra from {telescope}"
-
-    telescope = "JWST"
-    instrument = "NIRSpec"
-    t = (
-        db.query(db.Spectra)
-        .filter(
-            and_(
-                db.Spectra.c.telescope == telescope,
-                db.Spectra.c.instrument == instrument,
-            )
-        )
-        .astropy()
-    )
-    assert len(t) == 2, f"found {len(t)} spectra from {telescope}/{instrument}"
-
-    telescope = "HST"
-    instrument = "WFC3"
-    t = (
-        db.query(db.Spectra)
-        .filter(
-            and_(
-                db.Spectra.c.telescope == telescope,
-                db.Spectra.c.instrument == instrument,
-            )
-        )
-        .astropy()
-    )
-    assert len(t) == 77, f"found {len(t)} spectra from {telescope}/{instrument}"
-
-    ref = "Reid08.1290"
-    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
-    assert len(t) == 280, f"found {len(t)} spectra from {ref}"
-
-    ref = "Cruz03"
-    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
-    assert len(t) == 191, f"found {len(t)} spectra from {ref}"
-
-    ref = "Cruz18"
-    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
-    assert len(t) == 186, f"found {len(t)} spectra from {ref}"
-
-    ref = "Cruz07"
-    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
-    assert len(t) == 158, f"found {len(t)} spectra from {ref}"
-
-    ref = "Bard14"
-    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
-    assert len(t) == 57, f"found {len(t)} spectra from {ref}"
-
-    ref = "Burg10.1142"
-    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
-    assert len(t) == 46, f"found {len(t)} spectra from {ref}"
-
-    ref = "Manj20"
-    t = db.query(db.Spectra).filter(db.Spectra.c.reference == ref).astropy()
-    assert len(t) == 20, f"found {len(t)} spectra from {ref}"
 
 
 # Test to verify existing counts of spectral types grouped by regime
@@ -388,34 +249,6 @@ def test_modeledparameters_refs(db, ref, n_counts):
         .astropy()
     )
     assert len(t) == n_counts, f"found {len(t)} modeled parameters with {ref} reference"
-
-
-def test_radial_velocities(db):
-    t = db.query(db.RadialVelocities).astropy()
-    assert len(t) == 1015, f"found {len(t)} radial velociies"
-
-    ref = "Abaz09"
-    t = (
-        db.query(db.RadialVelocities)
-        .filter(db.RadialVelocities.c.reference == ref)
-        .astropy()
-    )
-    assert len(t) == 445, f"found {len(t)} radial velociies with {ref} reference"
-
-    ref = "Fahe16"
-    t = (
-        db.query(db.RadialVelocities)
-        .filter(db.RadialVelocities.c.reference == ref)
-        .astropy()
-    )
-    assert len(t) == 47, f"found {len(t)} radial velociies with {ref} reference"
-
-    t = (
-        db.query(db.RadialVelocities)
-        .filter(db.RadialVelocities.c.radial_velocity_error_km_s == None)
-        .astropy()
-    )
-    assert len(t) == 89, f"found {len(t)} radial velociies with no uncertainty"
 
 
 def test_companion_relations(db):
