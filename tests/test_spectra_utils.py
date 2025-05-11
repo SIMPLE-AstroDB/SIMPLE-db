@@ -6,7 +6,6 @@ from astrodb_utils.utils import (
 
 from simple.utils.spectra import (
     ingest_spectrum,
-    # ingest_spectrum_from_fits,
 )
 
 
