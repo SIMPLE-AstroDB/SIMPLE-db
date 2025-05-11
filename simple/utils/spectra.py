@@ -6,7 +6,7 @@ import os
 from typing import Optional
 import requests
 import sqlalchemy.exc
-from astrodb_utils import AstroDBError, internet_connection, exit_function
+from astrodb_utils import AstroDBError, internet_connection
 from astrodb_utils.sources import find_source_in_db
 from astrodb_utils.spectra import check_spectrum_plottable
 from astrodbkit.astrodb import Database
@@ -14,7 +14,6 @@ from astropy.io import fits
 
 __all__ = [
     "ingest_spectrum",
-    "ingest_spectrum_from_fits",
     "find_spectra",
 ]
 
@@ -117,8 +116,11 @@ def ingest_spectrum(
     else:
         msg = f"No unique source match for {source} in the database. Found {db_name}."
         flags["message"] = msg
-        raise AstroDBError(msg)
-        # exit_function(msg, raise_error=raise_error) # pass flags
+        if raise_error:
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return flags
 
     # Check if spectrum is a duplicate
     matches = find_spectra(
@@ -175,7 +177,16 @@ def ingest_spectrum(
                 flags["message"] = msg
                 return flags
 
-    regime = check_regime_in_db(db, regime)
+    regime = get_db_regime(db, regime)
+    if regime is None:
+        msg = f"Regime not found in database: {regime}."
+        flags["message"] = msg
+        if raise_error:
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return flags
+
     instrument, mode, telescope = check_instrument_in_db(
         db,
         instrument=instrument,
@@ -243,55 +254,6 @@ def ingest_spectrum(
             return flags
 
     return flags
-
-
-def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
-    """
-    Ingests spectrum using data found in the header
-
-    Parameters
-    ----------
-    db
-    source
-    spectrum_fits_file
-
-    """
-    header = fits.getheader(spectrum_fits_file)
-    regime = header["SPECBAND"]
-    if regime == "opt":
-        regime = "optical"
-    telescope = header["TELESCOP"]
-    instrument = header["INSTRUME"]
-    try:
-        mode = header["MODE"]
-    except KeyError:
-        mode = None
-    obs_date = header["DATE-OBS"]
-    doi = header["REFERENC"]
-    data_header = fits.getheader(spectrum_fits_file, 1)
-    w_unit = data_header["TUNIT1"]
-    flux_unit = data_header["TUNIT2"]
-
-    reference_match = (
-        db.query(db.Publications.c.publication)
-        .filter(db.Publications.c.doi == doi)
-        .table()
-    )
-    reference = reference_match["publication"][0]
-
-    ingest_spectrum(
-        db,
-        source,
-        spectrum_fits_file,
-        regime,
-        telescope,
-        instrument,
-        mode,
-        obs_date,
-        reference,
-        wavelength_units=w_unit,
-        flux_units=flux_unit,
-    )
 
 
 def find_spectra(
@@ -469,7 +431,7 @@ def check_instrument_in_db(db, instrument=None, mode=None, telescope=None):
         )
 
 
-def check_regime_in_db(db, regime):
+def get_db_regime(db, regime):
     regime_table = (
         db.query(db.Regimes).filter(db.Regimes.c.regime.ilike(regime)).table()
     )
@@ -480,10 +442,12 @@ def check_regime_in_db(db, regime):
             f"Add it to the Regimes table or use an existing regime.\n"
             f"Available regimes:\n {db.query(db.Regimes).table()}"
         )
-        raise AstroDBError(msg)
+        logger.warning(msg)
+        return None
     elif len(regime_table) > 1:
         msg = f"Multiple entries for regime {regime} found in database. Please check the Regimes table. Matches: {regime_table}"
-        raise AstroDBError(msg)
+        logger.warning(msg)
+        return None
     else:
         return regime_table["regime"][0]
 
