@@ -13,8 +13,8 @@ __all__ = [
     "convert_spt_code_to_string",
 ]
 
-logger = logging.getLogger(__name__)
-
+logger = logging.getLogger("astrodb_utils.spectral_types")
+# Sets up a child of the "astrodb_utils" logger, once moved to astrodb_utils, change to __name__
 
 def ingest_spectral_type(
     db,
@@ -77,13 +77,14 @@ def ingest_spectral_type(
                 db.SpectralTypes.c.source == db_name,
                 db.SpectralTypes.c.regime == regime,
                 db.SpectralTypes.c.reference == reference,
+                db.SpectralTypes.c.spectral_type_string == spectral_type_string,
             )
         )
         .count()
     )
 
     if duplicate_check > 0:
-        msg = f"Spectral type already in the database: {db_name}, {regime}, {reference}"
+        msg = f"Spectral type already in the database: {db_name}, {spectral_type_string}, {regime}, {reference}"
         if raise_error:
             logger.error(msg)
             raise AstroDBError(msg)
@@ -119,9 +120,9 @@ def ingest_spectral_type(
             conn.execute(db.SpectralTypes.insert().values(spt_data))
             conn.commit()
         logger.info(
-            f"Spectral type added to database: "
-            f"{spt_data['source']} with {spt_data['spectral_type_string']} "
-            f"with regime: {spt_data['regime']} and reference: {spt_data['reference']}"
+            f"Spectral type added: "
+            f"{spt_data['source']}, {spt_data['spectral_type_string']}, "
+            f"{spt_data['regime']}, {spt_data['reference']}"
         )
     except sqlalchemy.exc.IntegrityError as e:
         if (
