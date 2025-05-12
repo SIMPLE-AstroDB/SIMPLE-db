@@ -23,7 +23,7 @@ logger.setLevel(logging.INFO)  # Set logger to INFO level - less verbose
 
 # Load Database
 recreate_db = True
-save_db = True
+save_db = False
 
 SCHEMA_PATH = "simple/schema.yaml"   
 db = load_astrodb(
@@ -83,6 +83,7 @@ def add_instruments():
 def ingest_spectra(data):
     spectra_added = 0
     skipped = 0
+    inaccessible = 0
 
     url = "https://bdnyc.s3.us-east-1.amazonaws.com/Beiler24/"
 
@@ -114,13 +115,23 @@ def ingest_spectra(data):
             print("\n------------------")
 
         except AstroDBError as e:
-            skipped += 1
-            logger.info(f"Spectra skipped: {skipped}")
-            print(f"Error ingesting spectrum for {source_name}: {e}")
+            if "suspected duplicate" in str(e):
+                skipped += 1
+                logger.info(f"Spectra skipped: {skipped}")
+            elif "does not appear to be accessible" in str(e):
+                inaccessible += 1
+                logger.error(f"Inaccessible spectrum for {source_name}: {e}")
+            else:
+                logger.error(
+                    f"Unexpected error ingesting spectrum for {source_name}: {e}"
+                )
+                raise e
             print("\n------------------")
-            
+
     logger.info(f"Total spectra added: {spectra_added}")
     logger.info(f"Total spectra skipped: {skipped}")
+    logger.info(f"Total inaccessible spectra: {inaccessible}")
+    logger.info(f"Total spectra: {spectra_added + skipped + inaccessible}/ {len(data)}")
 
 # Call Functions ----
 ingest_spectra(data=data)
