@@ -11,14 +11,15 @@ import os
 import openpyxl
 import pandas as pd
 
+# Set the loggging level of the astrodb_utils logger
+astrodb_utils_logger = logging.getLogger("astrodb_utils")
+astrodb_utils_logger.setLevel(logging.INFO)
+
+# Set up the logging for this ingest script.
 logger = logging.getLogger(
     "astrodb_utils.beiler24"
 )  # Sets up a child of the "astrodb_utils" logger
 logger.setLevel(logging.INFO)  # Set logger to INFO level - less verbose
-# logger.setLevel(logging.DEBUG)  # Set logger to debug level - more verbose
-logger.info(f"script using {logger.name}")
-logger.info(f"Logger level: {logging.getLevelName(logger.getEffectiveLevel()) }")
-
 
 # Load Database
 recreate_db = True
@@ -121,7 +122,7 @@ def ingest_spectra(data):
     logger.info(f"Total spectra added: {spectra_added}")
     logger.info(f"Total spectra skipped: {skipped}")
 
-#Call Functions ----
+# Call Functions ----
 ingest_spectra(data=data)
 
 # Save to Database, Writes the JSON Files
