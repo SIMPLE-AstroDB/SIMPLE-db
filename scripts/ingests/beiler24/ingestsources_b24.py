@@ -1,6 +1,8 @@
 ## Ingest Sources for Beiler24 ----
+import logging
+
 # SIMPLE & Astrodb Packages
-from astrodb_utils import load_astrodb, ingest_instrument
+from astrodb_utils import load_astrodb, ingest_instrument, AstroDBError
 from astrodb_utils.sources import ingest_source
 from astrodb_utils.publications import ingest_publication
 from simple import REFERENCE_TABLES
@@ -8,6 +10,15 @@ from simple.utils.spectra import ingest_spectrum
 import os
 import openpyxl
 import pandas as pd
+
+logger = logging.getLogger(
+    "astrodb_utils.beiler24"
+)  # Sets up a child of the "astrodb_utils" logger
+logger.setLevel(logging.INFO)  # Set logger to INFO level - less verbose
+# logger.setLevel(logging.DEBUG)  # Set logger to debug level - more verbose
+logger.info(f"script using {logger.name}")
+logger.info(f"Logger level: {logging.getLevelName(logger.getEffectiveLevel()) }")
+
 
 # Load Database
 recreate_db = True
@@ -21,84 +32,97 @@ db = load_astrodb(
     felis_schema=SCHEMA_PATH)
 
 # Read the Excel file
-path = "/Users/carolina/Documents/AMNH/SIMPLE/SIMPLE-db/scripts/ingests/beiler24/"
-excel_path = os.path.join(path, "Beiler_SIMPLE_Ingest.xlsx")
+# path = "/Users/carolina/Documents/AMNH/SIMPLE/SIMPLE-db/scripts/ingests/beiler24/"
+# excel_path = os.path.join(path, "Beiler_SIMPLE_Ingest.xlsx")
+excel_path = "scripts/ingests/beiler24/Beiler_SIMPLE_Ingest.xlsx"
 data = pd.read_excel(excel_path)
-sources_added = 0
-spectra_added = 0
+
 
 # # Ingest Sources ----
-# for _, row in data.iterrows():
-#     try:
-#         ingest_source(
-#             db,
-#             source=row['source'],
-#             reference="Beil24",  
-#         )
-#         print(f"Source {row['source']} ingested.")
-#         sources_added =+ 1
+def add_sources():
+    # # Ingest Sources ----
+    sources_added = 0
+    for _, row in data.iterrows():
+        try:
+            ingest_source(
+                db,
+                source=row["source"],
+                reference="Beil24",
+            )
+            print(f"Source {row['source']} ingested.")
+            sources_added = +1
 
-#     except Exception as e:
-#         print(f"Error ingesting source {row['source']}: {e}")
-#         continue
+        except Exception as e:
+            print(f"Error ingesting source {row['source']}: {e}")
+            continue
 
-# print(f"Total sources added: {sources_added}")
+    print(f"Total sources added: {sources_added}")# for _, row in data.iterrows():
+
+
 # Ingest Instruments ----
-"""Add intrument nirspec mode clear/prism"""
-modes = ["FS-CLEAR/PRISM", "FS-G395H/F290LP"]
-for mode in modes:
-    try:
-        ingest_instrument(
-            db,
-            instrument="NIRSpec",
-            mode=mode,
-            telescope="JWST",
-        )
-        print(f"Instruments NIRSpec {mode} ingested.")
-        
-    except Exception as e:
-        print(f"Error ingesting instrument NIRSpec {mode}: {e}")
-        continue
+def add_instruments():
+    """Add intrument nirspec mode clear/prism"""
+    modes = ["FS-CLEAR/PRISM", "FS-G395H/F290LP"]
+    for mode in modes:
+        try:
+            ingest_instrument(
+                db,
+                instrument="NIRSpec",
+                mode=mode,
+                telescope="JWST",
+            )
+            print(f"Instruments NIRSpec {mode} ingested.")
+            
+        except Exception as e:
+            print(f"Error ingesting instrument NIRSpec {mode}: {e}")
+            continue
 
 # Ingest Spectra ----
 """ Note: Any source containing '+' has been replaced with '%2B' in the AWS URL"""
+def ingest_spectra(data):
+    spectra_added = 0
+    skipped = 0
 
-url = "https://bdnyc.s3.us-east-1.amazonaws.com/Beiler24/"
+    url = "https://bdnyc.s3.us-east-1.amazonaws.com/Beiler24/"
 
-for _, row in data.iterrows():
-    try:
-        source_name = row['source']
-        spectrum_file = row['spectrum permalink']
-        if '+' in spectrum_file:
-            spectrum_file = spectrum_file.replace("+", "%2B")
-        spectrum_url = url + spectrum_file
-        
-        ingest_spectrum(
-            db,
-            source=source_name,
-            spectrum=spectrum_url,
-            regime=row['regime'],
-            telescope=row['telescope'],
-            instrument=row['instrument'],
-            mode=row['mode'],
-            obs_date=row['observation_date'],
-            reference="Beil24",
-            # raise_error=False,  
-            format = "tabular-fits"
-        )
-         
-        print(f"Spectrum for {source_name} ingested.")
-        print(f'')
-        print(f'------------------')
-        spectra_added += 1
+    for _, row in data.iterrows():
+        try:
+            source_name = row["source"]
+            spectrum_file = row["spectrum permalink"]
+            if "+" in spectrum_file:
+                spectrum_file = spectrum_file.replace("+", "%2B")
+            spectrum_url = url + spectrum_file
 
-    except Exception as e:
-        print(f"Error ingesting spectrum for {source_name}: {e}")
-        print(f'')
-        print(f'------------------')
-        continue
+            ingest_spectrum(
+                db,
+                source=source_name,
+                spectrum=spectrum_url,
+                regime=row["regime"],
+                telescope=row["telescope"],
+                instrument=row["instrument"],
+                mode=row["mode"],
+                obs_date=row["observation_date"],
+                reference="Beil24",
+                raise_error=True,
+                format="tabular-fits",
+            )
 
-print(f"Total spectra added: {spectra_added}")
+            # print(f"Spectrum for {source_name} ingested.")
+            spectra_added += 1
+            logger.info(f"Spectra ingested: {spectra_added}")
+            print("\n------------------")
+
+        except AstroDBError as e:
+            skipped += 1
+            logger.info(f"Spectra skipped: {skipped}")
+            print(f"Error ingesting spectrum for {source_name}: {e}")
+            print("\n------------------")
+            
+    logger.info(f"Total spectra added: {spectra_added}")
+    logger.info(f"Total spectra skipped: {skipped}")
+
+#Call Functions ----
+ingest_spectra(data=data)
 
 # Save to Database, Writes the JSON Files
 if save_db: 
