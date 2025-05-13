@@ -32,8 +32,6 @@ db = load_astrodb(
     felis_schema=SCHEMA_PATH)
 
 # Read the Excel file
-# path = "/Users/carolina/Documents/AMNH/SIMPLE/SIMPLE-db/scripts/ingests/beiler24/"
-# excel_path = os.path.join(path, "Beiler_SIMPLE_Ingest.xlsx")
 excel_path = "scripts/ingests/beiler24/Beiler_SIMPLE_Ingest.xlsx"
 data = pd.read_excel(excel_path)
 
