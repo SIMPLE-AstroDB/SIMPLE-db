@@ -4,7 +4,7 @@ from astrodb_utils.sources import (
     AstroDBError,
     ingest_source,
     find_publication,
-    ingest_name,
+    ingest_names,
 )
 
 from astrodb_utils.publications import (
@@ -16,7 +16,7 @@ import sys
 
 sys.path.append(".")
 from astropy.io import ascii
-from simple.schema import REFERENCE_TABLES
+from simple.DEPRECATED_schema import REFERENCE_TABLES
 
 
 DB_SAVE = True
