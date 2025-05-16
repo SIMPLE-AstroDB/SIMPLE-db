@@ -6,7 +6,6 @@ from astrodb_utils.utils import (
 
 from simple.utils.spectra import (
     ingest_spectrum,
-    # ingest_spectrum_from_fits,
 )
 
 
@@ -27,7 +26,7 @@ from simple.utils.spectra import (
                 "instrument": "SpeX",
                 "mode": "Prism",
             },
-            "Value required for regime",
+            "Observation date is not valid",
         ),  # missing regime
         (
             {
@@ -36,7 +35,8 @@ from simple.utils.spectra import (
                 "instrument": "SpeX",
                 "obs_date": "2020-01-01",
             },
-            "Value required for telescope",
+            "Reference is required",
+            # "Value required for telescope",
         ),  # missing telescope
         (
             {
@@ -45,7 +45,8 @@ from simple.utils.spectra import (
                 "telescope": "IRTF",
                 "obs_date": "2020-01-01",
             },
-            "Value required for instrument",
+            "Reference is required",
+            # "Value required for instrument",
         ),  # missing instrument
         (
             {
@@ -56,7 +57,8 @@ from simple.utils.spectra import (
                 "regime": "nir",
                 "obs_date": "2020-01-01",
             },
-            "NOT NULL constraint failed: Spectra.reference",
+            "Reference is required",
+            # "NOT NULL constraint failed: Spectra.reference",
         ),  # missing reference
         (
             {
@@ -68,7 +70,7 @@ from simple.utils.spectra import (
                 "obs_date": "2020-01-01",
                 "reference": "Ref 5",
             },
-            "FOREIGN KEY constraint failed",
+            "Reference not found",
         ),  # invalid reference
         (
             {
@@ -80,7 +82,7 @@ from simple.utils.spectra import (
                 "obs_date": "2020-01-01",
                 "reference": "Ref 1",
             },
-            "No unique source match for kiwi in the database",
+            "No unique source match",
         ),  # invalid source
         (
             {
@@ -91,7 +93,7 @@ from simple.utils.spectra import (
                 "regime": "nir",
                 "reference": "Ref 1",
             },
-            "Invalid date received: None",
+            "Observation date is not valid",
         ),  # missing date
         (
             {
@@ -103,7 +105,7 @@ from simple.utils.spectra import (
                 "obs_date": "2020-01-01",
                 "reference": "Ref 1",
             },
-            "FOREIGN KEY constraint failed",
+            "Regime not found",
         ),  # invalid regime
     ],
 )
@@ -118,12 +120,12 @@ def test_ingest_spectrum_errors(temp_db, test_input, message):
     # Check that error was raised
     with pytest.raises(AstroDBError) as error_message:
         _ = ingest_spectrum(**parameters)
-    # assert message in str(error_message.value)  # Custom error messages from schema.py are no longer returned
+        assert message in str(error_message.value)
 
     # Suppress error but check that it was still captured
     result = ingest_spectrum(**parameters, raise_error=False)
     assert result["added"] is False
-    # assert message in result["message"]  # Custom error messages from schema.py are no longer returned
+    assert message in result["message"]
 
 
 def test_ingest_spectrum_works(temp_db):

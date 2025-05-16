@@ -1,8 +1,9 @@
 import logging
 import sqlite3
-from typing import Optional
 from sqlalchemy import and_
-
+import datetime
+import os
+from typing import Optional
 import requests
 import sqlalchemy.exc
 from astrodb_utils import AstroDBError, internet_connection
@@ -13,7 +14,6 @@ from astropy.io import fits
 
 __all__ = [
     "ingest_spectrum",
-    "ingest_spectrum_from_fits",
     "find_spectra",
 ]
 
@@ -33,7 +33,7 @@ def ingest_spectrum(
     telescope: str = None,
     instrument: str = None,
     mode: str = None,
-    obs_date: str = None,
+    obs_date: str | datetime.datetime = None,
     reference: str = None,
     original_spectrum: Optional[str] = None,
     comments: Optional[str] = None,
@@ -81,8 +81,8 @@ def ingest_spectrum(
         If False, continue without raising an error.
     format: str
         Format of the spectrum file used by specutils to load the file.
-        If not set, specutils will try to guess the format.
-        Options: "tabular-fits"
+        If not provided, the format will be determined by specutils.
+        Options: "tabular-fits",
 
     Returns
     -------
@@ -100,30 +100,50 @@ def ingest_spectrum(
 
     flags = {"added": False, "content": {}, "message": ""}
 
+    # If a date is provided as a string, convert it to datetime
+    logger.debug(f"Parsing obs_date: {obs_date}")
+    if obs_date is not None and isinstance(obs_date, str):
+        parsed_date = check_obs_date(obs_date, raise_error=raise_error)
+    elif isinstance(obs_date, datetime.datetime):
+        parsed_date = obs_date
+
+    if obs_date is None or (parsed_date is None and raise_error is False):
+        msg = f"Observation date is not valid: {obs_date}"
+        flags["message"] = msg
+        if raise_error:
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return flags
+
     # Get source name as it appears in the database
     db_name = find_source_in_db(db, source)
+    logger.debug(f"Found db_name: {db_name} for source: {source}")
 
     if len(db_name) == 1:
         db_name = db_name[0]
     else:
         msg = f"No unique source match for {source} in the database. Found {db_name}."
         flags["message"] = msg
-        raise AstroDBError(msg)
-        # exit_function(msg, raise_error=raise_error) # pass flags
+        if raise_error:
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return flags
 
     # Check if spectrum is a duplicate
     matches = find_spectra(
         db,
         db_name,
         reference=reference,
-        obs_date=obs_date,
+        obs_date=parsed_date,
         telescope=telescope,
         instrument=instrument,
         mode=mode,
     )
     if len(matches) > 0:
         msg = f"Skipping suspected duplicate measurement: {source}"
-        msg2 = f"\n{matches} \n{instrument, mode, obs_date, reference, spectrum}"
+        msg2 = f"{matches} {instrument, mode, parsed_date, reference, spectrum}"
         logger.debug(msg2)
         flags["message"] = msg
         # exit_function(msg, raise_error=raise_error)
@@ -131,11 +151,51 @@ def ingest_spectrum(
             raise AstroDBError(msg)
         else:
             logger.warning(msg)
-            flags["message"] = msg
             return flags
 
-    reference = check_publication_in_db(db, reference)
-    regime = check_regime_in_db(db, regime)
+    if reference is None:
+        msg = "Reference is required."
+        flags["message"] = msg
+        if raise_error:
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return flags
+    else:
+        # reference = check_publication_in_db(db, reference)
+        pubs_table = (
+            db.query(db.Publications)
+            .filter(db.Publications.c.reference.ilike(reference))
+            .table()
+        )
+
+        if len(pubs_table) == 1:
+            reference = pubs_table["reference"][0]
+        else:
+            if len(pubs_table) == 0:
+                msg = f"Reference not found in database: {reference}. Add it to the Publications table."
+            elif len(pubs_table) > 1:
+                msg = f"Multiple entries for reference {reference} found in database. Check the Publications table. \n  Matches: \n {pubs_table}"
+            else:
+                msg = f"Unexpected condition: {reference}."
+
+            if raise_error:
+                raise AstroDBError(msg)
+            else:
+                logger.warning(msg)
+                flags["message"] = msg
+                return flags
+
+    regime = get_db_regime(db, regime)
+    if regime is None:
+        msg = f"Regime not found in database: {regime}."
+        flags["message"] = msg
+        if raise_error:
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return flags
+
     instrument, mode, telescope = check_instrument_in_db(
         db,
         instrument=instrument,
@@ -144,23 +204,16 @@ def ingest_spectrum(
     )
 
     # Check if spectrum file(s) are accessible
-    logger.debug(f"Checking spectrum: {spectrum}")
-
-    if check_spectrum_accessible(spectrum) is False:
-        msg = f"The spectrum location for {source} does not appear to be accessible."
-        if raise_error:
-            raise AstroDBError(msg)
-        else:
-            logger.warning(msg)
-            flags["message"] = msg
-            return flags
-
+    check_spectrum_accessible(spectrum)
     if original_spectrum is not None:
-        logger.debug(f"Checking original_spectrum: {original_spectrum}")
         check_spectrum_accessible(original_spectrum)
 
     # Check if spectrum is plottable
-    # flags["plottable"] = check_spectrum_plottable(spectrum, format=format)
+    flags["plottable"] = check_spectrum_plottable(spectrum, format=format)
+
+    if os.path.splitext(spectrum)[1] == ".fits":
+        with fits.open(spectrum) as hdul:
+            hdul.verify("warn")
 
     row_data = {
         "source": db_name,
@@ -171,7 +224,7 @@ def ingest_spectrum(
         "telescope": telescope,
         "instrument": instrument,
         "mode": mode,
-        "observation_date": obs_date,
+        "observation_date": parsed_date,
         "reference": reference,
         "comments": comments,
         "other_references": other_references,
@@ -180,14 +233,15 @@ def ingest_spectrum(
     flags["content"] = row_data
 
     try:
+        # Attempt to add spectrum to database
         with db.engine.connect() as conn:
             conn.execute(db.Spectra.insert().values(row_data))
             conn.commit()
+
         flags["added"] = True
         logger.info(
-            f"Added spectrum for {source}: {telescope}-{instrument}-{mode} from {reference} on {obs_date.strftime('%Y-%m-%d')}"
+            f"Added spectrum for {source}: {telescope}-{instrument}-{mode} from {reference} on {parsed_date.strftime('%d %b %Y')}"
         )
-
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         msg = f"Integrity Error: {source} \n {e}"
         flags["message"] = msg
@@ -196,11 +250,10 @@ def ingest_spectrum(
         else:
             logger.error(msg)
             return flags
-
     except Exception as e:
         msg = (
             f"Spectrum for {source} could not be added to the database "
-            f"for unknown reason: {e}"
+            f"for unexpected reason: {e}"
         )
         flags["message"] = msg
         if raise_error:
@@ -210,55 +263,6 @@ def ingest_spectrum(
             return flags
 
     return flags
-
-
-def ingest_spectrum_from_fits(db, source, spectrum_fits_file):
-    """
-    Ingests spectrum using data found in the header
-
-    Parameters
-    ----------
-    db
-    source
-    spectrum_fits_file
-
-    """
-    header = fits.getheader(spectrum_fits_file)
-    regime = header["SPECBAND"]
-    if regime == "opt":
-        regime = "optical"
-    telescope = header["TELESCOP"]
-    instrument = header["INSTRUME"]
-    try:
-        mode = header["MODE"]
-    except KeyError:
-        mode = None
-    obs_date = header["DATE-OBS"]
-    doi = header["REFERENC"]
-    data_header = fits.getheader(spectrum_fits_file, 1)
-    w_unit = data_header["TUNIT1"]
-    flux_unit = data_header["TUNIT2"]
-
-    reference_match = (
-        db.query(db.Publications.c.publication)
-        .filter(db.Publications.c.doi == doi)
-        .table()
-    )
-    reference = reference_match["publication"][0]
-
-    ingest_spectrum(
-        db,
-        source,
-        spectrum_fits_file,
-        regime,
-        telescope,
-        instrument,
-        mode,
-        obs_date,
-        reference,
-        wavelength_units=w_unit,
-        flux_units=flux_unit,
-    )
 
 
 def find_spectra(
@@ -337,6 +341,7 @@ def check_spectrum_accessible(spectrum: str) -> bool:
     bool
         True if the spectrum is accessible, False otherwise
     """
+    logger.debug(f"Checking spectrum: {spectrum}")
     internet = internet_connection()
     if internet:
         request_response = requests.head(spectrum)
@@ -352,7 +357,7 @@ def check_spectrum_accessible(spectrum: str) -> bool:
             logger.error(msg)
             return False
         else:
-            msg = f"The spectrum location appears up: {spectrum}"
+            msg = "The spectrum location appears up."
             logger.debug(msg)
             return True
     else:
@@ -435,37 +440,76 @@ def check_instrument_in_db(db, instrument=None, mode=None, telescope=None):
         )
 
 
-def check_regime_in_db(db, regime):
+def get_db_regime(db, regime):
     regime_table = (
         db.query(db.Regimes).filter(db.Regimes.c.regime.ilike(regime)).table()
     )
 
     if len(regime_table) == 0:
         msg = (
-            f"Regime {regime} not found in database. "
-            f"Please add it to the Regimes table or use an existing regime.\n"
+            f"Regime not found in database: {regime}. "
+            f"Add it to the Regimes table or use an existing regime.\n"
             f"Available regimes:\n {db.query(db.Regimes).table()}"
         )
-        raise AstroDBError(msg)
+        logger.warning(msg)
+        return None
     elif len(regime_table) > 1:
         msg = f"Multiple entries for regime {regime} found in database. Please check the Regimes table. Matches: {regime_table}"
-        raise AstroDBError(msg)
+        logger.warning(msg)
+        return None
     else:
         return regime_table["regime"][0]
 
 
-def check_publication_in_db(db, reference):
-    pubs_table = (
-        db.query(db.Publications)
-        .filter(db.Publications.c.reference.ilike(reference))
-        .table()
-    )
+# def check_publication_in_db(db, reference):
+# if reference is None:
+#     msg = "Reference is required."
+#     if raise_error:
+#         raise AstroDBError(msg)
+#     else:
+#         logger.warning(msg)
+#         return None
 
-    if len(pubs_table) == 0:
-        msg = f"Reference {reference} not found in database. Please add it to the Publications table."
-        raise AstroDBError(msg)
-    elif len(pubs_table) > 1:
-        msg = f"Multiple entries for reference {reference} found in database. Please check the Publications table. \n  Matches: \n {pubs_table}"
-        raise AstroDBError(msg)
-    else:
-        return pubs_table["reference"][0]
+# pubs_table = (
+#     db.query(db.Publications)
+#     .filter(db.Publications.c.reference.ilike(reference))
+#     .table()
+# )
+
+# if len(pubs_table) == 0:
+#     msg = f"Reference not found in database: {reference}. Add it to the Publications table."
+#     raise AstroDBError(msg)
+# elif len(pubs_table) > 1:
+#     msg = f"Multiple entries for reference {reference} found in database. Check the Publications table. \n  Matches: \n {pubs_table}"
+#     raise AstroDBError(msg)
+# else:
+#     return pubs_table["reference"][0]
+
+
+def check_obs_date(date, raise_error=True):
+    """
+    Check if the observation date is in the correct format
+    Parameters
+    ----------
+    date: str
+        Observation date
+
+    Returns
+    -------
+    bool
+        True if the date is in the correct format, False otherwise
+    """
+    try:
+        parsed_date = datetime.date.fromisoformat(date)
+        logger.debug(
+            f"Observation date {date} is valid: {parsed_date.strftime('%d %b %Y')}"
+        )
+        return parsed_date
+    except ValueError as e:
+        msg = f"Observation date {date} is not valid: {e}"
+        result = None
+        if raise_error:
+            raise AstroDBError(msg)
+        else:
+            logger.warning(msg)
+            return result

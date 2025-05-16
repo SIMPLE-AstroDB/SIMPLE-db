@@ -7,13 +7,11 @@ from astrodb_utils.sources import ingest_source
 from astrodb_utils.publications import ingest_publication
 from simple import REFERENCE_TABLES
 from simple.utils.spectra import ingest_spectrum
-import os
-import openpyxl
 import pandas as pd
 
 # Set the loggging level of the astrodb_utils logger
 astrodb_utils_logger = logging.getLogger("astrodb_utils")
-astrodb_utils_logger.setLevel(logging.INFO)
+astrodb_utils_logger.setLevel(logging.INFO)  # Set logger to DEBUG level - more verbose
 
 # Set up the logging for this ingest script.
 logger = logging.getLogger(
@@ -23,7 +21,7 @@ logger.setLevel(logging.INFO)  # Set logger to INFO level - less verbose
 
 # Load Database
 recreate_db = True
-save_db = False
+save_db = True
 
 SCHEMA_PATH = "simple/schema.yaml"   
 db = load_astrodb(
