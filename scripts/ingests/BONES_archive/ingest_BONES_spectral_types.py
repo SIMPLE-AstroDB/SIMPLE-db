@@ -9,9 +9,10 @@ from astrodb_utils.sources import (
 from astrodb_utils.publications import(
     ingest_publication
 )
+import sys
+sys.path.append(".")
 from simple import REFERENCE_TABLES
 from simple.utils.spectral_types import ingest_spectral_type
-
 
 astrodb_utils_logger = logging.getLogger("astrodb_utils")
 logger = logging.getLogger(
@@ -21,7 +22,7 @@ logger = logging.getLogger(
 logger.setLevel(logging.INFO)  # Set logger to INFO/DEBUG/WARNING/ERROR/CRITICAL level
 astrodb_utils_logger.setLevel(logging.INFO)
 
-DB_SAVE = False
+DB_SAVE = True
 RECREATE_DB = True
 
 SCHEMA_PATH = "simple/schema.yaml"
@@ -64,11 +65,14 @@ def find_regime(source):
 
 # helper method for extracting ads key from link
 def extractADS(link):
-    start = link.find('abs/')+4
-    end = link.find('/abstract')
-    ads = link[start:end]
-    ads = ads.replace("%26", "&")
+    ads = ""
+    if 'harvard.edu' in link:
+        start = link.find('abs/')+4
+        end = link.find('/abstract')
+        ads = link[start:end]
+        ads = ads.replace("%26", "&")
     return ads
+
 
 # ingest ULAS J074431.30+283915.6 separately
 ingest_spectral_type(
@@ -93,25 +97,26 @@ for source in bones_sheet_table:
         ads = extractADS(source["ADS_LINK"])
         ref = find_publication(db=db, bibcode = ads)
         # if publication not in db, ingest
-        if ref[0] is False:
-            try:
-                ingest_publication(db = db, bibcode = ads)
-                pub_ingested += 1
-                ref = find_publication(db=db, bibcode=ads)
-            except Exception as e:
-                logger.error("Find and ingest pattern didn't work" + ads)
-                raise e
+        if ads is not "":
+            if ref[0] is False:
+                try:
+                    ingest_publication(db = db, bibcode = ads)
+                    pub_ingested += 1
+                    ref = find_publication(db=db, bibcode=ads)
+                except Exception as e:
+                    logger.error("Find and ingest pattern didn't work" + ads)
+                    raise e
 
-        # ingest the spectral types
-        ingest_spectral_type(
-            db,
-            source=source["NAME"],
-            spectral_type_string=bones_spectra,
-            regime=sp_regime,
-            comments="From the BONES archive",
-            reference = ref[1]
-        )
-        ingested += 1
+            # ingest the spectral types
+            ingest_spectral_type(
+                db,
+                source=source["NAME"],
+                spectral_type_string=bones_spectra,
+                regime=sp_regime,
+                comments="From the BONES archive",
+                reference = ref[1]
+            )
+            ingested += 1
     except AstroDBError as e:
         msg = "ingest failed with error: " + str(e)
         logger.warning(msg)
@@ -123,9 +128,9 @@ for source in bones_sheet_table:
 
 
 total = len(bones_sheet_table)
-logger.info(f"skipped: {skipped}")  # 32 skipped
-logger.info(f"spectra_ingested: {ingested}")  # 178 ingested
-logger.info(f"Already exists: {already_exists}") # 31 already exists in database
+logger.info(f"skipped: {skipped}")  # 0 skipped
+logger.info(f"spectra_ingested: {ingested}")  # 199 ingested
+logger.info(f"Already exists: {already_exists}") # 10 already exists in database
 logger.info(f"Publications ingested: {pub_ingested}") #7 new publications ingested
 logger.info(f"total: {total}")  # 209 total
 if DB_SAVE:

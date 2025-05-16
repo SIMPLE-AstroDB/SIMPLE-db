@@ -302,7 +302,7 @@ def test_spectra(db):
 # Test to verify existing counts of spectral types grouped by regime
 @pytest.mark.parametrize(
     ("regime", "n_spectra"),
-    [("optical", 1494), ("nir", 2623), ("mir", 0), ("unknown", 11)],
+    [("optical", 1494), ("nir", 2446), ("mir", 0), ("unknown", 10)],
 )
 def test_spectral_types_regimes(db, regime, n_spectra):
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
@@ -312,7 +312,7 @@ def test_spectral_types_regimes(db, regime, n_spectra):
 # Test numbers of MLTY dwarfs
 @pytest.mark.parametrize(
     ("string", "code_min", "code_max", "n_spectra"),
-    [("M", 60, 70, 963), ("L", 70, 80, 2076), ("T", 80, 90, 1030), ("Y", 90, 100, 59)],
+    [("M", 60, 70, 861), ("L", 70, 80, 2011), ("T", 80, 90, 1019), ("Y", 90, 100, 59)],
 )  # Total number of MLTY dwarfs = 3863
 def test_spectral_types_classes(db, string, code_min, code_max, n_spectra):
     result = (
@@ -331,7 +331,7 @@ def test_spectral_types_classes(db, string, code_min, code_max, n_spectra):
 
 def test_spectral_types(db):
     n_spectral_types = db.query(db.SpectralTypes).count()
-    assert n_spectral_types == 4128, f"found {n_spectral_types} spectral types"
+    assert n_spectral_types == 3950, f"found {n_spectral_types} spectral types"
     print(f"found {n_spectral_types} total spectral types")
 
     n_photometric_spectral_types = (
@@ -347,7 +347,7 @@ def test_spectral_types(db):
         db.query(db.SpectralTypes).filter(db.SpectralTypes.c.adopted == 1).count()
     )
     assert (
-        n_adopted_spectral_types == 265
+        n_adopted_spectral_types == 88
     ), f"found {n_adopted_spectral_types} adopted spectral types"
     print(f"found {n_adopted_spectral_types} adopted spectral types")
 
