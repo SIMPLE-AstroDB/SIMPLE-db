@@ -232,11 +232,11 @@ def test_spectra(db):
 
     regime = "nir"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 580, f"found {len(t)} spectra in the {regime} regime"
+    assert len(t) == 602, f"found {len(t)} spectra in the {regime} regime"
 
     regime = "mir"
     t = db.query(db.Spectra).filter(db.Spectra.c.regime == regime).astropy()
-    assert len(t) == 204, f"found {len(t)} spectra in the {regime} regime"
+    assert len(t) == 227, f"found {len(t)} spectra in the {regime} regime"
 
     telescope = "IRTF"
     t = db.query(db.Spectra).filter(db.Spectra.c.telescope == telescope).astropy()
@@ -254,7 +254,7 @@ def test_spectra(db):
         )
         .astropy()
     )
-    assert len(t) == 2, f"found {len(t)} spectra from {telescope}/{instrument}"
+    assert len(t) == 24, f"found {len(t)} spectra from {telescope}/{instrument}"
 
     telescope = "HST"
     instrument = "WFC3"
