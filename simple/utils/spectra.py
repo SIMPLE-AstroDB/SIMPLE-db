@@ -40,6 +40,7 @@ def ingest_spectrum(
     other_references: Optional[str] = None,
     local_spectrum: Optional[str] = None,
     raise_error: bool = True,
+    format: Optional[str] = None,
 ):
     """
     Parameters
@@ -78,6 +79,10 @@ def ingest_spectrum(
     raise_error: bool
         If True, raise an error if the spectrum cannot be added.
         If False, continue without raising an error.
+    format: str
+        Format of the spectrum file used by specutils to load the file.
+        If not provided, the format will be determined by specutils.
+        Options: "tabular-fits",
 
     Returns
     -------
@@ -96,8 +101,12 @@ def ingest_spectrum(
     flags = {"added": False, "content": {}, "message": ""}
 
     # If a date is provided as a string, convert it to datetime
+    logger.debug(f"Parsing obs_date: {obs_date}")
     if obs_date is not None and isinstance(obs_date, str):
         parsed_date = check_obs_date(obs_date, raise_error=raise_error)
+    elif isinstance(obs_date, datetime.datetime):
+        parsed_date = obs_date
+
     if obs_date is None or (parsed_date is None and raise_error is False):
         msg = f"Observation date is not valid: {obs_date}"
         flags["message"] = msg
@@ -147,6 +156,7 @@ def ingest_spectrum(
     if reference is None:
         msg = "Reference is required."
         flags["message"] = msg
+
         if raise_error:
             raise AstroDBError(msg)
         else:
@@ -176,7 +186,7 @@ def ingest_spectrum(
                 logger.warning(msg)
                 flags["message"] = msg
                 return flags
-
+             
     regime = get_db_regime(db, regime)
     if regime is None:
         msg = f"Regime not found in database: {regime}."
@@ -199,8 +209,20 @@ def ingest_spectrum(
     if original_spectrum is not None:
         check_spectrum_accessible(original_spectrum)
 
+    instrument, mode, telescope = check_instrument_in_db(
+        db,
+        instrument=instrument,
+        mode=mode,
+        telescope=telescope,
+    )
+
+    # Check if spectrum file(s) are accessible
+    check_spectrum_accessible(spectrum)
+    if original_spectrum is not None:
+        check_spectrum_accessible(original_spectrum)
+
     # Check if spectrum is plottable
-    flags["plottable"] = check_spectrum_plottable(spectrum)
+    flags["plottable"] = check_spectrum_plottable(spectrum, format=format)
 
     if os.path.splitext(spectrum)[1] == ".fits":
         with fits.open(spectrum) as hdul:
