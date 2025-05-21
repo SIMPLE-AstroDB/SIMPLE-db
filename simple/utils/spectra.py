@@ -209,7 +209,7 @@ def ingest_spectrum(
         check_spectrum_accessible(original_spectrum)
 
     # Check if spectrum is plottable
-    flags["plottable"] = check_spectrum_plottable(spectrum, format=format)
+    flags["plottable"] = check_spectrum_plottable(spectrum)
 
     if os.path.splitext(spectrum)[1] == ".fits":
         with fits.open(spectrum) as hdul:
