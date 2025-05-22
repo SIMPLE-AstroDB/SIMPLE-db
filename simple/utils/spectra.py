@@ -156,6 +156,7 @@ def ingest_spectrum(
     if reference is None:
         msg = "Reference is required."
         flags["message"] = msg
+
         if raise_error:
             raise AstroDBError(msg)
         else:
@@ -185,7 +186,7 @@ def ingest_spectrum(
                 logger.warning(msg)
                 flags["message"] = msg
                 return flags
-
+             
     regime = get_db_regime(db, regime)
     if regime is None:
         msg = f"Regime not found in database: {regime}."
@@ -195,6 +196,18 @@ def ingest_spectrum(
         else:
             logger.warning(msg)
             return flags
+
+    instrument, mode, telescope = check_instrument_in_db(
+        db,
+        instrument=instrument,
+        mode=mode,
+        telescope=telescope,
+    )
+
+    # Check if spectrum file(s) are accessible
+    check_spectrum_accessible(spectrum)
+    if original_spectrum is not None:
+        check_spectrum_accessible(original_spectrum)
 
     instrument, mode, telescope = check_instrument_in_db(
         db,
