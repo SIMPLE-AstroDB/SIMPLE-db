@@ -90,7 +90,7 @@ def test_publications(db):
         )
         .astropy()
     )
-    assert len(t) == 30, f"found {len(t)} publications with missing bibcode and doi"
+    assert len(t) == 31, f"found {len(t)} publications with missing bibcode and doi"
 
 
 def test_parameters(db):
@@ -683,4 +683,3 @@ def test_names_uniqueness(db):
         print(duplicate_names)
 
     assert len(duplicate_names) == 0
-
