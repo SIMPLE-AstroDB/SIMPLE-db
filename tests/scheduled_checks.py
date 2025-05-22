@@ -30,13 +30,12 @@ def test_spectra_urls(db):
     # Display broken spectra regardless if it's the number we expect or not
     print(f"found {len(broken_urls)} broken spectra urls: {broken_urls}, {codes}")
 
-    assert 5 == len(broken_urls)
+    assert 4 == len(broken_urls)
 
 # Expected fails:
 # 11123099-7653342.txt',
 # L1_OPT_2MASS_J10595138-2113082_Cruz2003.txt
 # 0000%252B2554_IRS_spectrum.fits'
-# 0415-0935.fits',
 # 2MASS+J22541892%2B3123498.fits'])
 
 
@@ -95,11 +94,15 @@ def test_source_simbad(db):
             duplicate_count += 1
 
     assert duplicate_count == 0, "Duplicate sources identified via Simbad queries"
+
+    # with open("not_in_simbad.txt", "w") as f:
+    #    f.write("\n".join(not_in_simbad))
+
     assert (
-        len(not_in_simbad) == 425
+        len(not_in_simbad) == 371
     ), f"Expecting {len(not_in_simbad)} sources not found in Simbad"
 
-    assert len(in_simbad) == 3012, "Sources found in Simbad"
+    assert len(in_simbad) == 3227, "Sources found in Simbad"
     print(f"Found {len(in_simbad)} SIMPLE sources in Simbad")
 
     assert len(not_in_simbad) + len(in_simbad) == len(
