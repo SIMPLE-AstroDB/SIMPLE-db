@@ -4,14 +4,14 @@ from sqlalchemy import and_
 
 def test_spectra_count(db):
     n_spectra = db.query(db.Spectra).count()
-    assert n_spectra == 1605, f"found {n_spectra} sources"
+    assert n_spectra == 1606, f"found {n_spectra} sources"
 
 
 @pytest.mark.parametrize(
     ("regime", "n_spectra"),
     [
         ("optical", 743),
-        ("nir", 635),
+        ("nir", 636),
         ("mir", 227),
         ("unknown", 0),
     ],
@@ -38,7 +38,7 @@ def test_spectra_regimes(db, regime, n_spectra):
         ("Spitzer", 203),
         ("KPNO 2.1m", 93),
         ("KPNO 4m", 251),
-        ("JWST", 48),
+        ("JWST", 49),
     ],
 )
 def test_spectra_telescope(db, telescope, n_spectra):
@@ -49,7 +49,7 @@ def test_spectra_telescope(db, telescope, n_spectra):
 @pytest.mark.parametrize(
     ("telescope", "instrument", "n_spectra"),
     [
-        ("JWST", "NIRSpec", 24),
+        ("JWST", "NIRSpec", 25),
         ("JWST", "MIRI", 24),
         ("HST", "WFC3", 77),
     ],
