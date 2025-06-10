@@ -19,7 +19,7 @@ logger.setLevel(logging.INFO)
 
 # Load Database
 recreate_db = True
-save_db = False
+save_db = True
 
 SCHEMA_PATH = "simple/schema.yaml"
 db = load_astrodb(
