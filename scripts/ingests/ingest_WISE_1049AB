@@ -64,3 +64,12 @@ ingest_companion_relationships(
     relationship="Sibling",
     ref = "Luhm13",
 )
+
+#ingest A and B as siblings
+ingest_companion_relationships(
+    db = db,
+    source = "WISE J104915.57-531906.1B",
+    companion_name= "WISE J104915.57-531906.1A",
+    relationship="Sibling",
+    ref = "Luhm13",
+)
