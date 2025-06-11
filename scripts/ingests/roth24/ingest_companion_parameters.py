@@ -1,4 +1,5 @@
 from astrodb_utils import load_astrodb
+from astrodbkit.schema_example import *
 from astrodb_utils.publications import (
     logger,
     ingest_publication,
@@ -6,8 +7,7 @@ from astrodb_utils.publications import (
 )
 import sys
 sys.path.append(".")
-from simple.schema import *
-from simple.schema import REFERENCE_TABLES
+from simple import REFERENCE_TABLES
 from astropy.io import ascii
 import logging
 import sqlalchemy.exc
