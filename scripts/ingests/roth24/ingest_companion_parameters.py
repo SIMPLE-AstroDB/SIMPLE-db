@@ -39,7 +39,7 @@ byw_table = ascii.read(
 
 # Create a database engine
 #engine = create_engine("sqlite:////Users/kasey/Documents/GitHub/SIMPLE-db/SIMPLE.sqlite", echo=True)
-
+'''
 metadata = MetaData() #metadata stores the table schema and database structure
 
 CompanionParameters = Table(
@@ -56,6 +56,7 @@ CompanionParameters = Table(
 )
 
 metadata.create_all(db.engine) #ensures table is created if it doens't already exist
+'''
 
 def extractADS(link):
     start = link.find("abs/") + 4
@@ -78,7 +79,9 @@ for row in byw_table:
     #Austin said that the ones in the sheet that he provided a link for have not been ingested so I am doing that here
     if "https://" in row["Ref"]:
         ads = extractADS(row["Ref"])
+        print(ads)
         ingest_publication(db = db, bibcode=ads)
+
         source_reference = find_publication(db, bibcode=ads)
         ref = source_reference[1]
     else:
