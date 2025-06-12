@@ -1,0 +1,50 @@
+from astrodb_utils import load_astrodb
+from astrodb_utils.sources import (
+    find_source_in_db,
+    AstroDBError,
+    ingest_source,
+    find_publication,
+    ingest_names,
+)
+
+from astrodb_utils.publications import (
+    ingest_publication,
+    logger,
+)
+
+import sys
+
+sys.path.append(".")
+from astropy.io import ascii
+from simple import REFERENCE_TABLES
+
+DB_SAVE = True
+RECREATE_DB = True
+
+SCHEMA_PATH = "simple/schema.yaml"
+db = load_astrodb(
+    "SIMPLE.sqlite",
+    recreatedb=RECREATE_DB,
+    reference_tables=REFERENCE_TABLES,
+    felis_schema=SCHEMA_PATH,
+)
+
+#ingest missing names
+missing_names = ["2MASS J04220512+1358474",
+"EPIC 210422945",
+"TIC 435923794",
+"WISEA J042205.19+135847.1",
+"WISE J042205.19+135847.2",
+"Gaia DR3 3310992904122021120",
+"Gaia DR2 3310992904122021120",
+"SSTSL2 J042205.16+135847.2"]
+for name in missing_names:
+    ingest_names(
+        db = db,
+        source = "Hya06",
+        other_name = name,
+        raise_error = True
+    )
+
+if DB_SAVE:
+    db.save_database(directory="data/")
