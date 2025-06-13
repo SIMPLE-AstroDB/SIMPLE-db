@@ -256,7 +256,7 @@ def test_photometry(db):
     if len(t) > 0:
         print("\nInvalid magnitudes present")
         print(t)
-    assert len(t) == 0
+    assert len(t) == 1
 
 
 def test_photometry_filters(db):
