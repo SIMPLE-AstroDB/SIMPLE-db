@@ -35,6 +35,11 @@ from astropy.io.votable.ucd import check_ucd
         ("JWST/MIRI.F1800W", 26),
         ("IRAC.I1", 828),
         ("IRAC.I2", 884),
+        ("PS1.g", 1),
+        ("PS1.i", 1),
+        ("PS1.r", 1),
+        ("PS1.z", 1),
+        ("PS1.y", 1),
     ],
 )
 def test_photometry_bands(db, band, value):
