@@ -18,8 +18,11 @@ logger = logging.getLogger("AstroDB")
 logger.setLevel(logging.INFO)
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
+SCHEMA_PATH = "simple/schema.yaml" 
 # LOAD THE DATABASE
-db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES)
+# Was not being properly loaded before because the load_astrodb didn't previously include the pointer to the schema 
+# which is what the felis_schema is
+db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES, felis_schema=SCHEMA_PATH)
 
 link = (
     "scripts/ingests/roth24/bywCompanionParameters.csv"
@@ -39,6 +42,8 @@ byw_table = ascii.read(
 
 # Create a database engine
 #engine = create_engine("sqlite:////Users/kasey/Documents/GitHub/SIMPLE-db/SIMPLE.sqlite", echo=True)
+
+# not necessary, this is what the load_astrodb does
 '''
 metadata = MetaData() #metadata stores the table schema and database structure
 
@@ -72,8 +77,11 @@ for row in byw_table:
     parameter = row["Parameter"]
     value = row["Value"]
     value_error = row["Value_error"]
+    print(value_error)
     upper_error = row["upper_error"]
+    print(upper_error)
     lower_error = row["lower_error"]
+    print(lower_error)
     unit = row["Unit"]
     comments = row["Comments"]
     #Austin said that the ones in the sheet that he provided a link for have not been ingested so I am doing that here
@@ -83,12 +91,14 @@ for row in byw_table:
         ingest_publication(db = db, bibcode=ads)
 
         source_reference = find_publication(db, bibcode=ads)
-        ref = source_reference[1]
+        reference = source_reference[1]
     else:
-        ref = row["Ref"]
+        reference = row["Ref"]
+
+    print(reference)
     with db.engine.connect() as conn:
             conn.execute(
-                CompanionParameters.insert().values(
+                db.CompanionParameters.insert().values(
                     {
                         "source": source_name,
                         "parameter": parameter,
@@ -98,7 +108,7 @@ for row in byw_table:
                         "lower_error": lower_error,
                         "unit": unit,
                         "comments": comments,
-                        "ref": ref
+                        "reference": reference
                     }
                 )
             )
