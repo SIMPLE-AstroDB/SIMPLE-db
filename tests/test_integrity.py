@@ -655,8 +655,7 @@ def test_companion_relationship_uniqueness(db):
     # checking duplicate sources have different companions
     non_unique = []
     for source in duplicate_sources:
-        t = db.query(db.CompanionRelationships.c.companion_name)
-        filter(db.CompanionRelationships.c.source == source).astropy()
+        t = db.query(db.CompanionRelationships.c.companion_name).filter(db.CompanionRelationships.c.source == source['source']).astropy()
         duplicate_companions = [
             n for n, companion in enumerate(t) if companion in t[:n]
         ]
