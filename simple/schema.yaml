@@ -1332,7 +1332,7 @@ tables:
       "@id": "#CompanionParameters.companion"
       datatype: string
       length: 50
-      description: Main identifier for a companion object
+      description: Main identifier for a companion object; link to Companion List table
       ivoa:ucd: meta.id
       nullable: false
     - name: parameter
@@ -1346,10 +1346,14 @@ tables:
       "@id": "#CompanionParameters.value"
       datatype: double
       description: Value of the parameter
-    - name: error
-      "@id": "#CompanionParameters.error"
+    - name: upper_error
+      "@id": "#CompanionParameters.upper_error"
       datatype: double
-      description: Uncertainty of the parameter value
+      description: Upper uncertainty of the parameter value
+    - name: lower_error
+      "@id": "#CompanionParameters.lower_error"
+      datatype: double
+      description: Lower uncertainty of the parameter value
     - name: unit
       "@id": "#CompanionParameters.unit"
       datatype: string
