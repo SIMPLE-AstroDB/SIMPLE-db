@@ -74,17 +74,14 @@ def extractADS(link):
 
 for row in byw_table:
     source_name = row["Source"]
+    companion = row["Host"]
     parameter = row["Parameter"]
     value = row["Value"]
-    value_error = row["Value_error"]
-    print(value_error)
     upper_error = row["upper_error"]
-    print(upper_error)
     lower_error = row["lower_error"]
-    print(lower_error)
     unit = row["Unit"]
     comments = row["Comments"]
-    #Austin said that the ones in the sheet that he provided a link for have not been ingested so I am doing that here
+    #the ones in the sheet that are provided a link for have not been ingested so do that here
     if "https://" in row["Ref"]:
         ads = extractADS(row["Ref"])
         print(ads)
@@ -101,9 +98,9 @@ for row in byw_table:
                 db.CompanionParameters.insert().values(
                     {
                         "source": source_name,
+                        "companion": companion,
                         "parameter": parameter,
                         "value": value,
-                        "value_error": value_error,
                         "upper_error": upper_error,
                         "lower_error": lower_error,
                         "unit": unit,
