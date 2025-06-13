@@ -11,12 +11,12 @@ astrodb_utils_logger.setLevel(logging.INFO)
 
 # set up proper motion logger
 logger = logging.getLogger(
-    "astrodb_utils.proper motion"
+    "astrodb_utils.proper_motion"
 )
 logger.setLevel(logging.INFO)
 
 # Load Database
-recreate_db = False
+recreate_db = True
 save_db = False
 
 SCHEMA_PATH = "simple/schema.yaml"
@@ -38,7 +38,7 @@ def ingest_PanSTARRS_proper_motion(data):
     
     for _, row in data.iterrows():
         try:
-            # Make sure to pass proper motion values, not positions
+            # showing error as key name in SIMPLE.sqlite not matching with the ASTRODB utils parameters name
             ingest_proper_motions(
                 db,
                 sources=[row["source"]],
@@ -53,9 +53,9 @@ def ingest_PanSTARRS_proper_motion(data):
             if "No unique source match" in str(e):
                 skipped += 1
                 logger.warning(f"Skipping {row['source']}: No unique match in database.")
-
-            inaccessible += 1
-            logger.error(f"Unexpected error for {row['source']}: {e}")
+            else:
+                inaccessible += 1
+                logger.error(f"Unexpected error for {row['source']}: {e}")
 
     logger.info(f"Total proper motions added: {motion_added}")
     logger.info(f"Total skipped: {skipped}")
@@ -64,7 +64,7 @@ def ingest_PanSTARRS_proper_motion(data):
 # Call function
 ingest_PanSTARRS_proper_motion(data=data)
 
-# write the json file
+# Save updated SQLite database
 if save_db:
     db.save_database(directory="data/")
     logger.info("Proper Motion Database saved successfully.")
