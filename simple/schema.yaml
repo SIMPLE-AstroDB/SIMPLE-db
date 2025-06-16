@@ -1039,6 +1039,7 @@ tables:
       datatype: string
       length: 30
       description: Instrument mode; links to Instruments table
+      nullable: false
     - name: observation_date
       "@id": "#Spectra.observation_date"
       datatype: timestamp
@@ -1072,6 +1073,7 @@ tables:
         columns: 
         - "#Spectra.source"
         - "#Spectra.regime"
+        - "#Spectra.mode"
         - "#Spectra.observation_date"
         - "#Spectra.reference"
     constraints:
