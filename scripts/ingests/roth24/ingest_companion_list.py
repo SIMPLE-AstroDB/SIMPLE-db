@@ -2,21 +2,17 @@ from astrodb_utils import load_astrodb
 from astrodbkit.schema_example import *
 from astrodb_utils.publications import (
     logger,
-    ingest_publication,
-    find_publication
 )
+from astrodb_utils.sources import coords_from_simbad
 import sys
 sys.path.append(".")
 from simple import REFERENCE_TABLES
 from astropy.io import ascii
 import logging
-import sqlalchemy.exc
-from sqlalchemy import create_engine
-from sqlalchemy import MetaData, Table, Column, Integer, String, Float
 
 logger = logging.getLogger("AstroDB")
 logger.setLevel(logging.INFO)
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 SCHEMA_PATH = "simple/schema.yaml" 
 # LOAD THE DATABASE
@@ -59,6 +55,7 @@ for row in byw_table:
             )
         )
         conn.commit()
+        print(coords_from_simbad(companion))
         ingested+=1
 
 print(ingested)
