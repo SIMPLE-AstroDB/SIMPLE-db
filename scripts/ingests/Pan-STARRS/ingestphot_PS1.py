@@ -29,14 +29,19 @@ excel_path = "scripts/ingests/Pan-STARRS/Optical Pan-STARRS Photometry.xlsx"
 data = pd.read_excel(excel_path)
 
 # Ingest Photometry: Add different bands depends on the ugriz magnitude available in the datasets
-def ingest_PanSTARRS_photometry(data):
+# process data in chunks as dataset is large
+def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
     photometry_added = 0
     skipped = 0
     inaccessible = 0
-     # easy for adding band counts in test_photometry.py
+    # easy for adding band counts in test_photometry.py
     band_counts = {band: 0 for band in ['g', 'r', 'i', 'z', 'y']}
 
-    for _, row in data.iterrows():
+    end_idx = min(start_idx + chunk_size, len(data))
+    data_chunk = data.iloc[start_idx:end_idx]
+    print(f"\nProcessing rows {start_idx} to {end_idx - 1}\n")
+
+    for _, row in data_chunk.iterrows():
         try:
             for band in ['g', 'r', 'i', 'z', 'y']:
                 mag = f"{band}mag"
@@ -47,7 +52,7 @@ def ingest_PanSTARRS_photometry(data):
                         source=row["source"],
                         band=f"PS1.{band}",
                         magnitude=row[mag],
-                        magnitude_error=row.get(err),
+                        magnitude_error=row[err],
                         reference="Best18",
                         telescope="Pan-STARRS",
                         epoch=None,
@@ -74,7 +79,7 @@ def ingest_PanSTARRS_photometry(data):
         logger.info(f"Total entries ingested for PS1.{band} band: {count}")
 
 # Run ingestion
-ingest_PanSTARRS_photometry(data=data)
+ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=300)
 
 # Save updated SQLite database
 if save_db:
