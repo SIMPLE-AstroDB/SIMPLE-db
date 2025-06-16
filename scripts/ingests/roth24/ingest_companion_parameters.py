@@ -5,6 +5,13 @@ from astrodb_utils.publications import (
     ingest_publication,
     find_publication
 )
+from astrodb_utils.sources import (
+    find_source_in_db,
+    AstroDBError,
+    ingest_source,
+    find_publication,
+)
+
 import sys
 sys.path.append(".")
 from simple import REFERENCE_TABLES
@@ -84,14 +91,16 @@ for row in byw_table:
     #the ones in the sheet that are provided a link for have not been ingested so do that here
     if "https://" in row["Ref"]:
         ads = extractADS(row["Ref"])
-        print(ads)
-        ingest_publication(db = db, bibcode=ads)
-
+        publication_exists = find_publication(db=db, bibcode=ads)
+        if publication_exists[0] == False:
+            ingest_publication(db = db, bibcode=ads)
+            
         source_reference = find_publication(db, bibcode=ads)
         reference = source_reference[1]
     else:
         reference = row["Ref"]
 
+    print(source_name)
     source_existing = db.query(db.Sources).filter_by(source=source_name).first()
     print(source_existing)
     companion_existing = db.query(db.CompanionList).filter_by(companion=companion).first()
