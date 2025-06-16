@@ -48,18 +48,17 @@ for row in byw_table:
     
     companion = row["Host"]
     
-    existing = db.query(db.CompanionList).filter_by(companion=companion).first()
-    print(existing)
-    if not existing:
-        with db.engine.connect() as conn:
-            conn.execute(
-                db.CompanionList.insert().values(
-                    {
-                        "companion": companion,
-                    }
-                )
+
+
+    with db.engine.connect() as conn:
+        conn.execute(
+            db.CompanionList.insert().values(
+                {
+                    "companion": companion,
+                }
             )
-            conn.commit()
+        )
+        conn.commit()
         ingested+=1
 
 print(ingested)
