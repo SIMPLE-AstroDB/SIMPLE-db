@@ -75,7 +75,7 @@ def extractADS(link):
 for row in byw_table:
     source_name = row["Source"]
     companion = row["Host"]
-    parameter = row["Parameter"]
+    parameter = row["Parameter"].lower()
     value = row["Value"]
     upper_error = row["upper_error"]
     lower_error = row["lower_error"]
@@ -92,7 +92,13 @@ for row in byw_table:
     else:
         reference = row["Ref"]
 
-    print(reference)
+    source_existing = db.query(db.Sources).filter_by(source=source_name).first()
+    print(source_existing)
+    companion_existing = db.query(db.CompanionList).filter_by(companion=companion).first()
+    print(companion_existing)
+    ref_existing = db.query(db.Publications).filter_by(reference=reference).first()
+    print(ref_existing)
+
     with db.engine.connect() as conn:
             conn.execute(
                 db.CompanionParameters.insert().values(
