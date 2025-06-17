@@ -102,7 +102,7 @@ def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
             photometry_added += 1
             logger.info(f"Added photometry for {source}")
 
-        except (IntegrityError, AstroDBError, KeyError) as e:
+        except sqlalchemy.exc.IntegrityError as e:
             if "UNIQUE constraint failed:" in str(e):
                 skipped += 1
                 msg = f"Duplicate photometry for {source}."
@@ -129,7 +129,7 @@ def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
 #ingest_PanSTARRS_photometry_filters()
 
 # Runtime: ~32 seconds per 100 rows
-ingest_PanSTARRS_photometry(data, start_idx=2079, chunk_size=10)
+ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=100)
 
 # Save updated SQLite database
 if save_db:
