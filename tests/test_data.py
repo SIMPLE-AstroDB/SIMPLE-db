@@ -19,7 +19,7 @@ def test_sources(db):
     assert n_sources == 3598, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 9159, f"found {n_names} names"
+    assert n_names == 9172, f"found {n_names} names"
 
 
 @pytest.mark.parametrize(
@@ -118,7 +118,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 492
+        len(s) == 495
     ), f"found {len(s)} sources with WISE designation that have no WISE photometry"
 
     # If Wise photometry, Wise designation should be in Names
@@ -253,7 +253,7 @@ def test_modeledparameters_refs(db, ref, n_counts):
 
 def test_companion_relations(db):
     t = db.query(db.CompanionRelationships).astropy()
-    assert len(t) == 102, f"found {len(t)} companion relationships"
+    assert len(t) == 108, f"found {len(t)} companion relationships"
 
     ref = "Roth24"
     t = (
