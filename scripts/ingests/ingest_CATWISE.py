@@ -34,17 +34,61 @@ for row in sources:
     coord = SkyCoord(ra = row["ra"], dec = row["dec"], unit = "deg", frame = "icrs")
 
     # generates a list of objects from the catwise2020 catalogs that are within this radius of a certain position/coordinate
-    results = Irsa.query_region(coordinates=coord, spatial='Cone', catalog='catwise_2020', radius=2 * u.arcmin)
-
-
+    results = Irsa.query_region(coordinates=coord, spatial='Cone', catalog='catwise_2020', radius=2 * u.arcmin, columns="source_name,PMRA,sigPMRA,PMDec,sigPMDec,ab_flags,cc_flags,w1mpro,w1sigmpro,w2mpro,w2sigmpro")
+    print(results)
     # generates a list of filtered results
-    filtered_results = results[(results["ab_flags"] == "00") & (results["cc_flags"] == "0000")]
+    filtered_results = []
+    for source in results:
+       if (source["ab_flags"] == '00') & (source["cc_flags"] == '0000'):
+        filtered_results.append(source["source_name"])
+    
     print(filtered_results)
     #use closest/best match
     match = filtered_results[0]
-    print(match)
+    logger.info("source match found")
 
-    break
+
+    source_row = results[results["source_name"] == match]
+    print(source_row)
+    print("\n")
+    print(source_row[0])
+
+    with db.engine.connect() as conn:
+        #ingest proper motions
+        conn.execute(
+                db.ProperMotions.insert().values(
+                    {
+                        "source": source_row["source_name"],
+                        "mu_ra": source_row["pmra"],
+                        "mu_ra_error": source_row["sigpmra"],
+                        "mu_dec": source_row["pmdec"],
+                        "mu_dec_error": source_row["sigpmdec"]
+                    }
+                )
+        )
+        #ingest WISE W1 photometry
+        conn.execute(
+                db.Photometry.insert().values(
+                    {
+                        "source": source_row["source_name"],
+                        "band": 1,
+                        "magnitude": source_row["w1mpro"],
+                        "magnitude_error": source_row["w1sigmpro"],
+                    }
+                )
+        )
+        #ingest WISE W2 photometry
+        conn.execute(
+                db.Photometry.insert().values(
+                    {
+                        "source": source_row["source_name"],
+                        "band": 2,
+                        "magnitude": source_row["w2mpro"],
+                        "magnitude_error": source_row["w2sigmpro"],
+                    }
+                )
+        )
+        conn.commit()
 
 logger.info("done")
 
