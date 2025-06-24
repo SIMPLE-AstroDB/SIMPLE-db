@@ -1,0 +1,95 @@
+from astrodb_utils import load_astrodb
+from astrodb_utils.sources import (
+    ingest_name
+)
+
+from astrodb_utils.publications import (
+    logger,
+)
+
+from astrodb_utils.photometry import (
+    ingest_photometry,
+)
+
+import sys
+
+sys.path.append(".")
+from astropy.io import ascii
+from simple import REFERENCE_TABLES
+
+DB_SAVE = True
+RECREATE_DB = True
+
+SCHEMA_PATH = "simple/schema.yaml"
+db = load_astrodb(
+    "SIMPLE.sqlite",
+    recreatedb=RECREATE_DB,
+    reference_tables=REFERENCE_TABLES,
+    felis_schema=SCHEMA_PATH,
+)
+
+#ingest missing names
+missing_names = ["2MASS J04220512+1358474",
+"EPIC 210422945",
+"TIC 435923794",
+"WISEA J042205.19+135847.1",
+"WISE J042205.19+135847.2",
+"Gaia DR3 3310992904122021120",
+"Gaia DR2 3310992904122021120",
+"SSTSL2 J042205.16+135847.2"]
+for name in missing_names:
+    ingest_name(
+        db = db,
+        source = "Hya06",
+        other_name = name,
+        raise_error = True
+    )
+
+#ingest GAIA photometry
+gbands = ["GAIA2.G","GAIA2.Gbp","GAIA2.Grp"]
+gaiamag = [20.2577,21.6141,18.5724]
+gaiamag_e = [0.0088,0.3347,0.0387]
+for a in range(3):
+    ingest_photometry(
+        db = db,
+        source = "Hya06",
+        band = gbands[a],
+        magnitude=gaiamag[a],
+        magnitude_error=gaiamag_e[a],
+        reference="GaiaDR2"
+    )
+
+#ingest WISE photometry
+wbands = ["WISE.W1","WISE.W2"]
+wisemag = [13.928,13.639]
+wisemag_e = [0.028,0.038]
+for i in range(2):
+    ingest_photometry(
+        db = db,
+        source = "Hya06",
+        band = wbands[i],
+        magnitude=wisemag[i],
+        magnitude_error=wisemag_e[i],
+        reference="Cutr12"
+    )
+
+#ingest 2MASS photometry
+ingest_photometry(
+    db = db,
+    source = "Hya06",
+    band = "2MASS.J",
+    magnitude=15.503,
+    magnitude_error=0.55,
+    reference="Cutr03"
+)
+ingest_photometry(
+    db = db,
+    source = "Hya06",
+    band = "2MASS.H",
+    magnitude=14.809,
+    magnitude_error=0.057,
+    reference="Cutr03"
+)
+
+if DB_SAVE:
+    db.save_database(directory="data/")
