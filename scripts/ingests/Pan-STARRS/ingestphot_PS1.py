@@ -95,12 +95,33 @@ def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
                         "reference": "Best18",
                     }
                     band_counts[band] += 1
-                    #print(f"Inserted data: {photometry_data}")
+                    print(f"Inserted data: {photometry_data}")
 
-            with db.engine.begin() as conn:
-                conn.execute(db.Photometry.insert().values(photometry_data))
-            photometry_added += 1
-            logger.info(f"Added photometry for {source}")
+                    with db.engine.begin() as conn:
+                        conn.execute(db.Photometry.insert().values(photometry_data))
+                    photometry_added += 1
+                    logger.info(f"Added photometry for {source}")
+
+        # Exceptions starts throwing at row 2081
+        # Add photometry at row 5066: SDSS_J074055.75+411409.6
+        #                       5351: SDSS_J082720.21+450203.5
+        #                       7346: SDSS_J122011.69+331536.6
+        #                       7701: SDSS_J130407.50+403615.8
+        #                       8218: SDSS_J145348.45+373317.0
+        #                       8460: SDSS_J153619.14+330515.1
+        #                       9268: SDSS_J212033.89+102159.0
+        #                       9700: SDSS_J233716.65-093324.8
+
+                    
+        except Exception as e:
+            msg = f"Error adding {source} photometry: {e}"
+            if "None of [Index(['ra_deg', 'dec_deg']" in str(e):
+                inaccessible += 1
+                if raise_error:
+                    logger.error(f"Missing source {source}.")
+                    raise AstroDBError(msg)
+                else:
+                    logger.warning(msg)
 
         except sqlalchemy.exc.IntegrityError as e:
             if "UNIQUE constraint failed:" in str(e):
@@ -119,6 +140,7 @@ def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
                 else:
                     logger.warning(str(e))
 
+
     logger.info(f"Total photometry added: {photometry_added}")
     logger.info(f"Total photometry skipped: {skipped}")
     logger.info(f"Total inaccessible data: {inaccessible}")
@@ -129,7 +151,7 @@ def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
 #ingest_PanSTARRS_photometry_filters()
 
 # Runtime: ~32 seconds per 100 rows
-ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=100)
+ingest_PanSTARRS_photometry(data, start_idx=9801, chunk_size=500)
 
 # Save updated SQLite database
 if save_db:
