@@ -81,7 +81,7 @@ for row in byw_table:
             ingest_publication(db = db, bibcode=ads)
             
         source_reference = find_publication(db, bibcode=ads)
-        reference = source_reference[1]
+        reference = source_reference[1].replace("\u017d", "Z")
     else:
         reference = row["Ref"]
 
