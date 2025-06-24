@@ -40,7 +40,9 @@ def ingest_PanSTARRS_photometry_filters():
                 db,
                 telescope="Pan-STARRS",
                 instrument="PS1",
-                filter_name=f"{band}"
+                filter_name=f"{band}",
+                wavelength_col_name="effective_wavelength",
+                width_col_name="width"
             )
             logger.info(f"Photometry filter PS1.{band} added successfully.")
         except AstroDBError as e:
@@ -112,7 +114,6 @@ def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
         #                       9268: SDSS_J212033.89+102159.0
         #                       9700: SDSS_J233716.65-093324.8
 
-                    
         except Exception as e:
             msg = f"Error adding {source} photometry: {e}"
             if "None of [Index(['ra_deg', 'dec_deg']" in str(e):
@@ -148,10 +149,10 @@ def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
         logger.info(f"Total entries for PS1.{band} band: {count}")
 
 # Call ingestion function
-#ingest_PanSTARRS_photometry_filters()
+ingest_PanSTARRS_photometry_filters()
 
 # Runtime: ~32 seconds per 100 rows
-ingest_PanSTARRS_photometry(data, start_idx=9801, chunk_size=500)
+ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=5)
 
 # Save updated SQLite database
 if save_db:
