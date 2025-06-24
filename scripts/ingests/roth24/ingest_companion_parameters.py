@@ -23,7 +23,7 @@ from sqlalchemy import MetaData, Table, Column, Integer, String, Float
 
 logger = logging.getLogger("AstroDB")
 logger.setLevel(logging.INFO)
-SAVE_DB = True  # save the data files in addition to modifying the .db file
+SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 SCHEMA_PATH = "simple/schema.yaml" 
 # LOAD THE DATABASE
@@ -50,6 +50,26 @@ byw_table = ascii.read(
 # Create a database engine
 #engine = create_engine("sqlite:////Users/kasey/Documents/GitHub/SIMPLE-db/SIMPLE.sqlite", echo=True)
 
+# not necessary, this is what the load_astrodb does
+'''
+metadata = MetaData() #metadata stores the table schema and database structure
+
+CompanionParameters = Table(
+    "CompanionParameters", metadata,
+    Column("source", String),
+    Column("parameter", String),
+    Column("value", String),
+    Column("value_error", String),
+    Column("upper_error", String),
+    Column("lower_error", String),
+    Column("unit", String),
+    Column("comments", String),
+    Column("ref", String)
+)
+
+metadata.create_all(db.engine) #ensures table is created if it doens't already exist
+'''
+
 def extractADS(link):
     start = link.find("abs/") + 4
     end = link.find("/abstract")
@@ -60,14 +80,7 @@ def extractADS(link):
 
 
 for row in byw_table:
-    source_name = find_source_in_db(
-        db,
-        row["Source"],
-        ra=row["RA"],
-        dec=row["DEC"],
-        ra_col_name="ra",
-        dec_col_name="dec",
-    )[0]
+    source_name = row["Source"]
     companion = row["Host"]
     parameter = row["Parameter"].lower()
     value = row["Value"]
@@ -87,6 +100,13 @@ for row in byw_table:
     else:
         reference = row["Ref"]
 
+    print(source_name)
+    source_existing = db.query(db.Sources).filter_by(source=source_name).first()
+    print(source_existing)
+    companion_existing = db.query(db.CompanionList).filter_by(companion=companion).first()
+    print(companion_existing)
+    ref_existing = db.query(db.Publications).filter_by(reference=reference).first()
+    print(ref_existing)
 
     with db.engine.connect() as conn:
             conn.execute(

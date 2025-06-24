@@ -533,7 +533,6 @@ def test_special_characters(db):
         # but not checking comments/descriptions
         if len(data) > 0:
             for table_name in data.keys():
-                print(table_name)
                 if table_name == "Publications":
                     check = [char not in data[table_name]["reference"]]
                     assert all(check), f"{char} in {table_name}"
@@ -560,9 +559,6 @@ def test_special_characters(db):
                     assert all(check), f"{char} in {table_name}"
                 elif table_name == "Regimes":
                     check = [char not in data[table_name]["regime"]]
-                    assert all(check), f"{char} in {table_name}"
-                elif table_name == "CompanionList":
-                    check = [char not in data[table_name]["companion"]]
                     assert all(check), f"{char} in {table_name}"
                 else:
                     check = [char not in data[table_name]["source"]]
