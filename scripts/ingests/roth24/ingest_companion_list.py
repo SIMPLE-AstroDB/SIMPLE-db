@@ -43,7 +43,6 @@ ingested = 0
 for row in byw_table:
     
     companion = row["Host"]
-    
 
 
     with db.engine.connect() as conn:

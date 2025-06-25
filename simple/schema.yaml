@@ -336,6 +336,13 @@ tables:
       length: 100
       description: Description of the companion object
       ivoa:ucd: meta.note
+    - name: other_companion_names
+      "@id": "#CompanionList.other_companion_names"
+      datatype: string
+      length: 1000
+      description: Additional names for the companion object, comma delimited.
+      ivoa:ucd: meta.id
+
 
 
   # TODO: Add a GravityList lookup table in place of enumeration
