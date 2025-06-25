@@ -64,8 +64,7 @@ ref_table = ascii.read(
 sources_ingested = 0
 ref_ingested = 0
 companions_ingested = 0
-ref_already_exists = 0
-ref_list = []
+ref_already_exists = 2 #Roth24 and Schl03 already exist in database
 
 def getRef(ref_index):
     ref = ref_index.split(',')[0]
@@ -81,8 +80,13 @@ def extractADS(link):
 
 
 def extractDOI(link):
-    start = link.find('article/')+8
-    doi = link[start:]
+    if 'iopscience' in link:
+        start = link.find('article/')+8
+        doi = link[start:]
+        doi = doi.replace("/pdf", "")
+    else:
+        start = link.find('doi.org/')+8
+        doi=link[start:]
     return doi
 
 #ingest publication: Curr20
@@ -92,48 +96,73 @@ ingest_publication(
 )
 ref_ingested+=1
 
-for row in calamari_table:
+#ingest publication: Fahe22
+# ingest_publication(
+#     db=db,
+#     doi="10.3847/1538-4357/ac2499",
+# )
+# ref_ingested+=1
+
+for row in ref_table:
     #ingest publications
-    pub = getRef(row['Ref'])
+    #get the ADS link
+    pub = row['ADS']
+    #if the link doesn't provide the ADS key directly...
+    pub_2 = row['Link']
     #if link provides ADS
     if 'harvard.edu' in pub:
-        ref = extractADS(pub)
-        print(ref)
-        #if ref == "2022BAAS...54e.224F":
-         #   continue
+        bib = extractADS(pub)
+        print(bib)
         pub_found = find_publication(
             db = db,
-            bibcode = ref
+            bibcode = bib
         )
         if pub_found[0] == False:
             ingest_publication(
                 db=db,
-                bibcode= ref
+                bibcode= bib
             )
             ref_ingested+=1
             print("publications ingested "+str(ref_ingested))
         else:
-            print("ref already exists")
             ref_already_exists+=1
-        ref_list +=ref
+            print("publications already exist " +str(ref_already_exists))
     #if link provides doi
     if 'iopscience' in pub:
-        ref = extractDOI(pub)
+        doi = extractDOI(pub)
         pub_found = find_publication(
             db=db,
-            doi=ref,
+            doi=doi,
         )
         if pub_found[0] == False:
             ingest_publication(
                 db=db,
-                doi= ref
+                doi= doi
             )
             ref_ingested+=1
-            print("publications ingested " +ref_ingested)
-        ref_list +=ref
+            print("publications ingested " +str(ref_ingested))
+        else:
+            ref_already_exists+=1
+            print("publications already exist " +str(ref_already_exists))
+    if 'doi.org' in pub_2:
+        doi = extractDOI(pub_2)
+        pub_found = find_publication(
+            db=db,
+            doi=doi,
+        )
+        if pub_found[0] == False:
+            ingest_publication(
+                db=db,
+                doi= doi
+            )
+            ref_ingested+=1
+            print("publications ingested " +str(ref_ingested))
+        else:
+            ref_already_exists+=1
+            print("publications already exist " +str(ref_already_exists))
     if pub == None:
         continue
-a=0
+#a=0
 """
 for row in calamari_table:
     #ingest the sources
@@ -195,6 +224,10 @@ for row in calamari_table:
     )
     i+=1
     """
+
+logger.info(f"references ingested:{ref_ingested}")  #  ingested
+logger.info(f"references already exists:{ref_already_exists}")  # due to preexisting data
+logger.info(f"total:{ref_ingested+ref_already_exists}")  #  total
 # WRITE THE JSON FILES
 if SAVE_DB:
     db.save_database(directory="data/")
