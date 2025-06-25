@@ -330,12 +330,6 @@ tables:
       description: Main identifier for a companion object
       ivoa:ucd: meta.id;meta.main
       nullable: false
-    - name: other_companion_names
-      "@id": "#CompanionList.other_companion_names"
-      datatype: string
-      length: 1000
-      description: Additional names for the companion object, comma delimited.
-      ivoa:ucd: meta.id
     - name: description
       "@id": "#CompanionList.description"
       datatype: string

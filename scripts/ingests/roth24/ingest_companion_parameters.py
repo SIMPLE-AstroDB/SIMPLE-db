@@ -23,7 +23,7 @@ from sqlalchemy import MetaData, Table, Column, Integer, String, Float
 
 logger = logging.getLogger("AstroDB")
 logger.setLevel(logging.INFO)
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 SCHEMA_PATH = "simple/schema.yaml" 
 # LOAD THE DATABASE
@@ -72,11 +72,7 @@ for row in byw_table:
     upper_error = row["upper_error"]
     lower_error = row["lower_error"]
     unit = row["Unit"]
-    print(row["Comments"])
-    if(row["Comments"] == ""):
-        comments = None
-    else:
-        comments = row["Comments"]
+    comments = row["Comments"]
     #the ones in the sheet that are provided a link for have not been ingested so do that here
     if "https://" in row["Ref"]:
         ads = extractADS(row["Ref"])
