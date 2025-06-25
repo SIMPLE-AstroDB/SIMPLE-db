@@ -72,7 +72,10 @@ for row in byw_table:
     upper_error = row["upper_error"]
     lower_error = row["lower_error"]
     unit = row["Unit"]
-    comments = row["Comments"]
+    print("printing source:" + source_name)
+    comments = str(row["Comments"])
+    if(comments == "--"):
+        comments = None
     #the ones in the sheet that are provided a link for have not been ingested so do that here
     if "https://" in row["Ref"]:
         ads = extractADS(row["Ref"])
