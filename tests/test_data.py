@@ -271,7 +271,6 @@ def test_companion_relations(db):
         ("GaiaDR3", 50),
     ],
 )
-
 def test_companionparameters_ref(db, ref, n_counts):
     t = (
         db.query(db.CompanionParameters)
@@ -287,8 +286,6 @@ def test_companionparameters_ref(db, ref, n_counts):
         ("metallicity", 54),
     ],
 )
-
-
 def test_companionparameters_params(db, param, n_counts):
     # Test to verify existing counts of modeled parameters
     t = (
@@ -297,7 +294,6 @@ def test_companionparameters_params(db, param, n_counts):
         .astropy()
     )
     assert len(t) == n_counts, f"found {len(t)} modeled parameters with {param} parameter"
-
 
 
 # Individual ingest tests
