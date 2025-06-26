@@ -27,9 +27,7 @@ SCHEMA_PATH = "simple/schema.yaml"
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES, felis_schema=SCHEMA_PATH)
 
 # generates all the sources in the db
-sources_table = select(db.Sources)
-with db.engine.connect() as conn:
-    sources = conn.execute(sources_table).mappings().all()
+sources_table = db.query(db.Sources).table()
 
 # should be 3598
 logger.info(f"Found {len(sources)} sources to process.")
