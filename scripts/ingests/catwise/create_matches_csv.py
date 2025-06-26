@@ -17,27 +17,20 @@ import pandas as pd
 
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
-RECREATE_DB = False  # recreates the .db file from the data files
+RECREATE_DB = True  # recreates the .db file from the data files
 SCHEMA_PATH = "simple/schema.yaml" 
 # LOAD THE DATABASE
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES, felis_schema=SCHEMA_PATH)
 
 # generates all the sources in the db
-sources_table = select(db.Sources)
-with db.engine.connect() as conn:
-    sources = conn.execute(sources_table).mappings().all()
-
-sources_df = pd.DataFrame(sources)
-
-
-coord_vector = SkyCoord(ra = sources_df['ra'], dec = sources_df['dec'], unit = "deg", frame = "icrs")
-print(coord_vector)
+sources_table = db.query(db.Sources).table()
+print(sources_table)
+coord_vector = SkyCoord(ra = sources_table["ra"], dec = sources_table["dec"], unit = "deg", frame = "icrs")
 results = Irsa.query_region(coordinates=coord_vector, spatial='Cone', catalog='catwise_2020', radius=0.5 * u.arcmin, 
 columns="source_name,PMRA,sigPMRA,PMDec,sigPMDec,ab_flags,cc_flags,w1mpro,w1sigmpro,w2mpro,w2sigmpro,ra,dec")
 
 # should be 3598
-logger.info(f"Found {len(sources)} sources to process.")
-
+logger.info(f"Found {len(sources_table["source"])} sources to process.")
 
 
 one_match_csv = "catwise_matches.csv"
