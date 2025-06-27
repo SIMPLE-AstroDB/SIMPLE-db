@@ -27,7 +27,7 @@ sources_table = db.query(db.Sources).table()
 print(sources_table)
 coord_vector = SkyCoord(ra = sources_table["ra"], dec = sources_table["dec"], unit = "deg", frame = "icrs")
 results = Irsa.query_region(coordinates=coord_vector, spatial='Cone', catalog='catwise_2020', radius=0.5 * u.arcmin, 
-columns="source_name,PMRA,sigPMRA,PMDec,sigPMDec,ab_flags,cc_flags,w1mpro,w1sigmpro,w2mpro,w2sigmpro,ra,dec")
+columns="source_name,PMRA,sigPMRA,PMDec,sigPMDec,ab_flags,cc_flags,w1mpro,w1sigmpro,w2mpro,w2sigmpro,ra,dec", verbose=True)
 
 # should be 3598
 logger.info(f"Found {len(sources_table["source"])} sources to process.")
