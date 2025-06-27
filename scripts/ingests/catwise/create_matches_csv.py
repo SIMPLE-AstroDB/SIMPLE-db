@@ -37,57 +37,46 @@ columns="source_name,PMRA,sigPMRA,PMDec,sigPMDec,ab_flags,cc_flags,w1mpro,w1sigm
 # should be 3598
 logger.info(f"Found {len(sources_table["source"])} sources to process.")
 
+source_num_counter = 0
+multiple_sources_counter = 0
+no_sources_counter = 0
+one_source = 0
 
-one_match_csv = "catwise_matches.csv"
-multiple_matches_csv = "catwise_multiple_matches.csv"
-no_matches_csv = "catwise_no_matches.csv"
-write_header1 = not os.path.exists(one_match_csv)  # Only write header if the file doesn't exist
-write_header2 = not os.path.exists(multiple_matches_csv)
-write_header3 = not os.path.exists(no_matches_csv)
+one_source_names, multiple_source_names, no_source_names = [], [], []
+one_source_PMRA, multiple_source_PMRA, no_source_PMRA = [], [], []
+one_source_sigPMRA, multiple_source_sigPMRA, no_source_sigPMRA = [], [], []
+one_source_PMDec, multiple_source_PMDec, no_source_PMDec = [], [], []
+one_source_sigPMDec, multiple_source_sigPMDec, no_source_sigPMDec = [], [], []
+one_source_w1mpro, multiple_source_w1mpro, no_source_w1mpro = [], [], []
+one_source_w1sigmpro, multiple_source_w1sigmpro, no_source_w1sigmpro = [], [], []
+one_source_w2mpro, multiple_w2mpro, no_source_w2mpro = [], [], []
+one_source_w2sigmpro, multiple_source_w2sigmpro, no_source_w2sigmpro = [], [], []
+one_source_ra, multiple_source_ra, no_source_ra = [], [], []
+one_source_dec, multiple_source_dec, no_source_dec = [], [], []
 
-# Open CSV file in append mode
-with open(one_match_csv, mode="a", newline="") as f1, open(multiple_matches_csv, mode="a", newline="") as f2, open(no_matches_csv, mode="a", newline="") as f3:
-    writer1 = csv.writer(f1)
-    writer2 = csv.writer(f2)
-    writer3 = csv.writer(f3)
 
-    # Write the header once if file doesn't exist
-    if write_header1:
-        writer1.writerow(["source_name", "ra", "dec", "PMRA", "sigPMRA", "PMDec", "sigPMDec", "w1mpro", "w1sigmpro", "w2mpro", "w2sigmpro"])
-    if write_header2:
-        writer2.writerow(["source_name", "ra", "dec", "PMRA", "sigPMRA", "PMDec", "sigPMDec", "w1mpro", "w1sigmpro", "w2mpro", "w2sigmpro"])
-    if write_header3:
-        writer3.writerow(["source_name", "ra", "dec", "PMRA", "sigPMRA", "PMDec", "sigPMDec", "w1mpro", "w1sigmpro", "w2mpro", "w2sigmpro"])
-
-    source_num = 0
-    multiple_sources = 0
-    no_sources = 0
-    one_source = 0
-    for result in results:
-        
-        try:
-            filtered_results = results[(results["ab_flags"] == '00') & (results["cc_flags"] == '0000')]
-            if(len(filtered_results)>1):
-                multiple_sources += 1
-                # Convert selected values to strings and join with commas
-                row_string = ", ".join(str(filtered_results[i]) for i in indices if i < len(filtered_results)) 
-                writer2.writerow([row_string]) 
-                logger.info("source match found and added to csv file")
-            else:        
-                one_source += 1
-                row_string = ", ".join(str(filtered_results[i]) for i in indices if i < len(filtered_results)) 
-                writer1.writerow([row_string]) 
-                logger.info("source match found and added to csv file")
-            source_num +=1
-            print(source_num)
-        except IndexError:
-            source_num+=1
-            no_sources += 1
+for result in results:
+    try:
+        filtered_results = results[(results["ab_flags"] == '00') & (results["cc_flags"] == '0000')]
+        if(len(filtered_results)>1):
+            multiple_sources_counter += 1
+            # Convert selected values to strings and join with commas
             row_string = ", ".join(str(filtered_results[i]) for i in indices if i < len(filtered_results)) 
-            writer3.writerow([row_string]) 
-            print(source_num)
-            logger.warning("no source match found")
-    logger.info("done")
+            logger.info("source match found and added to csv file")
+        else:        
+            one_source += 1
+            row_string = ", ".join(str(filtered_results[i]) for i in indices if i < len(filtered_results)) 
+            logger.info("source match found and added to csv file")
+        source_num_counter +=1
+        print(source_num_counter)
+    except IndexError:
+        source_num_counter+=1
+        no_sources_counter += 1
+        row_string = ", ".join(str(filtered_results[i]) for i in indices if i < len(filtered_results)) 
+        print(source_num_counter)
+        logger.warning("no source match found")
+
+logger.info("done")
     
 
 
