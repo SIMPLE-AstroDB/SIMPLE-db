@@ -15,6 +15,11 @@ import csv
 import numpy as np
 import pandas as pd
 
+# Define the indices you want to include
+indices = [0, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12]
+
+
+
 
 SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
@@ -64,55 +69,22 @@ with open(one_match_csv, mode="a", newline="") as f1, open(multiple_matches_csv,
             filtered_results = results[(results["ab_flags"] == '00') & (results["cc_flags"] == '0000')]
             if(len(filtered_results)>1):
                 multiple_sources += 1
-                for filtered in filtered_results:
-                    writer2.writerow([
-                        filtered_results[0],
-                        filtered_results[1],
-                        filtered_results[2],
-                        filtered_results[3],
-                        filtered_results[4],
-                        filtered_results[7],
-                        filtered_results[8],
-                        filtered_results[9],
-                        filtered_results[10],
-                        filtered_results[11],
-                        filtered_results[12]
-                    ])
-                    logger.info("source match found and added to csv file")
+                # Convert selected values to strings and join with commas
+                row_string = ", ".join(str(filtered_results[i]) for i in indices if i < len(filtered_results)) 
+                writer2.writerow([row_string]) 
+                logger.info("source match found and added to csv file")
             else:        
                 one_source += 1
-                writer1.writerow([
-                    filtered_results[0],
-                    filtered_results[1],
-                    filtered_results[2],
-                    filtered_results[3],
-                    filtered_results[4],
-                    filtered_results[7],
-                    filtered_results[8],
-                    filtered_results[9],
-                    filtered_results[10],
-                    filtered_results[11],
-                    filtered_results[12]
-                ])
-            logger.info("source match found and added to csv file")
+                row_string = ", ".join(str(filtered_results[i]) for i in indices if i < len(filtered_results)) 
+                writer1.writerow([row_string]) 
+                logger.info("source match found and added to csv file")
             source_num +=1
             print(source_num)
         except IndexError:
             source_num+=1
             no_sources += 1
-            writer3.writerow([
-                filtered_results[0],
-                filtered_results[1],
-                filtered_results[2],
-                filtered_results[3],
-                filtered_results[4],
-                filtered_results[7],
-                filtered_results[8],
-                filtered_results[9],
-                filtered_results[10],
-                filtered_results[11],
-                filtered_results[12]
-            ])
+            row_string = ", ".join(str(filtered_results[i]) for i in indices if i < len(filtered_results)) 
+            writer3.writerow([row_string]) 
             print(source_num)
             logger.warning("no source match found")
     logger.info("done")
