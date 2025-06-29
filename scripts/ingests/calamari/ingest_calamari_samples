@@ -4,6 +4,11 @@ sys.path.append(".")
 from astropy.io import ascii
 from simple import REFERENCE_TABLES
 from astrodb_utils import load_astrodb
+from sqlalchemy import(
+    exists,
+    select,
+) 
+from sqlalchemy.orm import Session
 
 from astrodb_utils.sources import (
     find_source_in_db,
@@ -41,6 +46,9 @@ link = (
 link_2 = (
     "scripts/ingests/calamari/calamari_refs.csv"
 )
+link_3 = (
+    "scripts/ingests/calamari/primary_sources.csv"
+)
 calamari_table = ascii.read(
     link,
     format="csv",
@@ -61,10 +69,21 @@ ref_table = ascii.read(
     delimiter=",",
 )
 
+primary_sources_table = ascii.read(
+    link_3,
+    format = "csv",
+    data_start=1,
+    header_start=0,
+    guess=False,
+    fast_reader=False, 
+    delimiter=",",
+    )
+
 sources_ingested = 0
-sources_already_exists = 0
+sources_already_exists = -2 #ingest 2 sources at the start. They will not be counted as already existing in the database
 ref_ingested = 0
 companions_ingested = 0
+companions_already_exists = 0
 ref_already_exists = 2 #Roth24 and Schl03 already exist in database
 
 def getRef(ref_index):
@@ -132,8 +151,15 @@ def otherReferencesList(ref):
                 result.append(pub_result[1])
             else:
                 print(f"Warning: Publication not found for reference {reference}")
-    print("final result"+str(result))
     return result
+
+def companionExists(source, companion):
+    return Session(db.engine).scalar(
+        select(exists().where(
+            (db.CompanionRelationships.c.source == source) & 
+        (db.CompanionRelationships.c.companion_name == companion)
+        ))
+    )
 
 #ingest publication: Curr20
 ingest_publication(
@@ -209,31 +235,42 @@ ingest_source(
 )
 sources_ingested+=1
 
-# #ingest source BD+60 1417
+# # #ingest source BD+60 1417
 # ingest_source(
 #     db=db,
 #     source = "BD+60 1417",
 #     reference="Fahe21",
-#     ra = 190.88386,
-#     dec = 60.023957,
+#     ra = 190.888634,
+#     dec = 60.01464,
 #     ra_col_name="ra",
 #     dec_col_name="dec"
 # )
 # sources_ingested+=1
 
-row_index=0
+#ingest source HD 2057
+ingest_source(
+    db=db,
+    source = "HD 2057",
+    reference="Reid06.891",
+    ra = 6.286472,
+    dec = 48.047403,
+    ra_col_name="ra",
+    dec_col_name="dec"
+)
+sources_ingested+=1
+
+object_index=0
 #ingest the sources
 for row in calamari_table:
     #read in row
     Dec = row['Dec']
     RA = row['RA']
     object = str(row['Object'])
-    primary = str(row['Primary'])
 
     # check the object in the row is in the DB
     #if not, ingest
     obj_result = find_source_in_db(db=db, source = object, ra=RA, dec=Dec, ra_col_name="ra", dec_col_name="dec")
-    ref_list = otherReferencesList(calamari_table[row_index]['Ref'])
+    ref_list = otherReferencesList(calamari_table[object_index]['Ref'])
     if len(obj_result)==0:
         if(len(ref_list)>1):
             ingest_source(
@@ -260,7 +297,14 @@ for row in calamari_table:
             sources_ingested+=1
     else:
         sources_already_exists+=1
+    object_index+=1
 
+primary_index=0
+for row in primary_sources_table:
+    primary = str(row['Primary'])
+    ref_list = otherReferencesList(calamari_table[primary_index]['Ref'])
+    RA = row['Primary RA']
+    Dec = row['Primary Dec']
     # check the primary in the row is in the DB
     #if not, ingest
     primary_result = find_source_in_db(db=db, source = primary, ra=RA, dec=Dec, ra_col_name="ra", dec_col_name="dec")
@@ -290,38 +334,44 @@ for row in calamari_table:
             sources_ingested+=1
     else:
         sources_already_exists+=1
-    row_index+=1
-# i=0
-# for row in calamari_table:
-#     #ingest companion relationships
-#     object = str(row['Object'])
-#     primary = str(row['Primary'])
-#     #UCD, or object, as the child
-#     ingest_companion_relationships(
-#         db=db,
-#         source = object,
-#         companion_name = primary,
-#         relationship = "Child",
-#         reference = ref_list[i]
-#     )
-#     #Primary as the parent
-#     ingest_companion_relationships(
-#         db=db,
-#         source = primary,
-#         companion_name = object,
-#         relationship = "Parent",
-#         reference = ref_list[i]
-#     )
-#     i+=1
+    primary_index+=1
+
+#ingest companion relationships
+for row in calamari_table:
+    object = str(row['Object'])
+    primary = str(row['Primary'])
+    #UCD, or object, as the child
+    if not companionExists(object, primary):
+        ingest_companion_relationships(
+            db=db,
+            source = object,
+            companion_name = primary,
+            relationship = "Child",
+        )
+        companions_ingested+=1
+    else:
+        companions_already_exists+=1
+    if not companionExists(primary, object):
+        #Primary as the parent
+        ingest_companion_relationships(
+            db=db,
+            source = primary,
+            companion_name = object,
+            relationship = "Parent",
+        )
+        companions_ingested+=1
+    else:
+        companions_already_exists+=1
 
 logger.info(f"references ingested:{ref_ingested}")  # 10 references ingested
 logger.info(f"references already exists:{ref_already_exists}")  # 24 references due to preexisting data
-logger.info(f"total:{ref_ingested+ref_already_exists}")  # 34 references total
-logger.info(f"sources ingested:{sources_ingested}")  # 12 ingested
-logger.info(f"sources already exists:{sources_already_exists}")  # 105 due to preexisting data
-logger.info(f"total:{sources_ingested+sources_already_exists}")  # 116 sources total
-logger.info(f"primary ingested:{primary_ingested}")  #  ingested
-print(skipped_sources)
+logger.info(f"total references:{ref_ingested+ref_already_exists}")  # 34 references total
+logger.info(f"sources ingested:{sources_ingested}")  # 41 ingested
+logger.info(f"sources already exists:{sources_already_exists}")  # 77 due to preexisting data
+logger.info(f"total sources:{sources_ingested+sources_already_exists}")  # 116 sources total
+logger.info(f"companion relationships ingested:{companions_ingested}")  #  ingested
+logger.info(f"companion relationships already exists:{companions_already_exists}")  #  due to preexisting data
+logger.info(f"total companion relationships:{companions_ingested+companions_already_exists}")  #  total
 # WRITE THE JSON FILES
 if SAVE_DB:
     db.save_database(directory="data/")
