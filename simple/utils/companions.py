@@ -89,7 +89,7 @@ def ingest_companion_relationships(
         logger.error(msg)
         raise AstroDBError(msg)
     
-    source_name = find_source_in_db(db, source)
+    source_name = find_source_in_db(db, source, ra_col_name="ra", dec_col_name="dec")
     if len(source_name) != 1:
         msg = f"{source}: No source or multiple sources found: {source_name}"
         logger.error(msg)

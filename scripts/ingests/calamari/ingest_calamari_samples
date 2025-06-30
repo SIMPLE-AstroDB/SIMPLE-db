@@ -4,17 +4,12 @@ sys.path.append(".")
 from astropy.io import ascii
 from simple import REFERENCE_TABLES
 from astrodb_utils import load_astrodb
-from sqlalchemy import(
-    exists,
-    select,
-) 
-from sqlalchemy.orm import Session
-
 from astrodb_utils.sources import (
     find_source_in_db,
     ingest_source,
     logger,
     AstroDBError,
+    ingest_name
 )
 
 from astrodb_utils.publications import (
@@ -30,7 +25,7 @@ astrodb_utils_logger = logging.getLogger("astrodb_utils")
 logger.setLevel(logging.DEBUG)  # Set logger to INFO/DEBUG/WARNING/ERROR/CRITICAL level
 astrodb_utils_logger.setLevel(logging.DEBUG)
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 SCHEMA_PATH = "simple/schema.yaml"
 db = load_astrodb(
@@ -80,7 +75,7 @@ primary_sources_table = ascii.read(
     )
 
 sources_ingested = 0
-sources_already_exists = -2 #ingest 2 sources at the start. They will not be counted as already existing in the database
+sources_already_exists = -3 #ingest 3 sources at the start. They will not be counted as already existing in the database
 ref_ingested = 0
 companions_ingested = 0
 companions_already_exists = 0
@@ -154,12 +149,19 @@ def otherReferencesList(ref):
     return result
 
 def companionExists(source, companion):
-    return Session(db.engine).scalar(
-        select(exists().where(
-            (db.CompanionRelationships.c.source == source) & 
-        (db.CompanionRelationships.c.companion_name == companion)
-        ))
+    exists = False
+    relationship_search = db.search_object(
+        name = source,
+        output_table="CompanionRelationships"
     )
+    if len(relationship_search) > 0:
+        for relationship in relationship_search:
+            if relationship["companion_name"] == companion:
+                exists = True
+                break
+    
+    return exists
+
 
 #ingest publication: Curr20
 ingest_publication(
@@ -235,17 +237,18 @@ ingest_source(
 )
 sources_ingested+=1
 
-# # #ingest source BD+60 1417
-# ingest_source(
-#     db=db,
-#     source = "BD+60 1417",
-#     reference="Fahe21",
-#     ra = 190.888634,
-#     dec = 60.01464,
-#     ra_col_name="ra",
-#     dec_col_name="dec"
-# )
-# sources_ingested+=1
+# #ingest source BD+60 1417
+ingest_source(
+    db=db,
+    source = "BD+60 1417",
+    reference="Fahe21",
+    ra = 190.888634,
+    dec = 60.01464,
+    ra_col_name="ra",
+    dec_col_name="dec",
+    search_db=False
+)
+sources_ingested+=1
 
 #ingest source HD 2057
 ingest_source(
@@ -295,7 +298,14 @@ for row in calamari_table:
                 dec_col_name = "dec"
             )
             sources_ingested+=1
-    else:
+    elif len(obj_result)==1:
+        ingest_name(
+            db=db,
+            source=obj_result[0],
+            other_name=object
+        )
+        sources_already_exists+=1
+    else: 
         sources_already_exists+=1
     object_index+=1
 
@@ -332,7 +342,14 @@ for row in primary_sources_table:
                 dec_col_name = "dec"
             )
             sources_ingested+=1
-    else:
+    elif len(primary_result)==1:
+        ingest_name(
+            db=db,
+            source=primary_result[0],
+            other_name=primary
+        )
+        sources_already_exists+=1
+    else: 
         sources_already_exists+=1
     primary_index+=1
 
@@ -362,16 +379,17 @@ for row in calamari_table:
         companions_ingested+=1
     else:
         companions_already_exists+=1
+    print(f"Companions ingested: {companions_ingested}")
 
 logger.info(f"references ingested:{ref_ingested}")  # 10 references ingested
 logger.info(f"references already exists:{ref_already_exists}")  # 24 references due to preexisting data
 logger.info(f"total references:{ref_ingested+ref_already_exists}")  # 34 references total
-logger.info(f"sources ingested:{sources_ingested}")  # 41 ingested
-logger.info(f"sources already exists:{sources_already_exists}")  # 77 due to preexisting data
+logger.info(f"sources ingested:{sources_ingested}")  # 42 ingested
+logger.info(f"sources already exists:{sources_already_exists}")  # 74 due to preexisting data
 logger.info(f"total sources:{sources_ingested+sources_already_exists}")  # 116 sources total
-logger.info(f"companion relationships ingested:{companions_ingested}")  #  ingested
-logger.info(f"companion relationships already exists:{companions_already_exists}")  #  due to preexisting data
-logger.info(f"total companion relationships:{companions_ingested+companions_already_exists}")  #  total
+logger.info(f"companion relationships ingested:{companions_ingested}")  # 101 ingested
+logger.info(f"companion relationships already exists:{companions_already_exists}")  # 15 due to preexisting data
+logger.info(f"total companion relationships:{companions_ingested+companions_already_exists}")  # 116 total
 # WRITE THE JSON FILES
 if SAVE_DB:
     db.save_database(directory="data/")
