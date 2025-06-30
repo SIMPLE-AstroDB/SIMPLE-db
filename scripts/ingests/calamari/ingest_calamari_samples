@@ -81,6 +81,7 @@ companions_ingested = 0
 companions_already_exists = 0
 ref_already_exists = 2 #Roth24 and Schl03 already exist in database
 
+#helper method to retrieve the publication links from calamari_data
 def getRef(ref_index):
     ref = ref_index.split(',')[0]
     ref_link = ref_table[int(ref)]['ADS']
@@ -88,6 +89,7 @@ def getRef(ref_index):
         ref_link = ref_table[int(ref)]['Link']
     return ref_link
 
+#helper method to retrieve the bibcode from a link
 def extractADS(link):
     start = link.find('abs/')+4
     end = link.find('/abstract')
@@ -95,6 +97,7 @@ def extractADS(link):
     ads = ads.replace("%26", "&")
     return ads
 
+#helper method to retrieve the doi from a link
 def extractDOI(link):
     link = str(link)
     if 'iopscience' in link:
@@ -110,10 +113,13 @@ def otherReferencesList(ref):
     #get all the ids/indexes of the references
     ids = ref.split(", ")
     result = []
+    #for each reference...
     for id in ids:
         link = ref_table[int(id)]['ADS']
+        #if bibcode or doi is not directly in the link... go to Link column
         if 'iopscience' not in link or 'harvard.edu' not in link:
             link = ref_table[int(id)]['Link']
+        #if bibcode is directly in the link
         if 'harvard.edu' in link:
             bibcode = extractADS(link)
             pub_result=find_publication(
@@ -124,6 +130,7 @@ def otherReferencesList(ref):
                 result.append(pub_result[1])
             else:
                 print(f"Warning: Publication not found for bibcode {bibcode}")
+            #if doi code is found directly in the link
         elif 'iopscience' in link or 'doi.org' in link:
             doi=extractDOI(link)
             pub_result=find_publication(
@@ -134,6 +141,7 @@ def otherReferencesList(ref):
                 result.append(pub_result[1])
             else:
                 print(f"Warning: Publication not found for doi {doi}")
+        #use reference name to find reference
         else:
             reference= ref_table[int(id)]['Ref']
             reference= reference.replace("+", "")
@@ -146,8 +154,11 @@ def otherReferencesList(ref):
                 result.append(pub_result[1])
             else:
                 print(f"Warning: Publication not found for reference {reference}")
+    #return list of references
     return result
 
+#helper method to check if a companion relationship exists
+#returns a boolean
 def companionExists(source, companion):
     exists = False
     relationship_search = db.search_object(
@@ -161,7 +172,6 @@ def companionExists(source, companion):
                 break
     
     return exists
-
 
 #ingest publication: Curr20
 ingest_publication(
@@ -275,6 +285,7 @@ for row in calamari_table:
     obj_result = find_source_in_db(db=db, source = object, ra=RA, dec=Dec, ra_col_name="ra", dec_col_name="dec")
     ref_list = otherReferencesList(calamari_table[object_index]['Ref'])
     if len(obj_result)==0:
+        #if the source has multiple references
         if(len(ref_list)>1):
             ingest_source(
                 db=db,
@@ -288,6 +299,7 @@ for row in calamari_table:
             )
             sources_ingested+=1
         else:
+            #if the source has one reference
             ingest_source(
                 db=db,
                 source = object,
@@ -299,6 +311,7 @@ for row in calamari_table:
             )
             sources_ingested+=1
     elif len(obj_result)==1:
+        #ingest names
         ingest_name(
             db=db,
             source=obj_result[0],
@@ -311,6 +324,7 @@ for row in calamari_table:
 
 primary_index=0
 for row in primary_sources_table:
+    #read in the data
     primary = str(row['Primary'])
     ref_list = otherReferencesList(calamari_table[primary_index]['Ref'])
     RA = row['Primary RA']
@@ -319,6 +333,7 @@ for row in primary_sources_table:
     #if not, ingest
     primary_result = find_source_in_db(db=db, source = primary, ra=RA, dec=Dec, ra_col_name="ra", dec_col_name="dec")
     if len(primary_result)==0:
+        #if source has multiple references
         if(len(ref_list)>1):
             ingest_source(
                 db=db,
@@ -332,6 +347,7 @@ for row in primary_sources_table:
             )
             sources_ingested+=1
         else:
+            #if source only has one reference
             ingest_source(
                 db=db,
                 source = primary,
@@ -343,6 +359,7 @@ for row in primary_sources_table:
             )
             sources_ingested+=1
     elif len(primary_result)==1:
+        #ingest names
         ingest_name(
             db=db,
             source=primary_result[0],
@@ -357,6 +374,7 @@ for row in primary_sources_table:
 for row in calamari_table:
     object = str(row['Object'])
     primary = str(row['Primary'])
+    #check if companion relationship exists
     #UCD, or object, as the child
     if not companionExists(object, primary):
         ingest_companion_relationships(
