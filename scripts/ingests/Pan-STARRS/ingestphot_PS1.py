@@ -4,7 +4,8 @@ from astrodb_utils.sources import find_source_in_db
 from astrodb_utils.photometry import ingest_photometry, ingest_photometry_filter
 from simple import REFERENCE_TABLES
 import pandas as pd
-from sqlalchemy.exc import IntegrityError
+import csv
+import sqlalchemy
 
 # Set the logging level of the astrodb_utils logger
 astrodb_utils_logger = logging.getLogger("astrodb_utils")
@@ -29,9 +30,10 @@ db = load_astrodb(
 excel_path = "scripts/ingests/Pan-STARRS/Pan-STARRS Photometry.xlsx"
 data = pd.read_excel(excel_path)
 
-# Ingest Photometry Filters: PAN-STARRS/PS1.g, PAN-STARRS/PS1.r, PAN-STARRS/PS1.i, PAN-STARRS/PS1.z, PAN-STARRS/PS1.y
-# Error: Unconsumed column names: effective_wavelength_angstroms, width_angstroms
-# collide with columns in PhotometryFilters table [ "band", "ucd", "effective_wavelength", "width"]
+csv_output1 = "scripts/ingests/Pan-STARRS/valid_photometry.csv"
+csv_output2 = "scripts/ingests/Pan-STARRS/invalid_photometry.csv"
+
+# ingest Photometry Filters: PAN-STARRS/PS1.g, PAN-STARRS/PS1.r, PAN-STARRS/PS1.i, PAN-STARRS/PS1.z, PAN-STARRS/PS1.y
 def ingest_PanSTARRS_photometry_filters():
     ugriz = ['g', 'r', 'i', 'z', 'y']
     for band in ugriz:
@@ -55,29 +57,30 @@ def ingest_PanSTARRS_photometry_filters():
 # Ingest Photometry: Add different bands depends on the ugriz magnitude available in the datasets
 # process data in chunks as dataset is large
 def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
-    photometry_added = 0
+    source_added = 0
     skipped = 0
     inaccessible = 0
-    band_counts = {band: 0 for band in ['g', 'r', 'i', 'z', 'y']}
     raise_error = False
+    successful_source = []
+    failed_source = []
+    band_counts = {band: 0 for band in ['g', 'r', 'i', 'z', 'y']}
 
     end_idx = min(start_idx + chunk_size, len(data))
     data_chunk = data.iloc[start_idx:end_idx]
-    print(f"\nProcessing source {start_idx} to {end_idx - 1}\n")
 
     for _, row in data_chunk.iterrows():
         source = row["source"]
         try:
-            db_name = find_source_in_db(db, source)
+            db_name = find_source_in_db(
+                db, 
+                source
+            )
             
             if len(db_name) != 1:
                 msg = f"No unique source match for {source} in the database"
                 skipped += 1
-                if raise_error:
-                    logger.error(msg)
-                    raise AstroDBError(msg)
-                else:
-                    logger.warning(msg)
+                failed_source.append({"source":source, "reason": "No unique match"})
+                logger.warning(msg)
                 continue
             else:
                 db_name = db_name[0]
@@ -89,72 +92,94 @@ def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
                     photometry_data = {
                         "source": db_name,
                         "band": f"PAN-STARRS/PS1.{band}",
-                        "magnitude": str(row[mag_col]),
+                        "magnitude": row[mag_col],
                         "magnitude_error": row[err_col],
                         "telescope": "Pan-STARRS",
                         "epoch": None,
                         "comments": None,
                         "reference": "Best18",
                     }
+                    successful_source.append(photometry_data)
                     band_counts[band] += 1
-                    print(f"Inserted data: {photometry_data}")
-
-                    with db.engine.begin() as conn:
-                        conn.execute(db.Photometry.insert().values(photometry_data))
-                    photometry_added += 1
-                    logger.info(f"Added photometry for {source}")
-
-        # Exceptions starts throwing at row 2081
-        # Add photometry at row 5066: SDSS_J074055.75+411409.6
-        #                       5351: SDSS_J082720.21+450203.5
-        #                       7346: SDSS_J122011.69+331536.6
-        #                       7701: SDSS_J130407.50+403615.8
-        #                       8218: SDSS_J145348.45+373317.0
-        #                       8460: SDSS_J153619.14+330515.1
-        #                       9268: SDSS_J212033.89+102159.0
-        #                       9700: SDSS_J233716.65-093324.8
+                    
+            source_added += 1        
+            logger.info(f"collecting photometry for {source}")
 
         except Exception as e:
             msg = f"Error adding {source} photometry: {e}"
             if "None of [Index(['ra_deg', 'dec_deg']" in str(e):
                 inaccessible += 1
-                if raise_error:
-                    logger.error(f"Missing source {source}.")
-                    raise AstroDBError(msg)
-                else:
-                    logger.warning(msg)
-
-        except sqlalchemy.exc.IntegrityError as e:
-            if "UNIQUE constraint failed:" in str(e):
-                skipped += 1
-                msg = f"Duplicate photometry for {source}."
-                if raise_error:
-                    logger.error(msg)
-                    raise AstroDBError(msg)
-                else:
-                    logger.warning(msg)
+                failed_source.append({"source": source, "reason": str(e)})
+                logger.warning(msg)
             else:
                 inaccessible += 1
-                if raise_error:
-                    logger.error(str(e))
-                    raise AstroDBError( str(e))
-                else:
-                    logger.warning(str(e))
+                failed_source.append({"source": source, "reason": str(e)})
+                logger.error(msg)
 
+    # Store valid source into csv
+    with open(csv_output1, "w", newline='') as f:
+        fieldnames = [
+            "source",
+            "band",
+            "magnitude",
+            "magnitude_error",
+            "telescope",
+            "epoch",
+            "comments",
+            "reference"
+        ]
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(successful_source)
 
-    logger.info(f"Total photometry added: {photometry_added}")
-    logger.info(f"Total photometry skipped: {skipped}")
+    # Store invalid ingestion sources
+    with open(csv_output2, "w", newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=["source", "reason"])
+        writer.writeheader()
+        writer.writerows(failed_source)
+
+    logger.info(f"Total source added: {source_added}")
+    logger.info(f"Total source skipped: {skipped}")
     logger.info(f"Total inaccessible data: {inaccessible}")
     for band, count in band_counts.items():
         logger.info(f"Total entries for PS1.{band} band: {count}")
 
+    """
+    log output:
+        INFO     - astrodb_utils.pan_starrs - Total source added: 2084
+        INFO     - astrodb_utils.pan_starrs - Total source skipped: 497
+        INFO     - astrodb_utils.pan_starrs - Total inaccessible data: 7307
+        INFO     - astrodb_utils.pan_starrs - Total entries for PS1.g band: 364
+        INFO     - astrodb_utils.pan_starrs - Total entries for PS1.r band: 894
+        INFO     - astrodb_utils.pan_starrs - Total entries for PS1.i band: 1556
+        INFO     - astrodb_utils.pan_starrs - Total entries for PS1.z band: 1938
+        INFO     - astrodb_utils.pan_starrs - Total entries for PS1.y band: 2050
+    """
+
+
+# make ingestion from valid data csv file after review
+def ingest_from_csv(csv_path):
+    with open(csv_path, 'r') as f:
+        rows = csv.DictReader(f)
+        for row in rows:
+            try:
+                with db.engine.begin() as conn:
+                    conn.execute(db.Photometry.insert().values(row))
+                logger.info(f"Added photometry for {row['source']}")
+            except sqlalchemy.exc.IntegrityError as e:
+                logger.error(f"Error adding photometry for {row['source']}: {e}")
+
+
 # Call ingestion function
-ingest_PanSTARRS_photometry_filters()
+#ingest_PanSTARRS_photometry_filters()
+                
+ingest_PanSTARRS_photometry(data,0,10000)
 
-# Runtime: ~32 seconds per 100 rows
-ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=5)
+#ingest_from_csv(csv_path="scripts/ingests/Pan-STARRS/successful_sources_PS1.csv")
 
-# Save updated SQLite database
+
+
+# save to database
 if save_db:
     db.save_database(directory="data/")
     logger.info("Pan-STARRS Photometry Database saved as SIMPLE.sqlite")
