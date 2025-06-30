@@ -7,4 +7,5 @@ REFERENCE_TABLES = [
     "Versions",
     "Parameters",
     "Regimes",
+    "CompanionList"
 ]
