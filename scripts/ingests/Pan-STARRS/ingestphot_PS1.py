@@ -28,10 +28,10 @@ db = load_astrodb(
 )
 
 excel_path = "scripts/ingests/Pan-STARRS/Pan-STARRS Photometry.xlsx"
-data = pd.read_excel(excel_path)
-
 csv_output1 = "scripts/ingests/Pan-STARRS/valid_photometry.csv"
 csv_output2 = "scripts/ingests/Pan-STARRS/invalid_photometry.csv"
+data = pd.read_excel(excel_path)
+
 
 # ingest Photometry Filters: PAN-STARRS/PS1.g, PAN-STARRS/PS1.r, PAN-STARRS/PS1.i, PAN-STARRS/PS1.z, PAN-STARRS/PS1.y
 def ingest_PanSTARRS_photometry_filters():
@@ -63,6 +63,7 @@ def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
     raise_error = False
     successful_source = []
     failed_source = []
+    matched_sources = []
     band_counts = {band: 0 for band in ['g', 'r', 'i', 'z', 'y']}
 
     end_idx = min(start_idx + chunk_size, len(data))
@@ -70,45 +71,52 @@ def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
 
     for _, row in data_chunk.iterrows():
         source = row["source"]
+
         try:
-            # add RA deg to excel to find source, add column to find_source_in_db
-            # RAJ2000, DEJ2000
-            # Create new csv that store the matching SIMPLE source name and Pan-STARRS source name
             db_name = find_source_in_db(
                 db, 
                 source,
-                ra_col_name="ra",
+                ra_col_name="ra", # for SIMPLE db to look for matching col name
                 dec_col_name="dec",
+                ra=row["ra"], # for Simbad search
+                dec=row["dec"],
+                use_simbad=True
             )
             
-            if (len(db_name) != 1) or (len(db_name) == 0) or (len(db_name) >= 1):
-                msg = f"No unique source match for {source} in the database"
+            # skip if no match or multi matching
+            if (len(db_name) == 0) or (len(db_name) > 1):
                 skipped += 1
-                failed_source.append({"source":source, "reason": "No unique match"})
-                panlogger.warning(msg)
+                failed_source.append({"source":source, "reason": "No unique match in SIMPLE db"})
+                panlogger.warning(f"Skipping {source}: No unique match in SIMPLE db.")
                 continue
+            
             else:
                 db_name = db_name[0]
+
+            # add matched source name in SIMPLE db corresponding to the Pan-STARRS source name
+            matched_sources.append({
+                "original_source": source,
+                "matched_source": db_name 
+            })
 
             for band in ['g', 'r', 'i', 'z', 'y']:
                 mag_col = f"{band}mag"
                 err_col = f"e_{band}mag"
-                if not pd.isna(row[f"{band}mag"]):
+                if not pd.isna(row[mag_col]):
                     photometry_data = {
                         "source": db_name,
                         "band": f"PAN-STARRS/PS1.{band}",
                         "magnitude": row[mag_col],
                         "magnitude_error": row[err_col],
                         "telescope": "Pan-STARRS",
-                        "epoch": None,
-                        "comments": None,
                         "reference": "Best18",
                     }
                     successful_source.append(photometry_data)
                     band_counts[band] += 1
-                    
-            source_added += 1        
-            panlogger.info(f"collecting photometry for {source}")
+
+            source_added += 1
+            panlogger.info(f"Collected photometry for {source}\n")
+
 
         except Exception as e:
             msg = f"Error adding {source} photometry: {e}"
@@ -121,7 +129,14 @@ def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
                 failed_source.append({"source": source, "reason": str(e)})
                 panlogger.error(msg)
 
-    # Store valid source into csv
+
+    # File 1: create new csv that store the matching sources values
+    with open("scripts/ingests/Pan-STARRS/matched_sources.csv", "w", newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=["original_source", "matched_source"])
+        writer.writeheader()
+        writer.writerows(matched_sources)
+
+    # File 2: store valid source into csv
     with open(csv_output1, "w", newline='') as f:
         fieldnames = [
             "source",
@@ -129,15 +144,14 @@ def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
             "magnitude",
             "magnitude_error",
             "telescope",
-            "epoch",
-            "comments",
             "reference"
         ]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(successful_source)
 
-    # Store invalid ingestion sources into csv
+
+    # File 3: store invalid ingestion sources into csv
     with open(csv_output2, "w", newline='') as f:
         writer = csv.DictWriter(f, fieldnames=["source", "reason"])
         writer.writeheader()
@@ -149,27 +163,13 @@ def ingest_PanSTARRS_photometry(data, start_idx=0, chunk_size=0):
     for band, count in band_counts.items():
         panlogger.info(f"Total entries for PS1.{band} band: {count}")
 
-    """
-    log output:
-        INFO     - astrodb_utils.pan_starrs - Total source added: 2084
-        INFO     - astrodb_utils.pan_starrs - Total source skipped: 497
-        INFO     - astrodb_utils.pan_starrs - Total inaccessible data: 7307
-        INFO     - astrodb_utils.pan_starrs - Total entries for PS1.g band: 364
-        INFO     - astrodb_utils.pan_starrs - Total entries for PS1.r band: 894
-        INFO     - astrodb_utils.pan_starrs - Total entries for PS1.i band: 1556
-        INFO     - astrodb_utils.pan_starrs - Total entries for PS1.z band: 1938
-        INFO     - astrodb_utils.pan_starrs - Total entries for PS1.y band: 2050
-    """
-
-
-# make ingestion from valid data csv file after review
-def ingest_from_csv(csv_path):
-    with open(csv_path, 'r') as f:
+def ingest_photometry_from_csv(csvpath):
+    with open(csvpath, 'r') as f:
         rows = csv.DictReader(f)
         for row in rows:
             try:
                 with db.engine.begin() as conn:
-                    conn.execute(db.Photometry.insert().values(row))
+                        conn.execute(db.Photometry.insert().values(row))
                 panlogger.info(f"Added photometry for {row['source']}")
             except sqlalchemy.exc.IntegrityError as e:
                 panlogger.error(f"Error adding photometry for {row['source']}: {e}")
@@ -179,10 +179,9 @@ def ingest_from_csv(csv_path):
                 
 #ingest_PanSTARRS_photometry_filters()
 
-ingest_PanSTARRS_photometry(data,0,10000)
+ingest_PanSTARRS_photometry(data,0,10)
 
-#ingest_from_csv(csv_path="scripts/ingests/Pan-STARRS/successful_sources_PS1.csv")
-
+ingest_photometry_from_csv("scripts/ingests/Pan-STARRS/valid_photometry.csv")
 
 
 # save to database
