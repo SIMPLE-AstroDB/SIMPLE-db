@@ -264,6 +264,38 @@ def test_companion_relations(db):
     assert len(t) == 89, f"found {len(t)} companion relationships with {ref} reference"
 
 
+@pytest.mark.parametrize(
+    ("ref", "n_counts"),
+    [
+        ("Roth24", 18),
+        ("GaiaDR3", 50),
+    ],
+)
+def test_companionparameters_ref(db, ref, n_counts):
+    t = (
+        db.query(db.CompanionParameters)
+        .filter(db.CompanionParameters.c.reference == ref)
+        .astropy()
+    )
+    assert len(t) == n_counts, f"found {len(t)} companion parameters with {ref} reference"
+
+@pytest.mark.parametrize(
+    ("param", "n_counts"),
+    [
+        ("age", 24),
+        ("metallicity", 54),
+    ],
+)
+def test_companionparameters_params(db, param, n_counts):
+    # Test to verify existing counts of modeled parameters
+    t = (
+        db.query(db.CompanionParameters)
+        .filter(db.CompanionParameters.c.parameter == param)
+        .astropy()
+    )
+    assert len(t) == n_counts, f"found {len(t)} modeled parameters with {param} parameter"
+
+
 # Individual ingest tests
 # -----------------------------------------------------------------------------------------
 def test_Manj19_data(db):
