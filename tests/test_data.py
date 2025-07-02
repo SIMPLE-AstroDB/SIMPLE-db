@@ -19,7 +19,7 @@ def test_sources(db):
     assert n_sources == 3640, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 9255, f"found {n_names} names"
+    assert n_names == 9256, f"found {n_names} names"
 
 
 @pytest.mark.parametrize(
