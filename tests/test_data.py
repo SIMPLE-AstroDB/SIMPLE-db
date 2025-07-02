@@ -19,7 +19,7 @@ def test_sources(db):
     assert n_sources == 3598, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 9172, f"found {n_names} names"
+    assert n_names == 9173, f"found {n_names} names"
 
 
 @pytest.mark.parametrize(
@@ -98,7 +98,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 10
+        len(s) == 11
     ), f"found {len(s)} sources with Gaia designation that have no GAIA photometry"
 
     # If Gaia photometry, Gaia designation should be in Names
