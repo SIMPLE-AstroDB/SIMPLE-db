@@ -16,7 +16,7 @@ def reference_verifier(t, name, bibcode, doi):
 def test_sources(db):
     # Test to verify existing counts of sources and names
     n_sources = db.query(db.Sources).count()
-    assert n_sources == 3641, f"found {n_sources} sources"
+    assert n_sources == 3640, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
     assert n_names == 9255, f"found {n_names} names"
@@ -253,7 +253,7 @@ def test_modeledparameters_refs(db, ref, n_counts):
 
 def test_companion_relations(db):
     t = db.query(db.CompanionRelationships).astropy()
-    assert len(t) == 197, f"found {len(t)} companion relationships"
+    assert len(t) == 194, f"found {len(t)} companion relationships"
 
     ref = "Roth24"
     t = (
