@@ -98,7 +98,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 10
+        len(s) == 11
     ), f"found {len(s)} sources with Gaia designation that have no GAIA photometry"
 
     # If Gaia photometry, Gaia designation should be in Names
