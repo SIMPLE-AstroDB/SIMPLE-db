@@ -89,7 +89,7 @@ def ingest_companion_relationships(
         logger.error(msg)
         raise AstroDBError(msg)
     
-    source_name = find_source_in_db(db, source)
+    source_name = find_source_in_db(db, source, ra_col_name="ra", dec_col_name="dec")
     if len(source_name) != 1:
         msg = f"{source}: No source or multiple sources found: {source_name}"
         logger.error(msg)
@@ -162,3 +162,20 @@ def ingest_companion_relationships(
             )
             logger.error(msg)
             raise AstroDBError(msg)
+        
+
+#helper method to check if a companion relationship exists
+#returns a boolean
+def companionExists(db, source, companion):
+    exists = False
+    relationship_search = db.search_object(
+        name = source,
+        output_table="CompanionRelationships"
+    )
+    if len(relationship_search) > 0:
+        for relationship in relationship_search:
+            if relationship["companion_name"] == companion:
+                exists = True
+                break
+    
+    return exists
