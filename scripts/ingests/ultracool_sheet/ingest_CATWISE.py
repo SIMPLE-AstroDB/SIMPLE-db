@@ -1,0 +1,131 @@
+from astrodb_utils import load_astrodb
+import sys
+
+import sqlalchemy
+sys.path.append(".")
+from simple import *
+from simple import REFERENCE_TABLES
+from simple.utils.astrometry import ingest_proper_motions
+from astropy.io import ascii
+from astrodb_utils.publications import (
+    logger,
+    find_publication,
+    ingest_publication
+)
+from astrodb_utils.sources import (
+    find_source_in_db,
+    ingest_source,
+    AstroDBError
+)
+
+from astrodb_utils.photometry import ingest_photometry
+from astropy.table import Table
+from astroquery.ipac.irsa import Irsa #we will use astroquery 
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+
+
+SAVE_DB = False  # save the data files in addition to modifying the .db file
+RECREATE_DB = True  # recreates the .db file from the data files
+SCHEMA_PATH = "simple/schema.yaml" 
+# LOAD THE DATABASE
+db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES, felis_schema=SCHEMA_PATH)
+
+link = 'scripts/ingests/ultracool_sheet/UltracoolSheet - Main_070325.csv'
+
+uc_sheet_table = ascii.read(
+    link,
+    format="csv",
+    data_start=1,
+    header_start=0,
+    guess=False,
+    fast_reader=False,
+    delimiter=",",
+)
+
+ingest_publication(
+    db = db,
+    bibcode = "2021ApJS..253....8M"
+)
+
+one_match_counter, no_match_counter, multiple_matches_counter, skipped = 0, 0, 0, 0
+no_match, multiple_matches = [], []
+
+for row in uc_sheet_table:
+    match = find_source_in_db(
+        db,
+        source = row["name"],
+        ra = row["ra"],
+        dec = row["dec"],
+        use_simbad = False
+    )
+    if len(match) == 1:
+        flag_counter = 0
+        for i in row["flag_WISE"]:
+            flag_counter+=1
+            photometry_band = "W" + str(flag_counter)
+            if(row[photometry_band + "err"] == None):
+                skipped += 1
+                continue
+            if i == "0":
+                try:
+                    ingest_photometry(
+                        db, 
+                        source = row["name"],
+                        band = "WISE."+photometry_band,
+                        magnitude = row[photometry_band],
+                        magnitude_error = row[photometry_band + "err"],
+                        reference = row["ref_" + photometry_band]
+                    )
+                except AstroDBError as e:
+                    if "duplicate" in str(e):
+                        skipped += 1
+                        continue
+        one_match_counter += 1
+    elif len(match) > 1:
+        multiple_matches.append(row["name"])
+        msg = f"Multiple matches found for {row["name"]}"
+        logger.error(msg)
+        skipped += 1
+        multiple_matches_counter += 1
+    else:
+        no_match.append(row["name"])
+        msg = f"No matches found for {row["name"]}"
+        logger.error(msg)
+        skipped += 1
+        no_match_counter += 1
+        
+   
+no_match_table = Table([no_match], names=["No Match"])
+no_match_table.write(
+    "scripts/ingests/ultracool_sheet/uc_sheet_catwise_no_match.csv",
+    delimiter=",",
+    overwrite=True,
+    format="ascii.ecsv",
+)
+multiple_matches_table = Table([multiple_matches], names=["Multiple Matches"])
+multiple_matches_table.write(
+    "scripts/ingests/ultracool_sheet/uc_sheet_catwise_multiple_matches.csv",
+    delimiter=",",
+    overwrite=True,
+    format="ascii.ecsv",
+)
+
+print(str(one_match_counter) + " sources ingested")
+print(str(no_match_counter) + " no matches")
+print(str(multiple_matches_counter) + " multiple matches")
+print(str(skipped) + " sources skipped")
+"""    ingest_proper_motions(
+        db,
+        sources = row["name"],
+        pm_ras = row["pmra_catwise"],
+        pm_ra_errs = row["pmraerr_catwise"],
+        pm_decs = row["pmdec_catwise"],
+        pm_dec_errs = row["pmdecerr_catwise"],
+        pm_references = "Maro21"
+    )"""
+    
+
+logger.info("done")
+
+
