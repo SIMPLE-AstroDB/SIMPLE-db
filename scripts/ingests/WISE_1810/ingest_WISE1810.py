@@ -5,7 +5,6 @@ from simple import REFERENCE_TABLES
 from simple.utils.spectra import ingest_spectrum
 from datetime import datetime
 
-
 # set up logging for ASTRODB
 astrodb_utils_logger = logging.getLogger("astrodb_utils")
 astrodb_utils_logger.setLevel(logging.INFO)
@@ -46,7 +45,7 @@ def add_instrument():
     except AstroDBError as e:
         logger.error(f"Error adding instruments: {e}")
 
-# obs date format
+# convert obs date format
 format_str = "%Y-%m-%d %H:%M:%S0000"
 
 # same sources with different instruments and FITS file
@@ -83,18 +82,9 @@ def add_spectra():
         except AstroDBError as e:
             logger.error(f"Error ingesting spectrum: {e}")
 
-
-
-
+# Run ingestion function
 add_instrument()
 add_spectra()
 
 if save_db: 
     db.save_database(directory="data/")
-
-                
-    
-
-
-
-
