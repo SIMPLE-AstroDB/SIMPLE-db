@@ -49,7 +49,8 @@ ingest_publication(
 )
 
 one_match_counter, no_match_counter, multiple_matches_counter, skipped = 0, 0, 0, 0
-no_match, multiple_matches = [], []
+no_match, multiple_matches, skipped, reason = [], [], [], []
+
 
 for row in uc_sheet_table:
     match = find_source_in_db(
@@ -66,6 +67,8 @@ for row in uc_sheet_table:
             photometry_band = "W" + str(flag_counter)
             if(row[photometry_band + "err"] == None):
                 skipped += 1
+                skipped.append(row["name"])
+                reason.append("only upper error")
                 continue
             if i == "0":
                 try:
@@ -80,19 +83,19 @@ for row in uc_sheet_table:
                 except AstroDBError as e:
                     if "duplicate" in str(e):
                         skipped += 1
+                        skipped.append(row["name"])
+                        reason.append("duplicate, already ingested")
                         continue
         one_match_counter += 1
     elif len(match) > 1:
         multiple_matches.append(row["name"])
         msg = f"Multiple matches found for {row["name"]}"
         logger.error(msg)
-        skipped += 1
         multiple_matches_counter += 1
     else:
         no_match.append(row["name"])
         msg = f"No matches found for {row["name"]}"
         logger.error(msg)
-        skipped += 1
         no_match_counter += 1
         
    
@@ -103,6 +106,15 @@ no_match_table.write(
     overwrite=True,
     format="ascii.ecsv",
 )
+
+skipped_table = Table([skipped, reason], names=["Skipped", "Reason"])
+no_match_table.write(
+    "scripts/ingests/ultracool_sheet/uc_sheet_catwise_no_match.csv",
+    delimiter=",",
+    overwrite=True,
+    format="ascii.ecsv",
+)
+
 multiple_matches_table = Table([multiple_matches], names=["Multiple Matches"])
 multiple_matches_table.write(
     "scripts/ingests/ultracool_sheet/uc_sheet_catwise_multiple_matches.csv",
