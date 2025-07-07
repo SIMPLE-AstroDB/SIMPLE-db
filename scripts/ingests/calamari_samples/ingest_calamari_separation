@@ -1,0 +1,116 @@
+import sys
+import logging
+sys.path.append(".")
+from astropy.io import ascii
+from simple import REFERENCE_TABLES
+from astrodb_utils import load_astrodb
+import sqlalchemy.exc
+from astrodb_utils.sources import (
+    logger,
+    AstroDBError,
+)
+from astrodb_utils.publications import (
+    find_publication,
+)
+from simple.utils.companions import(
+    ingest_companion_relationships
+)
+
+astrodb_utils_logger = logging.getLogger("astrodb_utils")
+logger.setLevel(logging.DEBUG)  # Set logger to INFO/DEBUG/WARNING/ERROR/CRITICAL level
+astrodb_utils_logger.setLevel(logging.DEBUG)
+
+SAVE_DB = False  # save the data files in addition to modifying the .db file
+RECREATE_DB = True  # recreates the .db file from the data files
+SCHEMA_PATH = "simple/schema.yaml"
+db = load_astrodb(
+    "SIMPLE.sqlite",
+    recreatedb=RECREATE_DB,
+    reference_tables=REFERENCE_TABLES,
+    felis_schema=SCHEMA_PATH,
+)
+
+link = (
+    "scripts/ingests/calamari_samples/calamari_data.csv"
+)
+link_2 = (
+    "scripts/ingests/calamari_samples/calamari_refs.csv"
+)
+
+calamari_table = ascii.read(
+    link,
+    format="csv",
+    data_start=1,
+    header_start=0,
+    guess=False,
+    fast_reader=False, 
+    delimiter=",",
+)
+
+ref_table = ascii.read(
+    link_2,
+    format="csv",
+    data_start=0,
+    header_start=0,
+    guess=False,
+    fast_reader=False, 
+    delimiter=",",
+)
+
+separation_ingested = 0
+separation_already_exist = 0
+skipped = 0
+
+def ingest_separation(source, companion, separation_arcsec):
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(
+                db.CompanionRelationships.update().where(
+                    (db.CompanionRelationships.c.source == source) & 
+                    (db.CompanionRelationships.c.companion_name == companion)
+                ).values(
+                    projected_separation_arcsec = separation_arcsec
+                )
+            )
+            conn.commit()
+        logger.info(
+            "Projected Separation (arcsec) updated: ",
+            [
+                source,
+                companion,
+                separation_arcsec,
+            ],
+        )
+    except Exception as e:
+        logger.error(f"Error updating projected separation {e}")
+        raise AstroDBError(f"Failed to update projected separation (arcesec) {e}")
+
+#ingest companion relationships
+for row in calamari_table:
+    object = str(row['Object'])
+    primary = str(row['Primary'])
+    if object == "eta Cnc B":
+        skipped+=2
+        continue
+    separation = float(row['Separation (arcsec)'])
+    
+    ingest_separation(
+        source= object,
+        companion = primary,
+        separation_arcsec=separation
+    )
+    separation_ingested+=1
+    ingest_separation(
+        source = primary,
+        companion = object,
+        separation_arcsec=separation
+    )
+    separation_ingested+=1
+    print(f"Separations ingested: {separation_ingested}")
+
+logger.info(f"Projected separation already exists: {separation_already_exist}") #  already exists in database
+logger.info(f"Projected separations skipped: {skipped}") # 2 skipped
+logger.info(f"Projected separation ingested: {separation_ingested}") # 114 projected separations ingested
+logger.info(f"total: {separation_already_exist+separation_ingested+skipped}")  # 116 total
+if SAVE_DB:
+    db.save_database(directory="data/")
