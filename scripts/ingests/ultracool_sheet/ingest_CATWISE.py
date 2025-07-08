@@ -48,7 +48,7 @@ ingest_publication(
     bibcode = "2021ApJS..253....8M"
 )
 
-one_match_counter, no_match_counter, multiple_matches_counter, skipped = 0, 0, 0, 0
+one_match_counter, no_match_counter, multiple_matches_counter, upper_error_counter, duplicate_counter, other_error_counter = 0, 0, 0, 0, 0, 0
 no_match, multiple_matches, skipped, reason = [], [], [], []
 
 
@@ -58,15 +58,18 @@ for row in uc_sheet_table:
         source = row["name"],
         ra = row["ra"],
         dec = row["dec"],
-        use_simbad = False
+        use_simbad = True
     )
     if len(match) == 1:
+        print("match:")
+        print(match)
+        print("has one match")
         flag_counter = 0
         for i in row["flag_WISE"]:
             flag_counter+=1
             photometry_band = "W" + str(flag_counter)
             if(row[photometry_band + "err"] == None):
-                skipped += 1
+                upper_error_counter += 1
                 skipped.append(row["name"])
                 reason.append("only upper error")
                 continue
@@ -82,12 +85,18 @@ for row in uc_sheet_table:
                     )
                 except AstroDBError as e:
                     if "duplicate" in str(e):
-                        skipped += 1
+                        duplicate_counter += 1
                         skipped.append(row["name"])
                         reason.append("duplicate, already ingested")
                         continue
+                    else:
+                        other_error_counter += 1
+                        skipped.append(row["name"])
+                        reason.append(str(e))
+                        raise e
         one_match_counter += 1
     elif len(match) > 1:
+        print("has multiple match")
         multiple_matches.append(row["name"])
         msg = f"Multiple matches found for {row["name"]}"
         logger.error(msg)
@@ -123,20 +132,13 @@ multiple_matches_table.write(
     format="ascii.ecsv",
 )
 
-print(str(one_match_counter) + " sources ingested")
+print(str(one_match_counter) + " photometry ingested")
 print(str(no_match_counter) + " no matches")
 print(str(multiple_matches_counter) + " multiple matches")
-print(str(skipped) + " sources skipped")
-"""    ingest_proper_motions(
-        db,
-        sources = row["name"],
-        pm_ras = row["pmra_catwise"],
-        pm_ra_errs = row["pmraerr_catwise"],
-        pm_decs = row["pmdec_catwise"],
-        pm_dec_errs = row["pmdecerr_catwise"],
-        pm_references = "Maro21"
-    )"""
-    
+print(str(duplicate_counter) + " duplicate sources")
+print(str(upper_error_counter) + " upper error sources")
+print(str(other_error_counter) + " other error sources")
+
 
 logger.info("done")
 
