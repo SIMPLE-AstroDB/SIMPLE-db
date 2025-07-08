@@ -1,3 +1,4 @@
+#  Run `felis validate simple/schema.yaml` to validate this schema
 ---
 name: simple
 "@id": "#simple"
@@ -314,6 +315,35 @@ tables:
         description: Primary key for Regimes table
         columns: 
         - "#Regimes.regime"
+
+  - name: CompanionList
+    "@id": "#CompanionList"
+    description: Companions lookup table
+    primaryKey:
+    - "#CompanionList.companion"
+
+    columns:
+    - name: companion
+      "@id": "#CompanionList.companion"
+      datatype: string
+      length: 50
+      description: Main identifier for a companion object
+      ivoa:ucd: meta.id;meta.main
+      nullable: false
+    - name: description
+      "@id": "#CompanionList.description"
+      datatype: string
+      length: 100
+      description: Description of the companion object
+      ivoa:ucd: meta.note
+    - name: other_companion_names
+      "@id": "#CompanionList.other_companion_names"
+      datatype: string
+      length: 1000
+      description: Additional names for the companion object, comma delimited.
+      ivoa:ucd: meta.id
+
+
 
   # TODO: Add a GravityList lookup table in place of enumeration
 
@@ -1289,6 +1319,102 @@ tables:
         referencedColumns:
         - "#Publications.reference"
 
+  - name: CompanionParameters
+    "@id": "#CompanionParameters"
+    description: Parameters for companion objects relevant to sources
+    primaryKey: 
+    - "#CompanionParameters.source"
+    - "#CompanionParameters.companion"
+    - "#CompanionParameters.parameter"
+
+    columns:
+    - name: source
+      "@id": "#CompanionParameters.source"
+      datatype: string
+      length: 50
+      description: Main identifier for an object; links to Sources table
+      ivoa:ucd: meta.id;meta.main
+      nullable: false
+    - name: companion
+      "@id": "#CompanionParameters.companion"
+      datatype: string
+      length: 50
+      description: Main identifier for a companion object; link to Companion List table
+      ivoa:ucd: meta.id
+      nullable: false
+    - name: parameter
+      "@id": "#CompanionParameters.parameter"
+      datatype: string
+      length: 30
+      description: Parameter name
+      ivoa:ucd: meta.id
+      nullable: false
+    - name: value
+      "@id": "#CompanionParameters.value"
+      datatype: double
+      description: Value of the parameter
+    - name: upper_error
+      "@id": "#CompanionParameters.upper_error"
+      datatype: double
+      description: Upper uncertainty of the parameter value
+    - name: lower_error
+      "@id": "#CompanionParameters.lower_error"
+      datatype: double
+      description: Lower uncertainty of the parameter value
+    - name: unit
+      "@id": "#CompanionParameters.unit"
+      datatype: string
+      length: 30
+      description: Unit of the parameter value. Should be astropy units compatible.
+    - name: comments
+      "@id": "#CompanionParameters.comments"
+      datatype: string
+      length: 100
+      description: Free-form comments for this entry
+      ivoa:ucd: meta.note
+    - name: reference
+      "@id": "#CompanionParameters.reference"
+      datatype: string
+      length: 30
+      description: Publication reference; links to Publications table
+      ivoa:ucd: meta.ref
+      nullable: false
+
+    indexes:
+      - name: PK_CompanionParameters
+        "@id": "#PK_CompanionParameters"
+        description: Primary key for CompanionParameters table
+        columns: 
+        - "#CompanionParameters.source"
+        - "#CompanionParameters.companion"
+        - "#CompanionParameters.parameter"
+        - "#CompanionParameters.reference"
+    constraints:
+      - name: CompanionParameters_source_Sources_source
+        "@type": "ForeignKey"
+        "@id": "#FK_CompanionParameters_source_Sources_source"
+        description: Link CompanionParameters source to Sources table
+        columns:
+        - "#CompanionParameters.source"
+        referencedColumns:
+        - "#Sources.source"
+      - name: CompanionParameters_companion_CompanionList_companion
+        "@type": "ForeignKey"
+        "@id": "#FK_CompanionParameters_companion_CompanionList_companion"
+        description: Link CompanionParameters companion to CompanionList table
+        columns:
+        - "#CompanionParameters.companion"
+        referencedColumns:
+        - "#CompanionList.companion"
+      - name: CompanionParameters_reference_Publications_reference
+        "@type": "ForeignKey"
+        "@id": "#FK_CompanionParameters_reference_Publications_reference"
+        description: Link CompanionParameters reference to Publications table
+        columns:
+        - "#CompanionParameters.reference"
+        referencedColumns:
+        - "#Publications.reference"
+  
   - name: RotationalParameters
     "@id": "#RotationalParameters"
     description: Rotational parameters for sources, including v_sin i, period, and inclination. 

@@ -93,16 +93,17 @@ def test_source_simbad(db):
             )
             duplicate_count += 1
 
-    assert duplicate_count == 0, "Duplicate sources identified via Simbad queries"
-
-    # with open("not_in_simbad.txt", "w") as f:
+    # Write not_in_simbad list to file
+    # with open("tests/not_in_simbad_25Jul1.txt", "w") as f:
     #    f.write("\n".join(not_in_simbad))
 
+    assert duplicate_count == 0, "Duplicate sources identified via Simbad queries"
+
     assert (
-        len(not_in_simbad) == 371
+        len(not_in_simbad) == 370
     ), f"Expecting {len(not_in_simbad)} sources not found in Simbad"
 
-    assert len(in_simbad) == 3227, "Sources found in Simbad"
+    assert len(in_simbad) == 3228, "Sources found in Simbad"
     print(f"Found {len(in_simbad)} SIMPLE sources in Simbad")
 
     assert len(not_in_simbad) + len(in_simbad) == len(

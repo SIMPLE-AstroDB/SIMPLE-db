@@ -1,0 +1,78 @@
+import sys
+
+sys.path.append(".")
+from astropy.io import ascii
+from simple import REFERENCE_TABLES
+from astrodb_utils import load_astrodb
+
+from simple.utils.companions import (
+    ingest_companion_relationships,
+)
+
+DB_SAVE = True
+RECREATE_DB = True
+
+SCHEMA_PATH = "simple/schema.yaml"
+db = load_astrodb(
+    "SIMPLE.sqlite",
+    recreatedb=RECREATE_DB,
+    reference_tables=REFERENCE_TABLES,
+    felis_schema=SCHEMA_PATH,
+)
+
+#ingest A as child of WISE J104915.57-531906.1
+ingest_companion_relationships(
+    db = db,
+    source = "WISE J104915.57-531906.1A",
+    companion_name= "WISE J104915.57-531906.1",
+    relationship="Child",
+    ref = "Luhm13",
+)
+
+#ingest WISE J104915.57-531906.1 as parent of A
+ingest_companion_relationships(
+    db = db,
+    source = "WISE J104915.57-531906.1",
+    companion_name= "WISE J104915.57-531906.1A",
+    relationship="Parent",
+    ref = "Luhm13",
+)
+
+#ingest B as child of WISE J104915.57-531906.1
+ingest_companion_relationships(
+    db = db,
+    source = "WISE J104915.57-531906.1B",
+    companion_name= "WISE J104915.57-531906.1",
+    relationship="Child",
+    ref = "Luhm13",
+)
+
+#ingest WISE J104915.57-531906.1 as parent of B
+ingest_companion_relationships(
+    db = db,
+    source = "WISE J104915.57-531906.1",
+    companion_name= "WISE J104915.57-531906.1B",
+    relationship="Parent",
+    ref = "Luhm13",
+)
+
+#ingest A and B as siblings
+ingest_companion_relationships(
+    db = db,
+    source = "WISE J104915.57-531906.1A",
+    companion_name= "WISE J104915.57-531906.1B",
+    relationship="Sibling",
+    ref = "Luhm13",
+)
+
+#ingest A and B as siblings
+ingest_companion_relationships(
+    db = db,
+    source = "WISE J104915.57-531906.1B",
+    companion_name= "WISE J104915.57-531906.1A",
+    relationship="Sibling",
+    ref = "Luhm13",
+)
+
+if DB_SAVE:
+    db.save_database(directory="data/")

@@ -560,6 +560,9 @@ def test_special_characters(db):
                 elif table_name == "Regimes":
                     check = [char not in data[table_name]["regime"]]
                     assert all(check), f"{char} in {table_name}"
+                elif table_name == "CompanionList":
+                    check = [char not in data[table_name]["companion"]]
+                    assert all(check), f"{char} in {table_name}"
                 else:
                     check = [char not in data[table_name]["source"]]
                     assert all(check), f"{char} in {table_name}"
@@ -655,8 +658,7 @@ def test_companion_relationship_uniqueness(db):
     # checking duplicate sources have different companions
     non_unique = []
     for source in duplicate_sources:
-        t = db.query(db.CompanionRelationships.c.companion_name)
-        filter(db.CompanionRelationships.c.source == source).astropy()
+        t = db.query(db.CompanionRelationships.c.companion_name).filter(db.CompanionRelationships.c.source == source['source']).astropy()
         duplicate_companions = [
             n for n, companion in enumerate(t) if companion in t[:n]
         ]
