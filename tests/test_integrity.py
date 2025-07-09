@@ -560,6 +560,9 @@ def test_special_characters(db):
                 elif table_name == "Regimes":
                     check = [char not in data[table_name]["regime"]]
                     assert all(check), f"{char} in {table_name}"
+                elif table_name == "CompanionList":
+                    check = [char not in data[table_name]["companion"]]
+                    assert all(check), f"{char} in {table_name}"
                 else:
                     check = [char not in data[table_name]["source"]]
                     assert all(check), f"{char} in {table_name}"
