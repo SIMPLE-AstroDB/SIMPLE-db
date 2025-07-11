@@ -56,7 +56,7 @@ spectra_data = [{
         "observation_date": datetime.strptime("2020-09-06 00:00:000000", format_str)
     },
     {
-        "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/WISE1810_comb_Jun2021_YJ_STD_bb.fits",
+        "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/data_target_WISE1810_comb_Jun2021_YJ_STD_bb.fits",
         "regime": "nir",
         "instrument": 'EMIR',
         "observation_date":datetime.strptime("2021-06-01 00:00:000000", format_str)
