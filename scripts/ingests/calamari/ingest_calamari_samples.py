@@ -16,10 +16,6 @@ from astrodb_utils.publications import (
     find_publication,
 )
 
-from simple.utils.companions import (
-    ingest_companion_relationships,
-)
-
 astrodb_utils_logger = logging.getLogger("astrodb_utils")
 logger.setLevel(logging.DEBUG)  # Set logger to INFO/DEBUG/WARNING/ERROR/CRITICAL level
 astrodb_utils_logger.setLevel(logging.DEBUG)
@@ -62,8 +58,6 @@ ref_table = ascii.read(
 
 sources_ingested = 0
 sources_already_exists = -3 #ingest 3 sources at the start. They will not be counted as already existing in the database
-companions_ingested = 0
-companions_already_exists = 0
 
 #helper method to retrieve the publication links from calamari_data
 def getRef(ref_index):
@@ -140,22 +134,6 @@ def otherReferencesList(ref):
                 print(f"Warning: Publication not found for reference {reference}")
     #return list of references
     return result
-
-#helper method to check if a companion relationship exists
-#returns a boolean
-def companionExists(source, companion):
-    exists = False
-    relationship_search = db.search_object(
-        name = source,
-        output_table="CompanionRelationships"
-    )
-    if len(relationship_search) > 0:
-        for relationship in relationship_search:
-            if relationship["companion_name"] == companion:
-                exists = True
-                break
-    
-    return exists
 
 #ingest source WISE J124332.17+600126.6
 ingest_source(

@@ -191,6 +191,9 @@ for row in ref_table:
         continue
 
 
-logger.info(f"references ingested:{ref_ingested}")  # 10 references ingested
-logger.info(f"references already exists:{ref_already_exists}")  # 24 references due to preexisting data
+logger.info(f"references ingested:{ref_ingested}")  # 11 references ingested
+logger.info(f"references already exists:{ref_already_exists}")  # 23 references due to preexisting data
 logger.info(f"total references:{ref_ingested+ref_already_exists}")  # 34 references total
+# WRITE THE JSON FILES
+if SAVE_DB:
+    db.save_database(directory="data/")

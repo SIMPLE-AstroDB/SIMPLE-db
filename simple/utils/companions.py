@@ -32,7 +32,7 @@ def ingest_companion_relationships(
         Name of source as it appears in sources table
     relationship: str
         relationship is of the souce to its companion
-        should be one of the following: Child, Sibling, Parent, or Unresolved Parent
+        should be one of the following: Child, Sibling, Parent, Unresolved Parent, or Unresolved Child
         see note
     companion_name: str
         SIMBAD resovable name of companion object
@@ -62,7 +62,7 @@ def ingest_companion_relationships(
 
     """
     # checking relationship entered
-    possible_relationships = ["Child", "Sibling", "Parent", "Unresolved Parent", None]
+    possible_relationships = ["Child", "Sibling", "Parent", "Unresolved Parent", "Unresolved Child", None]
     # check captialization
     if relationship.title() != relationship:
         logger.info(
