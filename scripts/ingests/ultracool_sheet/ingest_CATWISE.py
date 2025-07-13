@@ -1,7 +1,6 @@
 from astrodb_utils import load_astrodb
 import sys
 
-import sqlalchemy
 sys.path.append(".")
 from simple import *
 from simple import REFERENCE_TABLES
@@ -43,12 +42,19 @@ uc_sheet_table = ascii.read(
     delimiter=",",
 )
 
+#ingest maro21
 ingest_publication(
     db = db,
     bibcode = "2021ApJS..253....8M"
 )
 
-one_match_counter, no_match_counter, multiple_matches_counter, upper_error_counter, duplicate_counter, other_error_counter = 0, 0, 0, 0, 0, 0
+#ingest eise20
+ingest_publication(
+    db = db, 
+    bibcode = "2020ApJS..247...69E"
+)
+
+one_match_counter, no_match_counter, multiple_matches_counter, upper_error_counter, duplicate_counter = 0, 0, 0, 0, 0
 no_match, multiple_matches, skipped, reason = [], [], [], []
 
 
@@ -68,16 +74,16 @@ for row in uc_sheet_table:
         for i in row["flag_WISE"]:
             flag_counter+=1
             photometry_band = "W" + str(flag_counter)
-            if(row[photometry_band + "err"] == None):
+            if(str(row[photometry_band + "err"]) == "nan"):
                 upper_error_counter += 1
-                skipped.append(row["name"])
+                skipped.append(row["name"] + " " + photometry_band)
                 reason.append("only upper error")
                 continue
             if i == "0":
                 try:
                     ingest_photometry(
                         db, 
-                        source = row["name"],
+                        source = match[0],
                         band = "WISE."+photometry_band,
                         magnitude = row[photometry_band],
                         magnitude_error = row[photometry_band + "err"],
@@ -89,21 +95,28 @@ for row in uc_sheet_table:
                         skipped.append(row["name"])
                         reason.append("duplicate, already ingested")
                         continue
+                    elif "Eise20;Schn20" in str(e):
+                        ingest_photometry(
+                            db, 
+                            source = match[0],
+                            band = "WISE."+photometry_band,
+                            magnitude = row[photometry_band],
+                            magnitude_error = row[photometry_band + "err"],
+                            reference = "Eise20",
+                            comments = "Other reference is Schn20"
+                        )
                     else:
-                        other_error_counter += 1
-                        skipped.append(row["name"])
-                        reason.append(str(e))
                         raise e
         one_match_counter += 1
     elif len(match) > 1:
         print("has multiple match")
         multiple_matches.append(row["name"])
-        msg = f"Multiple matches found for {row["name"]}"
+        msg = f"Multiple matches found for {row['name']}"
         logger.error(msg)
         multiple_matches_counter += 1
     else:
         no_match.append(row["name"])
-        msg = f"No matches found for {row["name"]}"
+        msg = f"No matches found for {row['name']}"
         logger.error(msg)
         no_match_counter += 1
         
@@ -117,8 +130,8 @@ no_match_table.write(
 )
 
 skipped_table = Table([skipped, reason], names=["Skipped", "Reason"])
-no_match_table.write(
-    "scripts/ingests/ultracool_sheet/uc_sheet_catwise_no_match.csv",
+skipped_table.write(
+    "scripts/ingests/ultracool_sheet/uc_sheet_catwise_skipped.csv",
     delimiter=",",
     overwrite=True,
     format="ascii.ecsv",
@@ -137,7 +150,7 @@ print(str(no_match_counter) + " no matches")
 print(str(multiple_matches_counter) + " multiple matches")
 print(str(duplicate_counter) + " duplicate sources")
 print(str(upper_error_counter) + " upper error sources")
-print(str(other_error_counter) + " other error sources")
+
 
 
 logger.info("done")
