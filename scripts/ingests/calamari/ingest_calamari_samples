@@ -1,5 +1,6 @@
 import sys
 import logging
+import sqlalchemy
 sys.path.append(".")
 from astropy.io import ascii
 from simple import REFERENCE_TABLES
@@ -57,8 +58,9 @@ ref_table = ascii.read(
 )
 
 sources_ingested = 0
-sources_already_exists = -3 #ingest 3 sources at the start. They will not be counted as already existing in the database
-sources = []
+sources_already_exists = -9 #ingest 3 sources at the start. Also ingest the resolved children separately
+                            #They will not be counted as already existing in the database
+names_ingested=-6 #remove resolved children names from unresolved parent JSON file
 
 #helper method to retrieve the publication links from calamari_data
 def getRef(ref_index):
@@ -136,6 +138,55 @@ def otherReferencesList(ref):
     #return list of references
     return result
 
+def ingest_resolved_children(
+    db,
+    source,
+    reference: str,
+    *,
+    ra: float = None,
+    dec: float = None,
+    epoch: str = None,
+    equinox: str = None,
+    other_reference: str = None,
+    comment: str = None,
+    raise_error: bool = True,
+    ra_col_name: str = "ra",
+    dec_col_name: str = "dec",
+    epoch_col_name: str = "epoch",
+):
+    # Construct data to be added
+    source_data = [
+        {
+            "source": source,
+            ra_col_name: ra,
+            dec_col_name: dec,
+            "reference": reference,
+            epoch_col_name: epoch,
+            "equinox": equinox,
+            "other_references": other_reference,
+            "comments": comment,
+        }
+    ]
+    logger.debug(f"   Data: {source_data}.")
+
+    # Try to add the source to the database
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(db.Sources.insert().values(source_data))
+            conn.commit()
+        msg = f"Added {source_data}"
+        logger.info(f"Added {source}")
+        logger.debug(msg)
+    except sqlalchemy.exc.IntegrityError:
+        msg = f"Not ingesting {source}. Not sure why. \n"
+        msg2 = f"   {source_data} "
+        logger.warning(msg)
+        logger.debug(msg2)
+
+    # Add the source name to the Names table
+    ingest_name(db, source=source, other_name=source, raise_error=raise_error)
+    return
+
 #ingest source WISE J124332.17+600126.6
 ingest_source(
     db=db,
@@ -200,6 +251,65 @@ sources_ingested+=1
 #     dec_col_name="dec"
 # )
 # sources_ingested+=1
+ingest_resolved_children(
+    db=db,
+    source = "Gl 337C",
+    ra = 138.0584919,
+    dec=14.9956706,
+    reference="GaiaEDR3",
+    other_reference="Wils01"
+)
+sources_ingested+=1
+
+ingest_resolved_children(
+    db=db,
+    source = "Gl 337D",
+    ra = 138.0584919,
+    dec=14.9956706,
+    reference="GaiaEDR3",
+    other_reference="Wils01"
+)
+sources_ingested+=1
+
+ingest_resolved_children(
+    db=db,
+    source = "HD 130948C",
+    ra = 222.566667,
+    dec=23.911611,
+    reference="Dupu09.729",
+    other_reference="Pott22"
+)
+sources_ingested+=1
+
+ingest_resolved_children(
+    db=db,
+    source = "HD 130948B",
+    ra = 222.566667,
+    dec=23.911611,
+    reference="Dupu09.729",
+    other_reference="Pott22"
+)
+sources_ingested+=1
+
+ingest_resolved_children(
+    db=db,
+    source = "Gl 417B",
+    ra = 168.1055653,
+    dec=35.8028953,
+    reference="GaiaEDR3",
+    other_reference="Kirk00"
+)
+sources_ingested+=1
+
+ingest_resolved_children(
+    db=db,
+    source = "Gl 417C",
+    ra = 168.1055653,
+    dec=35.8028953,
+    reference="GaiaEDR3",
+    other_reference="Kirk00"
+)
+sources_ingested+=1
 
 object_index=0
 #ingest the sources
@@ -246,14 +356,16 @@ for row in calamari_table:
             source=obj_result[0],
             other_name=object
         )
+        names_ingested+=1
         sources_already_exists+=1
     else: 
         sources_already_exists+=1
     object_index+=1
 
-logger.info(f"sources ingested:{sources_ingested}")  # 42 ingested
-logger.info(f"sources already exists:{sources_already_exists}")  # 74 due to preexisting data
-logger.info(f"total sources:{sources_ingested+sources_already_exists}")  # 116 sources total
+logger.info(f"sources ingested:{sources_ingested}")  # 20 ingested
+logger.info(f"sources already exists:{sources_already_exists}")  # 44 due to preexisting data
+logger.info(f"total sources:{sources_ingested+sources_already_exists}")  # 64 sources total
+logger.info(f"names ingested:{names_ingested}") # 42 names ingested
 # WRITE THE JSON FILES
 if SAVE_DB:
     db.save_database(directory="data/")
