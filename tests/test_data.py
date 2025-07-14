@@ -253,7 +253,7 @@ def test_modeledparameters_refs(db, ref, n_counts):
 
 def test_companion_relations(db):
     t = db.query(db.CompanionRelationships).astropy()
-    assert len(t) == 197, f"found {len(t)} companion relationships"
+    assert len(t) == 209, f"found {len(t)} companion relationships"
 
     ref = "Roth24"
     t = (

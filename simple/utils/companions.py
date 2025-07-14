@@ -162,20 +162,3 @@ def ingest_companion_relationships(
             )
             logger.error(msg)
             raise AstroDBError(msg)
-        
-
-#helper method to check if a companion relationship exists
-#returns a boolean
-def companionExists(db, source, companion):
-    exists = False
-    relationship_search = db.search_object(
-        name = source,
-        output_table="CompanionRelationships"
-    )
-    if len(relationship_search) > 0:
-        for relationship in relationship_search:
-            if relationship["companion_name"] == companion:
-                exists = True
-                break
-    
-    return exists
