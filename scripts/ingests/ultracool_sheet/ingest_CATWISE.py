@@ -24,7 +24,7 @@ from astropy.coordinates import SkyCoord
 import astropy.units as u
 
 
-SAVE_DB = True  # save the data files in addition to modifying the .db file
+SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 SCHEMA_PATH = "simple/schema.yaml" 
 # LOAD THE DATABASE
@@ -56,7 +56,7 @@ ingest_publication(
 
 one_match_counter, no_match_counter, multiple_matches_counter, upper_error_counter, duplicate_counter = 0, 0, 0, 0, 0
 no_match, multiple_matches, skipped, reason = [], [], [], []
-
+pm_counter, photo_counter = 0, 0
 
 for row in uc_sheet_table:
     match = find_source_in_db(
@@ -70,6 +70,21 @@ for row in uc_sheet_table:
         print("match:")
         print(match)
         print("has one match")
+        if(str(row["pmra_catwise"])!= "nan"):
+            ingest_proper_motions(
+                db,
+                sources = match,
+                pm_ras = row["pmra_catwise"],
+                pm_ra_errs = row["pmraerr_catwise"],
+                pm_decs = row["pmdec_catwise"],
+                pm_dec_errs = row["pmdecerr_catwise"],
+                pm_references = "Maro21",
+            )
+            pm_counter += 1
+        else:
+            skipped.append(row["name"])
+            reason.append("missing proper motion values")
+
         flag_counter = 0
         for i in row["flag_WISE"]:
             flag_counter+=1
@@ -89,6 +104,7 @@ for row in uc_sheet_table:
                         magnitude_error = row[photometry_band + "err"],
                         reference = row["ref_" + photometry_band]
                     )
+                    photo_counter += 1
                 except AstroDBError as e:
                     if "duplicate" in str(e):
                         duplicate_counter += 1
@@ -105,6 +121,7 @@ for row in uc_sheet_table:
                             reference = "Eise20",
                             comments = "Other reference is Schn20"
                         )
+                        photo_counter += 1
                     else:
                         raise e
         one_match_counter += 1
@@ -150,7 +167,8 @@ print(str(no_match_counter) + " no matches")
 print(str(multiple_matches_counter) + " multiple matches")
 print(str(duplicate_counter) + " duplicate sources")
 print(str(upper_error_counter) + " upper error sources")
-
+print(str(photo_counter) + " photometry ingested")
+print(str(pm_counter) + " propermotions ingested")
 
 
 logger.info("done")
