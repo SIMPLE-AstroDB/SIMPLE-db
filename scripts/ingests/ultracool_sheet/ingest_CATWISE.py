@@ -154,7 +154,5 @@ print(str(upper_error_counter) + " upper error sources")
 
 
 logger.info("done")
-if SAVE_DB:
-    db.save_database(directory="data/")
 
 
