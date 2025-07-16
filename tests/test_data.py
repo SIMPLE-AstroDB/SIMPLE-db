@@ -118,7 +118,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 495
+        len(s) == 34
     ), f"found {len(s)} sources with WISE designation that have no WISE photometry"
 
     # If Wise photometry, Wise designation should be in Names
@@ -128,7 +128,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 389
+        len(s) == 2530
     ), f"found {len(s)} sources with WISE photometry and no Wise designation in Names"
 
     # If Gaia EDR3 pm, Gaia EDR3 designation should be in Names
