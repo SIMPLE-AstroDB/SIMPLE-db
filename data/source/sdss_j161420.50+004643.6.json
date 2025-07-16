@@ -77,6 +77,33 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.582,
+            "magnitude_error": 0.016,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.387,
+            "magnitude_error": 0.018,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 12.378,
+            "magnitude_error": 0.488,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr13"
         }
     ],
     "ProperMotions": [
@@ -85,9 +112,18 @@
             "mu_ra_error": 20.85,
             "mu_dec": -31.36,
             "mu_dec_error": 21.07,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Jame08"
+        },
+        {
+            "mu_ra": -71.7,
+            "mu_ra_error": 9.9,
+            "mu_dec": -73.3,
+            "mu_dec_error": 11.2,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "RadialVelocities": [

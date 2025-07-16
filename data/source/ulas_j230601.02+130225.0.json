@@ -80,6 +80,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Burn10.1885"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 17.581,
+            "magnitude_error": 0.083,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 15.143,
+            "magnitude_error": 0.032,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -88,9 +106,18 @@
             "mu_ra_error": 1.3,
             "mu_dec": 52.1,
             "mu_dec_error": 1.5,
-            "adopted": null,
+            "adopted": true,
             "comments": null,
             "reference": "Best20.257"
+        },
+        {
+            "mu_ra": 74.8,
+            "mu_ra_error": 38.0,
+            "mu_dec": 15.4,
+            "mu_dec_error": 38.9,
+            "adopted": false,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

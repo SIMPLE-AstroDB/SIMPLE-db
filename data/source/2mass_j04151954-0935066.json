@@ -170,6 +170,33 @@
             "reference": "Patt06"
         },
         {
+            "band": "JWST/MIRI.F1000W",
+            "magnitude": 10.749,
+            "magnitude_error": 0.002,
+            "telescope": "JWST",
+            "epoch": null,
+            "comments": null,
+            "reference": "Alej25"
+        },
+        {
+            "band": "JWST/MIRI.F1280W",
+            "magnitude": 10.669,
+            "magnitude_error": 0.002,
+            "telescope": "JWST",
+            "epoch": null,
+            "comments": null,
+            "reference": "Alej25"
+        },
+        {
+            "band": "JWST/MIRI.F1800W",
+            "magnitude": 10.327,
+            "magnitude_error": 0.002,
+            "telescope": "JWST",
+            "epoch": null,
+            "comments": null,
+            "reference": "Alej25"
+        },
+        {
             "band": "NICMOS1.F110W",
             "magnitude": 16.47,
             "magnitude_error": 0.05,
@@ -287,6 +314,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 15.148,
+            "magnitude_error": 0.026,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W2",
             "magnitude": 12.261,
             "magnitude_error": 0.026,
@@ -294,6 +330,15 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 12.305,
+            "magnitude_error": 0.011,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         },
         {
             "band": "WISE.W3",
@@ -305,6 +350,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W3",
+            "magnitude": 11.093,
+            "magnitude_error": 0.125,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr13"
+        },
+        {
             "band": "WISE.W4",
             "magnitude": 8.638,
             "magnitude_error": null,
@@ -312,33 +366,6 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
-        },
-        {
-            "band": "JWST/MIRI.F1000W",
-            "magnitude": 10.749,
-            "magnitude_error": 0.002,
-            "telescope": "JWST",
-            "epoch": null,
-            "comments": null,
-            "reference": "Alej25"
-        },
-        {
-            "band": "JWST/MIRI.F1280W",
-            "magnitude": 10.669,
-            "magnitude_error": 0.002,
-            "telescope": "JWST",
-            "epoch": null,
-            "comments": null,
-            "reference": "Alej25"
-        },
-        {
-            "band": "JWST/MIRI.F1800W",
-            "magnitude": 10.327,
-            "magnitude_error": 0.002,
-            "telescope": "JWST",
-            "epoch": null,
-            "comments": null,
-            "reference": "Alej25"
         }
     ],
     "ProperMotions": [
@@ -350,6 +377,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Dupu12.19"
+        },
+        {
+            "mu_ra": 2159.8,
+            "mu_ra_error": 9.3,
+            "mu_dec": 553.5,
+            "mu_dec_error": 13.0,
+            "adopted": false,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "Spectra": [
@@ -432,6 +468,19 @@
             "other_references": null
         },
         {
+            "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/JWST/NIRSpec/jw02124-o059_s00001_nirspec_f290lp-g395h-s200a1-subs200a1_x1d_manual.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "JWST",
+            "instrument": "NIRSpec",
+            "mode": "F290LP.G395H",
+            "observation_date": "2022-10-16T00:00:00",
+            "comments": null,
+            "reference": "Alej25",
+            "other_references": null
+        },
+        {
             "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/LRIS/KECK_LRIS_2MASSJ04151954-0935066_T8_LRIS_Burg03.fits",
             "original_spectrum": null,
             "local_spectrum": null,
@@ -455,19 +504,6 @@
             "observation_date": "2006-12-26T00:00:00",
             "comments": null,
             "reference": "Kirk08",
-            "other_references": null
-        },
-        {
-            "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/JWST/NIRSpec/jw02124-o059_s00001_nirspec_f290lp-g395h-s200a1-subs200a1_x1d_manual.fits",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime":"nir",
-            "telescope": "JWST",
-            "instrument": "NIRSpec",
-            "mode": "F290LP.G395H",
-            "observation_date": "2022-10-16T00:00:00",
-            "comments": null,
-            "reference": "Alej25",
             "other_references": null
         }
     ],

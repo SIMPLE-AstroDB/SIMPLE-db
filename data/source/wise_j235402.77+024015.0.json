@@ -129,6 +129,24 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Schn15"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 18.053,
+            "magnitude_error": 0.142,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 15.018,
+            "magnitude_error": 0.03,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -137,9 +155,18 @@
             "mu_ra_error": 2.8,
             "mu_dec": -393.1,
             "mu_dec_error": 3.0,
-            "adopted": null,
+            "adopted": true,
             "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "mu_ra": 449.2,
+            "mu_ra_error": 38.1,
+            "mu_dec": -474.2,
+            "mu_dec_error": 38.9,
+            "adopted": false,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "Spectra": [

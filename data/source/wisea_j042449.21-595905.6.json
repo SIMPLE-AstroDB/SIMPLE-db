@@ -17,15 +17,44 @@
             "other_name": "WISEA J042449.21-595905.6"
         }
     ],
+    "Photometry": [
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.525,
+            "magnitude_error": 0.012,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.984,
+            "magnitude_error": 0.011,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        }
+    ],
     "ProperMotions": [
         {
             "mu_ra": 255.0,
             "mu_ra_error": 28.0,
             "mu_dec": 172.0,
             "mu_dec_error": 23.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Luhm14.126"
+        },
+        {
+            "mu_ra": 221.9,
+            "mu_ra_error": 6.9,
+            "mu_dec": 150.9,
+            "mu_dec_error": 5.8,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [
