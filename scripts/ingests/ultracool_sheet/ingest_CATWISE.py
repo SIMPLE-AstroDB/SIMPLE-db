@@ -14,7 +14,8 @@ from astrodb_utils.publications import (
 from astrodb_utils.sources import (
     find_source_in_db,
     ingest_source,
-    AstroDBError
+    AstroDBError,
+    ingest_name
 )
 
 from astrodb_utils.photometry import ingest_photometry
@@ -56,7 +57,7 @@ ingest_publication(
 
 one_match_counter, no_match_counter, multiple_matches_counter, upper_error_counter, duplicate_counter = 0, 0, 0, 0, 0
 no_match, multiple_matches, skipped, reason = [], [], [], []
-pm_counter, photo_counter = 0, 0
+pm_counter, photo_counter, name_counter = 0, 0, 0
 
 for row in uc_sheet_table:
     match = find_source_in_db(
@@ -70,6 +71,17 @@ for row in uc_sheet_table:
         print("match:")
         print(match)
         print("has one match")
+        if(row["designation_WISE"]!= "nan"):
+            ingest_name(
+                db,
+                source = match[0],
+                other_name = row["designation_WISE"]
+            )
+            name_counter += 1
+        else:
+            skipped.append(row["name"])
+            reason.append("missing wise designation name")
+
         if(str(row["pmra_catwise"])!= "nan"):
             ingest_proper_motions(
                 db,
@@ -171,6 +183,7 @@ print(str(duplicate_counter) + " duplicate sources")
 print(str(upper_error_counter) + " upper error sources")
 print(str(photo_counter) + " photometry ingested")
 print(str(pm_counter) + " propermotions ingested")
+print(str(name_counter) + " catwise designation names ingested")
 
 
 logger.info("done")
