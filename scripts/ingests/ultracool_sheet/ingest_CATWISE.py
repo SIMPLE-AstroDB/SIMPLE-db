@@ -24,7 +24,7 @@ from astropy.coordinates import SkyCoord
 import astropy.units as u
 
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 SCHEMA_PATH = "simple/schema.yaml" 
 # LOAD THE DATABASE
@@ -119,6 +119,7 @@ for row in uc_sheet_table:
                             band = "WISE."+photometry_band,
                             magnitude = row[photometry_band],
                             magnitude_error = row[photometry_band + "err"],
+                            telescope = "WISE",
                             reference = "Eise20",
                             comments = "Other reference is Schn20"
                         )
