@@ -15,8 +15,8 @@ panlogger = logging.getLogger("astrodb_utils.pan_starrs")
 panlogger.setLevel(logging.INFO) 
 
 # load database
-recreate_db = False
-save_db = False
+recreate_db = True
+save_db = True
 
 SCHEMA_PATH = "simple/schema.yaml"
 db = load_astrodb(
@@ -25,6 +25,11 @@ db = load_astrodb(
     reference_tables = REFERENCE_TABLES,
     felis_schema = SCHEMA_PATH
 )
+
+"""
+This script is to collect the valid and invalid photometry data for further ingest in ingestphot_PS1.py
+For the matched source name, ingest_name is required in ingest_name.py
+"""
 
 excel_path = "scripts/ingests/Pan-STARRS/Pan-STARRS Photometry.xlsx"
 csv_output1 = "scripts/ingests/Pan-STARRS/valid_photometry.csv"
@@ -93,11 +98,16 @@ def ingest_PanSTARRS_photometry(data):
                     use_simbad=True
                 )
                 
-                # skip if no match or multi matching
-                if (len(db_name) == 0) or (len(db_name) > 1):
+                if (len(db_name) == 0):
                     skipped += 1
                     invalid_writer.writerow({"source": source, "reason": "No unique match in SIMPLE db"})
                     panlogger.warning(f"Skipping {source}: No unique match in SIMPLE db.")
+                    continue
+                
+                # Tested: no multiple matches occured in this dataset
+                elif (len(db_name) > 1 ):
+                    panlogger.warning(f"Skipping {source}, Multiple matches found in SIMPLE db: {e}")
+                    invalid_writer.writerow({"source": source, "reason": "Multiple matches found in SIMPLE db"})
                     continue
                 
                 else:
@@ -144,7 +154,7 @@ def ingest_PanSTARRS_photometry(data):
 
     """
     log output:
-    INFO     - astrodb_utils.pan_starrs - Total source added: 2084
+    INFO     - astrodb_utils.pan_starrs - Total source matched: 2084
     INFO     - astrodb_utils.pan_starrs - Total source skipped: 7804
     INFO     - astrodb_utils.pan_starrs - Total inaccessible data: 0
     INFO     - astrodb_utils.pan_starrs - Total entries for PS1.g band: 362

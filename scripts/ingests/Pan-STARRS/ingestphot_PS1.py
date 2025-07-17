@@ -15,8 +15,8 @@ panlogger = logging.getLogger("astrodb_utils.pan_starrs")
 panlogger.setLevel(logging.INFO) 
 
 # load database
-recreate_db = False
-save_db = False
+recreate_db = True
+save_db = True
 
 SCHEMA_PATH = "simple/schema.yaml"
 db = load_astrodb(
