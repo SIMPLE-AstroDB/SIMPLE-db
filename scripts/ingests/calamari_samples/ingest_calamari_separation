@@ -4,16 +4,9 @@ sys.path.append(".")
 from astropy.io import ascii
 from simple import REFERENCE_TABLES
 from astrodb_utils import load_astrodb
-import sqlalchemy.exc
 from astrodb_utils.sources import (
     logger,
     AstroDBError,
-)
-from astrodb_utils.publications import (
-    find_publication,
-)
-from simple.utils.companions import(
-    ingest_companion_relationships
 )
 
 astrodb_utils_logger = logging.getLogger("astrodb_utils")
@@ -61,6 +54,7 @@ separation_ingested = 0
 separation_already_exist = 0
 skipped = 0
 
+#helper method for updating ONLY the projected separation in the CompanionRelationships table
 def ingest_separation(source, companion, separation_arcsec):
     try:
         with db.engine.connect() as conn:
@@ -89,17 +83,19 @@ def ingest_separation(source, companion, separation_arcsec):
 for row in calamari_table:
     object = str(row['Object'])
     primary = str(row['Primary'])
+    #skip this source because projected separation is a range
     if object == "eta Cnc B":
         skipped+=2
         continue
     separation = float(row['Separation (arcsec)'])
-    
+    #ingest projected separation into the companion relationship under the object JSON file
     ingest_separation(
         source= object,
         companion = primary,
         separation_arcsec=separation
     )
     separation_ingested+=1
+    #ingest projected separation into the companion relationship under the primary JSON file
     ingest_separation(
         source = primary,
         companion = object,
