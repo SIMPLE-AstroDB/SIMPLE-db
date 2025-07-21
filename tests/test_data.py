@@ -19,7 +19,7 @@ def test_sources(db):
     assert n_sources == 3598, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 9164, f"found {n_names} names"
+    assert n_names == 9178, f"found {n_names} names"
 
 
 @pytest.mark.parametrize(
@@ -118,7 +118,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 495
+        len(s) == 496
     ), f"found {len(s)} sources with WISE designation that have no WISE photometry"
 
     # If Wise photometry, Wise designation should be in Names
@@ -393,6 +393,11 @@ def test_Kirk19_ingest(db):
     ref = "Kirk19"
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 182, f"found {len(t)} proper motion entries for {ref}"
+
+    # Test for Best18 proper motions added from Pan-STARRS catalog
+    ref = "Best18"
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 1966, f"found {len(t)} proper motion entries for {ref}"
 
 
 def test_Best2020_ingest(db):
