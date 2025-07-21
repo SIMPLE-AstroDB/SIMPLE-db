@@ -137,16 +137,17 @@ def otherReferencesList(ref):
     #return list of references
     return result
 
-def age_exists(db, source, companion):
+def age_exists(db, companion, reference):
     exists = False
     #check if age exists
     age_search = db.search_object(
-        name = source,
+        name = companion,
         output_table="CompanionParameters",
+        table_names={'CompanionRelationships':['companion_name']}
     )
     if len(age_search) > 0:
         for row in age_search:
-            if ((row["companion"] == companion) and (row["parameter"] == "age")):
+            if ((row["reference"] == reference) and (row["parameter"] == "age")):
                 exists = True
                 break
 
@@ -163,7 +164,7 @@ def ingest_ages(
         lower_error: float = None,
         ):
     #check if the age is already in the database
-    already_in_db = age_exists(db=db, source = source, companion=companion)
+    already_in_db = age_exists(db=db, companion=companion, reference=reference)
     #if the age is not in the database... ingest the new age
     if not already_in_db:
         # Construct data to be added
@@ -247,8 +248,8 @@ for row in calamari_table:
     #all cases with Deac14.119 in references uses this publication for the age.
     if("Deac14.119" in references):
         age_in_db = age_exists(db = db,
-                            source = source,
-                            companion = companion,)
+                            companion = companion,
+                            reference="Deac14.119")
         if not age_in_db:
             ingest_ages(
                 db=db,
@@ -266,10 +267,11 @@ for row in calamari_table:
 
     # for cases with 2 references with GaiaEDR3 as one of them, use the other reference
     elif len(references) == 2 and 'GaiaEDR3' in references:
-        references = references.remove('GaiaEDR3')
+        references_copy = references.copy()
+        references_copy.remove('GaiaEDR3')
         age_in_db = age_exists(db = db,
-                            source = source,
-                            companion = companion,)
+                            companion = companion,
+                            reference = references_copy[0])
         if not age_in_db:
             ingest_ages(
                 db=db,
@@ -278,7 +280,7 @@ for row in calamari_table:
                 age = age,
                 upper_error=upper_error,
                 lower_error=lower_error,
-                reference = references,
+                reference = references_copy[0],
                 comment=comment
             )
             age_ingested+=1
