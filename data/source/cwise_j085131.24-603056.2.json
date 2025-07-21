@@ -12,7 +12,38 @@
             "comments": null
         }
     ],
+    "CompanionParameters": [
+        {
+            "companion": "TYC 8927-2833-1",
+            "parameter": "age",
+            "value": 0.2,
+            "upper_error": 0.1,
+            "lower_error": 0.1,
+            "unit": "Gyr",
+            "comments": "derived from rotation",
+            "reference": "Roth24"
+        },
+        {
+            "companion": "TYC 8927-2833-1",
+            "parameter": "metallicity",
+            "value": -0.02,
+            "upper_error": 0.02,
+            "lower_error": 0.02,
+            "unit": "Dex",
+            "comments": "derived from mh_gspspec",
+            "reference": "GaiaDR3"
+        }
+    ],
     "CompanionRelationships": [
+        {
+            "companion_name": "PM J08515-6029",
+            "projected_separation_arcsec": 95.3,
+            "projected_separation_error": null,
+            "relationship": "Child",
+            "comments": null,
+            "reference": null,
+            "other_companion_names": "PM J08515-6029"
+        },
         {
             "companion_name": "TYC 8927-2833-1",
             "projected_separation_arcsec": 95.0,
@@ -29,6 +60,9 @@
         },
         {
             "other_name": "CWISE J085131.24-603056.2"
+        },
+        {
+            "other_name": "CatWISE J085131.24-603056.2"
         }
     ],
     "SpectralTypes": [
