@@ -176,8 +176,8 @@ def ingest_ages(
                 "value": age,
                 "unit": "Gyr",
                 "comments": comment,
-                "upper_error": upper_error,
-                "lower_error": lower_error,
+                "upper_error": "{:.2f}".format(upper_error),
+                "lower_error": "{:.2f}".format(lower_error),
             }
         ]
         logger.debug(f"   Data: {age_data}.")
@@ -190,8 +190,9 @@ def ingest_ages(
             msg = f"Added {age_data}"
             logger.info(f"Added {companion} age")
             logger.debug(msg)
-        except sqlalchemy.exc.IntegrityError:
-            msg = f"Not ingesting {companion} age. Not sure why. \n"
+        except sqlalchemy.exc.IntegrityError as e:
+            msg = f"Not ingesting {companion} age. IntegrityError: {str(e)}"
+            #msg = f"Not ingesting {companion} age. Not sure why. \n"
             msg2 = f"   {age_data} "
             logger.warning(msg)
             logger.debug(msg2)
@@ -206,8 +207,8 @@ def getAge(ageString):
     range: string
     """
     age = None
-    upperBound = None
-    lowerBound = None
+    upperBound = 0.0
+    lowerBound = 0.0
     range = None
 
     if '-' in ageString:
