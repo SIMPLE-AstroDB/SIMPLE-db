@@ -20,6 +20,7 @@ def ingest_companion_relationships(
     comment=None,
     ref=None,
     other_companion_names=None,
+    use_simbad = True
 ):
     """
     This function ingests a single row in to the CompanionRelationship table
@@ -59,10 +60,13 @@ def ingest_companion_relationships(
     - *Unresolved Parent*: The source is the unresolved,
         combined light source of an unresolved
          multiple system which includes the companion
+    - *Resolved Child*: The source is the resolved,
+        component light source of an unresolved 
+        multiple system which is the companion
 
     """
     # checking relationship entered
-    possible_relationships = ["Child", "Sibling", "Parent", "Unresolved Parent", None]
+    possible_relationships = ["Child", "Sibling", "Parent", "Unresolved Parent", "Resolved Child", None]
     # check captialization
     if relationship.title() != relationship:
         logger.info(
@@ -89,7 +93,7 @@ def ingest_companion_relationships(
         logger.error(msg)
         raise AstroDBError(msg)
     
-    source_name = find_source_in_db(db, source)
+    source_name = find_source_in_db(db, source, use_simbad=use_simbad, ra_col_name="ra", dec_col_name="dec")
     if len(source_name) != 1:
         msg = f"{source}: No source or multiple sources found: {source_name}"
         logger.error(msg)
