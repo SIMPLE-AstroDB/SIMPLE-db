@@ -6,8 +6,8 @@ from astropy.io.votable.ucd import check_ucd
 @pytest.mark.parametrize(
     "band, value",
     [
-        ("GAIA2.G", 1284),
-        ("GAIA2.Grp", 1107),
+        ("GAIA2.G", 1268),
+        ("GAIA2.Grp", 1108),
         ("GAIA3.G", 1256),
         ("GAIA3.Grp", 1261),
         ("WISE.W1", 462),

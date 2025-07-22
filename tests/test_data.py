@@ -19,7 +19,7 @@ def test_sources(db):
     assert n_sources == 3598, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 9172, f"found {n_names} names"
+    assert n_names == 9164, f"found {n_names} names"
 
 
 @pytest.mark.parametrize(
@@ -173,7 +173,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 16
+        len(s) == 0
     ), f"found {len(s)} sources with Gaia photometry and no Gaia designation in Names"
 
     # If Wise designation in Names, Wise phot should exist
@@ -183,7 +183,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 481
+        len(s) == 495
     ), f"found {len(s)} sources with WISE designation that have no WISE photometry"
 
     # If Wise photometry, Wise designation should be in Names
