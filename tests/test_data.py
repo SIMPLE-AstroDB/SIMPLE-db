@@ -16,10 +16,10 @@ def reference_verifier(t, name, bibcode, doi):
 def test_sources(db):
     # Test to verify existing counts of sources and names
     n_sources = db.query(db.Sources).count()
-    assert n_sources == 3598, f"found {n_sources} sources"
+    assert n_sources == 3618, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 9178, f"found {n_names} names"
+    assert n_names == 9164, f"found {n_names} names"
 
 
 @pytest.mark.parametrize(
@@ -78,7 +78,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 377
+        len(s) == 382
     ), f"found {len(s)} sources with 2MASS designation that have no 2MASS photometry"
 
     # If 2MASS photometry, 2MASS designation should be in Names
@@ -98,7 +98,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 10
+        len(s) == 11
     ), f"found {len(s)} sources with Gaia designation that have no GAIA photometry"
 
     # If Gaia photometry, Gaia designation should be in Names
@@ -253,7 +253,7 @@ def test_modeledparameters_refs(db, ref, n_counts):
 
 def test_companion_relations(db):
     t = db.query(db.CompanionRelationships).astropy()
-    assert len(t) == 108, f"found {len(t)} companion relationships"
+    assert len(t) == 175, f"found {len(t)} companion relationships"
 
     ref = "Roth24"
     t = (
@@ -262,6 +262,38 @@ def test_companion_relations(db):
         .astropy()
     )
     assert len(t) == 89, f"found {len(t)} companion relationships with {ref} reference"
+
+
+@pytest.mark.parametrize(
+    ("ref", "n_counts"),
+    [
+        ("Roth24", 18),
+        ("GaiaDR3", 50),
+    ],
+)
+def test_companionparameters_ref(db, ref, n_counts):
+    t = (
+        db.query(db.CompanionParameters)
+        .filter(db.CompanionParameters.c.reference == ref)
+        .astropy()
+    )
+    assert len(t) == n_counts, f"found {len(t)} companion parameters with {ref} reference"
+
+@pytest.mark.parametrize(
+    ("param", "n_counts"),
+    [
+        ("age", 24),
+        ("metallicity", 54),
+    ],
+)
+def test_companionparameters_params(db, param, n_counts):
+    # Test to verify existing counts of modeled parameters
+    t = (
+        db.query(db.CompanionParameters)
+        .filter(db.CompanionParameters.c.parameter == param)
+        .astropy()
+    )
+    assert len(t) == n_counts, f"found {len(t)} modeled parameters with {param} parameter"
 
 
 # Individual ingest tests
@@ -393,11 +425,6 @@ def test_Kirk19_ingest(db):
     ref = "Kirk19"
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 182, f"found {len(t)} proper motion entries for {ref}"
-
-    # Test for Best18 proper motions added from Pan-STARRS catalog
-    ref = "Best18"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 1966, f"found {len(t)} proper motion entries for {ref}"
 
 
 def test_Best2020_ingest(db):

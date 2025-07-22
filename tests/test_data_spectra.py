@@ -4,14 +4,14 @@ from sqlalchemy import and_
 
 def test_spectra_count(db):
     n_spectra = db.query(db.Spectra).count()
-    assert n_spectra == 1606, f"found {n_spectra} sources"
+    assert n_spectra == 1608, f"found {n_spectra} sources"
 
 
 @pytest.mark.parametrize(
     ("regime", "n_spectra"),
     [
-        ("optical", 743),
-        ("nir", 636),
+        ("optical", 744),
+        ("nir", 637),
         ("mir", 227),
         ("unknown", 0),
     ],
