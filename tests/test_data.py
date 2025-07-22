@@ -2,6 +2,8 @@
 # db is defined in conftest.py
 import pytest
 from sqlalchemy import except_, select, and_
+from astropy.table import Table
+
 
 
 # Utility functions
@@ -114,12 +116,20 @@ def test_missions(db):
     # If Wise designation in Names, Wise phot should exist
     stm = except_(
         select(db.Names.c.source).where(db.Names.c.other_name.like("%WISE%")),
-        select(db.Photometry.c.source).where(db.Photometry.c.band.like("%WISE%")),
+        select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")),
     )
     s = db.session.scalars(stm).all()
+    name_no_photo= Table([s], names=["Sources"])
+    name_no_photo.write(
+    "scripts/ingests/ultracool_sheet/uc_sheet_catwise_name_no_photo.csv",
+    delimiter=",",
+    overwrite=True,
+    format="ascii.ecsv",
+    )
     assert (
         len(s) == 48
     ), f"found {len(s)} sources with WISE designation that have no WISE photometry"
+    
 
     # If Wise photometry, Wise designation should be in Names
     stm = except_(

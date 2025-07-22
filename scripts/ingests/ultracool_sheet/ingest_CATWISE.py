@@ -63,7 +63,7 @@ ingest_publication(
 
 one_match_counter, no_match_counter, multiple_matches_counter, upper_error_counter, duplicate_counter = 0, 0, 0, 0, 0
 photo1_counter, photo2_counter, photo3_counter, photo4_counter = 0, 0, 0, 0
-no_match, multiple_matches, skipped, reason = [], [], [], []
+no_match, multiple_matches, skipped, reason, bad_flag = [], [], [], [], []
 pm_counter, photo_counter, name_counter = 0, 0, 0
 name_ingested = False
 good_flag_counter, bad_flag_counter = 0, 0
@@ -174,9 +174,8 @@ for row in uc_sheet_table:
                         raise e
                 
         one_match_counter += 1
-        if (good_flag_counter == 0 and name_ingested == True):
-            skipped.append(row["name"])
-            reason.append("name ingested but no photometry ingested (flags)")
+        if (good_flag_counter == 0):
+            bad_flag.append(row["name"])
             bad_flag_counter += 1
     elif len(match) > 1:
         print("has multiple match")
@@ -215,6 +214,14 @@ multiple_matches_table.write(
     format="ascii.ecsv",
 )
 
+bad_flag_table = Table([bad_flag], names=["Bad Flags"])
+bad_flag_table.write(
+    "scripts/ingests/ultracool_sheet/uc_sheet_catwise_bad_flag.csv",
+    delimiter=",",
+    overwrite=True,
+    format="ascii.ecsv",
+)
+
 print(str(one_match_counter) + " photometry ingested") #3142
 print(str(no_match_counter) + " no matches") #746
 print(str(multiple_matches_counter) + " multiple matches") #1
@@ -227,7 +234,7 @@ print(str(photo1_counter) + " photometry band 1 ingested") # 2896
 print(str(photo2_counter) + " photometry band 2 ingested") # 2917
 print(str(photo3_counter) + " photometry band 3 ingested") # 1310
 print(str(photo4_counter) + " photometry band 4 ingested") # 164
-print(str(bad_flag_counter) + " bad flags") # should be 111
+print(str(bad_flag_counter) + " bad flags") # 22 with name ingested
 
 
 logger.info("done")
