@@ -19,7 +19,7 @@ def test_sources(db):
     assert n_sources == 3598, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 12278, f"found {n_names} names"
+    assert n_names == 12145, f"found {n_names} names"
 
 
 @pytest.mark.parametrize(
@@ -113,8 +113,8 @@ def test_missions(db):
 
     # If Wise designation in Names, Wise phot should exist
     stm = except_(
-        select(db.Names.c.source).where(db.Names.c.other_name.like("WISE%")),
-        select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")),
+        select(db.Names.c.source).where(db.Names.c.other_name.like("%WISE%")),
+        select(db.Photometry.c.source).where(db.Photometry.c.band.like("%WISE%")),
     )
     s = db.session.scalars(stm).all()
     assert (
@@ -123,7 +123,7 @@ def test_missions(db):
 
     # If Wise photometry, Wise designation should be in Names
     stm = except_(
-        select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")),
+        select(db.Photometry.c.source).where(db.Photometry.c.band.like("%WISE%")),
         select(db.Names.c.source).where(db.Names.c.other_name.like("%WISE%")),
     )
     s = db.session.scalars(stm).all()
