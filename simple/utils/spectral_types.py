@@ -28,6 +28,7 @@ def ingest_spectral_type(
     comments: str = None,
     reference: str = None,
     raise_error: bool = True,
+    ignore_neighbors: bool = False
 ):
     """
     Script to ingest spectral types
@@ -61,13 +62,16 @@ def ingest_spectral_type(
 
     None
     """
-    db_name = find_source_in_db(db, source)
 
-    if len(db_name) != 1:
-        msg = f"No unique source match for {source} in the database "
-        raise AstroDBError(msg)
+    if not ignore_neighbors:
+        db_name = find_source_in_db(db, source)
+        if len(db_name) != 1:
+            msg = f"No unique source match for {source} in the database "
+            raise AstroDBError(msg)
+        else:
+            db_name = db_name[0]
     else:
-        db_name = db_name[0]
+        db_name = source
 
     # Check for duplicates
     duplicate_check = (
@@ -82,18 +86,18 @@ def ingest_spectral_type(
         )
         .count()
     )
-
-    if duplicate_check > 0:
-        msg = f"Spectral type already in the database: {db_name}, {spectral_type_string}, {regime}, {reference}"
-        if raise_error:
-            logger.error(msg)
-            raise AstroDBError(msg)
+    if not ignore_neighbors:
+        if duplicate_check > 0:
+            msg = f"Spectral type already in the database: {db_name}, {spectral_type_string}, {regime}, {reference}"
+            if raise_error:
+                logger.error(msg)
+                raise AstroDBError(msg)
+            else:
+                logger.warning(msg)
         else:
-            logger.warning(msg)
-    else:
-        logger.debug(
-            f"No duplicate spectral types found for : {db_name}, {regime}, {reference}"
-        )
+            logger.debug(
+                f"No duplicate spectral types found for : {db_name}, {regime}, {reference}"
+            )
 
     adopted = adopt_spectral_type(db, db_name, spectral_type_error)
 

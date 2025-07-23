@@ -1,16 +1,20 @@
 import sys
 import logging
+import sqlalchemy
 sys.path.append(".")
 from astropy.io import ascii
 from simple import REFERENCE_TABLES
 from astrodb_utils import load_astrodb
 from astrodb_utils.sources import (
     logger,
-    AstroDBError
+    AstroDBError,
+    ingest_source,
+    ingest_name
 )
 from astrodb_utils.publications import (
     find_publication,
 )
+
 from simple.utils.spectral_types import (
     ingest_spectral_type
 )
@@ -30,10 +34,10 @@ db = load_astrodb(
 )
 
 link = (
-    "scripts/ingests/calamari_samples/calamari_data.csv"
+    "scripts/ingests/calamari/calamari_data.csv"
 )
 link_2 = (
-    "scripts/ingests/calamari_samples/calamari_refs.csv"
+    "scripts/ingests/calamari/calamari_refs.csv"
 )
 
 calamari_table = ascii.read(
@@ -57,6 +61,7 @@ ref_table = ascii.read(
 )
 
 spectral_types_ingested = 0
+sources_ingested = 0
 spectral_types_already_exist = 0
 
 #helper method to retrieve the publication links from calamari_data
@@ -135,13 +140,123 @@ def otherReferencesList(ref):
     #return list of references
     return result
 
+# sources Gl 337CD and Gl 417BC do not exist in the database. ingest them.
+def ingest_resolved_children(
+    db,
+    source,
+    reference: str,
+    *,
+    ra: float = None,
+    dec: float = None,
+    epoch: str = None,
+    equinox: str = None,
+    other_reference: str = None,
+    comment: str = None,
+    raise_error: bool = True,
+    ra_col_name: str = "ra",
+    dec_col_name: str = "dec",
+    epoch_col_name: str = "epoch",
+):
+    # Construct data to be added
+    source_data = [
+        {
+            "source": source,
+            ra_col_name: ra,
+            dec_col_name: dec,
+            "reference": reference,
+            epoch_col_name: epoch,
+            "equinox": equinox,
+            "other_references": other_reference,
+            "comments": comment,
+        }
+    ]
+    logger.debug(f"   Data: {source_data}.")
+
+    # Try to add the source to the database
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(db.Sources.insert().values(source_data))
+            conn.commit()
+        msg = f"Added {source_data}"
+        logger.info(f"Added {source}")
+        logger.debug(msg)
+    except sqlalchemy.exc.IntegrityError:
+        msg = f"Not ingesting {source}. Not sure why. \n"
+        msg2 = f"   {source_data} "
+        logger.warning(msg)
+        logger.debug(msg2)
+
+    # Add the source name to the Names table
+    ingest_name(db, source=source, other_name=source, raise_error=raise_error)
+    return
+
+binaries = [
+    "HD 130948BC",
+    "HD 130948C",
+    "HD 130948B",
+    "Gl 337CD",
+    "Gl 337C",
+    "Gl 337D",
+    "Gl 417BC",
+    "Gl 417B",
+    "Gl 417C"
+]
+
+#ingest Gl 337CD
+ingest_resolved_children(
+    db=db,
+    source = "Gl 337CD",
+    reference = "GaiaEDR3",
+    ra = 138.0584919,
+    dec=14.9956706,
+    ra_col_name="ra",
+    dec_col_name="dec",
+    other_reference="Wils01"
+)
+sources_ingested+=1
+
+ingest_resolved_children(
+    db=db,
+    source = "Gl 417BC",
+    reference="GaiaEDR3",
+    ra = 168.1055653,
+    dec = 35.8028953,
+    ra_col_name="ra",
+    dec_col_name="dec",
+    other_reference="Kirk00"
+)
+sources_ingested+=1
+
 for row in calamari_table:
     object = row["Object"]
-    primary = row["Primary"]
     object_spt = row["SpT_Secondary"]
-    primary_spt = row["SpT_Primary"]
+    ignore_neighbors = False
+
+    if object == "WISE J124332.17+600126.6":
+        ingest_spectral_type(
+            db=db,
+            source = object,
+            spectral_type_string=object_spt,
+            reference = "Fahe21",
+            regime = "unknown",
+        )
+        spectral_types_ingested+=1
+        continue
+    if object == "2MASS J00250365+4759191":
+        ingest_spectral_type(
+            db=db,
+            source = object,
+            spectral_type_string=object_spt,
+            reference="Reid06.891",
+            regime = "unknown"
+        )
+        spectral_types_ingested+=1
+        continue
+    
     reference = otherReferencesList(row["Ref"])[0]
 
+    if object in binaries:
+        ignore_neighbors=True
     try:
         #ingest spectral types for the objects
         ingest_spectral_type(
@@ -149,9 +264,11 @@ for row in calamari_table:
             source = object,
             spectral_type_string=object_spt,
             regime = "unknown",
-            reference = reference
+            reference = reference,
+            ignore_neighbors=ignore_neighbors
         )
         spectral_types_ingested+=1
+        logger.info(f"ingested spectral type for {object}")
     except AstroDBError as e:
         msg = "ingest failed with error: " + str(e)
         logger.warning(msg)
@@ -160,8 +277,9 @@ for row in calamari_table:
         else:
             raise e
         
-logger.info(f"Spectral type already exists: {spectral_types_already_exist}") #  already exists in database
-logger.info(f"Spectral types ingested: {spectral_types_ingested}") # spectral types ingested
-logger.info(f"total: {spectral_types_ingested+spectral_types_already_exist}")  # 116 total
+logger.info(f"Spectral type already exists: {spectral_types_already_exist}") # 0 already exists in database
+logger.info(f"Spectral types ingested: {spectral_types_ingested}") # 62 spectral types ingested
+logger.info(f"sources ingested: {sources_ingested}") # sources ingested
+logger.info(f"total: {spectral_types_ingested+spectral_types_already_exist}")  # 64 total spectral types
 if SAVE_DB:
     db.save_database(directory="data/")

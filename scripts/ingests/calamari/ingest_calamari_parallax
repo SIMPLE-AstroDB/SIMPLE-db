@@ -30,10 +30,10 @@ db = load_astrodb(
 )
 
 link = (
-    "scripts/ingests/calamari_samples/calamari_data.csv"
+    "scripts/ingests/calamari/calamari_data.csv"
 )
 link_2 = (
-    "scripts/ingests/calamari_samples/calamari_refs.csv"
+    "scripts/ingests/calamari/calamari_refs.csv"
 )
 
 calamari_table = ascii.read(
@@ -137,7 +137,6 @@ def otherReferencesList(ref):
 
 for row in calamari_table:
     object = row["Object"]
-    primary = row["Primary"]
     reference = otherReferencesList(row["Ref"])[0]
 
     try:
