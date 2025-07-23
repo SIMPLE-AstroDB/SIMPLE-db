@@ -6,7 +6,8 @@ from simple import REFERENCE_TABLES
 from astrodb_utils import load_astrodb
 from astrodb_utils.sources import (
     logger,
-    AstroDBError
+    AstroDBError,
+    find_source_in_db
 )
 from astrodb_utils.publications import (
     find_publication,
@@ -58,6 +59,19 @@ ref_table = ascii.read(
 
 parallax_ingested = 0
 parallax_already_exist = 0
+skipped= 0
+
+binaries = [
+    "HD 130948BC",
+    "HD 130948C",
+    "HD 130948B",
+    "Gl 337CD",
+    "Gl 337C",
+    "Gl 337D",
+    "Gl 417BC",
+    "Gl 417B",
+    "Gl 417C"
+]
 
 #helper method to retrieve the publication links from calamari_data
 def getRef(ref_index):
@@ -135,29 +149,88 @@ def otherReferencesList(ref):
     #return list of references
     return result
 
-for row in calamari_table:
-    object = row["Object"]
-    reference = otherReferencesList(row["Ref"])[0]
+#helper method to check if parallax exists
+#returns a boolean
+def parallaxExists(source, reference):
+    exists = False
+    parallax_search = db.search_object(
+        name = source,
+        output_table="Parallaxes"
+    )
+    if len(parallax_search) > 0:
+        for parallax in parallax_search:
+            if parallax["reference"] == reference:
+                exists = True
+                break
+    
+    return exists
 
-    try:
-       ingest_parallax(
-           db=db,
-           source = object,
-           parallax_mas=row["Parallax (mas)"],
-           parallax_err_mas=row["ePlx"],
-           reference = reference
-       )
-       parallax_ingested+=1
-    except AstroDBError as e:
-        msg = "ingest failed with error: " + str(e)
-        logger.warning(msg)
-        if "Parallax already in the database" in str(e):
-            parallax_already_exist+=1
-        else:
-            raise e
+for row in calamari_table:
+    ignore_neighbors=False
+    object = row["Object"]
+
+    #skip these two sources because they have no parallax value or have been ingested beforehand
+    if object == "HIP 21152 B" or object == "HD 72946 B":
+        skipped+=1
+        continue
+
+    if object == "WISE J124332.17+600126.6":
+        #ingest parallax for WISE J124332.17+600126.6
+        ingest_parallax(
+            db=db,
+            source = "WISE J124332.17+600126.6",
+            parallax_mas=22.24367115,
+            parallax_err_mas=0.013506583,
+            reference = "Fahe21"
+        )
+        parallax_ingested+=1
+        continue
+    
+    if object == "2MASS J00250365+4759191":
+        #ingest parallax for 2MASS J00250365+4759191
+        ingest_parallax(
+            db=db, 
+            source = "2MASS J00250365+4759191",
+            parallax_mas=18.5162,
+            parallax_err_mas=0.1365,
+            reference="Reid06.891"
+        )
+        parallax_ingested+=1
+        continue
+
+    reference = otherReferencesList(row["Ref"])[0]
+    parallax_mas=row["Parallax (mas)"]
+
+    if object in binaries:
+        ignore_neighbors = True
+
+    if not ignore_neighbors:
+        object = find_source_in_db(db=db, source = object)[0]
+    parallax_exists = parallaxExists(source = object, reference=reference)
+    if not parallax_exists:
+        try:
+            ingest_parallax(
+                db=db,
+                source = object,
+                parallax_mas=parallax_mas,
+                parallax_err_mas=row["ePlx"],
+                reference = reference
+            )
+            parallax_ingested+=1
+        except AstroDBError as e:
+            msg = "ingest failed with error: " + str(e)
+            logger.warning(msg)
+            if "Parallax already in the database" in str(e):
+                parallax_already_exist+=1
+            else:
+                raise e
+    else:
+        parallax_already_exist+=1
+
         
-logger.info(f"Spectral type already exists: {parallax_already_exist}") #  already exists in database
-logger.info(f"Spectral types ingested: {parallax_ingested}") # spectral types ingested
-logger.info(f"total: {parallax_already_exist+parallax_ingested}")  # 58 total
+logger.info(f"parallax already exists: {parallax_already_exist}") # 10 already exists in database
+logger.info(f"parallax ingested: {parallax_ingested}") #52 parallax ingested
+logger.info(f"parallax skipped: {skipped}") # 2 parallax skipped
+logger.info(f"total: {parallax_already_exist+parallax_ingested+skipped}")  # 64 total
 if SAVE_DB:
     db.save_database(directory="data/")

@@ -23,7 +23,7 @@ astrodb_utils_logger = logging.getLogger("astrodb_utils")
 logger.setLevel(logging.DEBUG)  # Set logger to INFO/DEBUG/WARNING/ERROR/CRITICAL level
 astrodb_utils_logger.setLevel(logging.DEBUG)
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 SCHEMA_PATH = "simple/schema.yaml"
 db = load_astrodb(
@@ -63,6 +63,17 @@ ref_table = ascii.read(
 spectral_types_ingested = 0
 sources_ingested = 0
 spectral_types_already_exist = 0
+binaries = [
+    "HD 130948BC",
+    "HD 130948C",
+    "HD 130948B",
+    "Gl 337CD",
+    "Gl 337C",
+    "Gl 337D",
+    "Gl 417BC",
+    "Gl 417B",
+    "Gl 417C"
+]
 
 #helper method to retrieve the publication links from calamari_data
 def getRef(ref_index):
@@ -189,18 +200,6 @@ def ingest_resolved_children(
     # Add the source name to the Names table
     ingest_name(db, source=source, other_name=source, raise_error=raise_error)
     return
-
-binaries = [
-    "HD 130948BC",
-    "HD 130948C",
-    "HD 130948B",
-    "Gl 337CD",
-    "Gl 337C",
-    "Gl 337D",
-    "Gl 417BC",
-    "Gl 417B",
-    "Gl 417C"
-]
 
 #ingest Gl 337CD
 ingest_resolved_children(
