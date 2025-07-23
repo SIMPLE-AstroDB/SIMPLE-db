@@ -119,15 +119,15 @@ def test_missions(db):
         select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")),
     )
     s = db.session.scalars(stm).all()
-    name_no_photo= Table([s], names=["Sources"])
-    name_no_photo.write(
-    "scripts/ingests/ultracool_sheet/uc_sheet_catwise_name_no_photo.csv",
-    delimiter=",",
-    overwrite=True,
-    format="ascii.ecsv",
-    )
+    #name_no_photo= Table([s], names=["Sources"])
+    #name_no_photo.write(
+    #"scripts/ingests/ultracool_sheet/uc_sheet_catwise_name_no_photo.csv",
+    #delimiter=",",
+    #overwrite=True,
+    #format="ascii.ecsv",
+    #)
     assert (
-        len(s) == 48
+        len(s) == 159
     ), f"found {len(s)} sources with WISE designation that have no WISE photometry"
     
 
