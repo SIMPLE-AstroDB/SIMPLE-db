@@ -17,6 +17,9 @@
             "other_name": "2MASS J11150150+1607026"
         },
         {
+            "other_name": "CWISE J111501.20+160700.3"
+        },
+        {
             "other_name": "NLTT 26746B"
         },
         {
@@ -59,6 +62,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Lawr12"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.069,
+            "magnitude_error": 0.014,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.847,
+            "magnitude_error": 0.015,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -67,9 +88,18 @@
             "mu_ra_error": 10.0,
             "mu_dec": -136.0,
             "mu_dec_error": 10.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Lepi05"
+        },
+        {
+            "mu_ra": -232.4,
+            "mu_ra_error": 7.8,
+            "mu_dec": -143.0,
+            "mu_dec_error": 8.9,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

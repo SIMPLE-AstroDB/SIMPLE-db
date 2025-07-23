@@ -17,6 +17,9 @@
             "other_name": "2MASS J16491116+3000483"
         },
         {
+            "other_name": "CWISE J164911.14+300048.4"
+        },
+        {
             "other_name": "SDSS J164911.16+300048.3"
         },
         {
@@ -86,15 +89,42 @@
             "epoch": null,
             "comments": null,
             "reference": "Lawr12"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.485,
+            "magnitude_error": 0.014,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.331,
+            "magnitude_error": 0.018,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": -28.4,
+            "mu_ra_error": 8.7,
+            "mu_dec": 9.1,
+            "mu_dec_error": 10.0,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
+        },
         {
             "mu_ra": -27.0,
             "mu_ra_error": 21.0,
             "mu_dec": 15.0,
             "mu_dec_error": 21.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Zhan10"
         }

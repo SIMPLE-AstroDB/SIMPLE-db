@@ -14,6 +14,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J234716.98-011008.5"
+        },
+        {
             "other_name": "ULAS J234716.99-011009.1"
         }
     ],
@@ -62,6 +65,24 @@
             "epoch": null,
             "comments": null,
             "reference": "WFAU19"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 15.037,
+            "magnitude_error": 0.018,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.66,
+            "magnitude_error": 0.022,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -70,9 +91,18 @@
             "mu_ra_error": 19.92,
             "mu_dec": 107.61,
             "mu_dec_error": 19.92,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Lawr12"
+        },
+        {
+            "mu_ra": -28.8,
+            "mu_ra_error": 13.8,
+            "mu_dec": 25.3,
+            "mu_dec_error": 13.2,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

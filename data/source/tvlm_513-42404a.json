@@ -14,6 +14,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J150221.17+252553.9"
+        },
+        {
             "other_name": "TVLM 513-42404"
         },
         {
@@ -65,15 +68,51 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Best20.42"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 13.265,
+            "magnitude_error": 0.013,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.055,
+            "magnitude_error": 0.01,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 12.271,
+            "magnitude_error": 0.267,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr13"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": -135.9,
+            "mu_ra_error": 5.1,
+            "mu_dec": -48.0,
+            "mu_dec_error": 5.7,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
+        },
         {
             "mu_ra": -121.38,
             "mu_ra_error": 8.46,
             "mu_dec": -38.04,
             "mu_dec_error": 7.24,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Tinn95"
         }

@@ -17,6 +17,9 @@
             "other_name": "2MASS J11480096-2836488"
         },
         {
+            "other_name": "CWISE J114800.86-283649.0"
+        },
+        {
             "other_name": "Gaia DR2 3481051683236357888"
         },
         {
@@ -77,6 +80,24 @@
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.165,
+            "magnitude_error": 0.016,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.862,
+            "magnitude_error": 0.015,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -85,9 +106,18 @@
             "mu_ra_error": 9.5,
             "mu_dec": -13.6,
             "mu_dec_error": 10.4,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Gagn15.73"
+        },
+        {
+            "mu_ra": -85.0,
+            "mu_ra_error": 9.2,
+            "mu_dec": 6.6,
+            "mu_dec_error": 9.7,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

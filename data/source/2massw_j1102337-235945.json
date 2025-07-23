@@ -18,6 +18,9 @@
         },
         {
             "other_name": "2MASSW J1102337-235945"
+        },
+        {
+            "other_name": "CWISE J110233.46-235945.4"
         }
     ],
     "Photometry": [
@@ -47,6 +50,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.104,
+            "magnitude_error": 0.013,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.781,
+            "magnitude_error": 0.014,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -55,9 +76,18 @@
             "mu_ra_error": 19.0,
             "mu_dec": 75.0,
             "mu_dec_error": 20.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Fahe09"
+        },
+        {
+            "mu_ra": -271.5,
+            "mu_ra_error": 8.1,
+            "mu_dec": 45.1,
+            "mu_dec_error": 8.9,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

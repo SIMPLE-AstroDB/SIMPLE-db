@@ -17,6 +17,9 @@
             "other_name": "2MASS J10092633+3541415"
         },
         {
+            "other_name": "CWISE J100926.43+354135.6"
+        },
+        {
             "other_name": "Gaia DR2 753593041905983744"
         },
         {
@@ -159,6 +162,24 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Best20.42"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 13.76,
+            "magnitude_error": 0.013,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.433,
+            "magnitude_error": 0.011,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -179,6 +200,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "mu_ra": 62.3,
+            "mu_ra_error": 6.3,
+            "mu_dec": -336.2,
+            "mu_dec_error": 6.7,
+            "adopted": false,
+            "comments": null,
+            "reference": "Maro21"
         },
         {
             "mu_ra": 70.0,

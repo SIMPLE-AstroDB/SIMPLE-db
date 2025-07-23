@@ -17,6 +17,9 @@
             "other_name": "2MASS J04220512+1358474"
         },
         {
+            "other_name": "CWISE J042205.22+135847.1"
+        },
+        {
             "other_name": "EPIC 210422945"
         },
         {
@@ -109,6 +112,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 13.921,
+            "magnitude_error": 0.015,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W2",
             "magnitude": 13.639,
             "magnitude_error": 0.038,
@@ -116,6 +128,15 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.663,
+            "magnitude_error": 0.014,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -124,9 +145,18 @@
             "mu_ra_error": 12.0,
             "mu_dec": -10.0,
             "mu_dec_error": 10.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Lodi14.3908"
+        },
+        {
+            "mu_ra": 91.6,
+            "mu_ra_error": 8.3,
+            "mu_dec": -29.6,
+            "mu_dec_error": 7.9,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

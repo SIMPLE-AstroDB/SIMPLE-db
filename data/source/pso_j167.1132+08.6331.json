@@ -17,6 +17,9 @@
             "other_name": "2MASS J11082735+0838026"
         },
         {
+            "other_name": "CWISE J110827.08+083757.7"
+        },
+        {
             "other_name": "PSO J167.1132+08.6331"
         },
         {
@@ -86,6 +89,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Lawr12"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.167,
+            "magnitude_error": 0.014,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.729,
+            "magnitude_error": 0.014,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -94,9 +115,18 @@
             "mu_ra_error": 17.59,
             "mu_dec": -313.17,
             "mu_dec_error": 16.98,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Best15"
+        },
+        {
+            "mu_ra": -257.2,
+            "mu_ra_error": 7.3,
+            "mu_dec": -334.8,
+            "mu_dec_error": 8.5,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

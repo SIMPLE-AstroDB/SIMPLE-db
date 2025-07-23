@@ -14,6 +14,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J122036.45+540715.7"
+        },
+        {
             "other_name": "WISEA J122036.38+540717.3"
         }
     ],
@@ -53,6 +56,24 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Mart18"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 19.24,
+            "magnitude_error": 0.297,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 15.737,
+            "magnitude_error": 0.043,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -64,6 +85,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "mu_ra": 170.3,
+            "mu_ra_error": 51.6,
+            "mu_dec": -390.5,
+            "mu_dec_error": 57.4,
+            "adopted": false,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

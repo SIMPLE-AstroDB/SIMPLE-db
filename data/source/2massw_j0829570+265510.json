@@ -20,6 +20,9 @@
             "other_name": "2MASSW J0829570+265510"
         },
         {
+            "other_name": "CWISE J082956.96+265508.8"
+        },
+        {
             "other_name": "ULAS J082957.01+265509.4"
         }
     ],
@@ -86,6 +89,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Lawr12"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 13.908,
+            "magnitude_error": 0.015,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.468,
+            "magnitude_error": 0.013,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -94,9 +115,18 @@
             "mu_ra_error": 15.0,
             "mu_dec": -43.0,
             "mu_dec_error": 17.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Fahe09"
+        },
+        {
+            "mu_ra": -93.5,
+            "mu_ra_error": 7.1,
+            "mu_dec": -72.7,
+            "mu_dec_error": 7.6,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

@@ -15,6 +15,9 @@
     "Names": [
         {
             "other_name": "2MASS J16410015+1335591"
+        },
+        {
+            "other_name": "CWISE J164100.11+133558.5"
         }
     ],
     "Photometry": [
@@ -44,6 +47,35 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.961,
+            "magnitude_error": 0.017,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.634,
+            "magnitude_error": 0.023,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        }
+    ],
+    "ProperMotions": [
+        {
+            "mu_ra": -42.1,
+            "mu_ra_error": 11.9,
+            "mu_dec": -0.6,
+            "mu_dec_error": 13.2,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

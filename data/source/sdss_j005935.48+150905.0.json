@@ -17,6 +17,9 @@
             "other_name": "2MASS J00593543+1509050"
         },
         {
+            "other_name": "CWISE J005935.59+150905.7"
+        },
+        {
             "other_name": "Gaia DR2 2777549994499273088"
         },
         {
@@ -119,6 +122,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Lawr12"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.927,
+            "magnitude_error": 0.019,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.704,
+            "magnitude_error": 0.026,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -127,9 +148,18 @@
             "mu_ra_error": 20.3,
             "mu_dec": 34.9,
             "mu_dec_error": 20.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Gagn15.73"
+        },
+        {
+            "mu_ra": 110.9,
+            "mu_ra_error": 13.5,
+            "mu_dec": 29.1,
+            "mu_dec_error": 12.1,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "RadialVelocities": [

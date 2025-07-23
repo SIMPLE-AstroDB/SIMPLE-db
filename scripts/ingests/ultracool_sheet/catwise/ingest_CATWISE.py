@@ -26,12 +26,12 @@ import astropy.units as u
 
 
 SAVE_DB = True  # save the data files in addition to modifying the .db file
-RECREATE_DB = False  # recreates the .db file from the data files
+RECREATE_DB = True  # recreates the .db file from the data files
 SCHEMA_PATH = "simple/schema.yaml" 
 # LOAD THE DATABASE
 db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES, felis_schema=SCHEMA_PATH)
 
-link = 'scripts/ingests/ultracool_sheet/UltracoolSheet - Main_070325.csv'
+link = 'scripts/ingests/ultracool_sheet/catwise/UltracoolSheet - Main_070325.csv'
 
 uc_sheet_table = ascii.read(
     link,

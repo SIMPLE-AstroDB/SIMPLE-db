@@ -17,6 +17,9 @@
             "other_name": "2MASS J17262235-0502110"
         },
         {
+            "other_name": "CWISE J172622.26-050210.9"
+        },
+        {
             "other_name": "HIP 85365B"
         }
     ],
@@ -65,6 +68,24 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Best20.42"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 13.797,
+            "magnitude_error": 0.014,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.606,
+            "magnitude_error": 0.013,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -76,6 +97,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Deac14.119"
+        },
+        {
+            "mu_ra": -82.2,
+            "mu_ra_error": 7.1,
+            "mu_dec": -11.1,
+            "mu_dec_error": 7.5,
+            "adopted": false,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "RadialVelocities": [

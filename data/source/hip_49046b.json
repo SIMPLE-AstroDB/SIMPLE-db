@@ -14,6 +14,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J100035.69+271707.4"
+        },
+        {
             "other_name": "HIP 49046B"
         }
     ],
@@ -35,6 +38,33 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Deac14.119"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 11.732,
+            "magnitude_error": 0.01,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 11.586,
+            "magnitude_error": 0.008,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 11.338,
+            "magnitude_error": 0.158,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr13"
         }
     ],
     "ProperMotions": [
@@ -43,9 +73,18 @@
             "mu_ra_error": 5.0,
             "mu_dec": 113.0,
             "mu_dec_error": 5.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Deac14.119"
+        },
+        {
+            "mu_ra": -18.2,
+            "mu_ra_error": 3.9,
+            "mu_dec": 125.5,
+            "mu_dec_error": 4.4,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "RadialVelocities": [

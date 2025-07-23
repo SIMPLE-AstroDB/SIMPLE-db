@@ -14,6 +14,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J012217.01+033121.2"
+        },
+        {
             "other_name": "HIP 6407B"
         },
         {
@@ -65,6 +68,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Lawr12"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 13.862,
+            "magnitude_error": 0.015,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.623,
+            "magnitude_error": 0.014,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -73,9 +94,18 @@
             "mu_ra_error": 8.0,
             "mu_dec": -138.0,
             "mu_dec_error": 8.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Deac14.119"
+        },
+        {
+            "mu_ra": 56.3,
+            "mu_ra_error": 7.7,
+            "mu_dec": -156.2,
+            "mu_dec_error": 6.9,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "RadialVelocities": [

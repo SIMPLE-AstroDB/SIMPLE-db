@@ -15,6 +15,9 @@
     "Names": [
         {
             "other_name": "CFBDS J204803.61-183212.7"
+        },
+        {
+            "other_name": "CWISE J204803.67-183214.9"
         }
     ],
     "Photometry": [
@@ -55,6 +58,24 @@
             "reference": "Albe11"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 15.991,
+            "magnitude_error": 0.028,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.551,
+            "magnitude_error": 0.021,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
             "band": "Wircam.Y",
             "magnitude": 17.75,
             "magnitude_error": 0.02,
@@ -70,9 +91,18 @@
             "mu_ra_error": 27.26,
             "mu_dec": -240.35,
             "mu_dec_error": 27.83,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Albe11"
+        },
+        {
+            "mu_ra": 102.2,
+            "mu_ra_error": 19.0,
+            "mu_dec": -236.9,
+            "mu_dec_error": 21.0,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

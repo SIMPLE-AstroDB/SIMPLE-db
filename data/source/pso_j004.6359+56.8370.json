@@ -14,6 +14,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J001832.79+565013.6"
+        },
+        {
             "other_name": "PSO J004.6359+56.8370"
         }
     ],
@@ -44,6 +47,24 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 15.454,
+            "magnitude_error": 0.02,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.257,
+            "magnitude_error": 0.016,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -52,9 +73,18 @@
             "mu_ra_error": 3.2,
             "mu_dec": 10.4,
             "mu_dec_error": 2.7,
-            "adopted": null,
+            "adopted": true,
             "comments": null,
             "reference": "Best20.257"
+        },
+        {
+            "mu_ra": 389.4,
+            "mu_ra_error": 13.3,
+            "mu_dec": 26.7,
+            "mu_dec_error": 13.0,
+            "adopted": false,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

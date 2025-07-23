@@ -14,7 +14,30 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J042950.14-783702.4"
+        },
+        {
             "other_name": "WISEA J042949.41-783705.6"
+        }
+    ],
+    "Photometry": [
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.236,
+            "magnitude_error": 0.02,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.99,
+            "magnitude_error": 0.024,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -23,9 +46,18 @@
             "mu_ra_error": 20.0,
             "mu_dec": 421.0,
             "mu_dec_error": 18.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Luhm14.126"
+        },
+        {
+            "mu_ra": 322.9,
+            "mu_ra_error": 11.6,
+            "mu_dec": 449.7,
+            "mu_dec_error": 14.0,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

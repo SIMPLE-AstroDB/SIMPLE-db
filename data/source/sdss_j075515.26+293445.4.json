@@ -17,6 +17,9 @@
             "other_name": "2MASS J07551528+2934453"
         },
         {
+            "other_name": "CWISE J075515.15+293444.5"
+        },
+        {
             "other_name": "SDSS J075515.26+293445.4"
         },
         {
@@ -86,6 +89,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Lawr12"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 15.086,
+            "magnitude_error": 0.019,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.888,
+            "magnitude_error": 0.03,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -94,9 +115,18 @@
             "mu_ra_error": 19.0,
             "mu_dec": -74.0,
             "mu_dec_error": 22.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Fahe09"
+        },
+        {
+            "mu_ra": -110.9,
+            "mu_ra_error": 13.9,
+            "mu_dec": -78.7,
+            "mu_dec_error": 15.3,
+            "adopted": true,
+            "comments": null,
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [
