@@ -159,24 +159,6 @@ for row in calamari_table:
             spectral_types_already_exist+=1
         else:
             raise e
-
-    try:
-        #ingest spectral types for the primaries
-        ingest_spectral_type(
-            db=db,
-            source = primary,
-            spectral_type_string=primary_spt,
-            regime = "unknown",
-            reference=reference
-        )
-        spectral_types_ingested+=1
-    except AstroDBError as e:
-        msg = "ingest failed with error: " + str(e)
-        logger.warning(msg)
-        if "Spectral type already in the database" in str(e):
-            spectral_types_already_exist+=1
-        else:
-            raise e
         
 logger.info(f"Spectral type already exists: {spectral_types_already_exist}") #  already exists in database
 logger.info(f"Spectral types ingested: {spectral_types_ingested}") # spectral types ingested

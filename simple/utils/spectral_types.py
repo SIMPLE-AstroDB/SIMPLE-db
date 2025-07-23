@@ -61,7 +61,7 @@ def ingest_spectral_type(
 
     None
     """
-    db_name = find_source_in_db(db, source)
+    db_name = find_source_in_db(db, source, ra_col_name="ra", dec_col_name="dec")
 
     if len(db_name) != 1:
         msg = f"No unique source match for {source} in the database "
