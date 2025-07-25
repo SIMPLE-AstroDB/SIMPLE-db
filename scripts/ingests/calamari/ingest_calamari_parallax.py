@@ -9,18 +9,20 @@ from astrodb_utils.sources import (
     AstroDBError,
     find_source_in_db
 )
-from astrodb_utils.publications import (
-    find_publication,
-)
 from simple.utils.astrometry import (
     ingest_parallax
+)
+
+from scripts.ingests.calamari.calamari_publication_helpers import (
+    parallaxExists,
+    otherReferencesList
 )
 
 astrodb_utils_logger = logging.getLogger("astrodb_utils")
 logger.setLevel(logging.DEBUG)  # Set logger to INFO/DEBUG/WARNING/ERROR/CRITICAL level
 astrodb_utils_logger.setLevel(logging.DEBUG)
 
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 SCHEMA_PATH = "simple/schema.yaml"
 db = load_astrodb(
@@ -73,98 +75,6 @@ binaries = [
     "Gl 417C"
 ]
 
-#helper method to retrieve the publication links from calamari_data
-def getRef(ref_index):
-    ref = ref_index.split(',')[0]
-    ref_link = ref_table[int(ref)]['ADS']
-    if 'iopscience' not in ref_link or 'harvard.edu' not in ref_link:
-        ref_link = ref_table[int(ref)]['Link']
-    return ref_link
-
-#helper method to retrieve the bibcode from a link
-def extractADS(link):
-    start = link.find('abs/')+4
-    end = link.find('/abstract')
-    ads = link[start:end]
-    ads = ads.replace("%26", "&")
-    return ads
-
-#helper method to retrieve the doi from a link
-def extractDOI(link):
-    link = str(link)
-    if 'iopscience' in link:
-        start = link.find('article/')+8
-        doi = link[start:]
-        doi = doi.replace("/pdf", "")
-    else:
-        start = link.find('doi.org/')+8
-        doi=link[start:]
-    return doi
-
-def otherReferencesList(ref):
-    #get all the ids/indexes of the references
-    ids = ref.split(", ")
-    result = []
-    #for each reference...
-    for id in ids:
-        link = ref_table[int(id)]['ADS']
-        #if bibcode or doi is not directly in the link... go to Link column
-        if 'iopscience' not in link or 'harvard.edu' not in link:
-            link = ref_table[int(id)]['Link']
-        #if bibcode is directly in the link
-        if 'harvard.edu' in link:
-            bibcode = extractADS(link)
-            pub_result=find_publication(
-                db=db,
-                bibcode=bibcode
-            )
-            if pub_result[0]:
-                result.append(pub_result[1])
-            else:
-                print(f"Warning: Publication not found for bibcode {bibcode}")
-            #if doi code is found directly in the link
-        elif 'iopscience' in link or 'doi.org' in link:
-            doi=extractDOI(link)
-            pub_result=find_publication(
-                db=db,
-                doi=doi
-            )
-            if pub_result[0]:
-                result.append(pub_result[1])
-            else:
-                print(f"Warning: Publication not found for doi {doi}")
-        #use reference name to find reference
-        else:
-            reference= ref_table[int(id)]['Ref']
-            reference= reference.replace("+", "")
-            reference=reference[0:4] + reference[-2:]
-            pub_result=find_publication(
-                db=db,
-                reference=reference
-            )
-            if pub_result[0]:
-                result.append(pub_result[1])
-            else:
-                print(f"Warning: Publication not found for reference {reference}")
-    #return list of references
-    return result
-
-#helper method to check if parallax exists
-#returns a boolean
-def parallaxExists(source, reference):
-    exists = False
-    parallax_search = db.search_object(
-        name = source,
-        output_table="Parallaxes"
-    )
-    if len(parallax_search) > 0:
-        for parallax in parallax_search:
-            if parallax["reference"] == reference:
-                exists = True
-                break
-    
-    return exists
-
 for row in calamari_table:
     ignore_neighbors=False
     object = row["Object"]
@@ -198,7 +108,7 @@ for row in calamari_table:
         parallax_ingested+=1
         continue
 
-    reference = otherReferencesList(row["Ref"])[0]
+    reference = otherReferencesList(db=db, ref = row["Ref"], ref_table=ref_table)[0]
     parallax_mas=row["Parallax (mas)"]
 
     if object in binaries:
@@ -206,7 +116,7 @@ for row in calamari_table:
 
     if not ignore_neighbors:
         object = find_source_in_db(db=db, source = object)[0]
-    parallax_exists = parallaxExists(source = object, reference=reference)
+    parallax_exists = parallaxExists(db = db, source = object, reference=reference)
     if not parallax_exists:
         try:
             ingest_parallax(
