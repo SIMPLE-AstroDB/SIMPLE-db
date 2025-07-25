@@ -91,23 +91,6 @@ def otherReferencesList(db, ref, ref_table):
     return result
 
 
-#helper method to check if parallax exists
-#returns a boolean
-def parallaxExists(db, source, reference):
-    exists = False
-    parallax_search = db.search_object(
-        name = source,
-        output_table="Parallaxes"
-    )
-    if len(parallax_search) > 0:
-        for parallax in parallax_search:
-            if parallax["reference"] == reference:
-                exists = True
-                break
-    
-    return exists
-
-
 # sources Gl 337CD and Gl 417BC do not exist in the database. ingest them.
 def ingest_resolved_children(
     db,

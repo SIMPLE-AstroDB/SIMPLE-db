@@ -16,7 +16,7 @@ def reference_verifier(t, name, bibcode, doi):
 def test_sources(db):
     # Test to verify existing counts of sources and names
     n_sources = db.query(db.Sources).count()
-    assert n_sources == 3618, f"found {n_sources} sources"
+    assert n_sources == 3620, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
     assert n_names == 9215, f"found {n_names} names"

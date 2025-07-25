@@ -14,7 +14,6 @@ from simple.utils.astrometry import (
 )
 
 from scripts.ingests.calamari.calamari_publication_helpers import (
-    parallaxExists,
     otherReferencesList
 )
 
@@ -86,26 +85,26 @@ for row in calamari_table:
 
     if object == "WISE J124332.17+600126.6":
         #ingest parallax for WISE J124332.17+600126.6
-        ingest_parallax(
-            db=db,
-            source = "WISE J124332.17+600126.6",
-            parallax_mas=22.24367115,
-            parallax_err_mas=0.013506583,
-            reference = "Fahe21"
-        )
-        parallax_ingested+=1
+        # ingest_parallax(
+        #     db=db,
+        #     source = "WISE J124332.17+600126.6",
+        #     parallax_mas=22.24367115,
+        #     parallax_err_mas=0.013506583,
+        #     reference = "Fahe21"
+        # )
+        # parallax_ingested+=1
         continue
     
     if object == "2MASS J00250365+4759191":
         #ingest parallax for 2MASS J00250365+4759191
-        ingest_parallax(
-            db=db, 
-            source = "2MASS J00250365+4759191",
-            parallax_mas=18.5162,
-            parallax_err_mas=0.1365,
-            reference="Reid06.891"
-        )
-        parallax_ingested+=1
+        # ingest_parallax(
+        #     db=db, 
+        #     source = "2MASS J00250365+4759191",
+        #     parallax_mas=18.5162,
+        #     parallax_err_mas=0.1365,
+        #     reference="Reid06.891"
+        # )
+        # parallax_ingested+=1
         continue
 
     reference = otherReferencesList(db=db, ref = row["Ref"], ref_table=ref_table)[0]
@@ -116,26 +115,22 @@ for row in calamari_table:
 
     if not ignore_neighbors:
         object = find_source_in_db(db=db, source = object)[0]
-    parallax_exists = parallaxExists(db = db, source = object, reference=reference)
-    if not parallax_exists:
-        try:
-            ingest_parallax(
-                db=db,
-                source = object,
-                parallax_mas=parallax_mas,
-                parallax_err_mas=row["ePlx"],
-                reference = reference
-            )
-            parallax_ingested+=1
-        except AstroDBError as e:
-            msg = "ingest failed with error: " + str(e)
-            logger.warning(msg)
-            if "Parallax already in the database" in str(e):
-                parallax_already_exist+=1
-            else:
-                raise e
-    else:
-        parallax_already_exist+=1
+    try:
+        ingest_parallax(
+            db=db,
+            source = object,
+            parallax_mas=parallax_mas,
+            parallax_err_mas=row["ePlx"],
+            reference = reference
+        )
+        parallax_ingested+=1
+    except AstroDBError as e:
+        msg = "ingest failed with error: " + str(e)
+        logger.warning(msg)
+        if "Duplicate measurement exists with same reference" in str(e):
+            parallax_already_exist+=1
+        else:
+            raise e
 
         
 logger.info(f"parallax already exists: {parallax_already_exist}") # 10 already exists in database
