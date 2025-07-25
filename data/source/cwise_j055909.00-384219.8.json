@@ -56,16 +56,35 @@
             "other_name": "CatWISE J055909.00-384219.8"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 16.4877,
+            "parallax_error": 0.3623,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
     "SpectralTypes": [
         {
             "spectral_type_string": "(L4)",
             "spectral_type_code": 74.0,
             "spectral_type_error": 2.0,
             "regime": "nir",
-            "adopted": true,
+            "adopted": false,
             "photometric": true,
             "comments": null,
             "reference": "Roth24"
+        },
+        {
+            "spectral_type_string": "L4",
+            "spectral_type_code": 74.0,
+            "spectral_type_error": null,
+            "regime": "unknown",
+            "adopted": true,
+            "photometric": false,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ]
 }

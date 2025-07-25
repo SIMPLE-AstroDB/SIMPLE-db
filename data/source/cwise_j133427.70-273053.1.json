@@ -34,6 +34,15 @@
             "other_name": "CatWISE J133427.70-273053.1"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 27.0633,
+            "parallax_error": 0.3387,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
     "Spectra": [
         {
             "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/Roth24/AUS-1334-2730.fits",
@@ -55,10 +64,20 @@
             "spectral_type_code": 70.0,
             "spectral_type_error": 0.5,
             "regime": "nir",
-            "adopted": true,
+            "adopted": false,
             "photometric": false,
             "comments": null,
             "reference": "Roth24"
+        },
+        {
+            "spectral_type_string": "L0",
+            "spectral_type_code": 70.0,
+            "spectral_type_error": null,
+            "regime": "unknown",
+            "adopted": true,
+            "photometric": false,
+            "comments": null,
+            "reference": "GaiaEDR3"
         }
     ]
 }

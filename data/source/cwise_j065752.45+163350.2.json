@@ -56,6 +56,15 @@
             "other_name": "CatWISE J065752.45+163350.2"
         }
     ],
+    "Parallaxes": [
+        {
+            "parallax": 26.9694,
+            "parallax_error": 0.5771,
+            "adopted": true,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        }
+    ],
     "Spectra": [
         {
             "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/Roth24/AUS-0657%2B1633.fits",
@@ -73,11 +82,21 @@
     ],
     "SpectralTypes": [
         {
+            "spectral_type_string": "L6",
+            "spectral_type_code": 76.0,
+            "spectral_type_error": null,
+            "regime": "unknown",
+            "adopted": true,
+            "photometric": false,
+            "comments": null,
+            "reference": "GaiaEDR3"
+        },
+        {
             "spectral_type_string": "L6 beta",
             "spectral_type_code": 76.0,
             "spectral_type_error": 0.5,
             "regime": "nir",
-            "adopted": true,
+            "adopted": false,
             "photometric": false,
             "comments": null,
             "reference": "Roth24"
