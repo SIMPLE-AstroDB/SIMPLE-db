@@ -85,26 +85,26 @@ for row in calamari_table:
 
     if object == "WISE J124332.17+600126.6":
         #ingest parallax for WISE J124332.17+600126.6
-        # ingest_parallax(
-        #     db=db,
-        #     source = "WISE J124332.17+600126.6",
-        #     parallax_mas=22.24367115,
-        #     parallax_err_mas=0.013506583,
-        #     reference = "Fahe21"
-        # )
-        # parallax_ingested+=1
+        ingest_parallax(
+            db=db,
+            source = "WISE J124332.17+600126.6",
+            parallax_mas=22.24367115,
+            parallax_err_mas=0.013506583,
+            reference = "Fahe21"
+        )
+        parallax_ingested+=1
         continue
     
     if object == "2MASS J00250365+4759191":
         #ingest parallax for 2MASS J00250365+4759191
-        # ingest_parallax(
-        #     db=db, 
-        #     source = "2MASS J00250365+4759191",
-        #     parallax_mas=18.5162,
-        #     parallax_err_mas=0.1365,
-        #     reference="Reid06.891"
-        # )
-        # parallax_ingested+=1
+        ingest_parallax(
+            db=db, 
+            source = "2MASS J00250365+4759191",
+            parallax_mas=18.5162,
+            parallax_err_mas=0.1365,
+            reference="Reid06.891"
+        )
+        parallax_ingested+=1
         continue
 
     reference = otherReferencesList(db=db, ref = row["Ref"], ref_table=ref_table)[0]
