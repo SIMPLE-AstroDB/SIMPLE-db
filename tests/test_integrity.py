@@ -560,6 +560,9 @@ def test_special_characters(db):
                 elif table_name == "Regimes":
                     check = [char not in data[table_name]["regime"]]
                     assert all(check), f"{char} in {table_name}"
+                elif table_name == "CompanionList":
+                    check = [char not in data[table_name]["companion"]]
+                    assert all(check), f"{char} in {table_name}"
                 else:
                     check = [char not in data[table_name]["source"]]
                     assert all(check), f"{char} in {table_name}"
@@ -627,7 +630,7 @@ def test_companion_relationship(db):
     assert len(t) == 0
 
     # test correct relationship
-    possible_relationships = ["Child", "Sibling", "Parent", "Unresolved Parent"]
+    possible_relationships = ["Child", "Sibling", "Parent", "Unresolved Parent","Resolved Child"]
     t = (
         db.query(db.CompanionRelationships)
         .filter(~db.CompanionRelationships.c.relationship.in_(possible_relationships))
@@ -636,7 +639,7 @@ def test_companion_relationship(db):
     if len(t) > 0:
         print(
             "\n relationship is of the souce to its companion \
-            should be one of the following: Child, Sibling, Parent, or Unresolved Parent"
+            should be one of the following: Child, Sibling, Parent, Unresolved Parent, or Resolved Child"
         )
         print(t)
     assert len(t) == 0
@@ -655,8 +658,7 @@ def test_companion_relationship_uniqueness(db):
     # checking duplicate sources have different companions
     non_unique = []
     for source in duplicate_sources:
-        t = db.query(db.CompanionRelationships.c.companion_name)
-        filter(db.CompanionRelationships.c.source == source).astropy()
+        t = db.query(db.CompanionRelationships.c.companion_name).filter(db.CompanionRelationships.c.source == source['source']).astropy()
         duplicate_companions = [
             n for n, companion in enumerate(t) if companion in t[:n]
         ]
