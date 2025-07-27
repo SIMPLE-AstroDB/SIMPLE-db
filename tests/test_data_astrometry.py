@@ -70,6 +70,7 @@ def test_parallax_refs(db):
         ("vanL07", 68),
         ("Smar18", 68),
         ("Schm10.1808", 44),
+        ("Maro21", 2952)
     ],
 )
 def test_proper_motion_refs(db, ref, n_proper_motions):

@@ -108,6 +108,7 @@ for row in uc_sheet_table:
                 pm_decs = row["pmdec_catwise"],
                 pm_dec_errs = row["pmdecerr_catwise"],
                 pm_references = "Maro21",
+                comments="Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66)."
             )
             pm_counter += 1
         else:
@@ -133,7 +134,8 @@ for row in uc_sheet_table:
                         magnitude = row[photometry_band],
                         magnitude_error = row[photometry_band + "err"],
                         telescope = "WISE",
-                        reference = row["ref_" + photometry_band]
+                        reference = row["ref_" + photometry_band],
+                        comments="Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66)."
                     )
                     photo_counter += 1
                     if flag_counter == 1:
@@ -159,7 +161,7 @@ for row in uc_sheet_table:
                             magnitude_error = row[photometry_band + "err"],
                             telescope = "WISE",
                             reference = "Eise20",
-                            comments = "Other reference is Schn20"
+                            comments = "Other reference is Schn20. Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66)."
                         )
                         photo_counter += 1
                         if flag_counter == 1:
@@ -192,7 +194,7 @@ for row in uc_sheet_table:
    
 no_match_table = Table([no_match], names=["No Match"])
 no_match_table.write(
-    "scripts/ingests/ultracool_sheet/uc_sheet_catwise_no_match.csv",
+    "scripts/ingests/ultracool_sheet/catwise/uc_sheet_catwise_no_match.csv",
     delimiter=",",
     overwrite=True,
     format="ascii.ecsv",
@@ -200,7 +202,7 @@ no_match_table.write(
 
 skipped_table = Table([skipped, reason], names=["Skipped", "Reason"])
 skipped_table.write(
-    "scripts/ingests/ultracool_sheet/uc_sheet_catwise_skipped.csv",
+    "scripts/ingests/ultracool_sheet/catwise/uc_sheet_catwise_skipped.csv",
     delimiter=",",
     overwrite=True,
     format="ascii.ecsv",
@@ -208,7 +210,7 @@ skipped_table.write(
 
 multiple_matches_table = Table([multiple_matches], names=["Multiple Matches"])
 multiple_matches_table.write(
-    "scripts/ingests/ultracool_sheet/uc_sheet_catwise_multiple_matches.csv",
+    "scripts/ingests/ultracool_sheet/catwise/uc_sheet_catwise_multiple_matches.csv",
     delimiter=",",
     overwrite=True,
     format="ascii.ecsv",
@@ -216,25 +218,25 @@ multiple_matches_table.write(
 
 bad_flag_table = Table([bad_flag], names=["Bad Flags"])
 bad_flag_table.write(
-    "scripts/ingests/ultracool_sheet/uc_sheet_catwise_bad_flag.csv",
+    "scripts/ingests/ultracool_sheet/catwise/uc_sheet_catwise_bad_flag.csv",
     delimiter=",",
     overwrite=True,
     format="ascii.ecsv",
 )
 
-print(str(one_match_counter) + " photometry ingested") #3142
-print(str(no_match_counter) + " no matches") #746
+print(str(one_match_counter) + " photometry ingested") #3149
+print(str(no_match_counter) + " no matches") #738
 print(str(multiple_matches_counter) + " multiple matches") #1
 print(str(duplicate_counter) + " duplicate sources") #22
-print(str(upper_error_counter) + " upper error sources") #4588
-print(str(photo_counter) + " photometry ingested") #7287 (including all bands)
-print(str(pm_counter) + " propermotions ingested") # 2953
-print(str(name_counter) + " catwise designation names ingested") # 2971
-print(str(photo1_counter) + " photometry band 1 ingested") # 2896
-print(str(photo2_counter) + " photometry band 2 ingested") # 2917
+print(str(upper_error_counter) + " upper error sources") #4610
+print(str(photo_counter) + " photometry ingested") #7289 (including all bands)
+print(str(pm_counter) + " propermotions ingested") # 2954
+print(str(name_counter) + " catwise designation names ingested") # 2972
+print(str(photo1_counter) + " photometry band 1 ingested") # 2897
+print(str(photo2_counter) + " photometry band 2 ingested") # 2918
 print(str(photo3_counter) + " photometry band 3 ingested") # 1310
 print(str(photo4_counter) + " photometry band 4 ingested") # 164
-print(str(bad_flag_counter) + " bad flags") # 22 with name ingested
+print(str(bad_flag_counter) + " bad flags") # 165 (name not factored)
 
 
 logger.info("done")
