@@ -56,6 +56,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J181006.12-101001.5"
+        },
+        {
             "other_name": "CWISEP J181006.00-101001.1"
         },
         {
@@ -74,7 +77,36 @@
             "reference": "Lodi22"
         }
     ],
+    "Photometry": [
+        {
+            "band": "WISE.W1",
+            "magnitude": 13.65,
+            "magnitude_error": 0.018,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Other reference is Schn20. Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Eise20"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 12.483,
+            "magnitude_error": 0.009,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Other reference is Schn20. Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Eise20"
+        }
+    ],
     "ProperMotions": [
+        {
+            "mu_ra": -850.5,
+            "mu_ra_error": 5.5,
+            "mu_dec": -97.5,
+            "mu_dec_error": 5.7,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
         {
             "mu_ra": -1027.0,
             "mu_ra_error": 3.5,

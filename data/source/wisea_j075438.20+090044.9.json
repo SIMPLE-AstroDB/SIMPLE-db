@@ -14,6 +14,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J075438.31+090043.7"
+        },
+        {
             "other_name": "WISEA J075438.20+090044.9"
         }
     ],
@@ -44,6 +47,26 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Meis20.123"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 15.812,
+            "magnitude_error": 0.064,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        }
+    ],
+    "ProperMotions": [
+        {
+            "mu_ra": 273.1,
+            "mu_ra_error": 71.7,
+            "mu_dec": -175.1,
+            "mu_dec_error": 89.8,
+            "adopted": true,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

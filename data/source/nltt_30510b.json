@@ -17,6 +17,9 @@
             "other_name": "** DEA   78B"
         },
         {
+            "other_name": "CWISE J122218.69+364347.7"
+        },
+        {
             "other_name": "NLTT 30510B"
         }
     ],
@@ -56,6 +59,24 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Best20.42"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.481,
+            "magnitude_error": 0.014,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.227,
+            "magnitude_error": 0.016,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -67,6 +88,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Deac14.119"
+        },
+        {
+            "mu_ra": 206.5,
+            "mu_ra_error": 8.2,
+            "mu_dec": -84.7,
+            "mu_dec_error": 9.2,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "RadialVelocities": [
