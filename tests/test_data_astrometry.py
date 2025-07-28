@@ -54,6 +54,19 @@ def test_parallax_refs(db):
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
     assert len(t) == 15, f"found {len(t)} parallax entries for {ref}"
 
+def test_proper_motion_adopted(db):
+    ref = "Maro21"
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 2952, f"found {len(t)} propermotions reference entries for {ref}"
+
+    t = (
+        db.query(db.ProperMotions)
+        .filter(and_(db.ProperMotions.c.reference == ref, db.ProperMotions.c.adopted == 1))
+        .astropy()
+    )
+    assert (
+        len(t) == 982
+    ), f"found {len(t)} adopted propermotions reference entries for {ref}"
 
 @pytest.mark.parametrize(
     ("ref", "n_proper_motions"),
