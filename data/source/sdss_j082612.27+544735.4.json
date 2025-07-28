@@ -17,6 +17,9 @@
             "other_name": "2MASS J08261233+5447358"
         },
         {
+            "other_name": "CWISE J082612.30+544734.6"
+        },
+        {
             "other_name": "Gaia DR2 1032148879670723584"
         },
         {
@@ -80,15 +83,51 @@
             "epoch": null,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.931,
+            "magnitude_error": 0.017,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.688,
+            "magnitude_error": 0.022,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 12.588,
+            "magnitude_error": 0.484,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": 11.9,
+            "mu_ra_error": 11.2,
+            "mu_dec": -51.5,
+            "mu_dec_error": 12.7,
+            "adopted": true,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
         {
             "mu_ra": -104.3,
             "mu_ra_error": 55.5,
             "mu_dec": -88.5,
             "mu_dec_error": 15.7,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Schm10.1808"
         }

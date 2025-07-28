@@ -15,6 +15,9 @@
     "Names": [
         {
             "other_name": "CFBDS J104209.98+580856.6"
+        },
+        {
+            "other_name": "CWISE J104210.00+580856.5"
         }
     ],
     "Photometry": [
@@ -55,6 +58,24 @@
             "reference": "Albe11"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 17.077,
+            "magnitude_error": 0.047,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 15.405,
+            "magnitude_error": 0.032,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "Wircam.Y",
             "magnitude": 18.85,
             "magnitude_error": 0.03,
@@ -73,6 +94,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Albe11"
+        },
+        {
+            "mu_ra": 64.4,
+            "mu_ra_error": 31.5,
+            "mu_dec": 74.1,
+            "mu_dec_error": 33.8,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

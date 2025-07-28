@@ -14,16 +14,48 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J223550.11+122736.4"
+        },
+        {
             "other_name": "SDSS J223550.14+122737.3"
         }
     ],
+    "Photometry": [
+        {
+            "band": "WISE.W1",
+            "magnitude": 13.66,
+            "magnitude_error": 0.012,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.467,
+            "magnitude_error": 0.011,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        }
+    ],
     "ProperMotions": [
+        {
+            "mu_ra": -21.1,
+            "mu_ra_error": 6.8,
+            "mu_dec": -56.8,
+            "mu_dec_error": 6.2,
+            "adopted": true,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
         {
             "mu_ra": 3.3,
             "mu_ra_error": 25.5,
             "mu_dec": -113.6,
             "mu_dec_error": 18.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Schm10.1808"
         }

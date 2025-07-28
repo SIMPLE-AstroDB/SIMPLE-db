@@ -15,6 +15,9 @@
     "Names": [
         {
             "other_name": "CFBDS J030226.67-143719.2"
+        },
+        {
+            "other_name": "CWISE J030226.72-143720.6"
         }
     ],
     "Photometry": [
@@ -44,6 +47,24 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Albe11"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 17.263,
+            "magnitude_error": 0.059,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 15.697,
+            "magnitude_error": 0.052,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -55,6 +76,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Albe11"
+        },
+        {
+            "mu_ra": -79.0,
+            "mu_ra_error": 45.1,
+            "mu_dec": -107.7,
+            "mu_dec_error": 45.9,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

@@ -54,10 +54,22 @@ def test_parallax_refs(db):
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
     assert len(t) == 15, f"found {len(t)} parallax entries for {ref}"
 
-def test_propermotion_GaiaEDR3_Best18_Best20_Kirk19(db):
+def test_proper_motion_adopted(db):
     """
-    Test for proper motions added and adoptions from GaiaEDR3, Kirk19, Best18, and Best20.
+    Test for proper motions added and adoptions.
     """
+    ref = "Maro21"
+    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t) == 2952, f"found {len(t)} propermotions reference entries for {ref}"
+    t = (
+        db.query(db.ProperMotions)
+        .filter(and_(db.ProperMotions.c.reference == ref, db.ProperMotions.c.adopted == 1))
+        .astropy()
+    )
+    assert (
+        len(t) == 982
+    ), f"found {len(t)} adopted propermotions reference entries for {ref}"
+    
     ref = "GaiaEDR3"
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
     assert len(t) == 1133, f"found {len(t)} proper motion entries for {ref}"
@@ -103,6 +115,7 @@ def test_propermotion_GaiaEDR3_Best18_Best20_Kirk19(db):
         .astropy()
     )
     assert len(t) == 142, f"found {len(t)} adopted proper motion for {ref}"
+
     
     
 @pytest.mark.parametrize(
@@ -120,6 +133,7 @@ def test_propermotion_GaiaEDR3_Best18_Best20_Kirk19(db):
         ("vanL07", 68),
         ("Smar18", 68),
         ("Schm10.1808", 44),
+        ("Maro21", 2952)
     ],
 )
 def test_proper_motion_refs(db, ref, n_proper_motions):
