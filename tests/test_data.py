@@ -421,15 +421,6 @@ def test_Kirk19_ingest(db):
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 1, f"found {len(t)} sources for {ref}"
 
-    # Test proper motions added
-    ref = "Kirk19"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 182, f"found {len(t)} proper motion entries for {ref}"
-
-    # Test for Best18 proper motions added from Pan-STARRS catalog
-    ref = "Best18"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 1966, f"found {len(t)} proper motion entries for {ref}"
 
 def test_Best2020_ingest(db):
     # Test for Best20.257 proper motions added
