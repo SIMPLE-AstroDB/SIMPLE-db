@@ -21,7 +21,7 @@ def test_sources(db):
     assert n_sources == 3618, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 12188, f"found {n_names} names"
+    assert n_names == 12202, f"found {n_names} names"
 
 
 

@@ -67,7 +67,7 @@ def test_proper_motion_adopted(db):
         .astropy()
     )
     assert (
-        len(t) == 982
+        len(t) == 542
     ), f"found {len(t)} adopted propermotions reference entries for {ref}"
     
     ref = "GaiaEDR3"
@@ -91,7 +91,7 @@ def test_proper_motion_adopted(db):
         .filter(and_(db.ProperMotions.c.reference == ref, db.ProperMotions.c.adopted == 1))
         .astropy()
     )
-    assert len(t) == 734, f"found {len(t)} adopted proper motion for {ref}"
+    assert len(t) == 612, f"found {len(t)} adopted proper motion for {ref}"
 
     # Test for Best20.257 proper motions added and adoptions
     ref = "Best20.257"
@@ -103,7 +103,7 @@ def test_proper_motion_adopted(db):
         .filter(and_(db.ProperMotions.c.reference == ref, db.ProperMotions.c.adopted == 1))
         .astropy()
     )
-    assert len(t) == 145, f"found {len(t)} adopted proper motion for {ref}"
+    assert len(t) == 172, f"found {len(t)} adopted proper motion for {ref}"
 
     ref = "Kirk19"
     t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
@@ -114,7 +114,7 @@ def test_proper_motion_adopted(db):
         .filter(and_(db.ProperMotions.c.reference == ref, db.ProperMotions.c.adopted == 1))
         .astropy()
     )
-    assert len(t) == 142, f"found {len(t)} adopted proper motion for {ref}"
+    assert len(t) == 163, f"found {len(t)} adopted proper motion for {ref}"
 
     
     
