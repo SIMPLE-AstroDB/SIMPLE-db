@@ -25,6 +25,24 @@
     ],
     "Photometry": [
         {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 18.73,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 19.75,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.J",
             "magnitude": 16.468,
             "magnitude_error": 0.015,
@@ -63,11 +81,20 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 121.0,
+            "mu_ra_error": 2.9,
+            "mu_dec": -18.4,
+            "mu_dec_error": 4.6,
+            "adopted": true,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": 115.0,
             "mu_ra_error": 11.0,
             "mu_dec": -12.0,
             "mu_dec_error": 11.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Lodi14.3908"
         },

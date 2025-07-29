@@ -54,68 +54,30 @@ def test_parallax_refs(db):
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
     assert len(t) == 15, f"found {len(t)} parallax entries for {ref}"
 
-def test_proper_motion_adopted(db):
+
+@pytest.mark.parametrize(
+    "ref, n_propermotion, n_adopted",
+    [
+        ("Maro21", 2952, 542),
+        ("GaiaEDR3", 1133, 1057),
+        ("Best18", 1966, 612),
+        ("Best20.257", 348, 172),
+        ("Kirk19", 182, 163),
+    ]
+)
+def test_proper_motion_adopted(db, ref, n_propermotion, n_adopted):
     """
-    Test for proper motions added and adoptions.
+    Test for number of proper motions added and adoptions.
     """
-    ref = "Maro21"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 2952, f"found {len(t)} propermotions reference entries for {ref}"
-    t = (
+    t_added = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t_added) == n_propermotion, f"found {len(t_added)} proper motion entries for {ref}"
+
+    t_adopted = (
         db.query(db.ProperMotions)
         .filter(and_(db.ProperMotions.c.reference == ref, db.ProperMotions.c.adopted == 1))
         .astropy()
     )
-    assert (
-        len(t) == 542
-    ), f"found {len(t)} adopted propermotions reference entries for {ref}"
-    
-    ref = "GaiaEDR3"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 1133, f"found {len(t)} proper motion entries for {ref}"
-
-    t = (
-        db.query(db.ProperMotions)
-        .filter(and_(db.ProperMotions.c.reference == ref, db.ProperMotions.c.adopted == 1))
-        .astropy()
-    )
-    assert len(t) == 1057, f"found {len(t)} adopted proper motion for {ref}"
-
-    # Test for Best18 proper motions added from Pan-STARRS catalog
-    ref = "Best18"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 1966, f"found {len(t)} proper motion entries for {ref}"
-
-    t = (
-        db.query(db.ProperMotions)
-        .filter(and_(db.ProperMotions.c.reference == ref, db.ProperMotions.c.adopted == 1))
-        .astropy()
-    )
-    assert len(t) == 612, f"found {len(t)} adopted proper motion for {ref}"
-
-    # Test for Best20.257 proper motions added and adoptions
-    ref = "Best20.257"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 348, f"found {len(t)} proper motion entries for {ref}"
-
-    t = (
-        db.query(db.ProperMotions)
-        .filter(and_(db.ProperMotions.c.reference == ref, db.ProperMotions.c.adopted == 1))
-        .astropy()
-    )
-    assert len(t) == 172, f"found {len(t)} adopted proper motion for {ref}"
-
-    ref = "Kirk19"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 182, f"found {len(t)} proper motion entries for {ref}"
-
-    t = (
-        db.query(db.ProperMotions)
-        .filter(and_(db.ProperMotions.c.reference == ref, db.ProperMotions.c.adopted == 1))
-        .astropy()
-    )
-    assert len(t) == 163, f"found {len(t)} adopted proper motion for {ref}"
-
+    assert len(t_adopted) == n_adopted, f"found {len(t_adopted)} adopted proper motions for {ref}"
     
     
 @pytest.mark.parametrize(

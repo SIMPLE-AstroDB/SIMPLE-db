@@ -25,6 +25,42 @@
     ],
     "Photometry": [
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 20.57,
+            "magnitude_error": 0.03,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 21.68,
+            "magnitude_error": 0.07,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 17.97,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 18.94,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "VISTA.Y",
             "magnitude": 16.911,
             "magnitude_error": 0.004,
@@ -99,11 +135,20 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -7.3,
+            "mu_ra_error": 4.0,
+            "mu_dec": -17.0,
+            "mu_dec_error": 4.8,
+            "adopted": true,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": 0.85,
             "mu_ra_error": 7.0,
             "mu_dec": -25.67,
             "mu_dec_error": 7.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Lodi13.2474"
         },

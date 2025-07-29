@@ -61,6 +61,42 @@
             "reference": "Cutr03"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 19.63,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 21.63,
+            "magnitude_error": 0.08,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 16.92,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 17.96,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 13.63,
             "magnitude_error": 0.03,
@@ -117,6 +153,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 125.3,
+            "mu_ra_error": 2.3,
+            "mu_dec": 2.7,
+            "mu_dec_error": 2.3,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": 125.2,
             "mu_ra_error": 1.1,
             "mu_dec": -0.4,
@@ -146,19 +191,6 @@
     ],
     "Spectra": [
         {
-            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J12392727%2B5515371.fits",
-            "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1239%2B5515_IRS_spectrum.dat",
-            "local_spectrum": null,
-            "regime": "mir",
-            "telescope": "Spitzer",
-            "instrument": "IRS",
-            "mode": "SL",
-            "observation_date": "2004-04-18T00:00:00",
-            "comments": "SL2,SL1,LL2,LL1",
-            "reference": "Suar22",
-            "other_references": null
-        },
-        {
             "access_url": "https://s3.amazonaws.com/bdnyc/1239%2B5515.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/1239+5515.txt",
@@ -169,6 +201,19 @@
             "observation_date": "2004-04-18T02:01:06.605000",
             "comments": null,
             "reference": "PID51",
+            "other_references": null
+        },
+        {
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J12392727%2B5515371.fits",
+            "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/1239%2B5515_IRS_spectrum.dat",
+            "local_spectrum": null,
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2004-04-18T00:00:00",
+            "comments": "SL2,SL1,LL2,LL1",
+            "reference": "Suar22",
             "other_references": null
         },
         {

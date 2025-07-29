@@ -61,6 +61,33 @@
             "reference": "Cutr03"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 21.27,
+            "magnitude_error": 0.03,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 18.76,
+            "magnitude_error": 0.03,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 19.78,
+            "magnitude_error": 0.04,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 15.186,
             "magnitude_error": 0.058,
@@ -153,6 +180,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -72.2,
+            "mu_ra_error": 3.6,
+            "mu_dec": -63.5,
+            "mu_dec_error": 3.8,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -62.1,
             "mu_ra_error": 0.6,
             "mu_dec": -57.7,
@@ -221,19 +257,6 @@
             "other_references": null
         },
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20636.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/optical_spectra/U20636.fits",
-            "regime": "optical",
-            "telescope": "Gemini North",
-            "instrument": "GMOS-N",
-            "mode": "Prism",
-            "observation_date": "2004-09-11T00:00:00",
-            "comments": null,
-            "reference": "Reid08.1290",
-            "other_references": null
-        },
-        {
             "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20636_1551%2B09.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/optical_spectra/U20636_1551+09.fits",
@@ -257,6 +280,19 @@
             "observation_date": "2010-06-18T00:00:00",
             "comments": null,
             "reference": "Cruz18",
+            "other_references": null
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20636.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/U20636.fits",
+            "regime": "optical",
+            "telescope": "Gemini North",
+            "instrument": "GMOS-N",
+            "mode": "Prism",
+            "observation_date": "2004-09-11T00:00:00",
+            "comments": null,
+            "reference": "Reid08.1290",
             "other_references": null
         }
     ],

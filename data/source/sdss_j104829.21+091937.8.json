@@ -28,6 +28,24 @@
     ],
     "Photometry": [
         {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 18.77,
+            "magnitude_error": 0.18,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 20.22,
+            "magnitude_error": 0.05,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 15.966,
             "magnitude_error": 0.022,
@@ -84,6 +102,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -280.0,
+            "mu_ra_error": 2.0,
+            "mu_dec": 223.3,
+            "mu_dec_error": 6.3,
+            "adopted": true,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -268.0,
             "mu_ra_error": 20.0,
             "mu_dec": 241.0,
@@ -97,7 +124,7 @@
             "mu_ra_error": 13.4,
             "mu_dec": 202.9,
             "mu_dec_error": 14.8,
-            "adopted": true,
+            "adopted": false,
             "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
             "reference": "Maro21"
         }

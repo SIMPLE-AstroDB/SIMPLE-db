@@ -22,6 +22,51 @@
     ],
     "Photometry": [
         {
+            "band": "PAN-STARRS/PS1.g",
+            "magnitude": 21.16,
+            "magnitude_error": 0.04,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 16.7,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 19.45,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 14.33,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 15.23,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WISE.W1",
             "magnitude": 11.106,
             "magnitude_error": 0.013,
@@ -51,6 +96,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 47.9,
+            "mu_ra_error": 1.3,
+            "mu_dec": -210.6,
+            "mu_dec_error": 1.8,
+            "adopted": true,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": 51.0,
             "mu_ra_error": 20.0,
             "mu_dec": -204.0,
@@ -64,7 +118,7 @@
             "mu_ra_error": 4.2,
             "mu_dec": -216.3,
             "mu_dec_error": 4.1,
-            "adopted": true,
+            "adopted": false,
             "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
             "reference": "Maro21"
         }

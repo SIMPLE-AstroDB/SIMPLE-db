@@ -175,6 +175,42 @@
             "reference": "Diet14"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 18.58,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 20.78,
+            "magnitude_error": 0.06,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 15.93,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 16.98,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 12.763,
             "magnitude_error": 0.024,
@@ -276,6 +312,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 13.4,
+            "mu_ra_error": 1.1,
+            "mu_dec": -351.6,
+            "mu_dec_error": 1.4,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": 3.67,
             "mu_ra_error": 0.61,
             "mu_dec": -350.48,
@@ -349,19 +394,6 @@
             "other_references": null
         },
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/u20197.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/optical_spectra/u20197.fits",
-            "regime": "optical",
-            "telescope": "KPNO 4m",
-            "instrument": "R-C Spec",
-            "mode": "Missing",
-            "observation_date": "2004-02-11T00:00:00",
-            "comments": null,
-            "reference": "Reid08.1290",
-            "other_references": null
-        },
-        {
             "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M0500_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
@@ -372,6 +404,19 @@
             "observation_date": "2010-02-05T00:00:00",
             "comments": null,
             "reference": "Manj16",
+            "other_references": null
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/u20197.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/u20197.fits",
+            "regime": "optical",
+            "telescope": "KPNO 4m",
+            "instrument": "R-C Spec",
+            "mode": "Missing",
+            "observation_date": "2004-02-11T00:00:00",
+            "comments": null,
+            "reference": "Reid08.1290",
             "other_references": null
         }
     ],

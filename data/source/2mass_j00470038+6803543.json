@@ -111,6 +111,33 @@
             "reference": "Kirk21"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 21.16,
+            "magnitude_error": 0.11,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 18.03,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 19.02,
+            "magnitude_error": 0.03,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "SDSS.z",
             "magnitude": 18.72,
             "magnitude_error": 0.05,
@@ -248,6 +275,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 381.2,
+            "mu_ra_error": 1.7,
+            "mu_dec": -199.3,
+            "mu_dec_error": 1.8,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": 380.7,
             "mu_ra_error": 1.1,
             "mu_dec": -204.2,
@@ -268,19 +304,6 @@
     ],
     "Spectra": [
         {
-            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1111/type/native/viewcontent",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/Gizis-WISE0047+68_0.5prism_2011jul21.fits",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2011-07-21T00:00:00",
-            "comments": null,
-            "reference": "Gizi12",
-            "other_references": null
-        },
-        {
             "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/WISE0047.csv",
             "original_spectrum": null,
             "local_spectrum": null,
@@ -292,6 +315,19 @@
             "comments": "Multiple observation dates.",
             "reference": "Manj19",
             "other_references": "Apai15.14241, Lew_16"
+        },
+        {
+            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1111/type/native/viewcontent",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/Gizis-WISE0047+68_0.5prism_2011jul21.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2011-07-21T00:00:00",
+            "comments": null,
+            "reference": "Gizi12",
+            "other_references": null
         }
     ],
     "SpectralTypes": [

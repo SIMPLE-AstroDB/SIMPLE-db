@@ -22,6 +22,42 @@
     ],
     "Photometry": [
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 20.23,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 22.5,
+            "magnitude_error": 0.08,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 17.86,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 18.78,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.J",
             "magnitude": 15.702,
             "magnitude_error": 0.009,
@@ -60,11 +96,20 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -61.7,
+            "mu_ra_error": 3.1,
+            "mu_dec": -18.5,
+            "mu_dec_error": 3.6,
+            "adopted": true,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -74.6,
             "mu_ra_error": 6.4,
             "mu_dec": -17.5,
             "mu_dec_error": 8.5,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Gagn15.73"
         },

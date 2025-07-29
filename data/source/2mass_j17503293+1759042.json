@@ -183,6 +183,24 @@
             "reference": "Legg02.452"
         },
         {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 18.68,
+            "magnitude_error": 0.03,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 20.3,
+            "magnitude_error": 0.07,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "SDSS.g",
             "magnitude": 25.13499,
             "magnitude_error": 0.4445882,
@@ -338,6 +356,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 182.3,
+            "mu_ra_error": 3.2,
+            "mu_dec": 72.8,
+            "mu_dec_error": 6.8,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": 183.0,
             "mu_ra_error": 2.3,
             "mu_dec": 92.0,
@@ -367,19 +394,6 @@
     ],
     "Spectra": [
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/1750%2B1759.txt",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/1750+1759.txt",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2003-05-23T00:00:00",
-            "comments": null,
-            "reference": "Burg04.2856",
-            "other_references": null
-        },
-        {
             "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J1750%2B17.csv",
             "original_spectrum": null,
             "local_spectrum": null,
@@ -391,6 +405,19 @@
             "comments": null,
             "reference": "Manj19",
             "other_references": "Apai11.12550, Buen14"
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/1750%2B1759.txt",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/1750+1759.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-05-23T00:00:00",
+            "comments": null,
+            "reference": "Burg04.2856",
+            "other_references": null
         }
     ],
     "SpectralTypes": [
