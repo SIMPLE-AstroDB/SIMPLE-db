@@ -224,33 +224,6 @@ ingest_source(
 )
 sources_ingested+=1
 
-#ingest unresolved parents
-
-# #ingest source Gl 337 CD
-# ingest_source(
-#     db=db,
-#     source = "Gl 337CD",
-#     reference="GaiaEDR3",
-#     other_reference="Wils01",
-#     ra = 138.0584919,
-#     dec = 14.9956706,
-#     ra_col_name="ra",
-#     dec_col_name="dec"
-# )
-# sources_ingested+=1
-
-# #ingest source Gl 417 BC
-# ingest_source(
-#     db=db,
-#     source = "Gl 417BC",
-#     reference = "GaiaEDR3",
-#     other_reference="Kirk00",
-#     ra = 168.1055653,
-#     dec = 35.8028953,
-#     ra_col_name="ra",
-#     dec_col_name="dec"
-# )
-# sources_ingested+=1
 ingest_resolved_children(
     db=db,
     source = "Gl 337C",
