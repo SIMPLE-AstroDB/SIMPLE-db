@@ -92,12 +92,12 @@ for row in atmo_table:
                     db.ModeledParameters.insert().values(
                         {
                             "source": source_name[0][0],
+                            "model": "atmospheric",
                             "parameter": parameter,
                             "value": value,
                             "upper_error": upper_error,
                             "lower_error": lower_error,
                             "unit": unit,
-                            "comments": "atmospheric model",
                             "reference": source_name[0][6]
                         }
                     )
@@ -143,12 +143,12 @@ for row in evo_table:
                     db.ModeledParameters.insert().values(
                         {
                             "source": source_name[0][0],
+                            "model": "evolutionary",
                             "parameter": parameter,
                             "value": value,
                             "upper_error": upper_error,
                             "lower_error": lower_error,
                             "unit": unit,
-                            "comments": "evolutionary model",
                             "reference": source_name[0][6]
                         }
                     )

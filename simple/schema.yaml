@@ -1150,6 +1150,7 @@ tables:
       Note that *parameter* is linked to the Parameters table. "
     primaryKey: 
     - "#ModeledParameters.source"
+    - "#ModeledParameters.model"
     - "#ModeledParameters.parameter"
     - "#ModeledParameters.reference"
 
@@ -1160,6 +1161,13 @@ tables:
       length: 100
       description: Unique identifier for the source; links to Sources table
       ivoa:ucd: meta.id;meta.main
+      nullable: false
+    - name: model
+      "@id": "#ModeledParameters.model"
+      datatype: string
+      length: 30
+      description: Model name
+      ivoa:ucd: meta.id
       nullable: false
     - name: parameter
       "@id": "#ModeledParameters.parameter"
