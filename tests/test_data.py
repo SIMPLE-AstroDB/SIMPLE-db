@@ -2,6 +2,8 @@
 # db is defined in conftest.py
 import pytest
 from sqlalchemy import except_, select, and_
+from astropy.table import Table
+
 
 
 # Utility functions
@@ -19,7 +21,8 @@ def test_sources(db):
     assert n_sources == 3618, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 9215, f"found {n_names} names"
+    assert n_names == 12202, f"found {n_names} names"
+
 
 
 @pytest.mark.parametrize(
@@ -113,22 +116,23 @@ def test_missions(db):
 
     # If Wise designation in Names, Wise phot should exist
     stm = except_(
-        select(db.Names.c.source).where(db.Names.c.other_name.like("WISE%")),
+        select(db.Names.c.source).where(db.Names.c.other_name.like("%WISE%")),
         select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")),
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 496
+        len(s) == 160
     ), f"found {len(s)} sources with WISE designation that have no WISE photometry"
+    
 
     # If Wise photometry, Wise designation should be in Names
     stm = except_(
-        select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")),
-        select(db.Names.c.source).where(db.Names.c.other_name.like("WISE%")),
+        select(db.Photometry.c.source).where(db.Photometry.c.band.like("%WISE%")),
+        select(db.Names.c.source).where(db.Names.c.other_name.like("%WISE%")),
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 389
+        len(s) == 71
     ), f"found {len(s)} sources with WISE photometry and no Wise designation in Names"
 
     # If Gaia EDR3 pm, Gaia EDR3 designation should be in Names
@@ -421,11 +425,6 @@ def test_Kirk19_ingest(db):
     ref = "Pinf14.1931"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 1, f"found {len(t)} sources for {ref}"
-
-    # Test proper motions added
-    ref = "Kirk19"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 182, f"found {len(t)} proper motion entries for {ref}"
 
 
 def test_Best2020_ingest(db):

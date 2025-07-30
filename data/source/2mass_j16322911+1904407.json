@@ -60,6 +60,9 @@
         },
         {
             "other_name": "2MASSW J1632291+190441"
+        },
+        {
+            "other_name": "CWISE J163229.48+190439.6"
         }
     ],
     "Parallaxes": [
@@ -179,6 +182,33 @@
             "reference": "Legg02.452"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 21.6,
+            "magnitude_error": 0.04,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 18.0,
+            "magnitude_error": 0.03,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 19.07,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "SDSS.g",
             "magnitude": 25.92447,
             "magnitude_error": 0.5210237,
@@ -269,6 +299,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 13.142,
+            "magnitude_error": 0.014,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W2",
             "magnitude": 12.617,
             "magnitude_error": 0.025,
@@ -278,6 +317,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W2",
+            "magnitude": 12.639,
+            "magnitude_error": 0.009,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W3",
             "magnitude": 11.986,
             "magnitude_error": 0.237,
@@ -285,6 +333,15 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 11.824,
+            "magnitude_error": 0.227,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         },
         {
             "band": "WISE.W4",
@@ -298,6 +355,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 288.0,
+            "mu_ra_error": 2.9,
+            "mu_dec": -56.5,
+            "mu_dec_error": 2.5,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": 292.91,
             "mu_ra_error": 0.31,
             "mu_dec": -54.29,
@@ -305,22 +371,18 @@
             "adopted": true,
             "comments": null,
             "reference": "Dahn17"
+        },
+        {
+            "mu_ra": 294.5,
+            "mu_ra_error": 4.8,
+            "mu_dec": -64.2,
+            "mu_dec_error": 5.1,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "Spectra": [
-        {
-            "access_url": "https://s3.amazonaws.com/bdnyc/2M1632.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/2M1632_SpeX.fits",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2003-09-05T00:00:00",
-            "comments": null,
-            "reference": "Burg07.655",
-            "other_references": null
-        },
         {
             "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J1632%2B19.csv",
             "original_spectrum": null,
@@ -333,6 +395,19 @@
             "comments": null,
             "reference": "Manj19",
             "other_references": "Apai11.12550, Buen14"
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/2M1632.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/2M1632_SpeX.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-09-05T00:00:00",
+            "comments": null,
+            "reference": "Burg07.655",
+            "other_references": null
         },
         {
             "access_url": "https://s3.amazonaws.com/bdnyc/LRIS/U50006_1632%2B1904_lris.fits",

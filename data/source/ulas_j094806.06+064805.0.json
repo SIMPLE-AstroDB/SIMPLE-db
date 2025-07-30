@@ -14,6 +14,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J094806.21+064801.8"
+        },
+        {
             "other_name": "ULAS J094806.06+064805.0"
         },
         {
@@ -65,6 +68,24 @@
             "epoch": null,
             "comments": null,
             "reference": "WFAU19"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 18.672,
+            "magnitude_error": 0.248,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 16.879,
+            "magnitude_error": 0.141,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -76,6 +97,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Maro10.38"
+        },
+        {
+            "mu_ra": 241.4,
+            "mu_ra_error": 164.1,
+            "mu_dec": -12.8,
+            "mu_dec_error": 176.4,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

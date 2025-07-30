@@ -62,6 +62,9 @@
             "other_name": "2MASSW J1507476-162738"
         },
         {
+            "other_name": "CWISE J150747.49-162755.3"
+        },
+        {
             "other_name": "Gaia DR2 6306068659857135232"
         },
         {
@@ -262,6 +265,42 @@
             "reference": "Legg02.452"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 17.87,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 19.95,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 14.97,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 16.0,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 11.9,
             "magnitude_error": 0.03,
@@ -307,6 +346,15 @@
             "reference": "Cutr13"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 10.72,
+            "magnitude_error": 0.011,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W2",
             "magnitude": 10.369,
             "magnitude_error": 0.021,
@@ -314,6 +362,15 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr13"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 10.442,
+            "magnitude_error": 0.007,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         },
         {
             "band": "WISE.W3",
@@ -335,6 +392,15 @@
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": -152.3,
+            "mu_ra_error": 1.4,
+            "mu_dec": -893.9,
+            "mu_dec_error": 1.4,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
         {
             "mu_ra": -159.82,
             "mu_ra_error": 1.55,
@@ -361,6 +427,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "mu_ra": -149.8,
+            "mu_ra_error": 3.6,
+            "mu_dec": -960.7,
+            "mu_dec_error": 3.5,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "RadialVelocities": [
@@ -400,17 +475,17 @@
             "other_references": null
         },
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/2M1507.fits",
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J1507-16.csv",
             "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/nir_spectra/2M1507.fits",
+            "local_spectrum": null,
             "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2003-08-12T00:00:00",
-            "comments": null,
-            "reference": "Burg07.655",
-            "other_references": null
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2013-04-30T00:00:00",
+            "comments": "Multiple observation dates.",
+            "reference": "Manj19",
+            "other_references": "Apai12.13176, Yang15"
         },
         {
             "access_url": "https://s3.amazonaws.com/bdnyc/L5_2MASSJ1507-1627.fits",
@@ -426,17 +501,17 @@
             "other_references": null
         },
         {
-            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J1507-16.csv",
+            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/2M1507.fits",
             "original_spectrum": null,
-            "local_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/2M1507.fits",
             "regime": "nir",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2013-04-30T00:00:00",
-            "comments": "Multiple observation dates.",
-            "reference": "Manj19",
-            "other_references": "Apai12.13176, Yang15"
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-08-12T00:00:00",
+            "comments": null,
+            "reference": "Burg07.655",
+            "other_references": null
         }
     ],
     "SpectralTypes": [

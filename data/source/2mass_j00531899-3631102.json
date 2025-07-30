@@ -17,6 +17,9 @@
             "other_name": "2MASS J00531899-3631102"
         },
         {
+            "other_name": "CWISE J005319.06-363111.8"
+        },
+        {
             "other_name": "Gaia DR2 5001668709601989248"
         },
         {
@@ -149,6 +152,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 12.313,
+            "magnitude_error": 0.012,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W2",
             "magnitude": 12.029,
             "magnitude_error": 0.022,
@@ -158,6 +170,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W2",
+            "magnitude": 12.045,
+            "magnitude_error": 0.008,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W3",
             "magnitude": 11.52,
             "magnitude_error": 0.147,
@@ -165,6 +186,15 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 11.505,
+            "magnitude_error": 0.173,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         },
         {
             "band": "WISE.W4",
@@ -196,6 +226,15 @@
             "reference": "GaiaEDR3"
         },
         {
+            "mu_ra": 44.1,
+            "mu_ra_error": 4.2,
+            "mu_dec": -103.3,
+            "mu_dec_error": 4.2,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "mu_ra": 32.0,
             "mu_ra_error": 7.0,
             "mu_dec": -92.0,
@@ -206,6 +245,19 @@
         }
     ],
     "Spectra": [
+        {
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M0053_total.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "ESO VLT",
+            "instrument": "XShooter",
+            "mode": "Echelle",
+            "observation_date": "2009-10-16T00:00:00",
+            "comments": null,
+            "reference": "Manj16",
+            "other_references": null
+        },
         {
             "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0053-3631_080907.fits",
             "original_spectrum": null,
@@ -223,7 +275,7 @@
             "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M0053_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
-            "regime": "nir",
+            "regime": "optical",
             "telescope": "ESO VLT",
             "instrument": "XShooter",
             "mode": "Echelle",
@@ -243,19 +295,6 @@
             "observation_date": "2003-12-23T00:00:00",
             "comments": null,
             "reference": "Kirk08",
-            "other_references": null
-        },
-        {
-            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M0053_total.fits",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "optical",
-            "telescope": "ESO VLT",
-            "instrument": "XShooter",
-            "mode": "Echelle",
-            "observation_date": "2009-10-16T00:00:00",
-            "comments": null,
-            "reference": "Manj16",
             "other_references": null
         }
     ],

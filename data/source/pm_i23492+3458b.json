@@ -18,6 +18,9 @@
         },
         {
             "other_name": "PM J23492+3458B"
+        },
+        {
+            "other_name": "WISEA J234915.11+345854.9"
         }
     ],
     "Parallaxes": [
@@ -45,6 +48,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Kirk21"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 18.6,
+            "magnitude_error": 0.04,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 19.86,
+            "magnitude_error": 0.03,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
         },
         {
             "band": "WFCAM.H",
@@ -81,9 +102,27 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Best20.42"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 12.136,
+            "magnitude_error": 0.317,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": -1.4,
+            "mu_ra_error": 3.1,
+            "mu_dec": -101.3,
+            "mu_dec_error": 4.3,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
         {
             "mu_ra": -7.3,
             "mu_ra_error": 2.1,

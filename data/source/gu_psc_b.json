@@ -56,6 +56,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J011236.55+170429.7"
+        },
+        {
             "other_name": "GU PSC B"
         },
         {
@@ -172,6 +175,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 15.647,
+            "magnitude_error": 0.025,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W2",
             "magnitude": 15.41,
             "magnitude_error": 0.22,
@@ -179,6 +191,15 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 15.149,
+            "magnitude_error": 0.033,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         },
         {
             "band": "WISE.W3",
@@ -210,6 +231,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 64.2,
+            "mu_ra_error": 22.8,
+            "mu_dec": -44.3,
+            "mu_dec_error": 22.3,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "mu_ra": 98.0,
             "mu_ra_error": 15.0,
             "mu_dec": -92.0,
@@ -230,19 +260,6 @@
     ],
     "Spectra": [
         {
-            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1104/type/native/viewcontent",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/GNIRS/GU Psc b_gnirs.txt",
-            "regime": "nir",
-            "telescope": "Gemini North",
-            "instrument": "GNIRS",
-            "mode": "SXD",
-            "observation_date": "2012-11-14T00:00:00",
-            "comments": null,
-            "reference": "Liu_13.85",
-            "other_references": null
-        },
-        {
             "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/GUPSCB.csv",
             "original_spectrum": null,
             "local_spectrum": null,
@@ -254,6 +271,19 @@
             "comments": null,
             "reference": "Manj19",
             "other_references": "Apai15.14241"
+        },
+        {
+            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1104/type/native/viewcontent",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/GNIRS/GU Psc b_gnirs.txt",
+            "regime": "nir",
+            "telescope": "Gemini North",
+            "instrument": "GNIRS",
+            "mode": "SXD",
+            "observation_date": "2012-11-14T00:00:00",
+            "comments": null,
+            "reference": "Liu_13.85",
+            "other_references": null
         }
     ],
     "SpectralTypes": [

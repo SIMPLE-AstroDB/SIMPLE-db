@@ -59,6 +59,9 @@
             "other_name": "2MASS J05395200-0059019"
         },
         {
+            "other_name": "CWISE J053952.16-005856.5"
+        },
+        {
             "other_name": "Gaia DR2 3217523558083415040"
         },
         {
@@ -214,6 +217,42 @@
             "reference": "Legg02.452"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 19.08,
+            "magnitude_error": 0.11,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 21.23,
+            "magnitude_error": 0.05,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 16.1,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 17.16,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "SDSS.g",
             "magnitude": 23.41176,
             "magnitude_error": 0.2656564,
@@ -331,6 +370,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 11.891,
+            "magnitude_error": 0.012,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W2",
             "magnitude": 11.578,
             "magnitude_error": 0.021,
@@ -340,6 +388,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W2",
+            "magnitude": 11.604,
+            "magnitude_error": 0.009,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W3",
             "magnitude": 11.411,
             "magnitude_error": null,
@@ -347,6 +404,15 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 11.716,
+            "magnitude_error": 0.288,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         },
         {
             "band": "WISE.W4",
@@ -359,6 +425,15 @@
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": 158.1,
+            "mu_ra_error": 1.3,
+            "mu_dec": 325.5,
+            "mu_dec_error": 1.4,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
         {
             "mu_ra": 162.4461462279315,
             "mu_ra_error": 0.7888224833630593,
@@ -376,6 +451,15 @@
             "adopted": false,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "mu_ra": 168.6,
+            "mu_ra_error": 4.3,
+            "mu_dec": 327.5,
+            "mu_dec_error": 4.4,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         },
         {
             "mu_ra": 157.77,
@@ -424,6 +508,32 @@
             "other_references": null
         },
         {
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/SD0539_total.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "ESO VLT",
+            "instrument": "XShooter",
+            "mode": "Echelle",
+            "observation_date": "2010-01-17T00:00:00",
+            "comments": null,
+            "reference": "Manj16",
+            "other_references": null
+        },
+        {
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J0539-00.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2012-03-01T00:00:00",
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai11.12550, Buen14"
+        },
+        {
             "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/U50061_0539-0059_CUS-NP.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U50061_0539-0059_CUS-NP.fits",
@@ -453,7 +563,7 @@
             "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/SD0539_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
-            "regime": "nir",
+            "regime": "optical",
             "telescope": "ESO VLT",
             "instrument": "XShooter",
             "mode": "Echelle",
@@ -461,19 +571,6 @@
             "comments": null,
             "reference": "Manj16",
             "other_references": null
-        },
-        {
-            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J0539-00.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "nir",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2012-03-01T00:00:00",
-            "comments": null,
-            "reference": "Manj19",
-            "other_references": "Apai11.12550, Buen14"
         },
         {
             "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1124/type/native/viewcontent",
@@ -486,19 +583,6 @@
             "observation_date": "1999-03-20T00:00:00",
             "comments": null,
             "reference": "Fan_00",
-            "other_references": null
-        },
-        {
-            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/SD0539_total.fits",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "optical",
-            "telescope": "ESO VLT",
-            "instrument": "XShooter",
-            "mode": "Echelle",
-            "observation_date": "2010-01-17T00:00:00",
-            "comments": null,
-            "reference": "Manj16",
             "other_references": null
         }
     ],

@@ -91,6 +91,9 @@
             "other_name": "V* HN Peg B"
         },
         {
+            "other_name": "WISEA J214428.75+144606.4"
+        },
+        {
             "other_name": "WISEPJ214428.77+144606.2"
         }
     ],
@@ -220,6 +223,24 @@
             "reference": "Luhm07.570"
         },
         {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 18.1,
+            "magnitude_error": 0.08,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 19.65,
+            "magnitude_error": 0.12,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 15.4,
             "magnitude_error": 0.03,
@@ -258,6 +279,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 203.9,
+            "mu_ra_error": 14.3,
+            "mu_dec": -131.4,
+            "mu_dec_error": 8.7,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": 229.65,
             "mu_ra_error": 0.49,
             "mu_dec": -113.3,
@@ -291,19 +321,6 @@
             "other_references": null
         },
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/HN_Peg_B.txt",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/HN_Peg_B.txt",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2006-06-15T00:00:00",
-            "comments": null,
-            "reference": "Luhm07.570",
-            "other_references": null
-        },
-        {
             "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/HNPEGB.csv",
             "original_spectrum": null,
             "local_spectrum": null,
@@ -315,6 +332,19 @@
             "comments": null,
             "reference": "Manj19",
             "other_references": "Apai15.14241, Zhou18"
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/HN_Peg_B.txt",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/HN_Peg_B.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2006-06-15T00:00:00",
+            "comments": null,
+            "reference": "Luhm07.570",
+            "other_references": null
         }
     ],
     "SpectralTypes": [

@@ -14,6 +14,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J041023.09+150236.9"
+        },
+        {
             "other_name": "WISE J041022.71+150248.4"
         },
         {
@@ -187,6 +190,33 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Legg13"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 18.018,
+            "magnitude_error": 0.171,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.104,
+            "magnitude_error": 0.017,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 12.314,
+            "magnitude_error": 0.5,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         }
     ],
     "ProperMotions": [
@@ -195,9 +225,18 @@
             "mu_ra_error": 1.1,
             "mu_dec": -2213.3,
             "mu_dec_error": 1.1,
-            "adopted": null,
+            "adopted": true,
             "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "mu_ra": 976.8,
+            "mu_ra_error": 23.6,
+            "mu_dec": -2245.8,
+            "mu_dec_error": 22.7,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "Spectra": [
