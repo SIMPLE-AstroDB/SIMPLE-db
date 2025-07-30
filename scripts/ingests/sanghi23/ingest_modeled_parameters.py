@@ -21,7 +21,7 @@ from astropy.table import Table
 
 logger = logging.getLogger("AstroDB")
 logger.setLevel(logging.INFO)
-SAVE_DB = False  # save the data files in addition to modifying the .db file
+SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 SCHEMA_PATH = "simple/schema.yaml" 
 
@@ -54,7 +54,7 @@ evo_table = ascii.read(
     delimiter=",", #specifies the character that separates datafields
 )
 
-source_exists_counter = 0
+teff_ingested_counter, logg_ingested_counter, mass_ingested_counter, radius_ingested_counter, lbol_ingested_counter = 0, 0, 0, 0, 0
 skipped, reason = [], []
 
 
@@ -105,6 +105,14 @@ for row in atmo_table:
                     )
                 )
                 conn.commit()
+            if(param_counter == 1):
+                teff_ingested_counter += 1
+            elif(param_counter == 2):
+                radius_ingested_counter += 1
+            elif(param_counter == 3):
+                logg_ingested_counter += 1
+            else:
+                lbol_ingested_counter += 1
         except IndexError:
             skipped.append(row["name"])
             reason.append("no source found, atmo model")
@@ -156,6 +164,14 @@ for row in evo_table:
                     )
                 )
                 conn.commit()
+            if(param_counter == 1):
+                teff_ingested_counter += 1
+            elif(param_counter == 2):
+                radius_ingested_counter += 1
+            elif(param_counter == 3):
+                mass_ingested_counter += 1
+            else:
+                logg_ingested_counter += 1
         except IndexError:
             skipped.append(row["name"])
             reason.append("no source found, evo model")
@@ -169,6 +185,12 @@ skipped_table.write(
     overwrite=True,
     format="ascii.ecsv",
 )
+
+print("teff ingested: " + str(teff_ingested_counter)) #2106
+print("mass ingested: " + str(mass_ingested_counter)) #1053
+print("radius ingested: " + str(radius_ingested_counter)) #2106
+print("logg ingested: " + str(logg_ingested_counter)) #2106
+print("lbol ingested: " + str(lbol_ingested_counter)) #1053
 
 if SAVE_DB:
     db.save_database(directory="data/")

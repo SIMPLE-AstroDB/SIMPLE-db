@@ -216,11 +216,12 @@ def test_spectral_types(db):
 @pytest.mark.parametrize(
     ("param", "n_counts"),
     [
-        ("T eff", 176),
-        ("log g", 176),
-        ("mass", 176),
-        ("radius", 175),
+        ("T eff", 2282),
+        ("log g", 2282),
+        ("mass", 1229),
+        ("radius", 2281),
         ("metallicity", 2),
+        ("L bol", 1053)
     ],
 )
 def test_modeledparameters_params(db, param, n_counts):
