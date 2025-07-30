@@ -16,6 +16,8 @@ sys.path.append(".")
 from simple import REFERENCE_TABLES
 from astropy.io import ascii
 import logging
+from astropy.table import Table
+
 
 logger = logging.getLogger("AstroDB")
 logger.setLevel(logging.INFO)
@@ -105,7 +107,7 @@ for row in atmo_table:
                 conn.commit()
         except IndexError:
             skipped.append(row["name"])
-            reason.append("no source found")
+            reason.append("no source found, atmo model")
 
 for row in evo_table:
     source_name = db.search_object(row["name"])
@@ -156,7 +158,7 @@ for row in evo_table:
                 conn.commit()
         except IndexError:
             skipped.append(row["name"])
-            reason.append("no source found")
+            reason.append("no source found, evo model")
 
 logger.info("done")
 
