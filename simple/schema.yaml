@@ -1150,7 +1150,6 @@ tables:
       Note that *parameter* is linked to the Parameters table. "
     primaryKey: 
     - "#ModeledParameters.source"
-    - "#ModeledParameters.model"
     - "#ModeledParameters.parameter"
     - "#ModeledParameters.reference"
 
@@ -1162,12 +1161,6 @@ tables:
       description: Unique identifier for the source; links to Sources table
       ivoa:ucd: meta.id;meta.main
       nullable: false
-    - name: model
-      "@id": "#ModeledParameters.model"
-      datatype: string
-      length: 30
-      description: Model name
-      ivoa:ucd: meta.id
     - name: parameter
       "@id": "#ModeledParameters.parameter"
       datatype: string
@@ -1181,15 +1174,10 @@ tables:
       description: Value of the parameter
       nullable: false
       ivoa:ucd: stat.value;meta.modelled
-    - name: lower_error
-      "@id": "#ModeledParameters.lower_error"
+    - name: value_error
+      "@id": "#ModeledParameters.value_error"
       datatype: double
-      description: Lower uncertainty of the parameter value
-      ivoa:ucd: stat.error;meta.modelled
-    - name: upper_error
-      "@id": "#ModeledParameters.upper_error"
-      datatype: double
-      description: Upper uncertainty of the parameter value
+      description: Uncertainty of the parameter value
       ivoa:ucd: stat.error;meta.modelled
     - name: unit
       "@id": "#ModeledParameters.unit"
