@@ -168,6 +168,24 @@
             "reference": "Burg06.585"
         },
         {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 18.87,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 20.65,
+            "magnitude_error": 0.06,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "SDSS.g",
             "magnitude": 24.567,
             "magnitude_error": 0.747,
@@ -332,6 +350,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -231.8,
+            "mu_ra_error": 5.0,
+            "mu_dec": -276.8,
+            "mu_dec_error": 2.9,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -217.1,
             "mu_ra_error": 0.7,
             "mu_dec": -280.9,
@@ -387,19 +414,6 @@
             "other_references": null
         },
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/spex-prism_SDSSpJ111010.01%2B011613.1_20040311_BUR06D.txt",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_SDSSpJ111010.01+011613.1_20040311_BUR06D.txt",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2004-03-11T00:00:00",
-            "comments": null,
-            "reference": "Burg06.1095",
-            "other_references": null
-        },
-        {
             "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/S1110.csv",
             "original_spectrum": null,
             "local_spectrum": null,
@@ -411,6 +425,19 @@
             "comments": null,
             "reference": "Manj19",
             "other_references": "Apai15.14241"
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/spex-prism_SDSSpJ111010.01%2B011613.1_20040311_BUR06D.txt",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_SDSSpJ111010.01+011613.1_20040311_BUR06D.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2004-03-11T00:00:00",
+            "comments": null,
+            "reference": "Burg06.1095",
+            "other_references": null
         }
     ],
     "SpectralTypes": [

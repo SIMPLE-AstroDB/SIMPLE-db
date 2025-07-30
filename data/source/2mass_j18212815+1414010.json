@@ -132,6 +132,42 @@
             "reference": "Kirk21"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 18.45,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 20.65,
+            "magnitude_error": 0.06,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 15.67,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 16.7,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 12.463,
             "magnitude_error": 0.021,
@@ -233,6 +269,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 230.4,
+            "mu_ra_error": 2.1,
+            "mu_dec": -247.1,
+            "mu_dec_error": 2.6,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": 227.32440020926626,
             "mu_ra_error": 0.5404401639415449,
             "mu_dec": -246.40941735363936,
@@ -293,19 +338,6 @@
             "other_references": null
         },
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/j1821%2B14prismtcadam.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/j1821+14prismtcadam.fits",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2005-08-10T00:00:00",
-            "comments": null,
-            "reference": "Loop08.528",
-            "other_references": null
-        },
-        {
             "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J1821%2B14.csv",
             "original_spectrum": null,
             "local_spectrum": null,
@@ -317,6 +349,19 @@
             "comments": "Multiple observation dates.",
             "reference": "Manj19",
             "other_references": "Apai12.13176, Yang15"
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/j1821%2B14prismtcadam.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/j1821+14prismtcadam.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2005-08-10T00:00:00",
+            "comments": null,
+            "reference": "Loop08.528",
+            "other_references": null
         }
     ],
     "SpectralTypes": [

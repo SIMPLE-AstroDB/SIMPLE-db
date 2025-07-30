@@ -150,6 +150,42 @@
             "reference": "Patt06"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 17.98,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 20.22,
+            "magnitude_error": 0.05,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 15.53,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 16.52,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 12.45,
             "magnitude_error": 0.05,
@@ -214,6 +250,15 @@
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": -301.8,
+            "mu_ra_error": 2.1,
+            "mu_dec": -7.6,
+            "mu_dec_error": 2.2,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
         {
             "mu_ra": -313.48060684417385,
             "mu_ra_error": 1.1663319587401875,
@@ -301,19 +346,6 @@
             "other_references": null
         },
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/spex_prism_kelu-1_060411.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/nir_spectra/spex_prism_kelu-1_060411.fits",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2006-04-11T00:00:00",
-            "comments": "standard",
-            "reference": "Burg07.557",
-            "other_references": null
-        },
-        {
             "access_url": "https://s3.amazonaws.com/bdnyc/L2_Kelu-1AB.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/IRTF Library (Prism+LXD)/L2_Kelu-1AB.fits",
@@ -324,6 +356,19 @@
             "observation_date": "2009-12-01T00:00:00",
             "comments": null,
             "reference": "Rayn09",
+            "other_references": null
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/spex_prism_kelu-1_060411.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/spex_prism_kelu-1_060411.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2006-04-11T00:00:00",
+            "comments": "standard",
+            "reference": "Burg07.557",
             "other_references": null
         },
         {

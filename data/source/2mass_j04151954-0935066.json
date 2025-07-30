@@ -227,6 +227,15 @@
             "reference": "Goli04.3516"
         },
         {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 18.48,
+            "magnitude_error": 0.09,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "SDSS.i",
             "magnitude": 23.45,
             "magnitude_error": 0.09,
@@ -373,6 +382,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 2218.5,
+            "mu_ra_error": 5.7,
+            "mu_dec": 536.1,
+            "mu_dec_error": 1.8,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": 2214.3,
             "mu_ra_error": 1.2,
             "mu_dec": 535.9,
@@ -406,19 +424,6 @@
             "other_references": null
         },
         {
-            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J04151954-0935066.fits",
-            "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0415-0935_IRS_spectrum.dat",
-            "local_spectrum": null,
-            "regime": "mir",
-            "telescope": "Spitzer",
-            "instrument": "IRS",
-            "mode": "SL",
-            "observation_date": "2005-09-06T00:00:00",
-            "comments": "SL2,SL1, There are multiple observation dates",
-            "reference": "Suar22",
-            "other_references": null
-        },
-        {
             "access_url": "https://s3.amazonaws.com/bdnyc/IRS/0415-0935.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/0415-0935.txt",
@@ -432,29 +437,16 @@
             "other_references": null
         },
         {
-            "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/SpeX/Prism/IRTF_SpeX_2MASS%2BJ04151954-0935066_2003-09-17.fits",
-            "original_spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSIJ0415195-093506_20030917_BUR04B.txt",
-            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_2MASSIJ0415195-093506_20030917_BUR04B.txt",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2003-09-17T00:00:00",
-            "comments": null,
-            "reference": "Burg04.2856",
-            "other_references": null
-        },
-        {
-            "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/AKARI_2MASS%2BJ04151954-0935066_2007-08-23.fits",
-            "original_spectrum": null,
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J04151954-0935066.fits",
+            "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0415-0935_IRS_spectrum.dat",
             "local_spectrum": null,
-            "regime": "nir",
-            "telescope": "AKARI",
-            "instrument": "IRC",
-            "mode": "IRC04",
-            "observation_date": "2007-08-23T00:00:00",
-            "comments": null,
-            "reference": "Sora12",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2005-09-06T00:00:00",
+            "comments": "SL2,SL1, There are multiple observation dates",
+            "reference": "Suar22",
             "other_references": null
         },
         {
@@ -481,6 +473,32 @@
             "observation_date": "2022-10-16T00:00:00",
             "comments": null,
             "reference": "Alej25",
+            "other_references": null
+        },
+        {
+            "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/AKARI_2MASS%2BJ04151954-0935066_2007-08-23.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "AKARI",
+            "instrument": "IRC",
+            "mode": "IRC04",
+            "observation_date": "2007-08-23T00:00:00",
+            "comments": null,
+            "reference": "Sora12",
+            "other_references": null
+        },
+        {
+            "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/SpeX/Prism/IRTF_SpeX_2MASS%2BJ04151954-0935066_2003-09-17.fits",
+            "original_spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSIJ0415195-093506_20030917_BUR04B.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_2MASSIJ0415195-093506_20030917_BUR04B.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-09-17T00:00:00",
+            "comments": null,
+            "reference": "Burg04.2856",
             "other_references": null
         },
         {

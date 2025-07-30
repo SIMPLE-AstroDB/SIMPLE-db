@@ -86,6 +86,24 @@
             "reference": "Kirk21"
         },
         {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 19.06,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 20.8,
+            "magnitude_error": 0.08,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 16.35,
             "magnitude_error": 0.03,
@@ -133,11 +151,20 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -88.3,
+            "mu_ra_error": 2.3,
+            "mu_dec": -99.7,
+            "mu_dec_error": 3.0,
+            "adopted": true,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -60.7,
             "mu_ra_error": 4.5,
             "mu_dec": -106.6,
             "mu_dec_error": 3.6,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Best20.257"
         },

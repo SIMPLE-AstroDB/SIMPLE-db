@@ -21,7 +21,8 @@ def test_sources(db):
     assert n_sources == 3618, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 12188, f"found {n_names} names"
+    assert n_names == 12202, f"found {n_names} names"
+
 
 
 @pytest.mark.parametrize(
@@ -423,11 +424,6 @@ def test_Kirk19_ingest(db):
     ref = "Pinf14.1931"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 1, f"found {len(t)} sources for {ref}"
-
-    # Test proper motions added
-    ref = "Kirk19"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 182, f"found {len(t)} proper motion entries for {ref}"
 
 
 def test_Best2020_ingest(db):

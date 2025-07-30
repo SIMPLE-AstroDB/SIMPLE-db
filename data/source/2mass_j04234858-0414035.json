@@ -156,6 +156,42 @@
             "reference": "Patt06"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 20.13,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 21.93,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 16.59,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 17.77,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 13.51,
             "magnitude_error": 0.03,
@@ -221,6 +257,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -321.9,
+            "mu_ra_error": 2.0,
+            "mu_dec": 82.2,
+            "mu_dec_error": 1.4,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -321.6,
             "mu_ra_error": 1.0,
             "mu_dec": 88.1,
@@ -285,6 +330,19 @@
             "other_references": null
         },
         {
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/SD0423_total.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "ESO VLT",
+            "instrument": "XShooter",
+            "mode": "Echelle",
+            "observation_date": "2009-12-26T00:00:00",
+            "comments": null,
+            "reference": "Manj16",
+            "other_references": null
+        },
+        {
             "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1094/type/native/viewcontent",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/2M0423.fits",
@@ -301,7 +359,7 @@
             "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/SD0423_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
-            "regime": "nir",
+            "regime": "optical",
             "telescope": "ESO VLT",
             "instrument": "XShooter",
             "mode": "Echelle",
@@ -321,19 +379,6 @@
             "observation_date": "2002-01-25T03:54:52.508000",
             "comments": null,
             "reference": "Cruz03",
-            "other_references": null
-        },
-        {
-            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/SD0423_total.fits",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "optical",
-            "telescope": "ESO VLT",
-            "instrument": "XShooter",
-            "mode": "Echelle",
-            "observation_date": "2009-12-26T00:00:00",
-            "comments": null,
-            "reference": "Manj16",
             "other_references": null
         }
     ],

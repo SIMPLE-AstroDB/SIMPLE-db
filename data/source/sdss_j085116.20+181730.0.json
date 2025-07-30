@@ -55,6 +55,24 @@
             "reference": "Cutr03"
         },
         {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 19.02,
+            "magnitude_error": 0.1,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 19.92,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 15.732,
             "magnitude_error": 0.012,
@@ -111,6 +129,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -179.3,
+            "mu_ra_error": 3.8,
+            "mu_dec": -39.1,
+            "mu_dec_error": 4.4,
+            "adopted": true,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -195.0,
             "mu_ra_error": 18.0,
             "mu_dec": -50.0,
@@ -124,7 +151,7 @@
             "mu_ra_error": 7.9,
             "mu_dec": -37.0,
             "mu_dec_error": 8.7,
-            "adopted": true,
+            "adopted": false,
             "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
             "reference": "Maro21"
         }

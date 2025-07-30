@@ -209,6 +209,51 @@
             "reference": "Patt06"
         },
         {
+            "band": "PAN-STARRS/PS1.g",
+            "magnitude": 20.57,
+            "magnitude_error": 0.04,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 16.21,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 18.49,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 13.85,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 14.76,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "SDSS.g",
             "magnitude": 20.962,
             "magnitude_error": 0.034,
@@ -364,6 +409,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -344.0,
+            "mu_ra_error": 2.3,
+            "mu_dec": -707.1,
+            "mu_dec_error": 1.9,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -340.73,
             "mu_ra_error": 2.48,
             "mu_dec": -707.98,
@@ -427,19 +481,6 @@
     ],
     "Spectra": [
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/M9V_LHS2924.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/SpeX/IRTF Library (Prism+LXD)/M9V_LHS2924.fits",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "SXD",
-            "observation_date": "2003-02-23T00:00:00",
-            "comments": "Also ref Cush05",
-            "reference": "Rayn09",
-            "other_references": null
-        },
-        {
             "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/1428%2B3310.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/1428+3310.txt",
@@ -450,6 +491,19 @@
             "observation_date": "2004-03-12T00:00:00",
             "comments": null,
             "reference": "Burg06.1007",
+            "other_references": null
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/M9V_LHS2924.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/SpeX/IRTF Library (Prism+LXD)/M9V_LHS2924.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "SXD",
+            "observation_date": "2003-02-23T00:00:00",
+            "comments": "Also ref Cush05",
+            "reference": "Rayn09",
             "other_references": null
         },
         {

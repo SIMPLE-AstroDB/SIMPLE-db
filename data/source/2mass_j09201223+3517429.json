@@ -70,6 +70,33 @@
             "reference": "Cutr03"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 20.85,
+            "magnitude_error": 0.03,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 17.71,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 18.84,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.J",
             "magnitude": 15.468,
             "magnitude_error": 0.008,
@@ -117,6 +144,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -182.1,
+            "mu_ra_error": 1.9,
+            "mu_dec": -198.7,
+            "mu_dec_error": 2.4,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -186.3,
             "mu_ra_error": 1.1,
             "mu_dec": -202.4,
@@ -137,19 +173,6 @@
     ],
     "Spectra": [
         {
-            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J09201223%2B3517429.fits",
-            "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0920%2B3517_IRS_spectrum.dat",
-            "local_spectrum": null,
-            "regime": "mir",
-            "telescope": "Spitzer",
-            "instrument": "IRS",
-            "mode": "SL",
-            "observation_date": "2004-04-19T00:00:00",
-            "comments": "SL2,SL1",
-            "reference": "Suar22",
-            "other_references": null
-        },
-        {
             "access_url": "https://s3.amazonaws.com/bdnyc/IRS/0920%2B3517.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/0920+3517.txt",
@@ -160,6 +183,19 @@
             "observation_date": "2004-04-19T18:32:06.358000",
             "comments": null,
             "reference": "PID51",
+            "other_references": null
+        },
+        {
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J09201223%2B3517429.fits",
+            "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0920%2B3517_IRS_spectrum.dat",
+            "local_spectrum": null,
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2004-04-19T00:00:00",
+            "comments": "SL2,SL1",
+            "reference": "Suar22",
             "other_references": null
         },
         {

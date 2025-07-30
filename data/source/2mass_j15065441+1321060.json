@@ -178,6 +178,42 @@
             "reference": "Patt06"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 18.02,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 20.27,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 15.51,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 16.49,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "SDSS.g",
             "magnitude": 22.97,
             "magnitude_error": 0.149,
@@ -315,6 +351,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -1071.9,
+            "mu_ra_error": 2.8,
+            "mu_dec": -5.0,
+            "mu_dec_error": 2.2,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -1066.8,
             "mu_ra_error": 4.4,
             "mu_dec": -14.3,
@@ -397,19 +442,6 @@
             "other_references": null
         },
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/u11291_1506%2B1321_050323.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/nir_spectra/u11291_1506+1321_050323.fits",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2005-03-23T00:00:00",
-            "comments": null,
-            "reference": "Cruz18",
-            "other_references": null
-        },
-        {
             "access_url": "https://s3.amazonaws.com/bdnyc/L3_2MASSJ1506%2B1321.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/IRTF Library (Prism+LXD)/L3_2MASSJ1506+1321.fits",
@@ -420,6 +452,19 @@
             "observation_date": "2009-12-01T00:00:00",
             "comments": null,
             "reference": "Cush05",
+            "other_references": null
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/u11291_1506%2B1321_050323.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/u11291_1506+1321_050323.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2005-03-23T00:00:00",
+            "comments": null,
+            "reference": "Cruz18",
             "other_references": null
         }
     ],

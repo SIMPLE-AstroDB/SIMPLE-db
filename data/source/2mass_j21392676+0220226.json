@@ -123,6 +123,24 @@
             "reference": "Kirk21"
         },
         {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 17.56,
+            "magnitude_error": 0.07,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 18.9,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "SDSS.g",
             "magnitude": 25.15528,
             "magnitude_error": 0.4940774,
@@ -251,6 +269,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 490.6,
+            "mu_ra_error": 1.6,
+            "mu_dec": 126.6,
+            "mu_dec_error": 2.7,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": 475.3,
             "mu_ra_error": 6.7,
             "mu_dec": 137.0,
@@ -306,19 +333,6 @@
             "other_references": null
         },
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/U20912.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U20912.fits",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2003-09-03T00:00:00",
-            "comments": null,
-            "reference": "Burg06.1067",
-            "other_references": null
-        },
-        {
             "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J2139%2B02.csv",
             "original_spectrum": null,
             "local_spectrum": null,
@@ -330,6 +344,19 @@
             "comments": null,
             "reference": "Manj19",
             "other_references": "Apai10.12341, Apai13"
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/U20912.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/U20912.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-09-03T00:00:00",
+            "comments": null,
+            "reference": "Burg06.1067",
+            "other_references": null
         },
         {
             "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/U20912.fits",

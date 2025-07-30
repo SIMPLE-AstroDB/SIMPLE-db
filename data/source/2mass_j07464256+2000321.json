@@ -121,6 +121,51 @@
             "reference": "Patt06"
         },
         {
+            "band": "PAN-STARRS/PS1.g",
+            "magnitude": 20.8,
+            "magnitude_error": 0.05,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 16.13,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 18.57,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 13.7,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 14.68,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 11.01,
             "magnitude_error": 0.03,
@@ -186,6 +231,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -375.0,
+            "mu_ra_error": 2.0,
+            "mu_dec": -56.2,
+            "mu_dec_error": 1.1,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -365.1,
             "mu_ra_error": 0.8,
             "mu_dec": -53.1,
@@ -215,19 +269,6 @@
     ],
     "Spectra": [
         {
-            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J07464256%2B2000321.fits",
-            "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0746%2B2000_IRS_spectrum.dat",
-            "local_spectrum": null,
-            "regime": "mir",
-            "telescope": "Spitzer",
-            "instrument": "IRS",
-            "mode": "SL",
-            "observation_date": "2004-03-27T00:00:00",
-            "comments": "SL2,SL1,LL2,LL1",
-            "reference": "Suar22",
-            "other_references": null
-        },
-        {
             "access_url": "https://s3.amazonaws.com/bdnyc/0746%2B2000.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/0746+2000.txt",
@@ -238,6 +279,19 @@
             "observation_date": "2004-03-27T00:32:11.624000",
             "comments": null,
             "reference": "PID51",
+            "other_references": null
+        },
+        {
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J07464256%2B2000321.fits",
+            "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0746%2B2000_IRS_spectrum.dat",
+            "local_spectrum": null,
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2004-03-27T00:00:00",
+            "comments": "SL2,SL1,LL2,LL1",
+            "reference": "Suar22",
             "other_references": null
         },
         {
@@ -254,19 +308,6 @@
             "other_references": null
         },
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0746%2B2000_U10668.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0746+2000_U10668.fits",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2007-11-14T00:00:00",
-            "comments": null,
-            "reference": "Cruz18",
-            "other_references": null
-        },
-        {
             "access_url": "https://s3.amazonaws.com/bdnyc/L0.5_2MASSJ0746%2B2000AB.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/IRTF Library (Prism+LXD)/L0.5_2MASSJ0746+2000AB.fits",
@@ -277,6 +318,19 @@
             "observation_date": "2009-12-01T00:00:00",
             "comments": null,
             "reference": "Rayn09",
+            "other_references": null
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0746%2B2000_U10668.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0746+2000_U10668.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2007-11-14T00:00:00",
+            "comments": null,
+            "reference": "Cruz18",
             "other_references": null
         },
         {

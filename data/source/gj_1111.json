@@ -214,6 +214,15 @@
             "reference": "Diet14"
         },
         {
+            "band": "PAN-STARRS/PS1.g",
+            "magnitude": 15.48,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 7.666,
             "magnitude_error": 0.024,
@@ -324,6 +333,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -1132.9,
+            "mu_ra_error": 7.9,
+            "mu_dec": -607.3,
+            "mu_dec_error": 3.0,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -1113.7447249542556,
             "mu_ra_error": 0.2462166259075543,
             "mu_dec": -612.3705447326485,
@@ -353,6 +371,19 @@
     ],
     "Spectra": [
         {
+            "access_url": "https://s3.amazonaws.com/bdnyc/0829%2B2646+%2814-35um%29.txt",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/IRS/0829+2646 (14-35um).txt",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "LL",
+            "observation_date": "2006-05-18T00:00:00",
+            "comments": null,
+            "reference": "PID20409",
+            "other_references": null
+        },
+        {
             "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J08294949%2B2646348.fits",
             "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0829%2B2646_IRS_spectrum.dat",
             "local_spectrum": null,
@@ -376,19 +407,6 @@
             "observation_date": "2006-01-14T00:00:00",
             "comments": null,
             "reference": "Cush06.614",
-            "other_references": null
-        },
-        {
-            "access_url": "https://s3.amazonaws.com/bdnyc/0829%2B2646+%2814-35um%29.txt",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/IRS/0829+2646 (14-35um).txt",
-            "regime": "mir",
-            "telescope": "Spitzer",
-            "instrument": "IRS",
-            "mode": "LL",
-            "observation_date": "2006-05-18T00:00:00",
-            "comments": null,
-            "reference": "PID20409",
             "other_references": null
         },
         {

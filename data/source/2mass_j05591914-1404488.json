@@ -230,6 +230,24 @@
             "reference": "Legg02.452"
         },
         {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 16.31,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 18.02,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "SDSS.i",
             "magnitude": 21.35,
             "magnitude_error": 0.09,
@@ -349,6 +367,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 569.0,
+            "mu_ra_error": 2.8,
+            "mu_dec": -339.6,
+            "mu_dec_error": 2.0,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": 564.02,
             "mu_ra_error": 0.63,
             "mu_dec": -345.63,
@@ -413,6 +440,19 @@
             "other_references": null
         },
         {
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J0559-14.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2011-10-16T00:00:00",
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai11.12550, Buen14"
+        },
+        {
             "access_url": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSJ05591914-1404488_20040311_BUR06C.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_2MASSJ05591914-1404488_20040311_BUR06C.txt",
@@ -437,19 +477,6 @@
             "comments": null,
             "reference": "Rayn09",
             "other_references": null
-        },
-        {
-            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J0559-14.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "nir",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2011-10-16T00:00:00",
-            "comments": null,
-            "reference": "Manj19",
-            "other_references": "Apai11.12550, Buen14"
         },
         {
             "access_url": "https://s3.amazonaws.com/bdnyc/2MASSJ05591914-1404488_T5_LRIS_Burg03.txt",

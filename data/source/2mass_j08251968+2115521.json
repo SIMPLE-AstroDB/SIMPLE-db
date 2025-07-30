@@ -257,6 +257,33 @@
             "reference": "Legg02.452"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 20.59,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 17.22,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 18.27,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "SDSS.g",
             "magnitude": 25.0543,
             "magnitude_error": 0.5424665,
@@ -403,6 +430,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -503.3,
+            "mu_ra_error": 1.7,
+            "mu_dec": -301.4,
+            "mu_dec_error": 2.0,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -504.76,
             "mu_ra_error": 0.53,
             "mu_dec": -287.91,
@@ -489,6 +525,19 @@
             "other_references": null
         },
         {
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J0825%2B21.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2012-05-09T00:00:00",
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Apai11.12550, Buen14"
+        },
+        {
             "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/u10721_050323.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/u10721_050323.fits",
@@ -513,19 +562,6 @@
             "comments": null,
             "reference": "Rayn09",
             "other_references": null
-        },
-        {
-            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J0825%2B21.csv",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "nir",
-            "telescope": "HST",
-            "instrument": "WFC3",
-            "mode": "G141 grism",
-            "observation_date": "2012-05-09T00:00:00",
-            "comments": null,
-            "reference": "Manj19",
-            "other_references": "Apai11.12550, Buen14"
         },
         {
             "access_url": "https://s3.amazonaws.com/bdnyc/U10721_lris_141298.fits",

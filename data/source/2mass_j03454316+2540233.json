@@ -202,6 +202,42 @@
             "reference": "Legg01"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 18.35,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 20.7,
+            "magnitude_error": 0.04,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 15.91,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 16.89,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 13.24,
             "magnitude_error": 0.002,
@@ -303,6 +339,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": -97.1,
+            "mu_ra_error": 1.6,
+            "mu_dec": -39.2,
+            "mu_dec_error": 2.3,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -96.73,
             "mu_ra_error": 0.2,
             "mu_dec": -35.4,
@@ -341,19 +386,6 @@
     ],
     "Spectra": [
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/2M0345_L0.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/nir_spectra/2M0345_L0.fits",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2003-09-05T00:00:00",
-            "comments": null,
-            "reference": "Burg06.1007",
-            "other_references": null
-        },
-        {
             "access_url": "https://s3.amazonaws.com/bdnyc/SINFONI/2M0345_SINFONIspeclib_JHK.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SINFONI/2M0345_SINFONIspeclib_JHK.fits",
@@ -364,6 +396,19 @@
             "observation_date": "2010-04-19T00:00:00",
             "comments": null,
             "reference": "Bonn14.127",
+            "other_references": null
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/2M0345_L0.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/nir_spectra/2M0345_L0.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-09-05T00:00:00",
+            "comments": null,
+            "reference": "Burg06.1007",
             "other_references": null
         },
         {
