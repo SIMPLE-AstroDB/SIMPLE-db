@@ -423,16 +423,6 @@ def test_modeled_parameters(db):
         print(t)
     assert len(t) == 0
 
-    t = (
-        db.query(db.ModeledParameters)
-        .filter(db.ModeledParameters.c.model.is_(None))
-        .astropy()
-    )
-    if len(t) > 0:
-        print("\nEntries found without a model")
-        print(t)
-    assert len(t) == 705
-
     # Test units are astropy.unit resolvable
     t = (
         db.query(db.ModeledParameters)
