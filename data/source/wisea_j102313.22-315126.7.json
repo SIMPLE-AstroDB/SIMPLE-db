@@ -14,6 +14,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J102313.14-315125.1"
+        },
+        {
             "other_name": "WISEA J102313.22-315126.7"
         }
     ],
@@ -26,15 +29,42 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "McMa13"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 18.463,
+            "magnitude_error": 0.176,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 15.619,
+            "magnitude_error": 0.04,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": -268.3,
+            "mu_ra_error": 56.0,
+            "mu_dec": 309.2,
+            "mu_dec_error": 65.6,
+            "adopted": true,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
         {
             "mu_ra": -220.0,
             "mu_ra_error": 110.0,
             "mu_dec": 250.0,
             "mu_dec_error": 110.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Tinn18"
         }

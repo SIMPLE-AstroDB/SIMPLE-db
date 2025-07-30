@@ -17,6 +17,9 @@
             "other_name": "2MASS J14313097+1436539"
         },
         {
+            "other_name": "CWISE J143130.49+143652.7"
+        },
+        {
             "other_name": "Gaia DR2 1228220944254775680"
         },
         {
@@ -104,6 +107,42 @@
             "reference": "GaiaEDR3"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 19.62,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 21.93,
+            "magnitude_error": 0.05,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 17.04,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 17.99,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.J",
             "magnitude": 15.087,
             "magnitude_error": 0.006,
@@ -120,9 +159,45 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 13.716,
+            "magnitude_error": 0.012,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.445,
+            "magnitude_error": 0.011,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 12.823,
+            "magnitude_error": 0.436,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": -425.4,
+            "mu_ra_error": 2.5,
+            "mu_dec": -77.1,
+            "mu_dec_error": 1.6,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
         {
             "mu_ra": -430.4154988600154,
             "mu_ra_error": 1.2883651932597913,
@@ -140,6 +215,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "mu_ra": -431.3,
+            "mu_ra_error": 5.4,
+            "mu_dec": -76.2,
+            "mu_dec_error": 6.1,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         },
         {
             "mu_ra": -441.73,

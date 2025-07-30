@@ -65,6 +65,9 @@
             "other_name": "2MASSI J0415195-093506"
         },
         {
+            "other_name": "CWISE J041522.17-093457.1"
+        },
+        {
             "other_name": "WISEP J041521.20-093500.6"
         }
     ],
@@ -232,6 +235,15 @@
             "reference": "Goli04.3516"
         },
         {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 18.48,
+            "magnitude_error": 0.09,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "SDSS.i",
             "magnitude": 23.45,
             "magnitude_error": 0.09,
@@ -322,6 +334,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 15.148,
+            "magnitude_error": 0.026,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W2",
             "magnitude": 12.261,
             "magnitude_error": 0.026,
@@ -331,6 +352,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W2",
+            "magnitude": 12.305,
+            "magnitude_error": 0.011,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W3",
             "magnitude": 11.132,
             "magnitude_error": 0.113,
@@ -338,6 +368,15 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 11.093,
+            "magnitude_error": 0.125,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         },
         {
             "band": "WISE.W4",
@@ -351,6 +390,15 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 2218.5,
+            "mu_ra_error": 5.7,
+            "mu_dec": 536.1,
+            "mu_dec_error": 1.8,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": 2214.3,
             "mu_ra_error": 1.2,
             "mu_dec": 535.9,
@@ -358,6 +406,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Dupu12.19"
+        },
+        {
+            "mu_ra": 2159.8,
+            "mu_ra_error": 9.3,
+            "mu_dec": 553.5,
+            "mu_dec_error": 13.0,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "Spectra": [
@@ -375,19 +432,6 @@
             "other_references": null
         },
         {
-            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J04151954-0935066.fits",
-            "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0415-0935_IRS_spectrum.dat",
-            "local_spectrum": null,
-            "regime": "mir",
-            "telescope": "Spitzer",
-            "instrument": "IRS",
-            "mode": "SL",
-            "observation_date": "2005-09-06T00:00:00",
-            "comments": "SL2,SL1, There are multiple observation dates",
-            "reference": "Suar22",
-            "other_references": null
-        },
-        {
             "access_url": "https://s3.amazonaws.com/bdnyc/IRS/0415-0935.txt",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/IRS/0415-0935.txt",
@@ -401,29 +445,16 @@
             "other_references": null
         },
         {
-            "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/SpeX/Prism/IRTF_SpeX_2MASS%2BJ04151954-0935066_2003-09-17.fits",
-            "original_spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSIJ0415195-093506_20030917_BUR04B.txt",
-            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_2MASSIJ0415195-093506_20030917_BUR04B.txt",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2003-09-17T00:00:00",
-            "comments": null,
-            "reference": "Burg04.2856",
-            "other_references": null
-        },
-        {
-            "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/AKARI_2MASS%2BJ04151954-0935066_2007-08-23.fits",
-            "original_spectrum": null,
+            "access_url": "https://bdnyc.s3.amazonaws.com/IRS/2MASS+J04151954-0935066.fits",
+            "original_spectrum": "https://bdnyc.s3.amazonaws.com/IRS/0415-0935_IRS_spectrum.dat",
             "local_spectrum": null,
-            "regime": "nir",
-            "telescope": "AKARI",
-            "instrument": "IRC",
-            "mode": "IRC04",
-            "observation_date": "2007-08-23T00:00:00",
-            "comments": null,
-            "reference": "Sora12",
+            "regime": "mir",
+            "telescope": "Spitzer",
+            "instrument": "IRS",
+            "mode": "SL",
+            "observation_date": "2005-09-06T00:00:00",
+            "comments": "SL2,SL1, There are multiple observation dates",
+            "reference": "Suar22",
             "other_references": null
         },
         {
@@ -450,6 +481,32 @@
             "observation_date": "2022-10-16T00:00:00",
             "comments": null,
             "reference": "Alej25",
+            "other_references": null
+        },
+        {
+            "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/AKARI_2MASS%2BJ04151954-0935066_2007-08-23.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "AKARI",
+            "instrument": "IRC",
+            "mode": "IRC04",
+            "observation_date": "2007-08-23T00:00:00",
+            "comments": null,
+            "reference": "Sora12",
+            "other_references": null
+        },
+        {
+            "access_url": "https://bdnyc.s3.us-east-1.amazonaws.com/SpeX/Prism/IRTF_SpeX_2MASS%2BJ04151954-0935066_2003-09-17.fits",
+            "original_spectrum": "https://s3.amazonaws.com/bdnyc/spex-prism_2MASSIJ0415195-093506_20030917_BUR04B.txt",
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex-prism_2MASSIJ0415195-093506_20030917_BUR04B.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2003-09-17T00:00:00",
+            "comments": null,
+            "reference": "Burg04.2856",
             "other_references": null
         },
         {

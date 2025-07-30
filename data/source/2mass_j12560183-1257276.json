@@ -28,6 +28,9 @@
             "other_name": "2MASS J12560183-1257276"
         },
         {
+            "other_name": "CWISE J125601.53-125729.9"
+        },
+        {
             "other_name": "VHS 1256-1257b"
         },
         {
@@ -111,6 +114,15 @@
             "epoch": 2014.5396728515625,
             "comments": null,
             "reference": "Gauz15"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 20.36,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
         },
         {
             "band": "VISTA.H",
@@ -203,6 +215,15 @@
             "reference": "Gauz15"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 12.643,
+            "magnitude_error": 0.004,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W2",
             "magnitude": 12.8,
             "magnitude_error": 0.5,
@@ -210,6 +231,15 @@
             "epoch": null,
             "comments": null,
             "reference": "Gauz15"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 12.282,
+            "magnitude_error": 0.015,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -221,6 +251,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Dupu20"
+        },
+        {
+            "mu_ra": -259.6,
+            "mu_ra_error": 16.3,
+            "mu_dec": 58.3,
+            "mu_dec_error": 12.9,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "Spectra": [
@@ -232,6 +271,19 @@
             "telescope": "JWST",
             "instrument": "MIRI",
             "mode": "MRS",
+            "observation_date": "2022-07-05T00:00:00",
+            "comments": null,
+            "reference": "Mile23",
+            "other_references": null
+        },
+        {
+            "access_url": "https://bdnyc.s3.amazonaws.com/JWST/NIRSpec/VHS1256b_NIR.fits",
+            "original_spectrum": "https://bdnyc.s3.amazonaws.com/JWST/VHS1256b_V2.txt",
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "JWST",
+            "instrument": "NIRSpec",
+            "mode": "IFU",
             "observation_date": "2022-07-05T00:00:00",
             "comments": null,
             "reference": "Mile23",
@@ -261,19 +313,6 @@
             "observation_date": "2016-06-19T00:00:00",
             "comments": null,
             "reference": "Mile18",
-            "other_references": null
-        },
-        {
-            "access_url": "https://bdnyc.s3.amazonaws.com/JWST/NIRSpec/VHS1256b_NIR.fits",
-            "original_spectrum": "https://bdnyc.s3.amazonaws.com/JWST/VHS1256b_V2.txt",
-            "local_spectrum": null,
-            "regime": "nir",
-            "telescope": "JWST",
-            "instrument": "NIRSpec",
-            "mode": "IFU",
-            "observation_date": "2022-07-05T00:00:00",
-            "comments": null,
-            "reference": "Mile23",
             "other_references": null
         },
         {

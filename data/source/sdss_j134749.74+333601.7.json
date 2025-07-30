@@ -17,6 +17,9 @@
             "other_name": "2MASS J13474972+3336019"
         },
         {
+            "other_name": "CWISE J134749.79+333601.5"
+        },
+        {
             "other_name": "Gaia DR2 1458522725665649536"
         },
         {
@@ -144,6 +147,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Lawr12"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.694,
+            "magnitude_error": 0.016,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.396,
+            "magnitude_error": 0.018,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -164,6 +185,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "mu_ra": 48.4,
+            "mu_ra_error": 9.7,
+            "mu_dec": -31.2,
+            "mu_dec_error": 11.3,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         },
         {
             "mu_ra": 55.4,

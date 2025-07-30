@@ -62,6 +62,9 @@
             "other_name": "2MASS J08173001-6155158"
         },
         {
+            "other_name": "CWISE J081729.63-615457.4"
+        },
+        {
             "other_name": "DENIS J081730.0-615520"
         },
         {
@@ -244,6 +247,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 12.972,
+            "magnitude_error": 0.012,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W2",
             "magnitude": 11.24,
             "magnitude_error": 0.02,
@@ -251,6 +263,33 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 11.282,
+            "magnitude_error": 0.009,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 9.661,
+            "magnitude_error": 0.033,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
+        },
+        {
+            "band": "WISE.W4",
+            "magnitude": 9.273,
+            "magnitude_error": 0.433,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         }
     ],
     "ProperMotions": [
@@ -280,22 +319,18 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "mu_ra": -156.6,
+            "mu_ra_error": 22.7,
+            "mu_dec": 1117.5,
+            "mu_dec_error": 7.2,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "Spectra": [
-        {
-            "access_url": "https://s3.amazonaws.com/bdnyc/T6_DENIS_J081730.0_615520_OSIRIS_SXD.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/OSIRIS/T6_DENIS_J081730.0_615520_OSIRIS_SXD.fits",
-            "regime": "nir",
-            "telescope": "CTIO 1.5m",
-            "instrument": "OSIRIS",
-            "mode": "SXD",
-            "observation_date": "2010-05-03T00:00:00",
-            "comments": null,
-            "reference": "Arti10",
-            "other_references": null
-        },
         {
             "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/J0817-61.csv",
             "original_spectrum": null,
@@ -308,6 +343,19 @@
             "comments": null,
             "reference": "Manj19",
             "other_references": "Apai11.12550, Buen14"
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/T6_DENIS_J081730.0_615520_OSIRIS_SXD.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/OSIRIS/T6_DENIS_J081730.0_615520_OSIRIS_SXD.fits",
+            "regime": "nir",
+            "telescope": "CTIO 1.5m",
+            "instrument": "OSIRIS",
+            "mode": "SXD",
+            "observation_date": "2010-05-03T00:00:00",
+            "comments": null,
+            "reference": "Arti10",
+            "other_references": null
         }
     ],
     "SpectralTypes": [

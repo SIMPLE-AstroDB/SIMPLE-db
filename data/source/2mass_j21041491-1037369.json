@@ -62,6 +62,9 @@
             "other_name": "2MASSI J2104149-103736"
         },
         {
+            "other_name": "CWISE J210415.67-103742.5"
+        },
+        {
             "other_name": "Gaia DR2 6890153425787729152"
         },
         {
@@ -219,6 +222,42 @@
             "reference": "Diet14"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 18.34,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 20.56,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 15.92,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 16.88,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 13.048,
             "magnitude_error": 0.024,
@@ -264,9 +303,36 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 12.044,
+            "magnitude_error": 0.012,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W2",
             "magnitude": 11.681,
             "magnitude_error": 0.023,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": null,
+            "reference": "Cutr12"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 11.781,
+            "magnitude_error": 0.009,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 10.445,
+            "magnitude_error": 0.232,
             "telescope": "WISE",
             "epoch": null,
             "comments": null,
@@ -278,8 +344,8 @@
             "magnitude_error": 0.232,
             "telescope": "WISE",
             "epoch": null,
-            "comments": null,
-            "reference": "Cutr12"
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         },
         {
             "band": "WISE.W4",
@@ -292,6 +358,15 @@
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": 592.6,
+            "mu_ra_error": 1.0,
+            "mu_dec": -292.7,
+            "mu_dec_error": 0.9,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
         {
             "mu_ra": 590.62,
             "mu_ra_error": 0.55,
@@ -318,6 +393,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "mu_ra": 660.6,
+            "mu_ra_error": 5.1,
+            "mu_dec": -323.9,
+            "mu_dec_error": 3.8,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "RadialVelocities": [

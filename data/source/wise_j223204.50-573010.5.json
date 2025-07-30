@@ -14,6 +14,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J223204.73-573011.1"
+        },
+        {
             "other_name": "WISE J223204.50-573010.5"
         },
         {
@@ -65,6 +68,33 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "McMa13"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 17.678,
+            "magnitude_error": 0.082,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 15.14,
+            "magnitude_error": 0.028,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 11.9,
+            "magnitude_error": 0.315,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         }
     ],
     "ProperMotions": [
@@ -76,6 +106,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Kirk19"
+        },
+        {
+            "mu_ra": 435.3,
+            "mu_ra_error": 34.6,
+            "mu_dec": -28.8,
+            "mu_dec_error": 35.3,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

@@ -33,6 +33,33 @@
     ],
     "Photometry": [
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 20.0,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 17.66,
+            "magnitude_error": 0.06,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 18.72,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 14.909,
             "magnitude_error": 0.051,
@@ -71,11 +98,20 @@
     ],
     "ProperMotions": [
         {
+            "mu_ra": 18.2,
+            "mu_ra_error": 4.7,
+            "mu_dec": -156.3,
+            "mu_dec_error": 4.2,
+            "adopted": true,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "mu_ra": -22.0,
             "mu_ra_error": 10.0,
             "mu_dec": -162.0,
             "mu_dec_error": 10.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Hog_00"
         }

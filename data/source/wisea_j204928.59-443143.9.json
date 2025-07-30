@@ -14,16 +14,48 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J204928.79-443146.9"
+        },
+        {
             "other_name": "WISEA J204928.59-443143.9"
         }
     ],
+    "Photometry": [
+        {
+            "band": "WISE.W1",
+            "magnitude": 18.745,
+            "magnitude_error": 0.237,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 15.33,
+            "magnitude_error": 0.033,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        }
+    ],
     "ProperMotions": [
+        {
+            "mu_ra": 382.5,
+            "mu_ra_error": 44.5,
+            "mu_dec": -578.6,
+            "mu_dec_error": 50.6,
+            "adopted": true,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
         {
             "mu_ra": 415.0,
             "mu_ra_error": 120.0,
             "mu_dec": -585.0,
             "mu_dec_error": 120.0,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Tinn18"
         }

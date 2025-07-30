@@ -14,10 +14,31 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J020013.31+090837.4"
+        },
+        {
             "other_name": "ULAS J020013.18+090835.2"
         }
     ],
     "Photometry": [
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 20.46,
+            "magnitude_error": 0.11,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 22.08,
+            "magnitude_error": 0.14,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
         {
             "band": "WFCAM.H",
             "magnitude": 18.244,
@@ -62,6 +83,24 @@
             "epoch": null,
             "comments": null,
             "reference": "WFAU19"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 16.122,
+            "magnitude_error": 0.031,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 15.504,
+            "magnitude_error": 0.043,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -73,6 +112,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Burn13"
+        },
+        {
+            "mu_ra": 1.5,
+            "mu_ra_error": 29.5,
+            "mu_dec": 35.6,
+            "mu_dec_error": 28.1,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

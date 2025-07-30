@@ -15,6 +15,9 @@
     "Names": [
         {
             "other_name": "2MASS J04185879-4507413"
+        },
+        {
+            "other_name": "CWISE J041858.87-450741.3"
         }
     ],
     "Photometry": [
@@ -44,6 +47,24 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr03"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 13.862,
+            "magnitude_error": 0.012,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.487,
+            "magnitude_error": 0.011,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -55,6 +76,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Gagn15.73"
+        },
+        {
+            "mu_ra": 60.4,
+            "mu_ra_error": 5.9,
+            "mu_dec": 15.3,
+            "mu_dec_error": 5.0,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

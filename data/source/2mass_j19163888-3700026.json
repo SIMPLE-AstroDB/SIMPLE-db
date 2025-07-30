@@ -15,6 +15,9 @@
     "Names": [
         {
             "other_name": "2MASS J19163888-3700026"
+        },
+        {
+            "other_name": "CWISE J191639.08-370002.2"
         }
     ],
     "Photometry": [
@@ -80,6 +83,24 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Best20.42"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 13.956,
+            "magnitude_error": 0.015,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.784,
+            "magnitude_error": 0.015,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -88,9 +109,18 @@
             "mu_ra_error": 68.96,
             "mu_dec": 36.47,
             "mu_dec_error": 12.16,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Kirk10"
+        },
+        {
+            "mu_ra": 163.1,
+            "mu_ra_error": 8.7,
+            "mu_dec": 22.1,
+            "mu_dec_error": 8.4,
+            "adopted": true,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

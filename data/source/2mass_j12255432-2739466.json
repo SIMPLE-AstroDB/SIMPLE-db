@@ -18,6 +18,9 @@
         },
         {
             "other_name": "2MASS J12255432-2739466"
+        },
+        {
+            "other_name": "CWISE J122554.84-273958.5"
         }
     ],
     "Parallaxes": [
@@ -76,6 +79,24 @@
             "reference": "Kirk19"
         },
         {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 17.7,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 19.36,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 15.17,
             "magnitude_error": 0.03,
@@ -110,9 +131,54 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Legg02.452"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.743,
+            "magnitude_error": 0.029,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 12.87,
+            "magnitude_error": 0.022,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 11.157,
+            "magnitude_error": 0.146,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": 373.7,
+            "mu_ra_error": 3.6,
+            "mu_dec": -615.0,
+            "mu_dec_error": 5.2,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "mu_ra": 396.1,
+            "mu_ra_error": 14.4,
+            "mu_dec": -735.1,
+            "mu_dec_error": 15.2,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
         {
             "mu_ra": 384.98,
             "mu_ra_error": 1.87,

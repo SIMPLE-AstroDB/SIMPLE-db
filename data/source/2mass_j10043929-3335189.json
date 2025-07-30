@@ -20,6 +20,9 @@
             "other_name": "2MASSW J1004392-333518"
         },
         {
+            "other_name": "CWISE J100439.75-333524.0"
+        },
+        {
             "other_name": "Gaia DR2 5458784415378809728"
         },
         {
@@ -148,6 +151,15 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Best20.42"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 11.901,
+            "magnitude_error": 0.014,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
@@ -168,6 +180,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "mu_ra": 207.6,
+            "mu_ra_error": 9.2,
+            "mu_dec": -257.9,
+            "mu_dec_error": 10.9,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         },
         {
             "mu_ra": 343.58,
