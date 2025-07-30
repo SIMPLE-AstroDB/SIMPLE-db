@@ -57,7 +57,7 @@ evo_table = ascii.read(
 source_exists_counter = 0
 skipped, reason = [], []
 
-"""
+
 for row in atmo_table:
     source_name = db.search_object(row["name"])
     param_counter = 0
@@ -158,7 +158,7 @@ for row in evo_table:
                 conn.commit()
         except IndexError:
             skipped.append(row["name"])
-            reason.append("no source found, evo model")"""
+            reason.append("no source found, evo model")
 
 logger.info("done")
 
