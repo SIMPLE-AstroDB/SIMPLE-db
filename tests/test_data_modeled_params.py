@@ -8,6 +8,9 @@ def test_model(db):
         .filter(db.ModeledParameters.c.model.is_(None))
         .astropy()
     )
+    if len(t) > 0:
+        print("\nEntries found without a model")
+        print(t)
     assert len(t) == 705
 
 
