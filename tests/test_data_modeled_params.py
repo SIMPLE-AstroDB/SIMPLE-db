@@ -10,6 +10,13 @@ def test_model(db):
     )
     assert len(t) == 705
 
+def test_adopted(db):
+    t = (
+        db.query(db.ModeledParameters)
+        .filter(db.ModeledParameters.c.adopted.is_(1))
+        .astropy()
+    )
+    assert len(t) == 0
 
 @pytest.mark.parametrize(
     ("param", "n_counts"),

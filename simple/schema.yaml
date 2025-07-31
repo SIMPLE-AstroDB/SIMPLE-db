@@ -1183,15 +1183,15 @@ tables:
       description: Value of the parameter
       nullable: false
       ivoa:ucd: stat.value;meta.modelled
-    - name: upper_error
-      "@id": "#ModeledParameters.upper_error"
-      datatype: double
-      description: Upper uncertainty of the parameter value
-      ivoa:ucd: stat.error;meta.modelled
     - name: lower_error
       "@id": "#ModeledParameters.lower_error"
       datatype: double
       description: Lower uncertainty of the parameter value
+      ivoa:ucd: stat.error;meta.modelled
+    - name: upper_error
+      "@id": "#ModeledParameters.upper_error"
+      datatype: double
+      description: Upper uncertainty of the parameter value
       ivoa:ucd: stat.error;meta.modelled
     - name: unit
       "@id": "#ModeledParameters.unit"
@@ -1200,6 +1200,10 @@ tables:
       description: Unit of the parameter value. Should be compatible with astropy.units.
       nullable: false
       ivoa:ucd: meta.unit
+    - name: adopted
+      "@id": "#ModeledParameters.adopted"
+      datatype: boolean
+      description: Flag to indicate if this is the adopted measurement 
     - name: comments
       "@id": "#ModeledParameters.comments"
       datatype: string
@@ -1213,6 +1217,12 @@ tables:
       description: Reference; links to Publications table
       ivoa:ucd: meta.ref
       nullable: false
+    - name: other_references
+      "@id": "#ModeledParameters.other_references"
+      datatype: string
+      length: 100
+      description: Additional references, comma-separated.
+      ivoa:ucd: meta.ref
 
     indexes:
       - name: PK_ModeledParameters
