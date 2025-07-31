@@ -14,6 +14,16 @@
     ],
     "ModeledParameters": [
         {
+            "model": "atmospheric",
+            "parameter": "L bol",
+            "value": -3.93,
+            "upper_error": 0.06,
+            "lower_error": 0.06,
+            "unit": "dex",
+            "comments": null,
+            "reference": "Sang23"
+        },
+        {
             "model": null,
             "parameter": "T eff",
             "value": 1804.0,
@@ -22,6 +32,26 @@
             "unit": "K",
             "comments": null,
             "reference": "Fili15"
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "T eff",
+            "value": 1800.0,
+            "upper_error": null,
+            "lower_error": null,
+            "unit": "K",
+            "comments": null,
+            "reference": "Sang23"
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "T eff",
+            "value": 1532.0,
+            "upper_error": 64.0,
+            "lower_error": 64.0,
+            "unit": "K",
+            "comments": null,
+            "reference": "Sang23"
         },
         {
             "model": null,
@@ -34,6 +64,26 @@
             "reference": "Fili15"
         },
         {
+            "model": "atmospheric",
+            "parameter": "log g",
+            "value": 5.0,
+            "upper_error": null,
+            "lower_error": null,
+            "unit": "dex",
+            "comments": null,
+            "reference": "Sang23"
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "log g",
+            "value": 4.16,
+            "upper_error": 0.24,
+            "lower_error": 0.24,
+            "unit": "dex",
+            "comments": null,
+            "reference": "Sang23"
+        },
+        {
             "model": null,
             "parameter": "mass",
             "value": 26.71,
@@ -44,6 +94,16 @@
             "reference": "Fili15"
         },
         {
+            "model": "evolutionary",
+            "parameter": "mass",
+            "value": 13.15,
+            "upper_error": 7.39,
+            "lower_error": 7.39,
+            "unit": "M_jup",
+            "comments": null,
+            "reference": "Sang23"
+        },
+        {
             "model": null,
             "parameter": "radius",
             "value": 1.41,
@@ -52,6 +112,26 @@
             "unit": "R_jup",
             "comments": null,
             "reference": "Fili15"
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "radius",
+            "value": 1.1,
+            "upper_error": null,
+            "lower_error": null,
+            "unit": "R_jup",
+            "comments": null,
+            "reference": "Sang23"
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "radius",
+            "value": 1.52,
+            "upper_error": 0.12,
+            "lower_error": 0.12,
+            "unit": "R_jup",
+            "comments": null,
+            "reference": "Sang23"
         }
     ],
     "Names": [

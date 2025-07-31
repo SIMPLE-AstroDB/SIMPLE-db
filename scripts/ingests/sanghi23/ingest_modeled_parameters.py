@@ -57,6 +57,16 @@ evo_table = ascii.read(
 teff_ingested_counter, logg_ingested_counter, mass_ingested_counter, radius_ingested_counter, lbol_ingested_counter = 0, 0, 0, 0, 0
 skipped, reason = [], []
 
+ingest_source(
+    db = db,
+    source = "PSO J243.9421+67.2075",
+    reference = "Sang23",
+    ra = 243.9431,
+    dec = 67.2073,
+    ra_col_name="ra",
+    dec_col_name="dec",
+    epoch_col_name="epoch",
+)
 
 for row in atmo_table:
     source_name = db.search_object(row["name"])
@@ -186,11 +196,11 @@ skipped_table.write(
     format="ascii.ecsv",
 )
 
-print("teff ingested: " + str(teff_ingested_counter)) #2106
-print("mass ingested: " + str(mass_ingested_counter)) #1053
-print("radius ingested: " + str(radius_ingested_counter)) #2106
-print("logg ingested: " + str(logg_ingested_counter)) #2106
-print("lbol ingested: " + str(lbol_ingested_counter)) #1053
+print("teff ingested: " + str(teff_ingested_counter)) #2108
+print("mass ingested: " + str(mass_ingested_counter)) #1054
+print("radius ingested: " + str(radius_ingested_counter)) #2108
+print("logg ingested: " + str(logg_ingested_counter)) #2108
+print("lbol ingested: " + str(lbol_ingested_counter)) #1054
 
 if SAVE_DB:
     db.save_database(directory="data/")
