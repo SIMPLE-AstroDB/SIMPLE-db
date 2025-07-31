@@ -467,8 +467,10 @@ def test_modeled_parameters(db):
         db.query(db.ModeledParameters)
         .filter(
             and_(
-                db.ModeledParameters.c.value_error is not None,
-                db.ModeledParameters.c.value_error < 0,
+                db.ModeledParameters.c.upper_error is not None,
+                db.ModeledParameters.c.upper_error < 0,
+                db.ModeledParameters.c.lower_error is not None,
+                db.ModeledParameters.c.lower_error < 0,
             )
         )
         .astropy()

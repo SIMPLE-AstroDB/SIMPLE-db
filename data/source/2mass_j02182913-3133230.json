@@ -12,6 +12,104 @@
             "comments": null
         }
     ],
+    "ModeledParameters": [
+        {
+            "model": "atmospheric",
+            "parameter": "L bol",
+            "value": -3.97,
+            "lower_error": 0.02,
+            "upper_error": 0.02,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "T eff",
+            "value": 1800.0,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "K",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "radius",
+            "value": 1.07,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "R_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "log g",
+            "value": 5.5,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "log g",
+            "value": 5.14,
+            "lower_error": 0.43,
+            "upper_error": 0.43,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "T eff",
+            "value": 1811.0,
+            "lower_error": 177.0,
+            "upper_error": 177.0,
+            "unit": "K",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "radius",
+            "value": 1.05,
+            "lower_error": 0.2,
+            "upper_error": 0.2,
+            "unit": "R_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "mass",
+            "value": 58.92,
+            "lower_error": 24.38,
+            "upper_error": 24.38,
+            "unit": "M_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        }
+    ],
     "Names": [
         {
             "other_name": "2MASS J02182913-3133230"
@@ -252,6 +350,19 @@
     ],
     "Spectra": [
         {
+            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M0218_total.fits",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "ESO VLT",
+            "instrument": "XShooter",
+            "mode": "Echelle",
+            "observation_date": "2010-01-04T00:00:00",
+            "comments": null,
+            "reference": "Manj16",
+            "other_references": null
+        },
+        {
             "access_url": "https://s3.amazonaws.com/bdnyc/nir_spectra/U10107_0218-3133.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/nir_spectra/U10107_0218-3133.fits",
@@ -268,7 +379,7 @@
             "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M0218_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
-            "regime": "nir",
+            "regime": "optical",
             "telescope": "ESO VLT",
             "instrument": "XShooter",
             "mode": "Echelle",
@@ -301,19 +412,6 @@
             "observation_date": "2002-01-24T01:37:25.781000",
             "comments": null,
             "reference": "Cruz03",
-            "other_references": null
-        },
-        {
-            "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/2M0218_total.fits",
-            "original_spectrum": null,
-            "local_spectrum": null,
-            "regime": "optical",
-            "telescope": "ESO VLT",
-            "instrument": "XShooter",
-            "mode": "Echelle",
-            "observation_date": "2010-01-04T00:00:00",
-            "comments": null,
-            "reference": "Manj16",
             "other_references": null
         }
     ],

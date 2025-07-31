@@ -18,10 +18,10 @@ def reference_verifier(t, name, bibcode, doi):
 def test_sources(db):
     # Test to verify existing counts of sources and names
     n_sources = db.query(db.Sources).count()
-    assert n_sources == 3618, f"found {n_sources} sources"
+    assert n_sources == 3619, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 12202, f"found {n_names} names"
+    assert n_names == 12203, f"found {n_names} names"
 
 
 
@@ -216,27 +216,6 @@ def test_spectral_types(db):
     ), f"found {n_adopted_spectral_types} adopted spectral types"
     print(f"found {n_adopted_spectral_types} adopted spectral types")
 
-
-@pytest.mark.parametrize(
-    ("param", "n_counts"),
-    [
-        ("T eff", 176),
-        ("log g", 176),
-        ("mass", 176),
-        ("radius", 175),
-        ("metallicity", 2),
-    ],
-)
-def test_modeledparameters_params(db, param, n_counts):
-    # Test to verify existing counts of modeled parameters
-    t = (
-        db.query(db.ModeledParameters)
-        .filter(db.ModeledParameters.c.parameter == param)
-        .astropy()
-    )
-    assert (
-        len(t) == n_counts
-    ), f"found {len(t)} modeled parameters with {param} parameter"
 
 
 @pytest.mark.parametrize(

@@ -14,36 +14,148 @@
     ],
     "ModeledParameters": [
         {
+            "model": null,
             "parameter": "T eff",
             "value": 1290.0,
-            "value_error": 78.0,
+            "lower_error": 78.0,
+            "upper_error": 78.0,
             "unit": "K",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "log g",
             "value": 5.09,
-            "value_error": 0.4,
+            "lower_error": 0.4,
+            "upper_error": 0.4,
             "unit": "dex",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "mass",
             "value": 49.92,
-            "value_error": 24.8,
+            "lower_error": 24.8,
+            "upper_error": 24.8,
             "unit": "M_jup",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "radius",
             "value": 0.97,
-            "value_error": 0.12,
+            "lower_error": 0.12,
+            "upper_error": 0.12,
             "unit": "R_jup",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "L bol",
+            "value": -4.72,
+            "lower_error": 0.06,
+            "upper_error": 0.06,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "T eff",
+            "value": 1500.0,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "K",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "radius",
+            "value": 0.64,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "R_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "log g",
+            "value": 5.5,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "log g",
+            "value": 4.77,
+            "lower_error": 0.49,
+            "upper_error": 0.49,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "T eff",
+            "value": 1164.0,
+            "lower_error": 94.0,
+            "upper_error": 94.0,
+            "unit": "K",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "radius",
+            "value": 1.06,
+            "lower_error": 0.17,
+            "upper_error": 0.17,
+            "unit": "R_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "mass",
+            "value": 26.08,
+            "lower_error": 21.11,
+            "upper_error": 21.11,
+            "unit": "M_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
         }
     ],
     "Names": [
@@ -358,19 +470,6 @@
             "other_references": null
         },
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0255-4700_adam.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0255-4700_adam.fits",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2004-09-08T00:00:00",
-            "comments": null,
-            "reference": "Burg06.1095",
-            "other_references": null
-        },
-        {
             "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/DE0255_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
@@ -381,6 +480,19 @@
             "observation_date": "2009-10-17T00:00:00",
             "comments": null,
             "reference": "Manj16",
+            "other_references": null
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/SpeX/Prism/spex_prism_0255-4700_adam.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/spex_prism_0255-4700_adam.fits",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2004-09-08T00:00:00",
+            "comments": null,
+            "reference": "Burg06.1095",
             "other_references": null
         },
         {
@@ -397,19 +509,6 @@
             "other_references": null
         },
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/U10158_D0255-47_lris.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/LRIS/U10158_D0255-47_lris.fits",
-            "regime": "optical",
-            "telescope": "Keck I",
-            "instrument": "LRIS",
-            "mode": "Missing",
-            "observation_date": "2000-12-26T00:00:00",
-            "comments": null,
-            "reference": "Kirk08",
-            "other_references": null
-        },
-        {
             "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/DE0255_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
@@ -420,6 +519,19 @@
             "observation_date": "2009-10-17T00:00:00",
             "comments": null,
             "reference": "Manj16",
+            "other_references": null
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/U10158_D0255-47_lris.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/LRIS/U10158_D0255-47_lris.fits",
+            "regime": "optical",
+            "telescope": "Keck I",
+            "instrument": "LRIS",
+            "mode": "Missing",
+            "observation_date": "2000-12-26T00:00:00",
+            "comments": null,
+            "reference": "Kirk08",
             "other_references": null
         }
     ],
