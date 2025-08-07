@@ -57,9 +57,9 @@ T7Y1_table = ascii.read(
 teff_ingested_counter, logg_ingested_counter, mass_ingested_counter, radius_ingested_counter, lbol_ingested_counter = 0, 0, 0, 0, 0
 skipped, reason = [], []
 
-ingest_publication(db = db, bibcode = "2021ApJ...916...53Z")
 
-"""def get_pub(ads):
+def get_pub(ads):
+
     pub = find_publication(db = db, bibcode = ads)
     if(pub[0] == False):
         ingest_publication(db = db, bibcode = ads)
@@ -105,6 +105,7 @@ for row in L6T6_table:
                     db.ModeledParameters.insert().values(
                         {
                             "source": source_name[0][0],
+                            "model": None,
                             "parameter": parameter,
                             "value": value,
                             "upper_error": upper_error,
@@ -174,6 +175,7 @@ for row in T7Y1_table:
                     db.ModeledParameters.insert().values(
                         {
                             "source": source_name[0][0],
+                            "model": None,
                             "parameter": parameter,
                             "value": value,
                             "upper_error": upper_error,
@@ -193,7 +195,7 @@ for row in T7Y1_table:
             elif(param_counter == 4):
                 radius_ingested_counter += 1
             else:
-                mass_ingested_counter
+                mass_ingested_counter += 1
         except IndexError:
             skipped.append(row["object"])
             reason.append("no source found, T7Y1")
@@ -208,12 +210,14 @@ skipped_table.write(
     format="ascii.ecsv",
 )
 
-print("teff ingested: " + str(teff_ingested_counter)) #2108
-print("mass ingested: " + str(mass_ingested_counter)) #1054
-print("radius ingested: " + str(radius_ingested_counter)) #2108
-print("logg ingested: " + str(logg_ingested_counter)) #2108
-print("lbol ingested: " + str(lbol_ingested_counter)) #1054
 
-    """
+
 if SAVE_DB:
     db.save_database(directory="data/")
+
+print("teff ingested: " + str(teff_ingested_counter)) #55
+print("mass ingested: " + str(mass_ingested_counter)) #55
+print("radius ingested: " + str(radius_ingested_counter)) #14
+print("logg ingested: " + str(logg_ingested_counter)) #55
+print("lbol ingested: " + str(lbol_ingested_counter)) #55
+

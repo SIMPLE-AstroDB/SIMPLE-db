@@ -8,7 +8,7 @@ def test_model(db):
         .filter(db.ModeledParameters.c.model.is_(None))
         .astropy()
     )
-    assert len(t) == 705
+    assert len(t) == 939
 
 def test_adopted(db):
     t = (
@@ -21,12 +21,12 @@ def test_adopted(db):
 @pytest.mark.parametrize(
     ("param", "n_counts"),
     [
-        ("T eff", 2284),
-        ("log g", 2284),
-        ("mass", 1230),
-        ("radius", 2283),
+        ("T eff", 2339),
+        ("log g", 2339),
+        ("mass", 1285),
+        ("radius", 2297),
         ("metallicity", 2),
-        ("L bol", 1054)
+        ("L bol", 1109)
     ],
 )
 def test_modeledparameters_params(db, param, n_counts):
@@ -54,7 +54,7 @@ def test_modeledparameters_params(db, param, n_counts):
         ("Fili15", "mass", 174),
         ("Fili15", "radius", 174),
         ("Fili15", "metallicity", 0),
-        ("Fili15", "L bol", 0),
+        ("Fili15", "L bol", 5),
         ("Zhan19.1423", "T eff", 1),
         ("Zhan19.1423", "log g", 1),
         ("Zhan19.1423", "mass", 1),
@@ -67,6 +67,42 @@ def test_modeledparameters_params(db, param, n_counts):
         ("Lodi22", "radius", 1),
         ("Lodi22", "metallicity", 1),
         ("Lodi22", "L bol", 0),
+        ("Zhan20", "T eff", 41),
+        ("Zhan20", "log g", 41),
+        ("Zhan20", "mass", 41),
+        ("Zhan20", "radius", 0),
+        ("Zhan20", "metallicity", 0),
+        ("Zhan20", "L bol", 21),
+        ("Zapa18", "T eff", 0),
+        ("Zapa18", "log g", 0),
+        ("Zapa18", "mass", 0),
+        ("Zapa18", "radius", 0),
+        ("Zapa18", "metallicity", 0),
+        ("Zapa18", "L bol", 0),
+        ("Marl12", "T eff", 0),
+        ("Marl12", "log g", 0),
+        ("Marl12", "mass", 0),
+        ("Marl12", "radius", 0),
+        ("Marl12", "metallicity", 0),
+        ("Marl12", "L bol", 1),
+        ("Gree18", "T eff", 0),
+        ("Gree18", "log g", 0),
+        ("Gree18", "mass", 0),
+        ("Gree18", "radius", 0),
+        ("Gree18", "metallicity", 0),
+        ("Gree18", "L bol", 3),
+        ("Bowl18", "T eff", 0),
+        ("Bowl18", "log g", 0),
+        ("Bowl18", "mass", 0),
+        ("Bowl18", "radius", 0),
+        ("Bowl18", "metallicity", 0),
+        ("Bowl18", "L bol", 1),
+        ("Zhan21.53", "T eff", 0),
+        ("Zhan21.53", "log g", 0),
+        ("Zhan21.53", "mass", 0),
+        ("Zhan21.53", "radius", 0),
+        ("Zhan21.53", "metallicity", 0),
+        ("Zhan21.53", "L bol", 3),
     ],
 )
 def test_modeledparameters_param_refs(db, ref, param, n_counts):
