@@ -14,41 +14,60 @@
     ],
     "ModeledParameters": [
         {
+            "model": null,
             "parameter": "T eff",
             "value": 1663.0,
-            "value_error": 135.0,
+            "lower_error": 135.0,
+            "upper_error": 135.0,
             "unit": "K",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "log g",
             "value": 4.4,
-            "value_error": 0.42,
+            "lower_error": 0.42,
+            "upper_error": 0.42,
             "unit": "dex",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "mass",
             "value": 23.8,
-            "value_error": 15.19,
+            "lower_error": 15.19,
+            "upper_error": 15.19,
             "unit": "M_jup",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "radius",
             "value": 1.39,
-            "value_error": 0.19,
+            "lower_error": 0.19,
+            "upper_error": 0.19,
             "unit": "R_jup",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         }
     ],
     "Names": [
         {
             "other_name": "2MASS J21265040-8140293"
+        },
+        {
+            "other_name": "CWISE J212650.75-814030.9"
         },
         {
             "other_name": "DENIS J212650.3-814029"
@@ -184,6 +203,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 12.911,
+            "magnitude_error": 0.011,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W2",
             "magnitude": 12.472,
             "magnitude_error": 0.023,
@@ -193,6 +221,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W2",
+            "magnitude": 12.497,
+            "magnitude_error": 0.009,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W3",
             "magnitude": 11.885,
             "magnitude_error": 0.161,
@@ -200,6 +237,15 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 11.932,
+            "magnitude_error": 0.182,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         },
         {
             "band": "WISE.W4",
@@ -238,6 +284,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "mu_ra": 61.9,
+            "mu_ra_error": 4.7,
+            "mu_dec": -113.6,
+            "mu_dec_error": 4.1,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "RadialVelocities": [

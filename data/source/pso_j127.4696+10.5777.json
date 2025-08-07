@@ -12,7 +12,108 @@
             "comments": null
         }
     ],
+    "ModeledParameters": [
+        {
+            "model": "atmospheric",
+            "parameter": "L bol",
+            "value": -3.65,
+            "lower_error": 0.08,
+            "upper_error": 0.08,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "T eff",
+            "value": 1800.0,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "K",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "radius",
+            "value": 1.51,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "R_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "log g",
+            "value": 5.0,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "log g",
+            "value": 4.36,
+            "lower_error": 0.24,
+            "upper_error": 0.24,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "T eff",
+            "value": 1857.0,
+            "lower_error": 89.0,
+            "upper_error": 89.0,
+            "unit": "K",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "radius",
+            "value": 1.44,
+            "lower_error": 0.12,
+            "upper_error": 0.12,
+            "unit": "R_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "mass",
+            "value": 18.25,
+            "lower_error": 8.48,
+            "upper_error": 8.48,
+            "unit": "M_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        }
+    ],
     "Names": [
+        {
+            "other_name": "CWISE J082952.71+103439.2"
+        },
         {
             "other_name": "PSO J127.4696+10.5777"
         }
@@ -27,6 +128,33 @@
         }
     ],
     "Photometry": [
+        {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 21.75,
+            "magnitude_error": 0.05,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 19.34,
+            "magnitude_error": 0.03,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 20.32,
+            "magnitude_error": 0.03,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
         {
             "band": "WFCAM.H",
             "magnitude": 16.11,
@@ -62,6 +190,33 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Best20.42"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 14.626,
+            "magnitude_error": 0.032,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.184,
+            "magnitude_error": 0.032,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 11.789,
+            "magnitude_error": 0.42,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         }
     ],
     "ProperMotions": [
@@ -73,6 +228,24 @@
             "adopted": true,
             "comments": null,
             "reference": "Best15"
+        },
+        {
+            "mu_ra": -8.4,
+            "mu_ra_error": 10.5,
+            "mu_dec": -49.2,
+            "mu_dec_error": 15.0,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "mu_ra": -30.9,
+            "mu_ra_error": 10.1,
+            "mu_dec": -59.3,
+            "mu_dec_error": 11.1,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

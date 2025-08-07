@@ -14,41 +14,156 @@
     ],
     "ModeledParameters": [
         {
+            "model": null,
             "parameter": "T eff",
             "value": 2151.0,
-            "value_error": 114.0,
+            "lower_error": 114.0,
+            "upper_error": 114.0,
             "unit": "K",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "log g",
             "value": 5.22,
-            "value_error": 0.14,
+            "lower_error": 0.14,
+            "upper_error": 0.14,
             "unit": "dex",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "mass",
             "value": 72.07,
-            "value_error": 13.3,
+            "lower_error": 13.3,
+            "upper_error": 13.3,
             "unit": "M_jup",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "radius",
             "value": 1.03,
-            "value_error": 0.07,
+            "lower_error": 0.07,
+            "upper_error": 0.07,
             "unit": "R_jup",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "L bol",
+            "value": -3.45,
+            "lower_error": 0.02,
+            "upper_error": 0.02,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "T eff",
+            "value": 2500.0,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "K",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "radius",
+            "value": 1.01,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "R_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "log g",
+            "value": 4.5,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "log g",
+            "value": 5.25,
+            "lower_error": 0.38,
+            "upper_error": 0.38,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "T eff",
+            "value": 2416.0,
+            "lower_error": 211.0,
+            "upper_error": 211.0,
+            "unit": "K",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "radius",
+            "value": 1.07,
+            "lower_error": 0.19,
+            "upper_error": 0.19,
+            "unit": "R_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "mass",
+            "value": 77.0,
+            "lower_error": 25.88,
+            "upper_error": 25.88,
+            "unit": "M_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
         }
     ],
     "Names": [
         {
             "other_name": "2MASS J07075327-4900503"
+        },
+        {
+            "other_name": "CWISE J070753.25-490044.1"
         },
         {
             "other_name": "DENIS-P J070753.2-490050"
@@ -256,6 +371,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 11.839,
+            "magnitude_error": 0.011,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W2",
             "magnitude": 11.558,
             "magnitude_error": 0.021,
@@ -265,6 +389,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W2",
+            "magnitude": 11.574,
+            "magnitude_error": 0.008,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W3",
             "magnitude": 11.336,
             "magnitude_error": 0.102,
@@ -272,6 +405,15 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 11.162,
+            "magnitude_error": 0.098,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         },
         {
             "band": "WISE.W4",
@@ -301,6 +443,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "mu_ra": -4.3,
+            "mu_ra_error": 3.5,
+            "mu_dec": 399.6,
+            "mu_dec_error": 3.6,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         },
         {
             "mu_ra": -16.32,

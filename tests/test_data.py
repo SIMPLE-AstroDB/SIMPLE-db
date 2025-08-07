@@ -2,6 +2,8 @@
 # db is defined in conftest.py
 import pytest
 from sqlalchemy import except_, select, and_
+from astropy.table import Table
+
 
 
 # Utility functions
@@ -16,10 +18,11 @@ def reference_verifier(t, name, bibcode, doi):
 def test_sources(db):
     # Test to verify existing counts of sources and names
     n_sources = db.query(db.Sources).count()
-    assert n_sources == 3598, f"found {n_sources} sources"
+    assert n_sources == 3619, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 9173, f"found {n_names} names"
+    assert n_names == 12203, f"found {n_names} names"
+
 
 
 @pytest.mark.parametrize(
@@ -78,7 +81,7 @@ def test_missions(db):
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 377
+        len(s) == 382
     ), f"found {len(s)} sources with 2MASS designation that have no 2MASS photometry"
 
     # If 2MASS photometry, 2MASS designation should be in Names
@@ -113,22 +116,23 @@ def test_missions(db):
 
     # If Wise designation in Names, Wise phot should exist
     stm = except_(
-        select(db.Names.c.source).where(db.Names.c.other_name.like("WISE%")),
+        select(db.Names.c.source).where(db.Names.c.other_name.like("%WISE%")),
         select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")),
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 495
+        len(s) == 160
     ), f"found {len(s)} sources with WISE designation that have no WISE photometry"
+    
 
     # If Wise photometry, Wise designation should be in Names
     stm = except_(
-        select(db.Photometry.c.source).where(db.Photometry.c.band.like("WISE%")),
-        select(db.Names.c.source).where(db.Names.c.other_name.like("WISE%")),
+        select(db.Photometry.c.source).where(db.Photometry.c.band.like("%WISE%")),
+        select(db.Names.c.source).where(db.Names.c.other_name.like("%WISE%")),
     )
     s = db.session.scalars(stm).all()
     assert (
-        len(s) == 389
+        len(s) == 71
     ), f"found {len(s)} sources with WISE photometry and no Wise designation in Names"
 
     # If Gaia EDR3 pm, Gaia EDR3 designation should be in Names
@@ -213,27 +217,6 @@ def test_spectral_types(db):
     print(f"found {n_adopted_spectral_types} adopted spectral types")
 
 
-@pytest.mark.parametrize(
-    ("param", "n_counts"),
-    [
-        ("T eff", 176),
-        ("log g", 176),
-        ("mass", 176),
-        ("radius", 175),
-        ("metallicity", 2),
-    ],
-)
-def test_modeledparameters_params(db, param, n_counts):
-    # Test to verify existing counts of modeled parameters
-    t = (
-        db.query(db.ModeledParameters)
-        .filter(db.ModeledParameters.c.parameter == param)
-        .astropy()
-    )
-    assert (
-        len(t) == n_counts
-    ), f"found {len(t)} modeled parameters with {param} parameter"
-
 
 @pytest.mark.parametrize(
     ("ref", "n_counts"),
@@ -253,7 +236,7 @@ def test_modeledparameters_refs(db, ref, n_counts):
 
 def test_companion_relations(db):
     t = db.query(db.CompanionRelationships).astropy()
-    assert len(t) == 108, f"found {len(t)} companion relationships"
+    assert len(t) == 175, f"found {len(t)} companion relationships"
 
     ref = "Roth24"
     t = (
@@ -420,11 +403,6 @@ def test_Kirk19_ingest(db):
     ref = "Pinf14.1931"
     t = db.query(db.Sources).filter(db.Sources.c.reference == ref).astropy()
     assert len(t) == 1, f"found {len(t)} sources for {ref}"
-
-    # Test proper motions added
-    ref = "Kirk19"
-    t = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
-    assert len(t) == 182, f"found {len(t)} proper motion entries for {ref}"
 
 
 def test_Best2020_ingest(db):

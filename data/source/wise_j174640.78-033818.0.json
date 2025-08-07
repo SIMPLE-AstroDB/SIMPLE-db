@@ -14,6 +14,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J174640.73-033818.5"
+        },
+        {
             "other_name": "WISE J174640.78-033818.0"
         }
     ],
@@ -53,6 +56,15 @@
             "reference": "Kirk21"
         },
         {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 20.01,
+            "magnitude_error": 0.06,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 17.45,
             "magnitude_error": 0.04,
@@ -69,17 +81,53 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Mace13.6"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 17.022,
+            "magnitude_error": 0.056,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.601,
+            "magnitude_error": 0.023,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": -124.0,
+            "mu_ra_error": 60.4,
+            "mu_dec": -81.2,
+            "mu_dec_error": 60.4,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
         {
             "mu_ra": -37.9,
             "mu_ra_error": 2.9,
             "mu_dec": -107.1,
             "mu_dec_error": 2.9,
-            "adopted": null,
+            "adopted": true,
             "comments": null,
             "reference": "Best20.257"
+        },
+        {
+            "mu_ra": -53.9,
+            "mu_ra_error": 22.5,
+            "mu_dec": -97.4,
+            "mu_dec_error": 25.4,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

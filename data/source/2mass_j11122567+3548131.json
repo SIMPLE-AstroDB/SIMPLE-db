@@ -12,6 +12,35 @@
             "comments": null
         }
     ],
+    "CompanionRelationships": [
+        {
+            "companion_name": "Gl 417",
+            "projected_separation_arcsec": null,
+            "projected_separation_error": null,
+            "relationship": "Child",
+            "comments": null,
+            "reference": null,
+            "other_companion_names": "Gl 417"
+        },
+        {
+            "companion_name": "Gl 417B",
+            "projected_separation_arcsec": null,
+            "projected_separation_error": null,
+            "relationship": "Unresolved Parent",
+            "comments": null,
+            "reference": null,
+            "other_companion_names": "Gl 417B"
+        },
+        {
+            "companion_name": "Gl 417C",
+            "projected_separation_arcsec": null,
+            "projected_separation_error": null,
+            "relationship": "Unresolved Parent",
+            "comments": null,
+            "reference": null,
+            "other_companion_names": "Gl 417C"
+        }
+    ],
     "Names": [
         {
             "other_name": "2MASS J11122567+3548131"
@@ -21,6 +50,9 @@
         },
         {
             "other_name": "2MASSW J1112257+354813"
+        },
+        {
+            "other_name": "CWISE J111225.33+354810.4"
         },
         {
             "other_name": "GJ 417 BC"
@@ -142,6 +174,42 @@
             "reference": "GaiaEDR3"
         },
         {
+            "band": "PAN-STARRS/PS1.i",
+            "magnitude": 19.58,
+            "magnitude_error": 0.02,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.r",
+            "magnitude": 21.61,
+            "magnitude_error": 0.06,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 16.82,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
+            "band": "PAN-STARRS/PS1.z",
+            "magnitude": 17.88,
+            "magnitude_error": 0.01,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.H",
             "magnitude": 13.55,
             "magnitude_error": 0.03,
@@ -167,9 +235,45 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Schn23.ace9"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 11.946,
+            "magnitude_error": 0.011,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 11.656,
+            "magnitude_error": 0.008,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 11.036,
+            "magnitude_error": 0.133,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": -244.9,
+            "mu_ra_error": 2.1,
+            "mu_dec": -149.5,
+            "mu_dec_error": 2.8,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
         {
             "mu_ra": -244.3,
             "mu_ra_error": 3.8,
@@ -196,6 +300,15 @@
             "adopted": false,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "mu_ra": -248.6,
+            "mu_ra_error": 3.9,
+            "mu_dec": -164.8,
+            "mu_dec_error": 3.9,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         },
         {
             "mu_ra": -249.02,
@@ -231,19 +344,6 @@
             "other_references": null
         },
         {
-            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1117/type/native/viewcontent",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/Gl417BC.txt",
-            "regime": "nir",
-            "telescope": "IRTF",
-            "instrument": "SpeX",
-            "mode": "Prism",
-            "observation_date": "2006-12-23T00:00:00",
-            "comments": null,
-            "reference": "Pati12",
-            "other_references": null
-        },
-        {
             "access_url": "https://s3.amazonaws.com/bdnyc/SINFONI/Gl417B_SINFONIspeclib_JHK.fits",
             "original_spectrum": null,
             "local_spectrum": "$BDNYC_spectra/SINFONI/Gl417B_SINFONIspeclib_JHK.fits",
@@ -254,6 +354,19 @@
             "observation_date": "2010-04-19T00:00:00",
             "comments": null,
             "reference": "Bonn14.127",
+            "other_references": null
+        },
+        {
+            "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1117/type/native/viewcontent",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/SpeX/Prism/Gl417BC.txt",
+            "regime": "nir",
+            "telescope": "IRTF",
+            "instrument": "SpeX",
+            "mode": "Prism",
+            "observation_date": "2006-12-23T00:00:00",
+            "comments": null,
+            "reference": "Pati12",
             "other_references": null
         }
     ],

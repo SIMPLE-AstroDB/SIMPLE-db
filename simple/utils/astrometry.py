@@ -181,7 +181,7 @@ def ingest_parallax(
 
 # PROPER MOTIONS
 def ingest_proper_motions(
-    db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs, pm_references
+    db, sources, pm_ras, pm_ra_errs, pm_decs, pm_dec_errs, pm_references, comments: Optional[str] = None
 ):
     """
 
@@ -201,6 +201,8 @@ def ingest_proper_motions(
         list of uncertanties in proper motion dec
     pm_references: str or list[str]
         Reference or list of references for the proper motion measurements
+    comments: str
+        comments
 
     Examples
     ----------
@@ -326,6 +328,7 @@ def ingest_proper_motions(
                 "mu_dec_error": pm_dec_errs[i],
                 "adopted": adopted,
                 "reference": pm_references[i],
+                "comments": comments
             }
         ]
         logger.debug(f"Proper motion data to add: {pm_data}")

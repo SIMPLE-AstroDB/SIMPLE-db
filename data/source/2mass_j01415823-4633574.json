@@ -14,36 +14,148 @@
     ],
     "ModeledParameters": [
         {
+            "model": null,
             "parameter": "T eff",
             "value": 1917.0,
-            "value_error": 130.0,
+            "lower_error": 130.0,
+            "upper_error": 130.0,
             "unit": "K",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "log g",
             "value": 4.25,
-            "value_error": 0.19,
+            "lower_error": 0.19,
+            "upper_error": 0.19,
             "unit": "dex",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "mass",
             "value": 19.57,
-            "value_error": 7.04,
+            "lower_error": 7.04,
+            "upper_error": 7.04,
             "unit": "M_jup",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "radius",
             "value": 1.61,
-            "value_error": 0.1,
+            "lower_error": 0.1,
+            "upper_error": 0.1,
             "unit": "R_jup",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "L bol",
+            "value": -3.57,
+            "lower_error": 0.03,
+            "upper_error": 0.03,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "T eff",
+            "value": 1700.0,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "K",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "radius",
+            "value": 1.87,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "R_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "atmospheric",
+            "parameter": "log g",
+            "value": 5.5,
+            "lower_error": null,
+            "upper_error": null,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "log g",
+            "value": 4.33,
+            "lower_error": 0.06,
+            "upper_error": 0.06,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "T eff",
+            "value": 1920.0,
+            "lower_error": 30.0,
+            "upper_error": 30.0,
+            "unit": "K",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "radius",
+            "value": 1.47,
+            "lower_error": 0.04,
+            "upper_error": 0.04,
+            "unit": "R_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
+        },
+        {
+            "model": "evolutionary",
+            "parameter": "mass",
+            "value": 18.05,
+            "lower_error": 1.74,
+            "upper_error": 1.74,
+            "unit": "M_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Sang23",
+            "other_references": null
         }
     ],
     "Names": [
@@ -52,6 +164,9 @@
         },
         {
             "other_name": "2MASS J01415833-4633578"
+        },
+        {
+            "other_name": "CWISE J014158.40-463358.1"
         },
         {
             "other_name": "Gaia DR2 4954323704550180352"
@@ -240,6 +355,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W1",
+            "magnitude": 12.563,
+            "magnitude_error": 0.012,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W2",
             "magnitude": 12.17,
             "magnitude_error": 0.022,
@@ -249,6 +373,15 @@
             "reference": "Cutr12"
         },
         {
+            "band": "WISE.W2",
+            "magnitude": 12.19,
+            "magnitude_error": 0.009,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
             "band": "WISE.W3",
             "magnitude": 11.921,
             "magnitude_error": 0.212,
@@ -256,6 +389,15 @@
             "epoch": null,
             "comments": null,
             "reference": "Cutr12"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 11.784,
+            "magnitude_error": 0.224,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         },
         {
             "band": "WISE.W4",
@@ -294,6 +436,15 @@
             "adopted": true,
             "comments": null,
             "reference": "GaiaEDR3"
+        },
+        {
+            "mu_ra": 120.9,
+            "mu_ra_error": 4.4,
+            "mu_dec": -51.7,
+            "mu_dec_error": 4.1,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "RadialVelocities": [
@@ -306,6 +457,19 @@
         }
     ],
     "Spectra": [
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/SINFONI/2M0141_SINFONIspeclib_JHK.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/SINFONI/2M0141_SINFONIspeclib_JHK.fits",
+            "regime": "nir",
+            "telescope": "ESO VLT U2",
+            "instrument": "SINFONI",
+            "mode": "Missing",
+            "observation_date": "2010-04-19T00:00:00",
+            "comments": null,
+            "reference": "Bonn14.127",
+            "other_references": null
+        },
         {
             "access_url": "http://academicworks.cuny.edu/context/hc_pubs/article/1100/type/native/viewcontent",
             "original_spectrum": null,
@@ -330,19 +494,6 @@
             "observation_date": "2004-09-06T00:00:00",
             "comments": null,
             "reference": "Kirk06",
-            "other_references": null
-        },
-        {
-            "access_url": "https://s3.amazonaws.com/bdnyc/SINFONI/2M0141_SINFONIspeclib_JHK.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/SINFONI/2M0141_SINFONIspeclib_JHK.fits",
-            "regime": "nir",
-            "telescope": "ESO VLT U2",
-            "instrument": "SINFONI",
-            "mode": "Missing",
-            "observation_date": "2010-04-19T00:00:00",
-            "comments": null,
-            "reference": "Bonn14.127",
             "other_references": null
         },
         {

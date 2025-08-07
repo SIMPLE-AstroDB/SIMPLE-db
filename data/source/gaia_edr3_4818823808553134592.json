@@ -25,41 +25,60 @@
     ],
     "ModeledParameters": [
         {
+            "model": null,
             "parameter": "T eff",
             "value": 2600.0,
-            "value_error": 100.0,
+            "lower_error": 100.0,
+            "upper_error": 100.0,
             "unit": "K",
+            "adopted": 0,
             "comments": null,
-            "reference": "Zhan19.1423"
+            "reference": "Zhan19.1423",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "log g",
             "value": 5.5,
-            "value_error": 0.2,
+            "lower_error": 0.2,
+            "upper_error": 0.2,
             "unit": "dex",
+            "adopted": 0,
             "comments": null,
-            "reference": "Zhan19.1423"
+            "reference": "Zhan19.1423",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "mass",
             "value": 0.0855,
-            "value_error": 0.0014,
+            "lower_error": 0.0014,
+            "upper_error": 0.0014,
             "unit": "M_sun",
+            "adopted": 0,
             "comments": null,
-            "reference": "Zhan19.1423"
+            "reference": "Zhan19.1423",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "metallicity",
             "value": -1.4,
-            "value_error": 0.2,
+            "lower_error": 0.2,
+            "upper_error": 0.2,
             "unit": "dex",
+            "adopted": 0,
             "comments": "[Fe/H]",
-            "reference": "Zhan19.1423"
+            "reference": "Zhan19.1423",
+            "other_references": null
         }
     ],
     "Names": [
         {
             "other_name": "2MASS J04524567-3608412"
+        },
+        {
+            "other_name": "CWISE J045245.87-360843.8"
         },
         {
             "other_name": "Gaia EDR3 4818823808553134592"
@@ -137,12 +156,30 @@
         },
         {
             "band": "WISE.W1",
+            "magnitude": 15.627,
+            "magnitude_error": 0.02,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W1",
             "magnitude": 15.571,
             "magnitude_error": 0.037,
             "telescope": "WISE",
             "epoch": null,
             "comments": null,
             "reference": "Zhan19.1423"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 15.439,
+            "magnitude_error": 0.033,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         },
         {
             "band": "WISE.W2",
@@ -155,6 +192,15 @@
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": 146.4,
+            "mu_ra_error": 17.0,
+            "mu_dec": -187.6,
+            "mu_dec_error": 16.4,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
         {
             "mu_ra": 147.52,
             "mu_ra_error": 0.79,

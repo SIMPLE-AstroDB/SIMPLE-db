@@ -17,6 +17,9 @@
             "other_name": "2MASS J23594034-7335055"
         },
         {
+            "other_name": "CWISE J235941.43-733504.7"
+        },
+        {
             "other_name": "WISEP J235941.07-733504.8"
         },
         {
@@ -122,6 +125,33 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Fahe12"
+        },
+        {
+            "band": "WISE.W1",
+            "magnitude": 15.226,
+            "magnitude_error": 0.016,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.375,
+            "magnitude_error": 0.01,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
+        {
+            "band": "WISE.W3",
+            "magnitude": 11.591,
+            "magnitude_error": 0.144,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Cutr13"
         }
     ],
     "ProperMotions": [
@@ -133,6 +163,15 @@
             "adopted": true,
             "comments": null,
             "reference": "Fahe12"
+        },
+        {
+            "mu_ra": 279.8,
+            "mu_ra_error": 7.8,
+            "mu_dec": 48.0,
+            "mu_dec_error": 6.8,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

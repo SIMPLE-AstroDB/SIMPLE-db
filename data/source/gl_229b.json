@@ -14,36 +14,52 @@
     ],
     "ModeledParameters": [
         {
+            "model": null,
             "parameter": "T eff",
             "value": 927.0,
-            "value_error": 77.0,
+            "lower_error": 77.0,
+            "upper_error": 77.0,
             "unit": "K",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "log g",
             "value": 4.98,
-            "value_error": 0.48,
+            "lower_error": 0.48,
+            "upper_error": 0.48,
             "unit": "dex",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "mass",
             "value": 42.64,
-            "value_error": 25.95,
+            "lower_error": 25.95,
+            "upper_error": 25.95,
             "unit": "M_jup",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         },
         {
+            "model": null,
             "parameter": "radius",
             "value": 0.94,
-            "value_error": 0.15,
+            "lower_error": 0.15,
+            "upper_error": 0.15,
             "unit": "R_jup",
+            "adopted": 0,
             "comments": null,
-            "reference": "Fili15"
+            "reference": "Fili15",
+            "other_references": null
         }
     ],
     "Names": [
@@ -187,19 +203,6 @@
             "other_references": null
         },
         {
-            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/Gl229.fits",
-            "original_spectrum": null,
-            "local_spectrum": "$BDNYC_spectra/optical_spectra/Gl229.fits",
-            "regime": "optical",
-            "telescope": "CTIO 1.5m",
-            "instrument": "Missing",
-            "mode": "Missing",
-            "observation_date": "2002-01-29T02:19:27.144000",
-            "comments": null,
-            "reference": "Cruz03",
-            "other_references": null
-        },
-        {
             "access_url": "https://bdnyc.s3.amazonaws.com/xshooter/GJ229B_total.fits",
             "original_spectrum": null,
             "local_spectrum": null,
@@ -210,6 +213,19 @@
             "observation_date": "2009-12-14T00:00:00",
             "comments": null,
             "reference": "Manj16",
+            "other_references": null
+        },
+        {
+            "access_url": "https://s3.amazonaws.com/bdnyc/optical_spectra/Gl229.fits",
+            "original_spectrum": null,
+            "local_spectrum": "$BDNYC_spectra/optical_spectra/Gl229.fits",
+            "regime": "optical",
+            "telescope": "CTIO 1.5m",
+            "instrument": "Missing",
+            "mode": "Missing",
+            "observation_date": "2002-01-29T02:19:27.144000",
+            "comments": null,
+            "reference": "Cruz03",
             "other_references": null
         }
     ],

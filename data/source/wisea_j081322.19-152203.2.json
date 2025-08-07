@@ -17,6 +17,9 @@
             "other_name": "2MASS J08132232-1522043"
         },
         {
+            "other_name": "CWISE J081322.16-152202.8"
+        },
+        {
             "other_name": "WISEA J081322.19-152203.2"
         }
     ],
@@ -29,15 +32,33 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "McMa13"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 13.534,
+            "magnitude_error": 0.012,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": -120.8,
+            "mu_ra_error": 6.9,
+            "mu_dec": 92.5,
+            "mu_dec_error": 7.6,
+            "adopted": true,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
+        },
         {
             "mu_ra": -164.5,
             "mu_ra_error": 14.7,
             "mu_dec": 98.8,
             "mu_dec_error": 13.8,
-            "adopted": true,
+            "adopted": false,
             "comments": null,
             "reference": "Schn17"
         }

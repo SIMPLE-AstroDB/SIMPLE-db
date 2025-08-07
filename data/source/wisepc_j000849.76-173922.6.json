@@ -14,6 +14,9 @@
     ],
     "Names": [
         {
+            "other_name": "CWISE J000849.71-173925.0"
+        },
+        {
             "other_name": "WISEPC J000849.76-173922.6"
         }
     ],
@@ -46,6 +49,15 @@
             "reference": "Kirk11"
         },
         {
+            "band": "PAN-STARRS/PS1.y",
+            "magnitude": 19.56,
+            "magnitude_error": 0.17,
+            "telescope": "Pan-STARRS",
+            "epoch": null,
+            "comments": null,
+            "reference": "Best18"
+        },
+        {
             "band": "WFCAM.J",
             "magnitude": 16.85,
             "magnitude_error": 0.02,
@@ -53,9 +65,27 @@
             "epoch": null,
             "comments": "WFCAM filter is a guess. Check reference for actual filter and telescope used. ",
             "reference": "Best20.257"
+        },
+        {
+            "band": "WISE.W2",
+            "magnitude": 14.978,
+            "magnitude_error": 0.031,
+            "telescope": "WISE",
+            "epoch": null,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "ProperMotions": [
+        {
+            "mu_ra": -129.8,
+            "mu_ra_error": 26.2,
+            "mu_dec": -336.2,
+            "mu_dec_error": 24.6,
+            "adopted": false,
+            "comments": null,
+            "reference": "Best18"
+        },
         {
             "mu_ra": -171.1,
             "mu_ra_error": 3.1,
@@ -73,6 +103,15 @@
             "adopted": null,
             "comments": null,
             "reference": "Kirk11"
+        },
+        {
+            "mu_ra": -150.5,
+            "mu_ra_error": 33.3,
+            "mu_dec": -408.0,
+            "mu_dec_error": 35.4,
+            "adopted": false,
+            "comments": "Ingested from the Ultracool Sheet. Cross match to CatWISE done by Sanghi et al. 2023 (10.3847/1538-4357/acff66).",
+            "reference": "Maro21"
         }
     ],
     "SpectralTypes": [

@@ -56,6 +56,31 @@ def test_parallax_refs(db):
 
 
 @pytest.mark.parametrize(
+    "ref, n_propermotion, n_adopted",
+    [
+        ("Maro21", 2952, 542),
+        ("GaiaEDR3", 1133, 1057),
+        ("Best18", 1966, 612),
+        ("Best20.257", 348, 172),
+        ("Kirk19", 182, 163),
+    ]
+)
+def test_proper_motion_adopted(db, ref, n_propermotion, n_adopted):
+    """
+    Test for number of proper motions added and adoptions.
+    """
+    t_added = db.query(db.ProperMotions).filter(db.ProperMotions.c.reference == ref).astropy()
+    assert len(t_added) == n_propermotion, f"found {len(t_added)} proper motion entries for {ref}"
+
+    t_adopted = (
+        db.query(db.ProperMotions)
+        .filter(and_(db.ProperMotions.c.reference == ref, db.ProperMotions.c.adopted == 1))
+        .astropy()
+    )
+    assert len(t_adopted) == n_adopted, f"found {len(t_adopted)} adopted proper motions for {ref}"
+    
+    
+@pytest.mark.parametrize(
     ("ref", "n_proper_motions"),
     [
         ("GaiaEDR3", 1133),
@@ -70,6 +95,7 @@ def test_parallax_refs(db):
         ("vanL07", 68),
         ("Smar18", 68),
         ("Schm10.1808", 44),
+        ("Maro21", 2952)
     ],
 )
 def test_proper_motion_refs(db, ref, n_proper_motions):

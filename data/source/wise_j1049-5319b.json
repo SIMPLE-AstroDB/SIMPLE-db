@@ -1,0 +1,111 @@
+{
+    "Sources": [
+        {
+            "source": "WISE J1049-5319B",
+            "ra": 162.329,
+            "dec": -53.3192,
+            "epoch": 2000.0,
+            "equinox": "J2000",
+            "shortname": null,
+            "reference": "Luhm13",
+            "other_references": null,
+            "comments": null
+        }
+    ],
+    "CompanionRelationships": [
+        {
+            "companion_name": "WISE J1049-5319A",
+            "projected_separation_arcsec": null,
+            "projected_separation_error": null,
+            "relationship": "Sibling",
+            "comments": null,
+            "reference": "Luhm13",
+            "other_companion_names": "Luhman 16A"
+        },
+        {
+            "companion_name": "WISE J104915.57-531906.1",
+            "projected_separation_arcsec": null,
+            "projected_separation_error": null,
+            "relationship": "Child",
+            "comments": null,
+            "reference": "Luhm13",
+            "other_companion_names": "WISE J104915.57-531906.1"
+        }
+    ],
+    "ModeledParameters": [
+        {
+            "model": null,
+            "parameter": "T eff",
+            "value": 1261.0,
+            "lower_error": 55.0,
+            "upper_error": 55.0,
+            "unit": "K",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Fili15",
+            "other_references": null
+        },
+        {
+            "model": null,
+            "parameter": "log g",
+            "value": 4.95,
+            "lower_error": 0.27,
+            "upper_error": 0.27,
+            "unit": "dex",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Fili15",
+            "other_references": null
+        },
+        {
+            "model": null,
+            "parameter": "mass",
+            "value": 39.84,
+            "lower_error": 15.58,
+            "upper_error": 15.58,
+            "unit": "M_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Fili15",
+            "other_references": null
+        },
+        {
+            "model": null,
+            "parameter": "radius",
+            "value": 1.02,
+            "lower_error": 0.07,
+            "upper_error": 0.07,
+            "unit": "R_jup",
+            "adopted": 0,
+            "comments": null,
+            "reference": "Fili15",
+            "other_references": null
+        }
+    ],
+    "Names": [
+        {
+            "other_name": "Luhman 16B"
+        },
+        {
+            "other_name": "NAME Luhman 16B"
+        },
+        {
+            "other_name": "WISE J1049-5319B"
+        }
+    ],
+    "Spectra": [
+        {
+            "access_url": "https://bdnyc.s3.amazonaws.com/WFC3/Luhm16b.csv",
+            "original_spectrum": null,
+            "local_spectrum": null,
+            "regime": "nir",
+            "telescope": "HST",
+            "instrument": "WFC3",
+            "mode": "G141 grism",
+            "observation_date": "2013-11-08T00:00:00",
+            "comments": null,
+            "reference": "Manj19",
+            "other_references": "Buen13.13280, Buen15"
+        }
+    ]
+}

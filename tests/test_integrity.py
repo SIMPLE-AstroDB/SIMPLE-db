@@ -467,8 +467,10 @@ def test_modeled_parameters(db):
         db.query(db.ModeledParameters)
         .filter(
             and_(
-                db.ModeledParameters.c.value_error is not None,
-                db.ModeledParameters.c.value_error < 0,
+                db.ModeledParameters.c.upper_error is not None,
+                db.ModeledParameters.c.upper_error < 0,
+                db.ModeledParameters.c.lower_error is not None,
+                db.ModeledParameters.c.lower_error < 0,
             )
         )
         .astropy()
@@ -630,7 +632,7 @@ def test_companion_relationship(db):
     assert len(t) == 0
 
     # test correct relationship
-    possible_relationships = ["Child", "Sibling", "Parent", "Unresolved Parent"]
+    possible_relationships = ["Child", "Sibling", "Parent", "Unresolved Parent","Resolved Child"]
     t = (
         db.query(db.CompanionRelationships)
         .filter(~db.CompanionRelationships.c.relationship.in_(possible_relationships))
@@ -639,7 +641,7 @@ def test_companion_relationship(db):
     if len(t) > 0:
         print(
             "\n relationship is of the souce to its companion \
-            should be one of the following: Child, Sibling, Parent, or Unresolved Parent"
+            should be one of the following: Child, Sibling, Parent, Unresolved Parent, or Resolved Child"
         )
         print(t)
     assert len(t) == 0
