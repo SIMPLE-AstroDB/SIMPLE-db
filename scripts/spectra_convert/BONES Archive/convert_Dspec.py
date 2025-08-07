@@ -150,6 +150,8 @@ for filename in os.listdir(path):
         metadata['Reference'] = 'Kirk16'
         metadata['BUNIT']= 'erg / (cm2 s Angstrom)'
         metadata['Regime'] = "optical"
+        metadata['WAVERANGE'] = "4000-15000"
+        metadata['TUNIT1'] = 'Angstrom'
 
         metadata_list.append(metadata)
 

@@ -17,10 +17,6 @@ for filename in os.listdir(path):
         source: WISEA J101329.72-724619.2, 
                 WISEA J135501.90-825838.9,
                 WISEA J041451.67-585456.7
-                
-        publication
-            reference             doi                   
-            Zhan17.2438   10.1093/mnras/stw2438 
     """
     metadata = {}
     matched = False 
@@ -35,6 +31,7 @@ for filename in os.listdir(path):
             'DATE-OBS': '2015-02-08',
             'AUTHOR': 'Kirkpatrick et al.',
             'Reference': 'Kirk16',
+            'WAVERANGE': "0.85-1.348;1.39-1.83;1.92-2.5"
         })
         matched = True
 
@@ -46,7 +43,8 @@ for filename in os.listdir(path):
                 'DEC_TARG': "-58.9157500",
                 'DATE-OBS': '2020-02-12',
                 'AUTHOR': 'Schneider et al 2020',
-                'Reference': 'Schn20'
+                'Reference': 'Schn20',
+                'WAVERANGE': "0.85-1.374;1.38-1.825;1.93-2.4"
             })
             matched = True
 
@@ -57,7 +55,8 @@ for filename in os.listdir(path):
                 'DEC_TARG': "9.8382541",
                 'DATE-OBS': '2012-05-08',
                 'AUTHOR': 'Zhang et al. 2017a',
-                'Reference': 'Zhan17.2438'
+                'Reference': 'Zhan17.2438',
+                'WAVERANGE': "0-2.4"
             })
             matched = True
 
@@ -68,7 +67,8 @@ for filename in os.listdir(path):
                 'DEC_TARG': "-2.4856800",
                 'DATE-OBS': '2012-05-08',
                 'AUTHOR': 'Zhang et al. 2017a',
-                'Reference': 'Zhan17.2438'
+                'Reference': 'Zhan17.2438',
+                'WAVERANGE': "0-2.4"
             })
             matched = True
 
@@ -77,6 +77,7 @@ for filename in os.listdir(path):
         metadata['TELESCOP'] = 'Magellan I Baade'
         metadata['INSTRUME'] = 'FIRE'
         metadata['Regime'] = "nir"
+        metadata["TUNIT1"] = "um"
         metadata_list.append(metadata)
 
 path = "/Users/guanying/SIMPLE_Archive/SIMPLE-db/scripts/spectra_convert/BONES Archive/BONES_Archive.csv"
@@ -84,7 +85,8 @@ output_csv = os.path.join(os.path.dirname(path), 'BONES_Archive.csv')
 
 if metadata_list:
     fieldnames = [
-        "FILENAME","OBJECT","RA_TARG","DEC_TARG","DATE-OBS","TELESCOP","INSTRUME","AUTHOR","Reference","BUNIT","Regime"
+        "FILENAME","OBJECT","RA_TARG","DEC_TARG","DATE-OBS","TELESCOP",
+        "INSTRUME","AUTHOR","Reference","BUNIT","Regime","WAVERANGE","TUNIT1"
 
     ]
     with open(output_csv, mode='a', newline='') as csvfile:

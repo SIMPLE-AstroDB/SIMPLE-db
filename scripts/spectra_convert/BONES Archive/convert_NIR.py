@@ -1,7 +1,7 @@
 import os
 import csv
 
-path  = "/Users/guanying/SIMPLE_Archive/SIMPLE-db/scripts/spectra_convert/BONES Archive/"
+path  = "/Users/guanying/SIMPLE_Archive/SIMPLE-db/scripts/spectra_convert/BONES Archive/BONES SPECTRA"
 output_csv = os.path.join(os.path.dirname(path), 'BONES_Archive.csv')
 
 """
@@ -15,11 +15,13 @@ metadata_list = []
 for filename in os.listdir(path):
     """
     Things need to be ingested into SIMPLE:
-    Publication: Mace13, The Exemplar T8 Subdwarf Companion of Wolf 1130, bibcode: 2013ApJ...777...36M, doi: 10.1088/0004-637X/777/1/36
+    Publication: 
+                Burg25.79,bib: 2025ApJ...982...79B, doi: 10.3847/1538-4357/adb39f, New Cold Subdwarf Discoveries from Backyard Worlds and a Metallicity Classification System for T Subdwarfs
     """
     metadata = {}
     filename = os.path.basename(filename)
     metadata['FILENAME'] = filename
+    matched = False
 
     if filename.startswith("LRIS_1333"):
         metadata.update({
@@ -31,8 +33,10 @@ for filename in os.listdir(path):
             'Reference': 'Kirk16',
             'TELESCOPE': 'Keck I',
             'INSTRUME': 'LRIS',
+            'TUNIT1': 'Angstrom'
         })
         file_converted += 1
+        matched = True
 
     elif filename.startswith("mosfire_NIR_Wolf1130B.txt"):
         metadata.update({
@@ -44,8 +48,10 @@ for filename in os.listdir(path):
             'Reference': 'Mace13',
             'TELESCOPE': 'Keck I',
             'INSTRUME': 'Mosfire',
+            'TUNIT1': 'um'
         })
         file_converted += 1
+        matched = True
 
     elif filename.startswith("NIR_J1810-1009.txt"):
         metadata.update({
@@ -57,8 +63,12 @@ for filename in os.listdir(path):
             'Reference': 'Schn20',
             'TELESCOPE': 'Keck II',
             'INSTRUME': 'NIRES',
+            'TUNIT1': 'um',
+            'WAVERANGE': "1-1.35;1.41-1.82;1.93-2.5"
+
         })
         file_converted += 1
+        matched = True
 
     elif filename.startswith("NIR_J1316+0755_Burn2014.txt"):
         metadata.update({
@@ -69,9 +79,11 @@ for filename in os.listdir(path):
             'AUTHOR': 'Burningham et al.',
             'Reference': 'Burn14',
             'TELESCOPE': 'Gemini North',
-            'INSTRUME': 'GNIRS'
+            'INSTRUME': 'GNIRS',
+            'TUNIT1': 'um',
         })
         file_converted += 1
+        matched = True
 
     elif filename.startswith("nirspec_0014m0838.txt"):
         metadata.update({
@@ -82,22 +94,27 @@ for filename in os.listdir(path):
             'AUTHOR': 'Kirkpatrick et al.',
             'Reference': 'Krik16',
             'TELESCOPE': 'Keck II',
-            'INSTRUME': 'NIRSPEC'
+            'INSTRUME': 'NIRSPEC',
+            'TUNIT1': 'um',
+            'WAVERANGE': "1.15-1.39"
         })
         file_converted += 1
+        matched = True
     
     elif filename.startswith("nires_NIR_J1553+6934_20200707.txt"):
         metadata.update({
-            'OBJECT': "WISE J155349.98+693355.2",
+            'OBJECT': "WISE J155349.98+693355.2", # note: needed to be smoothed when converting spectrum
             'RA_TARG': "238.4582860",
             'DEC_TARG': "69.5653400",
             'DATE-OBS': '2020-07-07',
             'AUTHOR': 'Meisner et al.',
             'Reference': 'Meis21',
             'TELESCOPE': 'Keck II',
-            'INSTRUME': 'NIRES'
+            'INSTRUME': 'NIRES',
+            'TUNIT1': 'um',
         })
         file_converted += 1
+        matched = True
 
     elif filename.startswith("nires_NIR_GJ576B_20220611.txt"):
         metadata.update({
@@ -108,9 +125,11 @@ for filename in os.listdir(path):
             'AUTHOR': 'Zhang et al.',
             'Reference': 'Zhan18.2054',
             'TELESCOPE': 'Keck II',
-            'INSTRUME': 'NIRES'
+            'INSTRUME': 'NIRES',
+            'TUNIT1': 'um',
         }) 
         file_converted += 1
+        matched = True
     
     elif filename.startswith("nires_NIR_J0532+8246_20220119.csv"):
         metadata.update({
@@ -119,11 +138,14 @@ for filename in os.listdir(path):
             'DEC_TARG': "82.7792114",
             'DATE-OBS': '2022-01-19',
             'AUTHOR': 'Burgasser et al.',
-            'Reference': '', # Burgasser in prep
+            'Reference': 'Burg25.79', 
             'TELESCOPE': 'Keck II',
-            'INSTRUME': 'NIRES'
+            'INSTRUME': 'NIRES',
+            'TUNIT1': 'um',
+            'WAVERANGE': "0.85-1.38;1.41-1.8;1.93-2.4"
         })
         file_converted += 1
+        matched = True
     
     elif filename.startswith("NIR_J0850-0221.csv"):
         metadata.update({
@@ -134,9 +156,11 @@ for filename in os.listdir(path):
             'AUTHOR': 'Greci et al.',
             'Reference': 'Grec19',
             'TELESCOPE': 'IRTF',
-            'INSTRUME': 'SpeX'
+            'INSTRUME': 'SpeX',
+            'TUNIT1': 'um'
         })
         file_converted += 1
+        matched = True
 
     elif filename.startswith("NIR_J0948-2903.csv"):
         metadata.update({
@@ -147,9 +171,11 @@ for filename in os.listdir(path):
             'AUTHOR': 'Greci et al.',
             'Reference': 'Grec19',
             'TELESCOPE': 'IRTF',
-            'INSTRUME': 'SpeX'
+            'INSTRUME': 'SpeX',
+            'TUNIT1': 'um'
         })
         file_converted += 1
+        matched = True
 
     elif filename.startswith("NIR_J1820+2021.csv"):
         metadata.update({
@@ -160,9 +186,11 @@ for filename in os.listdir(path):
             'AUTHOR': 'Greci et al.',
             'Reference': 'Grec19',
             'TELESCOPE': 'IRTF',
-            'INSTRUME': 'SpeX'
+            'INSTRUME': 'SpeX',
+            'TUNIT1': 'um'
         })
         file_converted += 1
+        matched = True
     
     elif filename.startswith("NIR_J1552+0951.csv"):
         metadata.update({
@@ -173,9 +201,11 @@ for filename in os.listdir(path):
             'AUTHOR': 'Greci et al.',
             'Reference': 'Grec19',
             'TELESCOPE': 'IRTF',
-            'INSTRUME': 'SpeX'
+            'INSTRUME': 'SpeX',
+            'TUNIT1': 'um'
         })
         file_converted += 1
+        matched = True
 
     elif filename.startswith("NIR_J1219+0810.csv"):
         metadata.update({
@@ -186,9 +216,11 @@ for filename in os.listdir(path):
             'AUTHOR': 'Greci et al.',
             'Reference': 'Grec19',
             'TELESCOPE': 'IRTF',
-            'INSTRUME': 'SpeX'
+            'INSTRUME': 'SpeX',
+            'TUNIT1': 'um'
         })
         file_converted += 1
+        matched = True
 
     elif filename.startswith("NIR_J1440-2225.csv"):
         metadata.update({
@@ -199,9 +231,11 @@ for filename in os.listdir(path):
             'AUTHOR': 'Greci et al.',
             'Reference': 'Grec19',
             'TELESCOPE': 'IRTF',
-            'INSTRUME': 'SpeX'
+            'INSTRUME': 'SpeX',
+            'TUNIT1': 'um'
         })
         file_converted += 1
+        matched = True
 
     elif filename.startswith("NIR_J1245+6016.csv"):
         metadata.update({
@@ -212,9 +246,11 @@ for filename in os.listdir(path):
             'AUTHOR': 'Greci et al.',
             'Reference': 'Grec19',
             'TELESCOPE': 'IRTF',
-            'INSTRUME': 'SpeX'
+            'INSTRUME': 'SpeX',
+            'TUNIT1': 'um'
         })
         file_converted += 1
+        matched = True
 
     elif filename.startswith("NIR_J0301-2319.csv"):
         metadata.update({
@@ -225,9 +261,11 @@ for filename in os.listdir(path):
             'AUTHOR': 'Greci et al.',
             'Reference': 'Grec19',
             'TELESCOPE': 'IRTF',
-            'INSTRUME': 'SpeX'
+            'INSTRUME': 'SpeX',
+            'TUNIT1': 'um'
         })
         file_converted += 1
+        matched = True
 
     elif filename.startswith("NIR_J1439-1100.csv"):
         metadata.update({
@@ -238,9 +276,11 @@ for filename in os.listdir(path):
             'AUTHOR': 'Greci et al.',
             'Reference': 'Grec19',
             'TELESCOPE': 'IRTF',
-            'INSTRUME': 'SpeX'
+            'INSTRUME': 'SpeX',
+            'TUNIT1': 'um'
         })
         file_converted += 1
+        matched = True
     
     elif filename.startswith("NIR_J1220+6205.csv"):
         metadata.update({
@@ -251,9 +291,11 @@ for filename in os.listdir(path):
             'AUTHOR': 'Greci et al.',
             'Reference': 'Grec19',
             'TELESCOPE': 'IRTF',
-            'INSTRUME': 'SpeX'
+            'INSTRUME': 'SpeX',
+            'TUNIT1': 'um'
         })
         file_converted += 1
+        matched = True
 
     elif filename.startswith("NIR_J1035-0771.csv"):
         metadata.update({
@@ -264,9 +306,11 @@ for filename in os.listdir(path):
             'AUTHOR': 'Greci et al.',
             'Reference': 'Grec19',
             'TELESCOPE': 'IRTF',
-            'INSTRUME': 'SpeX'
+            'INSTRUME': 'SpeX',
+            'TUNIT1': 'um'
         })
         file_converted += 1
+        matched = True
     
     elif filename.startswith("NIR_J0004-2604.csv"):
         metadata.update({
@@ -276,26 +320,31 @@ for filename in os.listdir(path):
             'DATE-OBS': '2016-08-03',
             'AUTHOR': 'Greci et al.',
             'Reference': 'Grec19',
-            'TELESCOPE': 'IRTF',
-            'INSTRUME': 'SpeX'
+            'TELESCOP': 'IRTF',
+            'INSTRUME': 'SpeX',
+            'TUNIT1': 'um'
         })
         file_converted += 1
-
-    metadata['BUNIT'] = 'erg / (cm2 s Angstrom)'
-    metadata['REGIME']= 'nir'
-
-
-metadata_list.append(metadata)
+        matched = True
+        
+    if matched:
+        metadata['BUNIT'] = 'erg / (cm2 s Angstrom)'
+        metadata['Regime']= 'nir'
+        metadata_list.append(metadata)
 
 path = "/Users/guanying/SIMPLE_Archive/SIMPLE-db/scripts/spectra_convert/BONES Archive/BONES_Archive.csv"
 output_csv = os.path.join(os.path.dirname(path), 'BONES_Archive.csv')
 
 if metadata_list:
+    fieldnames = [
+        "FILENAME","OBJECT","RA_TARG","DEC_TARG","DATE-OBS","TELESCOP","INSTRUME","AUTHOR","Reference","BUNIT","Regime","WAVERANGE","TUNIT1"
+    ]
     with open(output_csv, mode='a', newline='') as csvfile:
-        fieldnames = metadata_list[0].keys()
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, extrasaction='ignore')
 
         for metadata in metadata_list:
+            for key in fieldnames:
+                metadata.setdefault(key, '')
             writer.writerow(metadata)
 
-    print(f"Metadata appended to: {output_csv}")
+    print(f"Metadata added for {len(metadata_list)} files")

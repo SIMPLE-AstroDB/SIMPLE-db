@@ -56,6 +56,8 @@ for file in files:
     metadata['Reference'] = 'Kirk16'
     metadata['BUNIT'] = 'erg / (cm2 s Angstrom)'
     metadata['Regime'] = "optical"
+    metadata['WAVERANGE'] = "0-10000"
+    metadata['TUNIT1'] = 'Angstrom'
 
     metadata_list.append(metadata)
 
