@@ -1,0 +1,94 @@
+import sys
+import logging
+sys.path.append(".")
+from astropy.io import ascii
+from simple import REFERENCE_TABLES
+from astrodb_utils import load_astrodb
+
+from astrodb_utils.spectra import (
+    ingest_spectrum,
+    find_spectra,
+    check_spectrum_plottable,
+)
+from astrodb_utils.sources import (
+    logger,
+    find_source_in_db,
+    ingest_source
+)
+from astrodb_utils.publications import ingest_publication
+
+astrodb_utils_logger = logging.getLogger("astrodb_utils")
+logger.setLevel(logging.DEBUG)  # Set logger to INFO/DEBUG/WARNING/ERROR/CRITICAL level
+astrodb_utils_logger.setLevel(logging.DEBUG)
+
+SAVE_DB = True  # save the data files in addition to modifying the .db file
+RECREATE_DB = True  # recreates the .db file from the data files
+SCHEMA_PATH = "simple/schema.yaml"
+db = load_astrodb(
+    "SIMPLE.sqlite",
+    recreatedb=RECREATE_DB,
+    reference_tables=REFERENCE_TABLES,
+    felis_schema=SCHEMA_PATH,
+)
+
+file = (
+    ""
+)
+
+link = "scripts/ingests/xshyne/xshyne_data.csv"
+
+xshyne_table = ascii.read(
+    link,
+    format="csv",
+    data_start=1,
+    header_start=0,
+    guess=False,
+    fast_reader=False, 
+    delimiter=",",
+)
+
+spectra_ingested = 0
+source_ingested = 0
+
+ingest_publication( db =db,
+                   doi = "10.48550/arXiv.2507.16899",
+                   bibcode = "2025arXiv250716899P",
+                   reference = "Petr25")
+
+for row in xshyne_table:
+    source = row["Source"]
+    ra = row["Ra"]
+    dec = row["Dec"]
+    date = row["Date"]
+
+    result = find_source_in_db(db = db, source = source, ra = ra, dec = dec, ra_col_name="ra", dec_col_name="dec")
+
+    if len(result) == 0:
+        ingest_source(
+            db=db,
+            source = source,
+            ref = "Petr25",
+            ra = ra,
+            dec = dec,
+            ra_col_name = "ra",
+            dec_col_name="dec"
+        )
+        source_ingested+=1
+    
+    ingest_spectrum(
+        db=db,
+        source = source,
+        #check?
+        regime = "",
+        spectrum = "",
+        telescope="JWST",
+        instrument="VLT/X-Shooter",
+        #check?
+        mode = "",
+        obs_date=date,
+        reference = "Petr25",
+    )
+    spectra_ingested+=1
+
+if SAVE_DB: 
+    db.save_database(directory="data/")
