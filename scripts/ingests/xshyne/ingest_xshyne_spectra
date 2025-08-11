@@ -7,13 +7,12 @@ from astrodb_utils import load_astrodb
 
 from astrodb_utils.spectra import (
     ingest_spectrum,
-    find_spectra,
-    check_spectrum_plottable,
 )
 from astrodb_utils.sources import (
     logger,
     find_source_in_db,
-    ingest_source
+    ingest_source,
+    ingest_name
 )
 from astrodb_utils.publications import ingest_publication
 
@@ -49,6 +48,8 @@ xshyne_table = ascii.read(
 
 spectra_ingested = 0
 source_ingested = 0
+source_already_exist = 0
+names_ingested = 0
 
 ingest_publication( db =db,
                    doi = "10.48550/arXiv.2507.16899",
@@ -60,8 +61,10 @@ for row in xshyne_table:
     ra = row["Ra"]
     dec = row["Dec"]
     date = row["Date"]
+    short_name = row["Short Name"]
 
     result = find_source_in_db(db = db, source = source, ra = ra, dec = dec, ra_col_name="ra", dec_col_name="dec")
+    short_name_result = find_source_in_db(db=db, source = short_name)
 
     if len(result) == 0:
         ingest_source(
@@ -75,12 +78,16 @@ for row in xshyne_table:
         )
         source_ingested+=1
     
+    if len(short_name_result) == 0:
+        ingest_name(db=db, source = source, other_name=short_name)
+        names_ingested+=1
+    
     ingest_spectrum(
         db=db,
         source = source,
         #check?
         regime = "",
-        spectrum = "",
+        spectrum = file,
         telescope="JWST",
         instrument="VLT/X-Shooter",
         #check?
@@ -90,5 +97,10 @@ for row in xshyne_table:
     )
     spectra_ingested+=1
 
+logger.info(f"sources ingested:{source_ingested}")  # 20 ingested
+logger.info(f"sources already exists:{source_already_exist}")  # 44 due to preexisting data
+logger.info(f"total sources:{source_ingested+source_already_exist}")  # 64 sources total
+logger.info(f"names ingested:{names_ingested}") # 42 names ingested
+logger.info(f"Spectra ingested: {spectra_ingested}") # spectra ingested
 if SAVE_DB: 
     db.save_database(directory="data/")
