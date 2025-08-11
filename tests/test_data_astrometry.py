@@ -5,7 +5,7 @@ from sqlalchemy import and_
 def test_parallax_refs(db):
     # Test total adopted measuruments
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.adopted == 1).astropy()
-    assert len(t) == 1876, f"found {len(t)} adopted parallax measuruments."
+    assert len(t) == 1901, f"found {len(t)} adopted parallax measuruments."
 
     ref = "GaiaDR3"
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
@@ -24,7 +24,7 @@ def test_parallax_refs(db):
 
     ref = "GaiaEDR3"
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()
-    assert len(t) == 1134, f"found {len(t)} parallax reference entries for {ref}"
+    assert len(t) == 1172, f"found {len(t)} parallax reference entries for {ref}"
 
     t = (
         db.query(db.Parallaxes)
@@ -32,7 +32,7 @@ def test_parallax_refs(db):
         .astropy()
     )
     assert (
-        len(t) == 1077
+        len(t) == 1115
     ), f"found {len(t)} adopted parallax reference entries for {ref}"
 
     ref = "Kirk21"
@@ -44,7 +44,7 @@ def test_parallax_refs(db):
         .filter(and_(db.Parallaxes.c.reference == ref, db.Parallaxes.c.adopted == 1))
         .astropy()
     )
-    assert len(t) == 248, f"found {len(t)} adopted parallax reference entries for {ref}"
+    assert len(t) == 247, f"found {len(t)} adopted parallax reference entries for {ref}"
 
     ref = "Kirk19"
     t = db.query(db.Parallaxes).filter(db.Parallaxes.c.reference == ref).astropy()

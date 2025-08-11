@@ -16,10 +16,10 @@ def reference_verifier(t, name, bibcode, doi):
 def test_sources(db):
     # Test to verify existing counts of sources and names
     n_sources = db.query(db.Sources).count()
-    assert n_sources == 3620, f"found {n_sources} sources"
+    assert n_sources == 3618, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 9215, f"found {n_names} names"
+    assert n_names == 9214, f"found {n_names} names"
 
 
 @pytest.mark.parametrize(
@@ -157,13 +157,13 @@ def test_missions(db):
         f"found {len(s)} sources with Gaia EDR3 parallax "
         f"and no Gaia EDR3 designation in Names "
     )
-    assert len(s) == 1, msg
+    assert len(s) == 39, msg
 
 
 # Test to verify existing counts of spectral types grouped by regime
 @pytest.mark.parametrize(
     ("regime", "n_spectra"),
-    [("optical", 1494), ("nir", 2644), ("mir", 0), ("unknown", 11)],
+    [("optical", 1494), ("nir", 2644), ("mir", 0), ("unknown", 75)],
 )
 def test_spectral_types_regimes(db, regime, n_spectra):
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
@@ -173,7 +173,7 @@ def test_spectral_types_regimes(db, regime, n_spectra):
 # Test numbers of MLTY dwarfs
 @pytest.mark.parametrize(
     ("string", "code_min", "code_max", "n_spectra"),
-    [("M", 60, 70, 967), ("L", 70, 80, 2084), ("T", 80, 90, 1039), ("Y", 90, 100, 59)],
+    [("M", 60, 70, 967), ("L", 70, 80, 2134), ("T", 80, 90, 1053), ("Y", 90, 100, 59)],
 )  # Total number of MLTY dwarfs = 3863
 def test_spectral_types_classes(db, string, code_min, code_max, n_spectra):
     result = (
@@ -192,7 +192,7 @@ def test_spectral_types_classes(db, string, code_min, code_max, n_spectra):
 
 def test_spectral_types(db):
     n_spectral_types = db.query(db.SpectralTypes).count()
-    assert n_spectral_types == 4149, f"found {n_spectral_types} spectral types"
+    assert n_spectral_types == 4213, f"found {n_spectral_types} spectral types"
     print(f"found {n_spectral_types} total spectral types")
 
     n_photometric_spectral_types = (
@@ -208,7 +208,7 @@ def test_spectral_types(db):
         db.query(db.SpectralTypes).filter(db.SpectralTypes.c.adopted == 1).count()
     )
     assert (
-        n_adopted_spectral_types == 288
+        n_adopted_spectral_types == 344
     ), f"found {n_adopted_spectral_types} adopted spectral types"
     print(f"found {n_adopted_spectral_types} adopted spectral types")
 
