@@ -8,7 +8,7 @@ def test_model(db):
         .filter(db.ModeledParameters.c.model.is_(None))
         .astropy()
     )
-    assert len(t) == 705
+    assert len(t) == 960
 
 def test_adopted(db):
     t = (
@@ -21,12 +21,12 @@ def test_adopted(db):
 @pytest.mark.parametrize(
     ("param", "n_counts"),
     [
-        ("T eff", 2284),
-        ("log g", 2284),
-        ("mass", 1230),
-        ("radius", 2283),
+        ("T eff", 2344),
+        ("log g", 2344),
+        ("mass", 1290),
+        ("radius", 2298),
         ("metallicity", 2),
-        ("L bol", 1054)
+        ("L bol", 1114)
     ],
 )
 def test_modeledparameters_params(db, param, n_counts):
@@ -54,7 +54,7 @@ def test_modeledparameters_params(db, param, n_counts):
         ("Fili15", "mass", 174),
         ("Fili15", "radius", 174),
         ("Fili15", "metallicity", 0),
-        ("Fili15", "L bol", 0),
+        ("Fili15", "L bol", 5),
         ("Zhan19.1423", "T eff", 1),
         ("Zhan19.1423", "log g", 1),
         ("Zhan19.1423", "mass", 1),
