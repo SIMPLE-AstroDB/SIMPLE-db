@@ -63,35 +63,37 @@ for row in xshyne_table:
     date = row["Date"]
     short_name = row["Short Name"]
 
-    result = find_source_in_db(db = db, source = source, ra = ra, dec = dec, ra_col_name="ra", dec_col_name="dec")
     short_name_result = find_source_in_db(db=db, source = short_name)
-
-    if len(result) == 0:
-        ingest_source(
-            db=db,
-            source = source,
-            ref = "Petr25",
-            ra = ra,
-            dec = dec,
-            ra_col_name = "ra",
-            dec_col_name="dec"
-        )
-        source_ingested+=1
     
     if len(short_name_result) == 0:
         ingest_name(db=db, source = source, other_name=short_name)
         names_ingested+=1
     
+    #ingest each spectra twice, once for nir and once for optical regime
     ingest_spectrum(
         db=db,
         source = source,
         #check?
-        regime = "",
+        regime = "optical",
         spectrum = file,
-        telescope="JWST",
+        telescope="ESO VLT",
         instrument="VLT/X-Shooter",
         #check?
-        mode = "",
+        mode = "Echelle",
+        obs_date=date,
+        reference = "Petr25",
+    )
+    spectra_ingested+=1
+    ingest_spectrum(
+        db=db,
+        source = source,
+        #check?
+        regime = "nir",
+        spectrum = file,
+        telescope="ESO VLT",
+        instrument="VLT/X-Shooter",
+        #check?
+        mode = "Echelle",
         obs_date=date,
         reference = "Petr25",
     )
