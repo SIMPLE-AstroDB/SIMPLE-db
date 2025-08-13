@@ -17,6 +17,8 @@ from simple import REFERENCE_TABLES
 from astropy.io import ascii
 import logging
 from astropy.table import Table
+from sigfig import round as sig_round
+
 
 
 logger = logging.getLogger("AstroDB")
@@ -64,6 +66,9 @@ def get_pub(ads):
         ingest_publication(db = db, bibcode = ads)
     return find_publication(db = db, bibcode = ads)[1]
 
+def truncate_to_two_decimals(value):
+    return sig_round(value, decimals=2)
+
 for row in L6T6_table:
     source_name = db.search_object(row["object"])
     if(len(source_name)>1):
@@ -74,30 +79,30 @@ for row in L6T6_table:
     while(param_counter < 4):
         if(param_counter == 1):
             parameter = "L bol"
-            value = row["log_Lbol"]
-            upper_error = row["log_Lbol_upp_err"]
-            lower_error = row["log_Lbol_low_err"]
+            value = truncate_to_two_decimals(row["log_Lbol"])
+            upper_error = truncate_to_two_decimals(row["log_Lbol_upp_err"])
+            lower_error = truncate_to_two_decimals(row["log_Lbol_low_err"])
             unit = "dex"
             ref = get_pub(row["Ref_lbol"])
         elif(param_counter == 2):
             parameter = "T eff"
-            value = row["Teff"]
-            upper_error = row["Teff_upp_err"]
-            lower_error = row["Teff_low_err"]
+            value = truncate_to_two_decimals(row["Teff"])
+            upper_error = truncate_to_two_decimals(row["Teff_upp_err"])
+            lower_error = truncate_to_two_decimals(row["Teff_low_err"])
             unit = "K"
             ref = get_pub(row["Ref_TeffloggRadiusMass"])
         elif(param_counter == 3):
             parameter = "log g"
-            value = row["logg"]
-            upper_error = row["logg_upp_err"]
-            lower_error = row["logg_low_err"]
+            value = truncate_to_two_decimals(row["logg"])
+            upper_error = truncate_to_two_decimals(row["logg_upp_err"])
+            lower_error = truncate_to_two_decimals(row["logg_low_err"])
             unit = "dex"
             ref = get_pub(row["Ref_TeffloggRadiusMass"])
         else:
             parameter = "mass"
-            value = row["Mass_MJ"]
-            upper_error = row["Mass_MJ_upp_err"]
-            lower_error = row["Mass_MJ_low_err"]
+            value = truncate_to_two_decimals(row["Mass_MJ"])
+            upper_error = truncate_to_two_decimals(row["Mass_MJ_upp_err"])
+            lower_error = truncate_to_two_decimals(row["Mass_MJ_low_err"])
             unit = "M_jup"
             ref = get_pub(row["Ref_TeffloggRadiusMass"])
         param_counter += 1
@@ -142,37 +147,37 @@ for row in T7Y1_table:
     while(param_counter < 5):
         if(param_counter == 1):
             parameter = "L bol"
-            value = row["log_Lbol"]
-            upper_error = row["log_Lbol_upp_err"]
-            lower_error = row["log_Lbol_low_err"]
+            value = truncate_to_two_decimals(row["log_Lbol"])
+            upper_error = truncate_to_two_decimals(row["log_Lbol_upp_err"])
+            lower_error = truncate_to_two_decimals(row["log_Lbol_low_err"])
             unit = "dex"
             ref = get_pub(row["Ref_lbol"])
         elif(param_counter == 2):
             parameter = "T eff"
-            value = row["Teff"]
-            upper_error = row["Teff_upp_err"]
-            lower_error = row["Teff_low_err"]
+            value = truncate_to_two_decimals(row["Teff"])
+            upper_error = truncate_to_two_decimals(row["Teff_upp_err"])
+            lower_error = truncate_to_two_decimals(row["Teff_low_err"])
             unit = "K"
             ref = get_pub(row["Ref_TeffloggRadiusMass"])
         elif(param_counter == 3):
             parameter = "log g"
-            value = row["logg"]
-            upper_error = row["logg_upp_err"]
-            lower_error = row["logg_low_err"]
+            value = truncate_to_two_decimals(row["logg"])
+            upper_error = truncate_to_two_decimals(row["logg_upp_err"])
+            lower_error = truncate_to_two_decimals(row["logg_low_err"])
             unit = "dex"
             ref = get_pub(row["Ref_TeffloggRadiusMass"])
         elif(param_counter == 4):
             parameter = "radius"
-            value = row["Radius_RJ"]
-            upper_error = row["Radius_RJ_upp_err"]
-            lower_error = row["Radius_RJ_low_err"]
+            value = truncate_to_two_decimals(row["Radius_RJ"])
+            upper_error = truncate_to_two_decimals(row["Radius_RJ_upp_err"])
+            lower_error = truncate_to_two_decimals(row["Radius_RJ_low_err"])
             unit = "R_jup"
             ref = get_pub(row["Ref_TeffloggRadiusMass"])
         else:
             parameter = "mass"
-            value = row["Mass_MJ"]
-            upper_error = row["Mass_MJ_upp_err"]
-            lower_error = row["Mass_MJ_low_err"]
+            value = truncate_to_two_decimals(row["Mass_MJ"])
+            upper_error = truncate_to_two_decimals(row["Mass_MJ_upp_err"])
+            lower_error = truncate_to_two_decimals(row["Mass_MJ_low_err"])
             unit = "M_jup"
             ref = get_pub(row["Ref_TeffloggRadiusMass"])
         param_counter += 1
@@ -231,9 +236,9 @@ skipped2_table.write(
 if SAVE_DB:
     db.save_database(directory="data/")
 
-print("teff ingested: " + str(teff_ingested_counter)) #54
-print("mass ingested: " + str(mass_ingested_counter)) #54
-print("radius ingested: " + str(radius_ingested_counter)) #14
-print("logg ingested: " + str(logg_ingested_counter)) #54
-print("lbol ingested: " + str(lbol_ingested_counter)) #54
+print("teff ingested: " + str(teff_ingested_counter)) #60
+print("mass ingested: " + str(mass_ingested_counter)) #60
+print("radius ingested: " + str(radius_ingested_counter)) #15
+print("logg ingested: " + str(logg_ingested_counter)) #60
+print("lbol ingested: " + str(lbol_ingested_counter)) #60
 
