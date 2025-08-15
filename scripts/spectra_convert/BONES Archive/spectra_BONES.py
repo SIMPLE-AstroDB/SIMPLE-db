@@ -7,19 +7,26 @@ from specutils import Spectrum
 from astrodb_utils.spectra import check_spectrum_plottable
 from astrodb_utils.fits import add_wavelength_keywords
 from specutils.manipulation import extract_region,median_smooth
+from specutils.manipulation import snr_threshold
+from astropy.nddata import StdDevUncertainty
 from specutils import Spectrum, SpectralRegion
+from astroquery.simbad import Simbad
 import os
+import pandas as pd
+from datetime import datetime
 
 """
 This script is to convert the BONES SPECTRA to convert to Spectrum and create FITS headers for ingestion into SIMPLE-db.
 """
-csv_path = "/Users/guanying/SIMPLE_Archive/SIMPLE-db/scripts/spectra_convert/BONES Archive/BONES_Archive.csv"
-metadata = pd.read_csv(csv_path)
+
 path = "/Users/guanying/SIMPLE_Archive/SIMPLE-db/scripts/spectra_convert/BONES Archive/BONES SPECTRA/"
 output_dir = "/Users/guanying/SIMPLE_Archive/SIMPLE-db/scripts/spectra_convert/BONES Archive/FITS SPECTRA"
+
+spreadsheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2sqaoYnG8g0d-wTgMjF3lXe40MF63B1wVodiAz2a4W2BCDnBvOBCQave8iiCbjj7-OQWpmqqQdpUA/pub?output=csv"
+metadata = pd.read_csv(spreadsheet_url)
+
 converted_files = 0
 failed_files = 0
-
 
 def get_spectra_region(wavelength):
     """
@@ -39,101 +46,131 @@ def create_spectra():
     """
     converted_files = 0
     failed_files = 0
-    with open(csv_path, 'r', newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
+    for _, row in metadata.iterrows():
 
-            filename = row['FILENAME']
-            filepath = os.path.join(output_dir, filename.replace('.txt', '.fits'))  
+        if pd.isnull(row['SIMPLE Name']):
+            continue
 
-            try:
-                print(f"Processing {filename}")
+        filename = str(row['Filename'])
+        filepath = os.path.join(output_dir, filename.replace('.txt', '.fits'))
 
-                # Read data from raw file
+        try:
+            print(f"Processing {filename}...")
+
+            # Read data from raw file
+            data = np.genfromtxt(
+                os.path.join(path, filename),
+                skip_header=1,
+                comments='#',
+                encoding="latin1"
+            )
+
+            # CASE: CSV format
+            if(filename.endswith('.csv')):
+                filepath = os.path.join(output_dir, filename.replace('.csv', '.fits'))
                 data = np.genfromtxt(
                     os.path.join(path, filename),
-                    skip_header=2,
+                    delimiter=',',
+                    skip_header=1,
                 )
-                    
-                # CASE: CSV format
-                if(filename.endswith('.csv')):
-                    filepath = os.path.join(output_dir, filename.replace('.csv', '.fits'))  
-                    data = np.genfromtxt(
-                        os.path.join(path, filename),
-                        delimiter=',',
-                        skip_header=1,
-                    )
 
-                # sort and remove NaN value
-                data = data[~np.isnan(data).any(axis=1)]
-                data = data[np.argsort(data[:, 0])]
-                
-                # Extract wavelength and flux
-                wavelength = data[:, 0] * (u.Unit(row['TUNIT1']))
-                flux = data[:, 1] * (u.erg / u.cm**2 / u.s / u.AA)
-                
-                # create spectrum object
-                print("Creating Spectrum object...")
-                spectrum = Spectrum(flux=flux, spectral_axis=wavelength)
+            # sort and remove NaN value
+            data = data[~np.isnan(data).any(axis=1)]
+            data = data[np.argsort(data[:, 0])]
+            
+            # Extract wavelength and flux
+            wavelength = data[:, 0] * (u.Unit(row['TUNIT1']))
+            flux = data[:, 1] * (u.erg / u.cm**2 / u.s / u.AA)
+            
+            # create spectrum object
+            print("Creating Spectrum object...")
+            spectrum = Spectrum(flux=flux, spectral_axis=wavelength)
 
-                # extract region from some fixed spectra
-                if row['WAVERANGE'] != '':
-                    region = get_spectra_region(row['WAVERANGE'])
+            # Mask the spectrum to fix the spectrum
+            if pd.notnull(row['S/N Threshold']):
 
-                    spectral_regions = [
-                        (start * u.Unit(row['TUNIT1']), end * u.Unit(row['TUNIT1']))
-                        for start, end in region
-                    ]
-                    spectrum = extract_region(
-                        spectrum,
-                        SpectralRegion(spectral_regions),
-                        return_single_spectrum=True
-                    )
+                uncertainty_array = data[:, 2] * (u.erg / u.cm**2 / u.s / u.AA)
+                uncertainty = StdDevUncertainty(uncertainty_array)
 
-                # This spectrum is from WISE J155349.98+693355.2, apply median smoothing
-                if("nires_NIR_J1553+6934_20200707.txt" in filename):
-                    smoothed = median_smooth(spectrum, width=101)
-                    spectrum = Spectrum(flux=smoothed.flux, spectral_axis=wavelength)
-                
-                # convert spectrum
-                header = Header()
-                header.set('SIMPLE', True, 'Conforms to FITS standard')
-                header.set('VOPUB', 'SIMPLE Archive', 'Publication of the spectrum')
-                header.set('OBJECT', row['OBJECT'], 'Name of the object')
-                header.set('RA_TARG', row['RA_TARG'], '[deg] Pointing position')
-                header.set('DEC_TARG', row['DEC_TARG'], '[deg] Pointing position')
-                header.set('DATE-OBS', row['DATE-OBS'], 'Date of observation')
-                header.set('TELESCOP', row['TELESCOP'], 'Telescope used for observation')
-                header.set('INSTRUME', row['INSTRUME'], 'Instrument used for observation')
-                header.set('BUNIT', row['BUNIT'], 'Flux unit of the spectrum')
-                header.set('TUNIT1', row['TUNIT1'], 'Wavelength unit of the spectrum')
-                header.set('REGIME', row['Regime'], 'Spectral regime of the spectrum')
-                header.set('FILENAME', filename + '.fits', 'Name of the file')
-                header.set('AUTHOR', row['AUTHOR'], 'Author of the spectrum')
-                header.set('REFERENC', row['Reference'], 'Reference for the spectrum')
-                header.set('HISTORY', 'Converted from BONES Archive text file to FITS format.', 'Conversion history')
-                header.set('DATE', '2025-08-06', 'Date of FITS file creation')
-                header.set('CONTRIB1', 'Guan Ying Goh', 'Contributor name')
-                spectrum.meta["header"] = header
+                # Create a spectrum object
+                spectrum = Spectrum(flux=flux, spectral_axis=wavelength, uncertainty=uncertainty)
 
-                # Add wavelength keywords
-                add_wavelength_keywords(header, wavelength)
-                
-                # Save spectrum to FITS file
-                print("Writing to FITS file...")
-                spectrum.write(filepath, format='tabular-fits', overwrite=True)
-                print(f"Converted {filename} to {filepath}!\n")
-                converted_files += 1
+                # Create Spectrum object with uncertainty
+                spectrum = Spectrum(
+                    flux=flux,
+                    spectral_axis=wavelength,
+                    uncertainty=StdDevUncertainty(uncertainty_array)
+                )
+                snr_limit = float(row['S/N Threshold'])
+                spectrum = snr_threshold(spectrum, snr_limit)
 
-            except Exception as e:
-                print(f"Error processing {filename}: {e}")
-                failed_files += 1
-                continue
+                # replace masked points with NaN
+                masked_flux = spectrum.flux.copy()
+                masked_flux[spectrum.mask] = np.nan
+                spectrum = Spectrum(
+                    flux=masked_flux,
+                    spectral_axis=wavelength,
+                    uncertainty=StdDevUncertainty(uncertainty_array)
+                )
+
+            # extract region for some spectra to remove noisy parts at the edges
+            if row['Extract region?'] == "Yes" and pd.notnull(row['WAVERANGE']):
+                region = get_spectra_region(row['WAVERANGE'])
+
+                spectral_regions = [
+                    (start * u.Unit(row['TUNIT1']), end * u.Unit(row['TUNIT1']))
+                    for start, end in region
+                ]
+                spectrum = extract_region(
+                    spectrum,
+                    SpectralRegion(spectral_regions),
+                    return_single_spectrum=True
+                )
+
+            # smooth spectrum if needed
+            if pd.notnull(row['Smooth Spectrum?']):
+                smoothed = median_smooth(spectrum, width=101)
+                spectrum = Spectrum(flux=smoothed.flux, spectral_axis=wavelength)
+            
+            # convert spectrum and add header to the FITS
+            header = Header()
+            header.set('SIMPLE', True, 'Conforms to FITS standard')
+            header.set('VOPUB', 'SIMPLE Archive', 'Publication of the spectrum')
+            header.set('OBJECT', str(row['SIMPLE Name']), 'Name of the object')
+            result = Simbad.query_object(str(row['SIMPLE Name']))
+            if result is not None and len(result) > 0:
+                header.set("RA_TARG", result[0]["ra"], '[ra] Pointing position')
+                header.set("DEC_TARG", result[0]["dec"], '[dec] Pointing position')
+            header.set('DATE-OBS', row['DATE-OBS'], 'Date of observation')
+            header.set('TELESCOP', row['TELESCOP'], 'Telescope used for observation')
+            header.set('INSTRUME', row['INSTRUME'], 'Instrument used for observation')
+            header.set('REGIME', row['Regime'], 'Spectral regime of the spectrum')
+            header.set('FILENAME', filename + '.fits', 'Name of the file')
+            header.set('REFERENC', row['Reference'], 'Reference for the spectrum')
+            header.set('HISTORY', 'Converted from BONES Archive text file to FITS format.', 'Conversion history')
+            header.set('CONTRIB1', 'Guan Ying Goh', 'Contributor name')
+            today_date = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+            header.set('DATE', today_date, 'Date of FITS file creation')
+            spectrum.meta["header"] = header
+
+            # Add wavelength keywords
+            add_wavelength_keywords(header, wavelength)
+            
+            # Save spectrum to FITS file
+            print("Writing to FITS file...")
+            spectrum.write(filepath, format='tabular-fits', overwrite=True)
+            print(f"Converted {filename} to {filepath}!\n")
+            converted_files += 1
+
+        except Exception as e:
+            print(f"Error processing {filename}: {e}")
+            failed_files += 1
+            continue
 
     print(f"Successful conversions: {converted_files}")
     print(f"Failed conversions: {failed_files}")
 
-create_spectra()
+# create_spectra()
 
 fits_dir = "/Users/guanying/SIMPLE_Archive/SIMPLE-db/scripts/spectra_convert/BONES Archive/FITS SPECTRA/"
 new_files = os.listdir(fits_dir)
@@ -149,7 +186,7 @@ for file in new_files:
     spectrum.write(new_file_path, format="tabular-fits", overwrite=True)
 
     # Check spectra plot again one by one
-    if file.endswith('.fits') and ("FIRE" in file or "fire" in file ):
+    if file.endswith('.fits') and "Xshooter_NIR_ULASJ130710.22+151103.4" in file:
         print(f"Checking {file}...")
         if check_spectrum_plottable(spectrum, show_plot=True):
             print(f"    It is plottable!")
