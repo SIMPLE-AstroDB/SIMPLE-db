@@ -11,7 +11,6 @@ from astrodb_utils.spectra import (
 from astrodb_utils.sources import (
     logger,
     find_source_in_db,
-    ingest_source,
     ingest_name
 )
 from astrodb_utils.publications import ingest_publication
@@ -20,7 +19,7 @@ astrodb_utils_logger = logging.getLogger("astrodb_utils")
 logger.setLevel(logging.DEBUG)  # Set logger to INFO/DEBUG/WARNING/ERROR/CRITICAL level
 astrodb_utils_logger.setLevel(logging.DEBUG)
 
-SAVE_DB = True  # save the data files in addition to modifying the .db file
+SAVE_DB = False  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 SCHEMA_PATH = "simple/schema.yaml"
 db = load_astrodb(
@@ -63,6 +62,8 @@ for row in xshyne_table:
     date = row["Date"]
     short_name = row["Short Name"]
 
+    multiple_dates = row["Start Date"] is not row["End Date"]
+
     short_name_result = find_source_in_db(db=db, source = short_name)
     
     if len(short_name_result) == 0:
@@ -70,39 +71,60 @@ for row in xshyne_table:
         names_ingested+=1
     
     #ingest each spectra twice, once for nir and once for optical regime
-    ingest_spectrum(
-        db=db,
-        source = source,
-        #check?
-        regime = "optical",
-        spectrum = file,
-        telescope="ESO VLT",
-        instrument="VLT/X-Shooter",
-        #check?
-        mode = "Echelle",
-        obs_date=date,
-        reference = "Petr25",
-    )
-    spectra_ingested+=1
-    ingest_spectrum(
-        db=db,
-        source = source,
-        #check?
-        regime = "nir",
-        spectrum = file,
-        telescope="ESO VLT",
-        instrument="VLT/X-Shooter",
-        #check?
-        mode = "Echelle",
-        obs_date=date,
-        reference = "Petr25",
-    )
-    spectra_ingested+=1
+    #add comment if spectra has multiple observation dates
+    if multiple_dates:
+        ingest_spectrum(
+            db=db,
+            source = source,
+            regime = "optical",
+            spectrum = file,
+            telescope="ESO VLT",
+            instrument="VLT/X-Shooter",
+            mode = "Echelle",
+            obs_date=date,
+            reference = "Petr25",
+            comments="Spectrum is a combination of multiple observation dates"
+        )
+        spectra_ingested+=1
+        ingest_spectrum(
+            db=db,
+            source = source,
+            regime = "nir",
+            spectrum = file,
+            telescope="ESO VLT",
+            instrument="VLT/X-Shooter",
+            mode = "Echelle",
+            obs_date=date,
+            reference = "Petr25",
+            comments="Spectrum is a combination of multiple observation dates"
+        )
+        spectra_ingested+=1
+    else:
+        ingest_spectrum(
+            db=db,
+            source = source,
+            regime = "optical",
+            spectrum = file,
+            telescope="ESO VLT",
+            instrument="VLT/X-Shooter",
+            mode = "Echelle",
+            obs_date=date,
+            reference = "Petr25",
+        )
+        spectra_ingested+=1
+        ingest_spectrum(
+            db=db,
+            source = source,
+            regime = "nir",
+            spectrum = file,
+            telescope="ESO VLT",
+            instrument="VLT/X-Shooter",
+            mode = "Echelle",
+            obs_date=date,
+            reference = "Petr25",
+        )
 
-logger.info(f"sources ingested:{source_ingested}")  # 20 ingested
-logger.info(f"sources already exists:{source_already_exist}")  # 44 due to preexisting data
-logger.info(f"total sources:{source_ingested+source_already_exist}")  # 64 sources total
-logger.info(f"names ingested:{names_ingested}") # 42 names ingested
 logger.info(f"Spectra ingested: {spectra_ingested}") # spectra ingested
+logger.info(f"Names ingested: {names_ingested}") # names ingested
 if SAVE_DB: 
     db.save_database(directory="data/")
