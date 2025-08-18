@@ -7,13 +7,12 @@ from specutils import Spectrum
 from astrodb_utils.spectra import check_spectrum_plottable
 from astrodb_utils.fits import add_wavelength_keywords
 from specutils.manipulation import extract_region,median_smooth
-from specutils.manipulation import snr_threshold
-from astropy.nddata import StdDevUncertainty
-from specutils import Spectrum, SpectralRegion
 from astroquery.simbad import Simbad
 import os
 import pandas as pd
 from datetime import datetime
+import matplotlib.pyplot as plt
+from specutils import Spectrum
 
 """
 This script is to convert the BONES SPECTRA to convert to Spectrum and create FITS headers for ingestion into SIMPLE-db.
@@ -28,18 +27,39 @@ metadata = pd.read_csv(spreadsheet_url)
 converted_files = 0
 failed_files = 0
 
-def get_spectra_region(wavelength):
+def make_mask(wavelength, region_str):
     """
-    Get the wavelength ranges like 1.15-1.39 or 0.85-1.348;1.39-1.83;1.92-2.5 into SpectralRegion
-     making them a list
+    Create a mask for the spectrum based on the specified region string format
     """
-    regions = []
-    for part in wavelength.split(';'):
-        interval = part.strip().split('-')
-        start, end = float(interval[0]), float(interval[1])
-        regions.append((start, end))
-    return regions
-    
+    # Split the input string by ; and remove empty parts
+    parts = region_str.split(';')
+    parts = [p.strip() for p in parts if p.strip()]
+
+    mask = None
+    for i, part in enumerate(parts):
+        # If the part is a range like 1.5-5.7
+        if '-' in part:
+            numbers = part.split('-')
+            start = float(numbers[0])
+            end = float(numbers[1])
+            new_mask = np.logical_and(wavelength.value > start, wavelength.value < end)
+        else:
+            val = float(part)
+            if i == 0: # lowwer limit at edge
+                new_mask = wavelength.value < val
+            elif i == len(parts) - 1: # upper limit at edge
+                new_mask = wavelength.value > val
+            else:
+                new_mask = wavelength.value == val
+
+        ## combine previous mask
+        if mask is None:
+            mask = new_mask
+        else:
+            mask = np.logical_or(mask, new_mask)
+
+    return mask
+
 def create_spectra():
     """
     Converts a row of metadata into a Spectrum object, creates a FITS header, and saves the spectrum to a FITS file under the output directory.
@@ -86,49 +106,37 @@ def create_spectra():
             print("Creating Spectrum object...")
             spectrum = Spectrum(flux=flux, spectral_axis=wavelength)
 
-            # Mask the spectrum to fix the spectrum
-            if pd.notnull(row['S/N Threshold']):
+            # # mask region to make plot look better but not affect the data
+            if pd.notnull(row['Mask Region']):
+                print("Applying mask region: ", row['Mask Region'])
+                mask = make_mask(wavelength, row['Mask Region'])
 
-                uncertainty_array = data[:, 2] * (u.erg / u.cm**2 / u.s / u.AA)
-                uncertainty = StdDevUncertainty(uncertainty_array)
-
-                # Create a spectrum object
-                spectrum = Spectrum(flux=flux, spectral_axis=wavelength, uncertainty=uncertainty)
-
-                # Create Spectrum object with uncertainty
+                # create the Spectrum
                 spectrum = Spectrum(
                     flux=flux,
                     spectral_axis=wavelength,
-                    uncertainty=StdDevUncertainty(uncertainty_array)
+                    mask=mask
                 )
-                snr_limit = float(row['S/N Threshold'])
-                spectrum = snr_threshold(spectrum, snr_limit)
+                print("Plot using specutils")
+                spectrum.plot()
+                plt.show()
+                print("Plot using matplotlib")
 
-                # replace masked points with NaN
-                masked_flux = spectrum.flux.copy()
-                masked_flux[spectrum.mask] = np.nan
-                spectrum = Spectrum(
-                    flux=masked_flux,
-                    spectral_axis=wavelength,
-                    uncertainty=StdDevUncertainty(uncertainty_array)
-                )
+                fig, ax = plt.subplots()
+                ax.plot(spectrum.spectral_axis, spectrum.flux)
+                ax.plot(spectrum.spectral_axis[~spectrum.mask], spectrum.flux[~spectrum.mask])
+                if(pd.notnull(row["y-min"])):
+                    y_min = float(row["y-min"])
+                    y_max = float(row["y-max"])
+                    ax.set_ylim(y_min, y_max)
 
-            # extract region for some spectra to remove noisy parts at the edges
-            if row['Extract region?'] == "Yes" and pd.notnull(row['WAVERANGE']):
-                region = get_spectra_region(row['WAVERANGE'])
-
-                spectral_regions = [
-                    (start * u.Unit(row['TUNIT1']), end * u.Unit(row['TUNIT1']))
-                    for start, end in region
-                ]
-                spectrum = extract_region(
-                    spectrum,
-                    SpectralRegion(spectral_regions),
-                    return_single_spectrum=True
-                )
+                ax.set_xlabel(row['TUNIT1'])
+                ax.set_ylabel("Flux (erg / cm² / s / Angstrom)")
+                plt.show()
 
             # smooth spectrum if needed
             if pd.notnull(row['Smooth Spectrum?']):
+                print("Smoothing the spectrum..")
                 smoothed = median_smooth(spectrum, width=101)
                 spectrum = Spectrum(flux=smoothed.flux, spectral_axis=wavelength)
             
@@ -175,20 +183,29 @@ def create_spectra():
 fits_dir = "/Users/guanying/SIMPLE_Archive/SIMPLE-db/scripts/spectra_convert/BONES Archive/FITS SPECTRA/"
 new_files = os.listdir(fits_dir)
 new_files = [f for f in new_files if f.endswith('.fits')]
+plotted_spectra = 0
+failed_spectra = 0
 
 for file in new_files:
     new_file_path = os.path.join(output_dir, file)
     spectrum = Spectrum.read(new_file_path, format="tabular-fits")
 
     header = spectrum.meta["header"]
-    add_wavelength_keywords(header, spectrum.spectral_axis)
+    # add_wavelength_keywords(header, spectrum.spectral_axis)
     spectrum.meta["header"] = header
     spectrum.write(new_file_path, format="tabular-fits", overwrite=True)
 
     # Check spectra plot again one by one
-    if file.endswith('.fits') and "Xshooter_NIR_ULASJ130710.22+151103.4" in file:
+    if file.endswith('.fits'):
         print(f"Checking {file}...")
-        if check_spectrum_plottable(spectrum, show_plot=True):
-            print(f"    It is plottable!")
-        else:
-            print(f"{file} is not plottable.")
+        try:
+            spectrum.plot()
+            plt.show()
+            print("    It is plottable!")
+            plotted_spectra += 1
+        except Exception as e:
+            print(f"   Error plotting {file}: {e}")
+            failed_spectra += 1
+            continue     
+print(f"Plotted spectra: {plotted_spectra}")
+print(f"Failed spectra: {failed_spectra}")  

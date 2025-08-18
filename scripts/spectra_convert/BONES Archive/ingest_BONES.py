@@ -17,8 +17,8 @@ logger = logging.getLogger("astrodb_utils.bones")
 logger.setLevel(logging.INFO)
 
 # Load Database
-recreate_db = True
-save_db = True
+recreate_db = False
+save_db = False
 
 SCHEMA_PATH = "simple/schema.yaml"   
 db = load_astrodb(
@@ -28,8 +28,8 @@ db = load_astrodb(
     felis_schema=SCHEMA_PATH)
 
 # Paths
-csv_path = "/Users/guanying/SIMPLE_Archive/SIMPLE-db/scripts/spectra_convert/BONES Archive/BONES_Archive.csv"
-data = pd.read_csv(csv_path)
+spreadsheet_url =  "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2sqaoYnG8g0d-wTgMjF3lXe40MF63B1wVodiAz2a4W2BCDnBvOBCQave8iiCbjj7-OQWpmqqQdpUA/pub?output=csv"
+data = pd.read_csv(spreadsheet_url)
 
 def add_instruments():
     INSTRUMENT=[
@@ -63,16 +63,26 @@ def add_instruments():
 def ingest_spectra():
     added_files = 0
     failed_files = 0
+    url = "https://bdnyc.s3.us-east-1.amazonaws.com/BONES Archive/" 
 
     for _, row in data.iterrows():
+        
+        # skip the non-spectra rows
+        if pd.isnull(row['SIMPLE Name']):
+            continue
+
+        filename = str(row['Filename'])
+        fits_file = filename.replace('.txt', '.fits').replace('.csv', '.fits')
+        access_url = url + fits_file
+
         obs_date = row['DATE-OBS']
-        obs_date = datetime.strptime(obs_date, '%Y-%m-%d').replace(microsecond=0)
+        obs_date = datetime.strptime(obs_date + "T" + "000000", '%Y-%m-%dT%H:%M:%S.%f')
 
         try:
             ingest_spectrum(
                 db,
-                source=row['OBJECT'],
-                access_url="",
+                source=row['SIMPLE Name'],
+                access_url=access_url,
                 regime= row['Regime'],
                 instrument=row['INSTRUME'],
                 telescope=row['TELESCOP'],
