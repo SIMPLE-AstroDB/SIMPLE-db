@@ -8,6 +8,10 @@ import csv
 from datetime import datetime
 import pandas as pd
 
+"""
+This script ingest new created spectra FITS files into the SIMPLE database
+"""
+
 # Set the loggging level of the astrodb_utils logger
 astrodb_utils_logger = logging.getLogger("astrodb_utils")
 astrodb_utils_logger.setLevel(logging.INFO)
