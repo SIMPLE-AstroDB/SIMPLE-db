@@ -3,7 +3,7 @@
 
 The vision of the SIMPLE project is to create a *collaborative* database of low-mass stars, brown dwarfs, and directly 
 imaged exoplanets: a simple archive of complex objects. The tables and fields currently included in the 
-database are described in the [Documentation](documentation/README.md) 
+database are described in the [Documentation](docs/README.md) 
 and currently include names, coordinates, photometry and reference and data provenance information and is visualized 
 in the [schema](#simple-database-schema) below. 
 The archive includes kinematics, spectra, modeled and retrieved parameters. 
@@ -19,6 +19,10 @@ For day-to-day discussions, please join us in the #simple-db-dev channel in the 
 If you are not already in the Astropy Slack, [request an account](http://joinslack.astropy.org/).
 
 To see more details about how this project got started and our initial discussions, check out the [archived running notes in the Wiki](https://github.com/SIMPLE-AstroDB/SIMPLE-db/wiki/Original-Notes).
+
+## Demo Notebooks
+- [Querying the Database](docs/notebooks/Demo_Queries_1.0.ipynb)
+- [Visualizing with the Database](docs/notebooks/Demo_Visualization_1.0.ipynb)
 
 ## Getting Started
 
@@ -88,4 +92,4 @@ The schema for the SIMPLE database is described
 in the [Documentation](documentation) and can be found in [`simple/schema.yaml`](simple/schema.yaml).
 
 A graphical representation of the SIMPLE schema:
-<img src="https://github.com/SIMPLE-AstroDB/SIMPLE-db/blob/main/documentation/figures/auto_schema.png?raw=true" width=75%>
+<img src="https://github.com/SIMPLE-AstroDB/SIMPLE-db/blob/main/docs/figures/auto_schema.png?raw=true" width=75%>
