@@ -1,3 +1,7 @@
+# Demo Notebooks
+- [Querying the Database](notebooks/Demo_Queries_1.0.ipynb)
+- [Visualizing with the Database](notebooks/Demo_Visualization_1.0.ipynb)
+
 # Schema Documentation
 This documentation is generated from the [schema.yaml](simple/schema.yaml) file using [build_schema_docs.py](scripts/build_schema_docs.py).
 
