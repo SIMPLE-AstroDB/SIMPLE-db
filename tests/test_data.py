@@ -221,7 +221,7 @@ def test_spectral_types(db):
 @pytest.mark.parametrize(
     ("ref", "n_counts"),
     [
-        ("Fili15", 696),
+        ("Fili15", 701),
         ("Lodi22", 5),
     ],
 )
