@@ -1,22 +1,35 @@
-from scripts.ingests.ingest_utils import *
-from scripts.ingests.utils import *
 from astroquery.gaia import Gaia
 from astropy.table import Table, setdiff
 from astropy import table
 from sqlalchemy import func
 import numpy as np
 import pandas as pd
+from astrodb_utils import load_astrodb
+from astrodb_utils.sources import (
+    find_source_in_db,
+    AstroDBError,
+    find_publication,
+    ingest_source,
+)
+
+from astrodb_utils.publications import (
+    ingest_publication,
+    logger,
+)
+from simple import REFERENCE_TABLES
+SCHEMA_PATH = "simple/schema.yaml"
 
 # GLOBAL VARIABLES
 
 SAVE_DB = True  # save the data files in addition to modifying the .db file
 RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = False
-DATE_SUFFIX = "Jun2022"
+#Changed from Jun2022 to Sep2021
+DATE_SUFFIX = "Sep2021"
 # LOAD THE DATABASE
-db = load_simpledb("SIMPLE.db", recreatedb=RECREATE_DB)
+db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES, felis_schema=SCHEMA_PATH)
 
-logger.setLevel(logging.DEBUG)
+#logger.setLevel(logging.DEBUG)
 
 
 # Functions
@@ -60,27 +73,38 @@ def add_gaia_rvs(data, ref):
     unmasked_rvs = np.logical_not(data["radial_velocity"].mask).nonzero()
     rvs = data[unmasked_rvs]["db_names", "radial_velocity", "radial_velocity_error"]
     refs = [ref] * len(rvs)
-    ingest_radial_velocities(
+    ingest_publication(
         db, rvs["db_names"], rvs["radial_velocity"], rvs["radial_velocity_error"], refs
     )
+
+    return
+
+def add_gaia_epoch(data, ref):
+    unmasked_epochs = np.logical_not(data["ref_epoch"].mask).nonzero()
+    epochs = data[unmasked_epochs]["db_names", "ref_epoch"]
+    refs = [ref] * len(epochs)
+    ingest_publication(db, epochs["db_names"], epochs["ref_epoch"], refs)
+
     return
 
 
+'''
 dr3_desig_file_string = (
     "scripts/ingests/Gaia/gaia_dr3_designations_" + "Sep2021" + ".xml"
 )
 gaia_dr3_names = Table.read(dr3_desig_file_string, format="votable")
 pd_gaia_dr3_names = gaia_dr3_names.to_pandas
+'''
 
 # Querying the GAIA DR3 Data
 # gaia_dr3_data = query_gaia_dr3(gaia_dr3_names)
 
 # making the data file and then converting the string into an astropy table
-dr3_data_file_string = "scripts/ingests/Gaia/gaia_dr3_data_" + DATE_SUFFIX + ".xml"
-# gaia_dr3_data.write(dr3_data_file_string, format='votable')
+
+dr3_data_file_string = "scripts/ingests/Gaia/gaia_edr3_data_" + DATE_SUFFIX + ".xml"
 gaia_dr3_data = Table.read(dr3_data_file_string, format="votable")
 
-# ingest_sources(db, gaia_dr3_data['designation'], 'GaiaDR3')
+#ingest_sources(db, gaia_dr3_data['designation'], 'GaiaDR3')
 
 add_gaia_rvs(gaia_dr3_data, "GaiaDR3")
 
