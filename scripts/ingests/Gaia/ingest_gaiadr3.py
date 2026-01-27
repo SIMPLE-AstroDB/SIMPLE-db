@@ -54,6 +54,7 @@ def query_gaia_dr3(input_table):
 
     return gaia_data
 
+GAIA_BIBCODE = "2021A&A...649A...1G"
 
 # Ingesting the GAIADR3 publication
 def update_ref_tables():
@@ -68,25 +69,74 @@ def update_ref_tables():
 
 # update_ref_tables()
 
+ingested = 0
 
-def add_gaia_rvs(data, ref):
-    unmasked_rvs = np.logical_not(data["radial_velocity"].mask).nonzero()
-    rvs = data[unmasked_rvs]["db_names", "radial_velocity", "radial_velocity_error"]
-    refs = [ref] * len(rvs)
-    ingest_publication(
-        db, rvs["db_names"], rvs["radial_velocity"], rvs["radial_velocity_error"], refs
-    )
 
+def add_gaia_coordinates_and_epochs(data, ref):
+    
+    global ingested
+    
+    for row in data:
+        # source in the database
+        source = find_source_in_db(db, row["db_names"])
+        if source is None:
+            logger.warning(f"Source {row['db_names']} not found in database")
+            continue
+        
+        # coordinates and epoch from Gaia DR3 data
+        ra = row["ra"]
+        dec = row["dec"] 
+        ref_epoch = row["ref_epoch"]
+        
+        # Check if the values are not masked
+        if ra is np.ma.masked or dec is np.ma.masked:
+            logger.warning(f"Coordinates are masked for {row['db_names']}")
+            continue
+        
+        # Get epoch value, handle if it's masked
+        epoch_value = None if ref_epoch is np.ma.masked else ref_epoch
+        
+        try:
+            # Ingest using the Parallaxes table which stores astrometric data
+            # The table structure is: source, ra, dec, epoch, parallax, parallax_error, reference, adopted
+            with db.engine.connect() as conn:
+                conn.execute(
+                    db.Parallaxes.insert().values(
+                        {
+                            "source": source[0],
+                            #"ra": ra,
+                            #"dec": dec,
+                            #"epoch": epoch_value,
+                            "parallax": row.get("parallax") if not row.get("parallax") is np.ma.masked else None,
+                            "parallax_error": row.get("parallax_error") if not row.get("parallax_error") is np.ma.masked else None,
+                            "reference": ref,
+                            "adopted": False,  # Set to False by default; update later if needed
+                            "comments": "Gaia DR3 astrometry"
+                        }
+                    )
+                )
+                conn.execute(
+                    db.Sources.update().where(db.Sources.c.source == source[0]).values(
+                        {
+                            "ra": ra,
+                            "dec": dec,
+                            "epoch": ref_epoch,
+                            "equinox": None, 
+                            "reference": ref,
+                            "other_references": None,
+                            "shortname": None,
+                        }
+                    )
+                )
+                conn.commit()
+                
+            ingested += 1
+            print(f"Ingested coordinates for {row['db_names']}: RA={ra}, Dec={dec}, epoch={epoch_value}")
+            
+        except Exception as e:
+            logger.warning(f"Could not ingest coordinates for {row['db_names']}: {e}")
+    
     return
-
-def add_gaia_epoch(data, ref):
-    unmasked_epochs = np.logical_not(data["ref_epoch"].mask).nonzero()
-    epochs = data[unmasked_epochs]["db_names", "ref_epoch"]
-    refs = [ref] * len(epochs)
-    ingest_publication(db, epochs["db_names"], epochs["ref_epoch"], refs)
-
-    return
-
 
 '''
 dr3_desig_file_string = (
@@ -106,7 +156,8 @@ gaia_dr3_data = Table.read(dr3_data_file_string, format="votable")
 
 #ingest_sources(db, gaia_dr3_data['designation'], 'GaiaDR3')
 
-add_gaia_rvs(gaia_dr3_data, "GaiaDR3")
+add_gaia_coordinates_and_epochs(gaia_dr3_data, "GaiaDR3")
+print(ingested)
 
 # WRITE THE JSON FILES
 if SAVE_DB:
