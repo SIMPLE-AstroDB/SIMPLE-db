@@ -70,11 +70,12 @@ def update_ref_tables():
 # update_ref_tables()
 
 ingested = 0
-
+total = 0    
 
 def add_gaia_coordinates_and_epochs(data, ref):
     
     global ingested
+    global total
     
     for row in data:
         # source in the database
@@ -88,36 +89,18 @@ def add_gaia_coordinates_and_epochs(data, ref):
         dec = row["dec"] 
         ref_epoch = row["ref_epoch"]
         
-        # Check if the values are not masked
         if ra is np.ma.masked or dec is np.ma.masked:
             logger.warning(f"Coordinates are masked for {row['db_names']}")
             continue
         
-        # Get epoch value, handle if it's masked
         epoch_value = None if ref_epoch is np.ma.masked else ref_epoch
         
         try:
-            # Ingest using the Parallaxes table which stores astrometric data
-            # The table structure is: source, ra, dec, epoch, parallax, parallax_error, reference, adopted
             with db.engine.connect() as conn:
-                conn.execute(
-                    db.Parallaxes.insert().values(
-                        {
-                            "source": source[0],
-                            #"ra": ra,
-                            #"dec": dec,
-                            #"epoch": epoch_value,
-                            "parallax": row.get("parallax") if not row.get("parallax") is np.ma.masked else None,
-                            "parallax_error": row.get("parallax_error") if not row.get("parallax_error") is np.ma.masked else None,
-                            "reference": ref,
-                            "adopted": False,  # Set to False by default; update later if needed
-                            "comments": "Gaia DR3 astrometry"
-                        }
-                    )
-                )
                 conn.execute(
                     db.Sources.update().where(db.Sources.c.source == source[0]).values(
                         {
+                            "source": source[0],
                             "ra": ra,
                             "dec": dec,
                             "epoch": ref_epoch,
@@ -131,9 +114,11 @@ def add_gaia_coordinates_and_epochs(data, ref):
                 conn.commit()
                 
             ingested += 1
+            total += 1
             print(f"Ingested coordinates for {row['db_names']}: RA={ra}, Dec={dec}, epoch={epoch_value}")
             
         except Exception as e:
+            total += 1
             logger.warning(f"Could not ingest coordinates for {row['db_names']}: {e}")
     
     return
@@ -157,7 +142,8 @@ gaia_dr3_data = Table.read(dr3_data_file_string, format="votable")
 #ingest_sources(db, gaia_dr3_data['designation'], 'GaiaDR3')
 
 add_gaia_coordinates_and_epochs(gaia_dr3_data, "GaiaDR3")
-print(ingested)
+print("ingested: " + str(ingested))
+print("total: " + str(total))
 
 # WRITE THE JSON FILES
 if SAVE_DB:
