@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from astropy.io import fits
 from astropy.time import Time
-from datetime import date
+from datetime import datetime
 import astropy.units as u
 from specutils import Spectrum
 from astrodb_utils.fits import add_missing_keywords, add_wavelength_keywords, check_header
@@ -19,13 +19,13 @@ def get_paper_metadata(filename):
     if "-I_SIMPLE.fits" in filename or "-I_SMOOTHED_SIMPLE.fits" in filename:
         title = "Primeval very low-mass stars and brown dwarfs - I. Six new L subdwarfs, classification and atmospheric properties"
         voref = "10.1093/mnras/stw2438"
-    elif "-II.fits" in filename or "-II_SMOOTHED_SIMPLE.fits" in filename:
+    elif "-II_SIMPLE.fits" in filename or "-II_SMOOTHED_SIMPLE.fits" in filename:
         title = "Primeval very low-mass stars and brown dwarfs - II. The most metal-poor substellar object"
         voref = "10.1093/mnras/stx350"
-    elif "-III.fits" in filename or "-III_SMOOTHED_SIMPLE.fits" in filename:
+    elif "-III_SIMPLE.fits" in filename or "-III_SMOOTHED_SIMPLE.fits" in filename:
         title = "Primeval very low-mass stars and brown dwarfs - III. The halo transitional brown dwarfs"
         voref = "10.1093/mnras/sty1352"
-    elif "IV.fits" in filename or "IV_SMOOTHED_SIMPLE.fits" in filename:
+    elif "-IV_SIMPLE.fits" in filename or "IV_SMOOTHED_SIMPLE.fits" in filename:
         title = "Primeval very low-mass stars and brown dwarfs - IV. New L subdwarfs, Gaia astrometry, population properties, and a blue brown dwarf binary"
         voref = "10.1093/mnras/sty2054"
     else:
@@ -79,11 +79,23 @@ def add_header(path):
             if "TELESCOP" not in header or "INSTRUME" not in header:
                 missing_telescop_instrument.append(filename)
 
+            add_wavelength_keywords(header, spectrum.spectral_axis)
+
             # Paper metadata
             header["TITLE"] = (title, "Title of the paper")
             header["VOREF"] = (voref, "DOI of the paper")
             header["AUTHOR"] = ("Zhang, Z.H. et al.", "Original authors")
-            header["DATE"] = (date.today().isoformat(), "Header update date")
+            header["DATE"] = (datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
+            header["CONTRIB1"] = ("Guan Ying Goh")
+            header["TELAPSE"] = (header.get("EXPTIME"))
+            mjd_obs = header.get("MJD-OBS")
+            exptime = header.get("EXPTIME")
+            if mjd_obs is None or exptime is None:
+                print(f"  WARNING: MJD-OBS or EXPTIME missing in header for {filename}. Cannot calculate TMID.")
+            if mjd_obs is not None and exptime is not None:
+                tmid = mjd_obs + (exptime / 2) / (60 * 60 * 24)
+                header.set("TMID", tmid, "[d] MJD of exposure mid-point")
+            print("   Added paper metadata")
 
             # Fix flux units
             if "BUNIT" not in header:
@@ -94,9 +106,8 @@ def add_header(path):
             # date-obs check
             if "DATE-OBS" not in header or header["DATE-OBS"] in ["", "UNKNOWN", None]:
                 missing_dateobs.append(filename)
-            
-            add_wavelength_keywords(header, spectrum.spectral_axis)
-            add_missing_keywords(header)
+
+            # add_missing_keywords(header)
             check_header(hdul[0].header)
 
             hdul.flush()
