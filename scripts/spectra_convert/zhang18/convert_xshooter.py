@@ -31,8 +31,8 @@ def process_fits_by_row(row, input_path, output_path):
     filename = row['filename']
     filepath = os.path.join(input_path, filename)
     
-    # Skip IMACS, txt, OSIRIS
-    if ("IMACS" in filename) or "txt" in filename or "OSIRIS" in filename:
+    # Skip IMACS, txt, OSIRIS, and UVB spectra
+    if ("IMACS" in filename) or "txt" in filename or "OSIRIS" in filename or "UVB" in filename:
         print(f"Skipping file: {filename}")
         return False
 

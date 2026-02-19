@@ -13,6 +13,7 @@ from pathlib import Path
 
 # Path config
 path = "/Users/guanying/SIMPLE db/SIMPLE-db/scripts/spectra_convert/zhang18/processed_spectra"
+spreadsheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_VuhqnOHq9Zqu2GOcPSJks6Te161VaGJVkkN1EJYVplDqoBHgK2N1yTuD7MDPcwyI4BPUB0x2gKKo/pub?gid=220627455&single=true&output=csv"
 
 
 def get_paper_metadata(filename):
@@ -34,6 +35,22 @@ def get_paper_metadata(filename):
 
     return title, voref
 
+def get_regime(filename):
+    df = pd.read_csv(spreadsheet)
+
+    # Clean filename to match spreadsheet's filename
+    base_filename = filename.replace("_SMOOTHED_SIMPLE.fits", ".fits").replace("_SIMPLE.fits", ".fits")
+    row = df[df['filename'] == base_filename]
+
+    # Get regime for SPECBAND
+    if not row.empty:
+        regime = row.iloc[0]['regime']
+    else:
+        regime = None
+        print(f"  WARNING: Filename {base_filename} not found in spreadsheet.")
+
+    return regime
+    
 
 def add_header(path):
     missing_telescop_instrument = []
@@ -54,7 +71,6 @@ def add_header(path):
             header = hdul[0].header
 
             # add SIMPLE FITS headers
-            header["SIMPLE"] = (True, "Conforms to FITS standard")
             header["VOPUB"] = ("SIMPLE Archive", "Publication of the spectrum")
 
             # object name
@@ -78,6 +94,18 @@ def add_header(path):
             # Check TELESCOP + INSTRUME
             if "TELESCOP" not in header or "INSTRUME" not in header:
                 missing_telescop_instrument.append(filename)
+            header["OBSERVAT"] = (header.get("TELESCOP"), "Observatory")
+
+            # Get SPECBAND (regime)
+            regime = get_regime(filename)
+            header["SPECBAND"] = (regime)
+
+            # Get APERTURE (slit width)
+            if (header.get("SLITW")) is not None:
+                header["APERTURE"] = (header.get("SLITW"))
+            else:
+                if "Xshooter" in filename :
+                    header["APERTURE"] = ("1.2", "Slit width in arcsec")
 
             add_wavelength_keywords(header, spectrum.spectral_axis)
 
@@ -107,9 +135,11 @@ def add_header(path):
             if "DATE-OBS" not in header or header["DATE-OBS"] in ["", "UNKNOWN", None]:
                 missing_dateobs.append(filename)
 
-            # add_missing_keywords(header)
-            check_header(hdul[0].header)
+            add_missing_keywords(header)
+            check_header(header)
 
+            hdul.verify('exception')
+            hdul.verify('warn')
             hdul.flush()
             print(f"  Finished {filename}")
             file_proceed += 1
@@ -126,4 +156,12 @@ def add_header(path):
         for f in missing_dateobs:
             print(f"  - {f}")
 
+"""
+\File processed: 120/120
+    64 OSIRIS
+    52 Xshooter with smoothed and unsmoothed (ignored UVB)
+    2 FIRE_Magellan
+    1 SDSS
+    1 IMACS
+"""
 add_header(path)
