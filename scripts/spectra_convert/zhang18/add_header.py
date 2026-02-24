@@ -94,7 +94,19 @@ def add_header(path):
             # Check TELESCOP + INSTRUME
             if "TELESCOP" not in header or "INSTRUME" not in header:
                 missing_telescop_instrument.append(filename)
-            header["OBSERVAT"] = (header.get("TELESCOP"), "Observatory")
+
+            # Modify TELESCOPE + add OBSERVAT
+            if "Xshooter" in filename:
+                header["TELESCOP"] = ("ESO VLT")
+                header["OBSERVAT"] = ("European Southern Observatory")
+            elif "OSIRIS" in filename:
+                header["TELESCOP"] = ("GTC")
+                header["OBSERVAT"] = ("Roque de los Muchachos Observatory (ORM)")
+            elif "FIRE" in filename:
+                header["TELESCOP"] = ("Magellan I Baade")
+                header["OBSERVAT"] = ("Las Campanas Observatory")
+            elif "_SDSS_" in filename:
+                header["TELESCOP"] = ("SDSS")
 
             # Get SPECBAND (regime)
             regime = get_regime(filename)
@@ -139,7 +151,6 @@ def add_header(path):
             check_header(header)
 
             hdul.verify('exception')
-            hdul.verify('warn')
             hdul.flush()
             print(f"  Finished {filename}")
             file_proceed += 1

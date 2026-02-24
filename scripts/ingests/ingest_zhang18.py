@@ -32,24 +32,30 @@ db = load_astrodb(
 # Path
 file_path = "scripts/spectra_convert/zhang18/processed_spectra"
 
-# Add new mode for Xshooter smoothed spectra
+# Add new mode for SDSS and ESO VLT Telescope
 def add_mode():
-    """
-        Telescope: ESO VLT (existed)
-        Instrument: XShooter (existed)
-        mode: Echelle-smoothed (new mode for smoothed spectrum)
-    """
-    try:
-        ingest_instrument(
-            db,
-            telescope="ESO VLT",
-            instrument="Xshooter",
-            mode="Echelle-Smoothed",
-            raise_error=True
-        )
-        print("mode added successfully! ")
-    except AstroDBError as e:
-        astrodb_logger.error(f"Error adding mode: {e}")
+    modes = [
+        {
+            "telescope": "ESO VLT", # existed
+            "instrument": "Xshooter", # existed
+            "mode": "Echelle-Smoothed", # new
+        },
+        {
+            "telescope": "SDSS", # new
+            "instrument": "BOSS" # new
+        },
+    ]
+    for mode in modes:
+        try:
+            ingest_instrument(
+                db, 
+                **mode, 
+                raise_error=True
+            )
+            print(f"Mode {mode['instrument']} added successfully!")
+        except AstroDBError as e:
+            astrodb_logger.error(f"Error adding {mode['instrument']} mode: {e}")
+
 
 def modify_date(obs_date):
     if not obs_date:
@@ -77,12 +83,6 @@ def ingest_zhang18():
         # Get all neccessary info to ingest
         source_name = header.get("OBJECT")
         access_url = filename
-        
-        # Regime
-        if "NIR" in filename:
-            regime = "nir"
-        else:
-            regime = "optical"
 
         # Mode
         if "SMOOTHED" in filename:
@@ -108,11 +108,12 @@ def ingest_zhang18():
 
         # iNgest
         try:
+            print(f"Ingesting spectrum for {source_name}: \naccess URL: {access_url} \nregime: {header.get('SPECBAND')} \nmode: {mode} \ntelescope: {header.get('TELESCOP')} \ninstrument: {header.get('INSTRUME')} \nobs_date: {obs_date} \nreference: {reference}")
             ingest_spectrum(
                 db,
                 source=source_name,
                 spectrum=access_url,
-                regime=regime,
+                regime=header.get("SPECBAND"),
                 mode=mode,
                 telescope=header.get("TELESCOP"),
                 instrument=header.get("INSTRUME"),
