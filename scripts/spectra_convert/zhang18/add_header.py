@@ -36,18 +36,10 @@ def get_paper_metadata(filename):
     return title, voref
 
 def get_regime(filename):
-    df = pd.read_csv(spreadsheet)
-
-    # Clean filename to match spreadsheet's filename
-    base_filename = filename.replace("_SMOOTHED_SIMPLE.fits", ".fits").replace("_SIMPLE.fits", ".fits")
-    row = df[df['filename'] == base_filename]
-
-    # Get regime for SPECBAND
-    if not row.empty:
-        regime = row.iloc[0]['regime']
+    if "NIR" in filename:
+        regime = "nir"
     else:
-        regime = None
-        print(f"  WARNING: Filename {base_filename} not found in spreadsheet.")
+        regime = "optical"
 
     return regime
     
