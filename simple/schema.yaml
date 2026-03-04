@@ -289,32 +289,32 @@ tables:
         columns: 
         - "#Versions.version"
 
-  - name: Regimes
-    "@id": "#Regimes"
+  - name: RegimeList
+    "@id": "#RegimeList"
     description: Regime lookup table. Values used by Spectra and SpectralTypes tables
     primaryKey: 
-    - "#Regimes.regime"
+    - "#RegimeList.regime"
 
     columns:
     - name: regime
-      "@id": "#Regimes.regime"
+      "@id": "#RegimeList.regime"
       datatype: string
       length: 30
       description: Regime identifier string
       ivoa:ucd: meta.id;meta.main
       nullable: false
     - name: description
-      "@id": "#Regimes.description"
+      "@id": "#RegimeList.description"
       datatype: string
       length: 1000
       description: Description of regime
 
     indexes:
-      - name: PK_Regimes
-        "@id": "#PK_Regimes"
-        description: Primary key for Regimes table
+      - name: PK_RegimeList
+        "@id": "#PK_RegimeList"
+        description: Primary key for RegimeList table
         columns: 
-        - "#Regimes.regime"
+        - "#RegimeList.regime"
 
   - name: CompanionList
     "@id": "#CompanionList"
@@ -873,7 +873,7 @@ tables:
       "@id": "#SpectralTypes.regime"
       datatype: string
       length: 30
-      description: Spectral type regime; links to Regimes table
+      description: Spectral type regime; links to RegimeList table
       ivoa:ucd: meta.id
       nullable: false
     - name: adopted
@@ -923,14 +923,14 @@ tables:
         - "#SpectralTypes.reference"
         referencedColumns:
         - "#Publications.reference"
-      - name: SpectralTypes_regime_Regimes_regime
+      - name: SpectralTypes_regime_RegimeList_regime
         "@type": "ForeignKey"
-        "@id": "#FK_SpectralTypes_regime_Regimes_regime"
-        description: Link SpectralTypes regime to Regimes table
+        "@id": "#FK_SpectralTypes_regime_RegimeList_regime"
+        description: Link SpectralTypes regime to RegimeList table
         columns:
         - "#SpectralTypes.regime"
         referencedColumns:
-        - "#Regimes.regime"
+        - "#RegimeList.regime"
 
   - name: Gravities
     "@id": "#Gravities"
@@ -961,7 +961,7 @@ tables:
       "@id": "#Gravities.regime"
       datatype: string
       length: 30
-      description: Gravity regime; links to Regimes table
+      description: Gravity regime; links to RegimeList table
       ivoa:ucd: meta.id
     - name: comments
       "@id": "#Gravities.comments"
@@ -1001,14 +1001,14 @@ tables:
         - "#Gravities.reference"
         referencedColumns:
         - "#Publications.reference"
-      - name: Gravities_regime_Regimes_regime
+      - name: Gravities_regime_RegimeList_regime
         "@type": "ForeignKey"
-        "@id": "#FK_Gravities_regime_Regimes_regime"
-        description: Link Gravities regime to Regimes table
+        "@id": "#FK_Gravities_regime_RegimeList_regime"
+        description: Link Gravities regime to RegimeList table
         columns:
         - "#Gravities.regime"
         referencedColumns:
-        - "#Regimes.regime"
+        - "#RegimeList.regime"
 
   - name: Spectra
     "@id": "#Spectra"
@@ -1051,7 +1051,7 @@ tables:
       "@id": "#Spectra.regime"
       datatype: string
       length: 30
-      description: Spectral regime of spectrum; links to Regimes table
+      description: Spectral regime of spectrum; links to RegimeList table
       ivoa:ucd: meta.id
     - name: telescope
       "@id": "#Spectra.telescope"
@@ -1116,14 +1116,14 @@ tables:
         - "#Spectra.source"
         referencedColumns:
         - "#Sources.source"
-      - name: Spectra_regime_Regimes_regime
+      - name: Spectra_regime_RegimeList_regime
         "@type": "ForeignKey"
-        "@id": "#FK_Spectra_regime_Regimes_regime"
-        description: Link Spectra regime to Regimes table
+        "@id": "#FK_Spectra_regime_RegimeList_regime"
+        description: Link Spectra regime to RegimeList table
         columns:
         - "#Spectra.regime"
         referencedColumns:
-        - "#Regimes.regime"
+        - "#RegimeList.regime"
       - name: Spectra_telescope_Telescopes_telescope
         "@type": "ForeignKey"
         "@id": "#FK_Spectra_telescope_Instruments_telescope"
