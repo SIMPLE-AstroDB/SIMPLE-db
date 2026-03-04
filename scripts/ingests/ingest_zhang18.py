@@ -21,7 +21,7 @@ logger = logging.getLogger("ingest_zhang18")
 logger.setLevel(logging.INFO)
 
 # Load DB
-SAVE_DB = False
+SAVE_DB = True
 RECREATE_DB = True
 SCHEMA_PATH = "simple/schema.yaml"
 db = load_astrodb(
@@ -205,6 +205,13 @@ def ingest_zhang18():
     print(f"Total spectra failed to ingest: {spectrum_failed}")
     print(f"Failed files: {failed_file}")
 
+"""
+Total sources ingested: 14
+Total sources failed to ingest: 0
+
+Total spectra ingested: 120
+Total spectra failed to ingest: 0
+"""
 
 add_mode()
 ingest_zhang18()
