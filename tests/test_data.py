@@ -18,10 +18,10 @@ def reference_verifier(t, name, bibcode, doi):
 def test_sources(db):
     # Test to verify existing counts of sources and names
     n_sources = db.query(db.Sources).count()
-    assert n_sources == 3619, f"found {n_sources} sources"
+    assert n_sources == 3633, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 12203, f"found {n_names} names"
+    assert n_names == 12217, f"found {n_names} names"
 
 
 
@@ -450,7 +450,10 @@ def test_suar22_ingest(db):
     [
         ("Roja12", 1),
         ("Burg24", 1),
-        ("Zhan18.2054", 32),
+        ("Zhan17.3040", 5),
+        ("Zhan17", 1),
+        ("Zhan18.1352", 2),
+        ("Zhan18.2054", 46),
         ("Lodi17", 28),
         ("Lupi08", 6),
     ],
