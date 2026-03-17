@@ -11,6 +11,7 @@ from astroquery.simbad import Simbad
 from simple import REFERENCE_TABLES
 from specutils import Spectrum
 from datetime import datetime
+from simple.utils.spectral_types import ingest_spectral_type
 
 # set up logging 
 astrodb_logger = logging.getLogger("astrodb_utils")
@@ -205,16 +206,41 @@ def ingest_zhang18():
     print(f"Total spectra failed to ingest: {spectrum_failed}")
     print(f"Failed files: {failed_file}")
 
+spreadsheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_VuhqnOHq9Zqu2GOcPSJks6Te161VaGJVkkN1EJYVplDqoBHgK2N1yTuD7MDPcwyI4BPUB0x2gKKo/pub?output=csv"
+def ingest_SpectralType():
+    df = pd.read_csv(spreadsheet)
+    for index, row in df.iterrows():
+        source_name = row["source"]
+        spectral_type = row["Spectral Type"]
+        spectralType_ingested = 0
+        if (row["new source in SIMPLE?"] == "yes"):
+            try:
+                ingest_spectral_type(
+                    db,
+                    source=source_name,
+                    spectral_type_string=spectral_type,
+                    reference="Zhan18.2054",
+                    regime="optical"
+                )
+                print(f"Spectral type for {source_name} ingested successfully!")
+                spectralType_ingested += 1
+            except AstroDBError as e:
+                logger.error(f"Error ingesting spectral type for {source_name}: {e}")
+
+    print(f"\nTotal spectral types ingested: {spectralType_ingested}")
 """
 Total sources ingested: 14
 Total sources failed to ingest: 0
 
 Total spectra ingested: 120
 Total spectra failed to ingest: 0
+
+Total spectral types ingested: 13
 """
 
 add_mode()
 ingest_zhang18()
+ingest_SpectralType()
 
 if SAVE_DB:
     db.save_db(directory="data/")
