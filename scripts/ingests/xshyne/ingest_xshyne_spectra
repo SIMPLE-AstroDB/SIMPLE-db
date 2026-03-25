@@ -1,0 +1,130 @@
+import sys
+import logging
+sys.path.append(".")
+from astropy.io import ascii
+from simple import REFERENCE_TABLES
+from astrodb_utils import load_astrodb
+
+from astrodb_utils.spectra import (
+    ingest_spectrum,
+)
+from astrodb_utils.sources import (
+    logger,
+    find_source_in_db,
+    ingest_name
+)
+from astrodb_utils.publications import ingest_publication
+
+astrodb_utils_logger = logging.getLogger("astrodb_utils")
+logger.setLevel(logging.DEBUG)  # Set logger to INFO/DEBUG/WARNING/ERROR/CRITICAL level
+astrodb_utils_logger.setLevel(logging.DEBUG)
+
+SAVE_DB = False  # save the data files in addition to modifying the .db file
+RECREATE_DB = True  # recreates the .db file from the data files
+SCHEMA_PATH = "simple/schema.yaml"
+db = load_astrodb(
+    "SIMPLE.sqlite",
+    recreatedb=RECREATE_DB,
+    reference_tables=REFERENCE_TABLES,
+    felis_schema=SCHEMA_PATH,
+)
+
+file = (
+    ""
+)
+
+link = "scripts/ingests/xshyne/xshyne_data.csv"
+
+xshyne_table = ascii.read(
+    link,
+    format="csv",
+    data_start=1,
+    header_start=0,
+    guess=False,
+    fast_reader=False, 
+    delimiter=",",
+)
+
+spectra_ingested = 0
+source_ingested = 0
+source_already_exist = 0
+names_ingested = 0
+
+ingest_publication( db =db,
+                   doi = "10.48550/arXiv.2507.16899",
+                   bibcode = "2025arXiv250716899P",
+                   reference = "Petr25")
+
+for row in xshyne_table:
+    source = row["Source"]
+    ra = row["Ra"]
+    dec = row["Dec"]
+    date = row["Date"]
+    short_name = row["Short Name"]
+
+    multiple_dates = row["Start Date"] is not row["End Date"]
+
+    short_name_result = find_source_in_db(db=db, source = short_name)
+    
+    if len(short_name_result) == 0:
+        ingest_name(db=db, source = source, other_name=short_name)
+        names_ingested+=1
+    
+    #ingest each spectra twice, once for nir and once for optical regime
+    #add comment if spectra has multiple observation dates
+    if multiple_dates:
+        ingest_spectrum(
+            db=db,
+            source = source,
+            regime = "optical",
+            spectrum = file,
+            telescope="ESO VLT",
+            instrument="VLT/X-Shooter",
+            mode = "Echelle",
+            obs_date=date,
+            reference = "Petr25",
+            comments="Spectrum is a combination of multiple observation dates"
+        )
+        spectra_ingested+=1
+        ingest_spectrum(
+            db=db,
+            source = source,
+            regime = "nir",
+            spectrum = file,
+            telescope="ESO VLT",
+            instrument="VLT/X-Shooter",
+            mode = "Echelle",
+            obs_date=date,
+            reference = "Petr25",
+            comments="Spectrum is a combination of multiple observation dates"
+        )
+        spectra_ingested+=1
+    else:
+        ingest_spectrum(
+            db=db,
+            source = source,
+            regime = "optical",
+            spectrum = file,
+            telescope="ESO VLT",
+            instrument="VLT/X-Shooter",
+            mode = "Echelle",
+            obs_date=date,
+            reference = "Petr25",
+        )
+        spectra_ingested+=1
+        ingest_spectrum(
+            db=db,
+            source = source,
+            regime = "nir",
+            spectrum = file,
+            telescope="ESO VLT",
+            instrument="VLT/X-Shooter",
+            mode = "Echelle",
+            obs_date=date,
+            reference = "Petr25",
+        )
+
+logger.info(f"Spectra ingested: {spectra_ingested}") # spectra ingested
+logger.info(f"Names ingested: {names_ingested}") # names ingested
+if SAVE_DB: 
+    db.save_database(directory="data/")
