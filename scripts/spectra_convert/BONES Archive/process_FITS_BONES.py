@@ -124,6 +124,9 @@ def create_spectra():
                     delimiter=',',
                     skip_header=1,
                 )
+            if("Xshooter_NIR_2MASSJ06164006-6407194.txt" in filename):
+                # change Xshooter to OSIRIS
+                filepath = os.path.join(output_dir, filename.replace('Xshooter', 'OSIRIS').replace('.txt', '_SIMPLE.fits'))
 
             # sort and remove NaN value
             data = data[~np.isnan(data).any(axis=1)]
@@ -161,12 +164,12 @@ def create_spectra():
             header.set('TELESCOP', row['TELESCOP'], 'Telescope used for observation')
             header.set('INSTRUME', row['INSTRUME'], 'Instrument used for observation')
             header.set('REGIME', row['Regime'], 'Spectral regime of the spectrum')
-            header.set('FILENAME', filename + '.fits', 'Name of the file')
             header.set('REFERENC', row['Reference'], 'Reference for the spectrum')
             header.set('AUTHOR', row['OPTICAL_CITATION'] if pd.notnull(row['OPTICAL_CITATION']) else row['NIR_CITATION'])
             header.set('TITLE', row['TITLE'], 'Title of the discovery reference')
             header.set('VOREF', row['VOREF'], 'DOI of the discovery reference')
-            header.set('HISTORY', 'Converted from BONES Archive text file to FITS format.', 'Conversion history')
+            header.set('HISTORY', f'Original file from BONES Archive: {str(row["Filename"])}')
+            header.set('HISTORY', f'Converted to FITS format: {os.path.basename(filepath)}')
             header.set('CONTRIB1', 'Guan Ying Goh', 'Contributor name')
             today_date = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
             header.set('DATE', today_date, 'Date of FITS file creation')
