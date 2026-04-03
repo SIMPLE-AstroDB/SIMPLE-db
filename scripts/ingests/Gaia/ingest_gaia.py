@@ -1,9 +1,12 @@
-from scripts.ingests.utils import *
+#from scripts.ingests.utils import *
 from astroquery.gaia import Gaia
 from astropy.table import Table, setdiff
 from astropy import table
 from sqlalchemy import func
 import numpy as np
+from astrodb_utils.sources import *
+from astrodb_utils.publications import *
+from astrodb_utils import load_astrodb
 
 
 # GLOBAL VARIABLES
@@ -198,9 +201,13 @@ def add_gaia_photometry(gaia_data,ref):
 
     return
 
+SCHEMA_PATH = "simple/schema.yaml"
+from simple import REFERENCE_TABLES
 
 # LOAD THE DATABASE
-db = load_simpledb('SIMPLE.db', RECREATE_DB=RECREATE_DB)
+db = load_astrodb(
+    "SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES, felis_schema=SCHEMA_PATH
+)
 
 # get all sources that have Gaia DR2 designations
 # 2nd query which is all sources that are not in that list
