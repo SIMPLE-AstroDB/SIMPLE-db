@@ -23,7 +23,7 @@ logger = logging.getLogger("astrodb_utils.bones")
 logger.setLevel(logging.INFO)
 
 # Load Database
-SAVE_DB = False
+SAVE_DB = True
 RECREATE_DB = True
 SCHEMA_PATH = "simple/schema.yaml"
 db = load_astrodb(
@@ -110,10 +110,12 @@ def modify_date(obs_date):
     return datetime.fromisoformat(str(obs_date)) # example: 2004-04-17 04:40:11.761000
 
 def add_access_url(filename):
-    filename = filename.replace(".txt", "_SIMPLE.fits")
-    filename = filename.replace(".csv", "_SIMPLE.fits")
-    filename = filename.replace('+', '%2B')
-    access_url = ("https://bdnyc.s3.us-east-1.amazonaws.com/bones/" + filename)
+    if "SIMPLE" in filename:
+        file_url = ("https://bdnyc.s3.us-east-1.amazonaws.com/bones/" + filename)
+    else:
+        file_url = ("https://bdnyc.s3.us-east-1.amazonaws.com/bones/original/" + filename)
+
+    access_url = file_url.replace('+', '%2B')
     return access_url
 
 def ingest_spectra():
@@ -128,18 +130,18 @@ def ingest_spectra():
 
         print(f"Processing {row['NAME']}...")
 
-        filename = str(row['Filename'])
-        access_url = add_access_url(filename)
-        original_spectrum = filename # To be updated
-
+        original_spectrum = add_access_url(str(row['Filename']))
+        access_url = add_access_url(str(row['SIMPLE Filename']))
         obs_date = modify_date(row['DATE-OBS'])
+        
+        print(f"Ingesting spectrum for {row['NAME']} \n access URL: {access_url} \n original spectrum URL: {original_spectrum}...")
 
         try:
             ingest_spectrum(
                 db,
                 source=row['SIMPLE Name'],
                 spectrum=access_url,
-                # original_spectrum=original_spectrum,
+                original_spectrum=original_spectrum,
                 regime= row['Regime'],
                 instrument=row['INSTRUME'],
                 telescope=row['TELESCOP'],
@@ -156,6 +158,10 @@ def ingest_spectra():
     print(f"Total spectra added: {added_files}")
     print(f"Total failed spectra: {failed_files}")
 
+"""
+Total spectra added: 66
+Total failed spectra: 0
+"""
 add_instruments()
 add_publications()
 ingest_spectra()
