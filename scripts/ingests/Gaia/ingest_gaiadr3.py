@@ -100,14 +100,10 @@ def add_gaia_coordinates_and_epochs(data, ref):
                 conn.execute(
                     db.Sources.update().where(db.Sources.c.source == source[0]).values(
                         {
-                            "source": source[0],
                             "ra": ra,
                             "dec": dec,
                             "epoch": ref_epoch,
-                            "equinox": None, 
                             "reference": ref,
-                            "other_references": None,
-                            "shortname": None,
                         }
                     )
                 )
