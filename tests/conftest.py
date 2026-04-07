@@ -86,7 +86,7 @@ def temp_db():
     with temp_db.engine.connect() as conn:
         conn.execute(temp_db.Publications.insert().values(ref_data))
         conn.execute(temp_db.Sources.insert().values(source_data))
-        conn.execute(temp_db.Regimes.insert().values(regime_data))
+        conn.execute(temp_db.RegimeList.insert().values(regime_data))
         conn.execute(temp_db.Telescopes.insert().values(telescope_data))
         conn.execute(temp_db.Instruments.insert().values(instrument_data))
         conn.commit()
