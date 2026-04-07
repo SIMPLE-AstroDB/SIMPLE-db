@@ -18,10 +18,10 @@ def reference_verifier(t, name, bibcode, doi):
 def test_sources(db):
     # Test to verify existing counts of sources and names
     n_sources = db.query(db.Sources).count()
-    assert n_sources == 3619, f"found {n_sources} sources"
+    assert n_sources == 3632, f"found {n_sources} sources"
 
     n_names = db.query(db.Names).count()
-    assert n_names == 12203, f"found {n_names} names"
+    assert n_names == 12216, f"found {n_names} names"
 
 
 
@@ -167,7 +167,7 @@ def test_missions(db):
 # Test to verify existing counts of spectral types grouped by regime
 @pytest.mark.parametrize(
     ("regime", "n_spectra"),
-    [("optical", 1494), ("nir", 2644), ("mir", 0), ("unknown", 11)],
+    [("optical", 1507), ("nir", 2644), ("mir", 0), ("unknown", 11)],
 )
 def test_spectral_types_regimes(db, regime, n_spectra):
     t = db.query(db.SpectralTypes).filter(db.SpectralTypes.c.regime == regime).astropy()
@@ -177,7 +177,7 @@ def test_spectral_types_regimes(db, regime, n_spectra):
 # Test numbers of MLTY dwarfs
 @pytest.mark.parametrize(
     ("string", "code_min", "code_max", "n_spectra"),
-    [("M", 60, 70, 967), ("L", 70, 80, 2084), ("T", 80, 90, 1039), ("Y", 90, 100, 59)],
+    [("M", 60, 70, 979), ("L", 70, 80, 2085), ("T", 80, 90, 1039), ("Y", 90, 100, 59)],
 )  # Total number of MLTY dwarfs = 3863
 def test_spectral_types_classes(db, string, code_min, code_max, n_spectra):
     result = (
@@ -196,7 +196,7 @@ def test_spectral_types_classes(db, string, code_min, code_max, n_spectra):
 
 def test_spectral_types(db):
     n_spectral_types = db.query(db.SpectralTypes).count()
-    assert n_spectral_types == 4149, f"found {n_spectral_types} spectral types"
+    assert n_spectral_types == 4162, f"found {n_spectral_types} spectral types"
     print(f"found {n_spectral_types} total spectral types")
 
     n_photometric_spectral_types = (
@@ -212,7 +212,7 @@ def test_spectral_types(db):
         db.query(db.SpectralTypes).filter(db.SpectralTypes.c.adopted == 1).count()
     )
     assert (
-        n_adopted_spectral_types == 288
+        n_adopted_spectral_types == 301
     ), f"found {n_adopted_spectral_types} adopted spectral types"
     print(f"found {n_adopted_spectral_types} adopted spectral types")
 
@@ -450,7 +450,10 @@ def test_suar22_ingest(db):
     [
         ("Roja12", 1),
         ("Burg24", 1),
-        ("Zhan18.2054", 32),
+        ("Zhan17.3040", 5),
+        ("Zhan17", 1),
+        ("Zhan18.1352", 2),
+        ("Zhan18.2054", 45),
         ("Lodi17", 28),
         ("Lupi08", 6),
     ],
