@@ -168,4 +168,4 @@ ingest_spectra()
 
 if SAVE_DB:
     db.save_database(directory="data/")
-    logger.info("Database saved as SIMPLE.sqlite")
+    logger.info("Database JSON files written to disk")
