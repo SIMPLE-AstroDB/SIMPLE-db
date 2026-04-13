@@ -5,7 +5,7 @@ from pydantic import ValidationError
 
 from felis.datamodel import Schema
 
-SCHEMA_PATH = "simple/schema.yaml"
+SCHEMA_PATH = "schema.yaml"
 
 
 def test_schema():

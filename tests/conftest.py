@@ -11,7 +11,7 @@ from simple import REFERENCE_TABLES
 
 logger = logging.getLogger("AstroDB")
 
-SCHEMA_PATH = "simple/schema.yaml"
+SCHEMA_PATH = "schema.yaml"
 
 
 # Create a fresh SIMPLE database for the data and integrity tests
