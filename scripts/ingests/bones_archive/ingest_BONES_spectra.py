@@ -75,7 +75,7 @@ def add_instruments():
         },
         {
             "name":"OSIRIS",
-            "mode":"Missing",
+            "mode":"spectroscopy",
             "telescope":"SOAR",
         }
     ]
