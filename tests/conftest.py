@@ -10,7 +10,6 @@ sys.path.append("./")  # needed for github actions to find the simple module
 
 logger = logging.getLogger("AstroDB")
 
-SCHEMA_PATH = "schema.yaml"
 
 
 # Create a fresh SIMPLE database for the data and integrity tests
