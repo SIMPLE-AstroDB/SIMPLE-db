@@ -4,14 +4,14 @@ from sqlalchemy import and_
 
 def test_spectra_count(db):
     n_spectra = db.query(db.Spectra).count()
-    assert n_spectra == 1727, f"found {n_spectra} sources"
+    assert n_spectra == 1793, f"found {n_spectra} sources"
 
 
 @pytest.mark.parametrize(
     ("regime", "n_spectra"),
     [
-        ("optical", 837),
-        ("nir", 663),
+        ("optical", 854),
+        ("nir", 712),
         ("mir", 227),
         ("unknown", 0),
     ],
@@ -24,15 +24,15 @@ def test_spectra_regimes(db, regime, n_spectra):
 @pytest.mark.parametrize(
     ("telescope", "n_spectra"),
     [
-        ("IRTF", 457),
-        ("Keck I", 65),
-        ("Keck II", 8),
-        ("Magellan I Baade", 12),
+        ("IRTF", 495),
+        ("Keck I", 67),
+        ("Keck II", 13),
+        ("Magellan I Baade", 14),
         ("Magellan II Clay", 11),
-        ("SOAR", 2),
+        ("SOAR", 3),
         ("Lick Shane 3m", 1),
         ("HST", 77),
-        ("Gemini North", 27),
+        ("Gemini North", 28),
         ("Gemini South", 34),
         ("GTC", 66),
         ("ESO VLT", 114),
@@ -57,7 +57,7 @@ def test_spectra_telescope(db, telescope, n_spectra):
         ("ESO VLT", "XShooter", 88),
         ("GTC", "OSIRIS", 65),
         ("Magellan I Baade", "IMACS", 1),
-        ("Magellan I Baade", "FIRE", 11),
+        ("Magellan I Baade", "FIRE", 13),
         ("SDSS", "BOSS", 1),
     ],
 )
@@ -82,7 +82,7 @@ def test_spectra_instrument(db, telescope, instrument, n_spectra):
         ("Cruz03", 191),
         ("Cruz18", 186),
         ("Cruz07", 158),
-        ("Bard14", 57),
+        ("Bard14", 63),
         ("Burg10.1142", 46),
         ("Manj20", 20),
         ("Roth24", 34),
