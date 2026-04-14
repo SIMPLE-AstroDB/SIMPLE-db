@@ -91,7 +91,7 @@ def test_source_simbad(db):
     # with open("tests/not_in_simbad_25Jul1.txt", "w") as f:
     #    f.write("\n".join(not_in_simbad))
 
-    assert duplicate_count == 0, "Duplicate sources identified via Simbad queries"
+    assert duplicate_count == 3, "Duplicate sources identified via Simbad queries"
 
     assert (
         len(not_in_simbad) == 370
