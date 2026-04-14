@@ -21,31 +21,30 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Python 3.13
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install astrodbkit
-        pip install astrodb_utils
-        pip install .
+      run: uv sync
 
     - name: Generate sqlite (file) database
-      run: |
-        python simple/utils/generate_database.py
-      working-directory: .
+      run: uv run python simple/utils/generate_database.py
+
+    - name: Checkout destination repo
+      uses: actions/checkout@v4
+      with:
+        repository: SIMPLE-AstroDB/SIMPLE-binary
+        path: SIMPLE-binary
+        token: ${{ secrets.SIMPLE_TOKEN }}
 
     - name: Push database file
-      uses: dmnemec/copy_file_to_another_repo_action@main
-      # Details for this action at https://github.com/marketplace/actions/push-a-file-to-another-repository
-      env:
-          API_TOKEN_GITHUB: ${{ secrets.SIMPLE_TOKEN }}
-      with:
-          source_file: 'SIMPLE.sqlite'
-          destination_repo: 'SIMPLE-AstroDB/SIMPLE-binary'
-          destination_branch: 'main'
-          user_email: 'github-actions@github.com'
-          user_name: 'github-actions'
+      run: |
+        cp SIMPLE.sqlite SIMPLE-binary/SIMPLE.sqlite
+        cp database.toml SIMPLE-binary/database.toml
+        cd SIMPLE-binary
+        git config user.email "github-actions@github.com"
+        git config user.name "github-actions"
+        git add SIMPLE.sqlite
+        git add database.toml
+        git commit -m "Update SIMPLE.sqlite and database.toml from SIMPLE-db release ${{ github.ref_name }}" || echo "No changes to commit"
+        git push
