@@ -22,17 +22,15 @@ def db():
     
     if os.path.exists(DB_NAME):
         os.remove(DB_NAME)
-    connection_string = "sqlite:///" + DB_NAME
-    create_database(connection_string, felis_schema=SCHEMA_PATH)
-    assert os.path.exists(DB_NAME)
 
-    # Connect to the new database
     db = load_astrodb(DB_NAME,
                       data_path=DB_PATH,
+                      recreatedb=True,
                       reference_tables=REFERENCE_TABLES,
                       felis_schema=SCHEMA_PATH)
 
-    return db
+    yield db
+    db.engine.dispose()
 
 
 # Create a temp database with dummy data to test utility functions
@@ -93,4 +91,6 @@ def temp_db():
 
     logger.info("Loaded temp database using temp_db function in conftest")
 
-    return temp_db
+    yield temp_db
+
+    temp_db.engine.dispose()

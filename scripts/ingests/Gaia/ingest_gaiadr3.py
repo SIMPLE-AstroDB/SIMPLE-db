@@ -103,7 +103,10 @@ def add_gaia_coordinates_and_epochs(data, ref):
                             "ra": ra,
                             "dec": dec,
                             "epoch": ref_epoch,
-                            "reference": ref,
+                            "other_references": func.case(
+                                (db.Sources.c.other_references == None, ref),
+                                else_=db.Sources.c.other_references + ", " + ref
+                            )
                         }
                     )
                 )
