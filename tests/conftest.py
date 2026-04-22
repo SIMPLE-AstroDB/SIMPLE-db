@@ -16,11 +16,9 @@ SCHEMA_PATH = db_settings.felis_path
 # Create a fresh SIMPLE database for the data and integrity tests
 @pytest.fixture(scope="session", autouse=True)
 def db():
-    db = build_db_from_json(
-        settings_file="database.toml"
-    )
-
-    return db
+    db = build_db_from_json(settings_file="database.toml")
+    yield db
+    db.engine.dispose()
 
 
 # Create a temp database with dummy data to test utility functions
@@ -81,4 +79,6 @@ def temp_db():
 
     logger.info("Loaded temp database using temp_db function in conftest")
 
-    return temp_db
+    yield temp_db
+
+    temp_db.engine.dispose()
