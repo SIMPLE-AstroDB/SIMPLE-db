@@ -3,34 +3,22 @@ import os
 import sys
 
 import pytest
-from astrodb_utils import load_astrodb
+from astrodb_utils.loaders import build_db_from_json, DatabaseSettings
 from astrodbkit.astrodb import Database, create_database
 
 sys.path.append("./")  # needed for github actions to find the simple module
-from simple import REFERENCE_TABLES
 
 logger = logging.getLogger("AstroDB")
 
-SCHEMA_PATH = "simple/schema.yaml"
-
+db_settings=DatabaseSettings(settings_file="database.toml")
+SCHEMA_PATH = db_settings.felis_path
 
 # Create a fresh SIMPLE database for the data and integrity tests
 @pytest.fixture(scope="session", autouse=True)
 def db():
-    DB_NAME = "tests/simple_tests.sqlite"
-    DB_PATH = "data"
-    
-    if os.path.exists(DB_NAME):
-        os.remove(DB_NAME)
-    connection_string = "sqlite:///" + DB_NAME
-    create_database(connection_string, felis_schema=SCHEMA_PATH)
-    assert os.path.exists(DB_NAME)
-
-    # Connect to the new database
-    db = load_astrodb(DB_NAME,
-                      data_path=DB_PATH,
-                      reference_tables=REFERENCE_TABLES,
-                      felis_schema=SCHEMA_PATH)
+    db = build_db_from_json(
+        settings_file="database.toml"
+    )
 
     return db
 
