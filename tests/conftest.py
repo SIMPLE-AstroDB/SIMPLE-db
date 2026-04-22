@@ -16,18 +16,7 @@ SCHEMA_PATH = db_settings.felis_path
 # Create a fresh SIMPLE database for the data and integrity tests
 @pytest.fixture(scope="session", autouse=True)
 def db():
-    DB_NAME = "tests/simple_tests.sqlite"
-    DB_PATH = "data"
-    
-    if os.path.exists(DB_NAME):
-        os.remove(DB_NAME)
-
-    db = load_astrodb(DB_NAME,
-                      data_path=DB_PATH,
-                      recreatedb=True,
-                      reference_tables=REFERENCE_TABLES,
-                      felis_schema=SCHEMA_PATH)
-
+    db = build_db_from_json(settings_file="database.toml")
     yield db
     db.engine.dispose()
 
