@@ -144,3 +144,24 @@ def test_radial_velocities(db):
         .astropy()
     )
     assert len(t) == 89, f"found {len(t)} radial velociies with no uncertainty"
+
+
+def test_source_epochs(db):
+    """
+    Verify the Gaia DR3 epoch ingest populated the expected number of sources.
+    The ingest script (scripts/ingests/Gaia/ingest_gaiadr3.py) writes ra/dec/epoch
+    onto sources matched against the Gaia DR3 votable.
+    """
+    t_with = (
+        db.query(db.Sources)
+        .filter(db.Sources.c.epoch != None)  # noqa: E711
+        .astropy()
+    )
+    assert len(t_with) == 1386, f"found {len(t_with)} sources with an epoch"
+
+    t_without = (
+        db.query(db.Sources)
+        .filter(db.Sources.c.epoch == None)  # noqa: E711
+        .astropy()
+    )
+    assert len(t_without) == 2246, f"found {len(t_without)} sources without an epoch"
