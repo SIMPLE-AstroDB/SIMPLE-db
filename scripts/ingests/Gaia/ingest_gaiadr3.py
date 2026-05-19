@@ -1,10 +1,10 @@
 from astroquery.gaia import Gaia
 from astropy.table import Table, setdiff
 from astropy import table
-from sqlalchemy import func
+from sqlalchemy import case
 import numpy as np
 import pandas as pd
-from astrodb_utils import load_astrodb
+from astrodb_utils.loaders import build_db_from_json
 from astrodb_utils.sources import (
     find_source_in_db,
     AstroDBError,
@@ -16,18 +16,15 @@ from astrodb_utils.publications import (
     ingest_publication,
     logger,
 )
-from simple import REFERENCE_TABLES
-SCHEMA_PATH = "simple/schema.yaml"
 
 # GLOBAL VARIABLES
 
 SAVE_DB = True  # save the data files in addition to modifying the .db file
-RECREATE_DB = True  # recreates the .db file from the data files
 VERBOSE = False
 #Changed from Jun2022 to Sep2021
 DATE_SUFFIX = "Sep2021"
 # LOAD THE DATABASE
-db = load_astrodb("SIMPLE.sqlite", recreatedb=RECREATE_DB, reference_tables=REFERENCE_TABLES, felis_schema=SCHEMA_PATH)
+db = build_db_from_json(settings_file="database.toml")
 
 #logger.setLevel(logging.DEBUG)
 
@@ -70,58 +67,60 @@ def update_ref_tables():
 # update_ref_tables()
 
 ingested = 0
-total = 0    
+total = 0
 
 def add_gaia_coordinates_and_epochs(data, ref):
-    
+
     global ingested
     global total
-    
+
+    updated_sources = []
+
     for row in data:
         # source in the database
         source = find_source_in_db(db, row["db_names"])
         if source is None:
             logger.warning(f"Source {row['db_names']} not found in database")
             continue
-        
+
         # coordinates and epoch from Gaia DR3 data
         ra = row["ra"]
-        dec = row["dec"] 
+        dec = row["dec"]
         ref_epoch = row["ref_epoch"]
-        
+
         if ra is np.ma.masked or dec is np.ma.masked:
             logger.warning(f"Coordinates are masked for {row['db_names']}")
             continue
-        
+
         epoch_value = None if ref_epoch is np.ma.masked else ref_epoch
-        
+
         try:
             with db.engine.connect() as conn:
                 conn.execute(
                     db.Sources.update().where(db.Sources.c.source == source[0]).values(
                         {
-                            "source": source[0],
                             "ra": ra,
                             "dec": dec,
                             "epoch": ref_epoch,
-                            "equinox": None, 
-                            "reference": ref,
-                            "other_references": None,
-                            "shortname": None,
+                            "other_references": case(
+                                (db.Sources.c.other_references == None, ref),
+                                else_=db.Sources.c.other_references + ", " + ref
+                            )
                         }
                     )
                 )
                 conn.commit()
-                
+
             ingested += 1
             total += 1
+            updated_sources.append(source[0])
             print(f"Ingested coordinates for {row['db_names']}: RA={ra}, Dec={dec}, epoch={epoch_value}")
-            
+
         except Exception as e:
             total += 1
             logger.warning(f"Could not ingest coordinates for {row['db_names']}: {e}")
-    
-    return
+
+    return updated_sources
 
 '''
 dr3_desig_file_string = (
@@ -141,10 +140,15 @@ gaia_dr3_data = Table.read(dr3_data_file_string, format="votable")
 
 #ingest_sources(db, gaia_dr3_data['designation'], 'GaiaDR3')
 
-add_gaia_coordinates_and_epochs(gaia_dr3_data, "GaiaDR3")
+updated_sources = add_gaia_coordinates_and_epochs(gaia_dr3_data, "GaiaDR3")
 print("ingested: " + str(ingested))
 print("total: " + str(total))
 
 # WRITE THE JSON FILES
+# Per-source save: only rewrite the JSONs for sources we actually updated.
+# Avoids the bulk db.save_database() round-trip that would reformat every
+# source file (e.g. "adopted": 0 -> false) due to serializer changes in
+# astrodbkit. A separate PR will handle that repo-wide reformat.
 if SAVE_DB:
-    db.save_database(directory="data/")
+    for src in updated_sources:
+        db.save_json(src, "data/source")
